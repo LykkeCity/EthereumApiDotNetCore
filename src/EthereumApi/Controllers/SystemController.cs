@@ -22,12 +22,12 @@ namespace EthereumApi.Controllers
 		public async Task<IActionResult> NewClient()
 		{
 			// check contract queue
-			var count = _contractQueueService.Count();
+			var count = await _contractQueueService.Count();
 
 			// check ethereum node
 			var block = await _contractService.GetCurrentBlock();
 
-			return Ok(new { QueueCount = count, BlockNumber = block });
+			return Ok(new { QueueCount = count, BlockNumber = block.ToString() });
 		}
 	}
 }

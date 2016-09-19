@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Services;
 using AzureRepositories;
+using EthereumJobs.Actions;
 using EthereumJobs.Job;
 
 namespace EthereumJobs.Config
@@ -23,6 +24,9 @@ namespace EthereumJobs.Config
 
 		private static void RegisterJobs(IServiceCollection collection)
 		{
+			collection.AddTransient<RestoreUserContractEvents>();
+			collection.AddTransient<CatchOldUserContractEvents>();
+
 			collection.AddSingleton<CheckContractQueueCountJob>();
 			collection.AddSingleton<CheckPaymentsToUserContractsJob>();
 			collection.AddSingleton<RefreshContractQueueJob>();

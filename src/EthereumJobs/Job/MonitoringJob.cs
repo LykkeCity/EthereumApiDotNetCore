@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core.Log;
+using Core.Repositories;
 using Core.Timers;
-using EthereumCore.Monitoring;
 
 namespace EthereumJobs.Job
 {

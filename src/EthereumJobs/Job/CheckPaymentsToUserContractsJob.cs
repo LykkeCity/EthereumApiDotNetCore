@@ -18,6 +18,7 @@ namespace EthereumJobs.Job
 		private readonly IEthereumQueueOutService _queueOutService;
 		private readonly ILog _logger;
 
+		private bool _shouldCreateNewEvent;
 		private HexBigInteger _filter;
 
 		public CheckPaymentsToUserContractsJob(IContractService contractService, IPaymentService paymentService,
@@ -37,17 +38,33 @@ namespace EthereumJobs.Job
 
 		public override async Task Execute()
 		{
-			if (_filter == null)
-				_filter = await _contractService.CreateFilterEventForUserContractPayment();
-
-			var logs = await _contractService.GetNewPaymentEvents(_filter);
-
-			if (logs == null)
-				return;
-
-			foreach (var item in logs)
+			try
 			{
-				await ProcessLogItem(item);
+				if (_shouldCreateNewEvent)
+				{
+					_filter = await _contractService.CreateFilterEventForUserContractPayment();
+					_shouldCreateNewEvent = false;
+				}
+
+				if (_filter == null)
+					_filter = await _contractService.GetFilterEventForUserContractPayment();
+
+				var logs = await _contractService.GetNewPaymentEvents(_filter);
+
+				if (logs == null)
+					return;
+
+				foreach (var item in logs)
+				{
+					await ProcessLogItem(item);
+				}
+			}
+			catch (Exception e)
+			{
+				// ethereum, node is down
+				if (e.Message.Contains("when trying to send rpc"))
+					_shouldCreateNewEvent = true;
+				throw;
 			}
 		}
 
@@ -56,7 +73,7 @@ namespace EthereumJobs.Job
 		/// </summary>
 		/// <param name="log"></param>
 		/// <returns></returns>
-		private async Task<bool> ProcessLogItem(UserPaymentEvent log)
+		internal async Task<bool> ProcessLogItem(UserPaymentEvent log)
 		{
 			try
 			{
@@ -68,9 +85,7 @@ namespace EthereumJobs.Job
 
 				await _queueOutService.FirePaymentEvent(log.Address, UnitConversion.Convert.FromWei(log.Amount));
 
-				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {log.Address}");
-
-				Console.WriteLine($"Event from {log.Address} for {log.Amount} WEI processed! Transaction: {transaction}");
+				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
 
 				return true;
 			}

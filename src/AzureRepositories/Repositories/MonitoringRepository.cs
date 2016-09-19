@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AzureRepositories.Azure;
-using EthereumCore.Monitoring;
+using Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace AzureRepositories.Monitoring
+namespace AzureRepositories.Repositories
 {
 	public class MonitoringEntity : TableEntity, IMonitoring
 	{
@@ -36,7 +36,6 @@ namespace AzureRepositories.Monitoring
 		public async Task SaveAsync(IMonitoring monitoring)
 		{
 			var entity = MonitoringEntity.Create(monitoring);
-
 			await _table.InsertOrMergeAsync(entity);
 		}
 	}

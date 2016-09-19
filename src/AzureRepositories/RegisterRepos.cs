@@ -2,11 +2,11 @@
 using AzureRepositories.Azure.Queue;
 using AzureRepositories.Azure.Tables;
 using AzureRepositories.Log;
-using AzureRepositories.Monitoring;
+using AzureRepositories.Repositories;
 using Core;
 using Core.Log;
+using Core.Repositories;
 using Core.Settings;
-using EthereumCore.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AzureRepositories
@@ -30,6 +30,14 @@ namespace AzureRepositories
 		{
 			services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
 				new AzureTableStorage<MonitoringEntity>(settings.Db.ExchangeQueueConnString, "Monitoring",
+					provider.GetService<ILog>())));
+
+			services.AddSingleton<IUserContractRepository>(provider => new UserContractRepository(
+				new AzureTableStorage<UserContractEntity>(settings.Db.DataConnString, "UserContracts",
+					provider.GetService<ILog>())));
+
+			services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
+				new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, "AppSettings",
 					provider.GetService<ILog>())));
 		}
 

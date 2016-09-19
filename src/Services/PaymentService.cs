@@ -18,7 +18,17 @@ namespace Services
 		/// <returns></returns>
 		Task<string> TransferFromUserContract(string contractAddress, BigInteger amount);
 
+		/// <summary>
+		/// Transfer money from user contract to main account
+		/// </summary>
+		/// <param name="contractAddress">Address of user contract</param>
+		/// <param name="amount">ETH amount</param>
+		/// <returns></returns>
+		Task<string> TransferFromUserContract(string contractAddress, decimal amount);
+
 		Task<decimal> GetMainAccountBalance();
+
+		Task<decimal> GetUserContractBalance(string address);
 	}
 
 	public class PaymentService : IPaymentService
@@ -28,6 +38,11 @@ namespace Services
 		public PaymentService(IBaseSettings settings)
 		{
 			_settings = settings;
+		}
+
+		public async Task<string> TransferFromUserContract(string contractAddress, decimal amount)
+		{
+			return await TransferFromUserContract(contractAddress, UnitConversion.Convert.ToWei(amount));
 		}
 
 		public async Task<string> TransferFromUserContract(string contractAddress, BigInteger amount)
@@ -62,6 +77,13 @@ namespace Services
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
 			var balance = await web3.Eth.GetBalance.SendRequestAsync(_settings.EthereumMainAccount);
+			return UnitConversion.Convert.FromWei(balance);
+		}
+
+		public async Task<decimal> GetUserContractBalance(string address)
+		{
+			var web3 = new Web3(_settings.EthereumUrl);
+			var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
 			return UnitConversion.Convert.FromWei(balance);
 		}
 	}

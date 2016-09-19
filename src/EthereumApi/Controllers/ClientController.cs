@@ -21,7 +21,7 @@ namespace EthereumApi.Controllers
 		[Produces(typeof(RegisterResponse))]
 		public async Task<IActionResult> NewClient()
 		{
-			var contract = await _contractQueueService.GetContract();
+			var contract = await _contractQueueService.GetContractAndSave();
 
 			var response = new RegisterResponse
 			{

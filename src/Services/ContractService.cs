@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Core;
 using Core.ContractEvents;
+using Core.Repositories;
 using Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
@@ -15,6 +17,7 @@ namespace Services
 	{
 		Task<string> GenerateMainContract();
 		Task<string> GenerateUserContract();
+		Task<HexBigInteger> GetFilterEventForUserContractPayment();
 		Task<HexBigInteger> CreateFilterEventForUserContractPayment();
 		Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
 		Task<string[]> GenerateUserContracts(int count = 10);
@@ -24,10 +27,12 @@ namespace Services
 	public class ContractService : IContractService
 	{
 		private readonly IBaseSettings _settings;
+		private readonly IAppSettingsRepository _appSettings;
 
-		public ContractService(IBaseSettings settings)
+		public ContractService(IBaseSettings settings, IAppSettingsRepository appSettings)
 		{
 			_settings = settings;
+			_appSettings = appSettings;
 		}
 
 		public async Task<string> GenerateMainContract()
@@ -87,11 +92,24 @@ namespace Services
 			return receipt.ContractAddress;
 		}
 
+		public async Task<HexBigInteger> GetFilterEventForUserContractPayment()
+		{
+			var setting = await _appSettings.GetSettingAsync(Constants.EthereumFilterSettingKey);
+			if (!string.IsNullOrWhiteSpace(setting))
+				return new HexBigInteger(setting);
+
+			return await CreateFilterEventForUserContractPayment();
+		}
+
 		public async Task<HexBigInteger> CreateFilterEventForUserContractPayment()
 		{
 			var contract = new Web3(_settings.EthereumUrl).Eth.GetContract(_settings.MainContract.Abi, _settings.EthereumMainContractAddress);
+			var filter = await contract.CreateFilterAsync();
 
-			return await contract.CreateFilterAsync();
+			//save filter for next launch
+			await _appSettings.SetSettingAsync(Constants.EthereumFilterSettingKey, filter.HexValue);
+
+			return filter;
 		}
 
 		public async Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter)

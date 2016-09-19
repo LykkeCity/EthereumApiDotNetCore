@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Core.Settings;
+using EthereumJobs.Actions;
 using EthereumJobs.Job;
 using Microsoft.Extensions.DependencyInjection;
 using EthereumJobs.Config;
@@ -10,12 +12,18 @@ namespace EthereumJobs
 	{
 		public IServiceProvider Services { get; set; }
 
-		public void Run(IBaseSettings settings)
+		public async void Run(IBaseSettings settings)
 		{
 			IServiceCollection collection = new ServiceCollection();
 			collection.InitJobDependencies(settings);
 
 			Services = collection.BuildServiceProvider();
+
+			// restore contract payment events after service shutdown
+			await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
+			await Task.Run(() => Services.GetService<RestoreUserContractEvents>().Start());
+
+			Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
 			RunJobs();
 		}
