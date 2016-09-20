@@ -1,0 +1,29 @@
+{
+	"MainContract": {
+		"Abi": "[{\"constant\":false,\"inputs\":[{\"name\":\"userContractAddress\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"gotPayment\",\"outputs\":[],\"type\":\"function\"},{\"inputs\":[],\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"userAddress\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"PaymentFromUser\",\"type\":\"event\"}]\n",
+		"ByteCode": "60606040525b5b60b08060126000396000f360606040526000357c010000000000000000000000000000000000000000000000000000000090048063a158bece146037576035565b005b605460048080359060200190919080359060200190919050506056565b005b7fb1cd3e821f00c43cea071e67e96459fa3925baae181f45332c039ff4ff2d50688282604051808373ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15b505056"
+	},
+
+	"UserContract": {
+		"Abi": "[{\"constant\":false,\"inputs\":[{\"name\":\"recepient\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferMoney\",\"outputs\":[],\"type\":\"function\"},{\"inputs\":[{\"name\":\"mainContractAddress\",\"type\":\"address\"}],\"type\":\"constructor\"}]\n",
+		"ByteCode": "60606040526040516020806101a4833981016040528080519060200190919050505b80600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055505b506101488061005c6000396000f36060604052361561003d576000357c010000000000000000000000000000000000000000000000000000000090048063fee666ad146100ef5761003d565b6100ed5b600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663a158bece3034604051837c0100000000000000000000000000000000000000000000000000000000028152600401808373ffffffffffffffffffffffffffffffffffffffff168152602001828152602001925050506000604051808303816000876161da5a03f115610002575050505b565b005b61010e6004808035906020019091908035906020019091905050610110565b005b8173ffffffffffffffffffffffffffffffffffffffff16600082604051809050600060405180830381858888f19350505050505b505056"
+	},
+
+	"EthereumMainAccount": "",
+	"EthereumMainAccountPassword": "",
+	"EthereumMainContractAddress": "",
+	"EthereumUrl": "",
+
+	"EthereumPrivateAccount": "",
+
+	"MinContractPoolLength": 100,
+	"MaxContractPoolLength": 200,
+	"MainAccountMinBalance": 1.0,
+
+	"Db": {
+		"DataConnString": "",
+		"LogsConnString": "",
+		"EthereumNotificationsConnString": "",
+		"ExchangeQueueConnString": ""
+	}
+}
