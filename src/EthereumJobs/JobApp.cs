@@ -19,6 +19,9 @@ namespace EthereumJobs
 
 			Services = collection.BuildServiceProvider();
 
+			// start monitoring
+			Services.GetService<MonitoringJob>().Start();
+
 			// restore contract payment events after service shutdown
 			await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
 			await Task.Run(() => Services.GetService<RestoreUserContractEvents>().Start());
@@ -33,7 +36,6 @@ namespace EthereumJobs
 			Services.GetService<CheckContractQueueCountJob>().Start();
 			Services.GetService<CheckPaymentsToUserContractsJob>().Start();
 			Services.GetService<RefreshContractQueueJob>().Start();
-			Services.GetService<MonitoringJob>().Start();
 		}
 	}
 }

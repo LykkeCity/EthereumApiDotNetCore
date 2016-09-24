@@ -58,7 +58,7 @@ namespace EthereumJobs.Actions
 
 				var transaction = await _paymentService.TransferFromUserContract(contract.Address, balance);
 
-				await _queueOutService.FirePaymentEvent(contract.Address, balance);
+				await _queueOutService.FirePaymentEvent(contract.Address, balance, transaction);
 
 				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {contract.Address}. Transaction: {transaction}");
 

@@ -83,7 +83,7 @@ namespace EthereumJobs.Job
 
 				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
 
-				await _queueOutService.FirePaymentEvent(log.Address, UnitConversion.Convert.FromWei(log.Amount));
+				await _queueOutService.FirePaymentEvent(log.Address, UnitConversion.Convert.FromWei(log.Amount), transaction);
 
 				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
 

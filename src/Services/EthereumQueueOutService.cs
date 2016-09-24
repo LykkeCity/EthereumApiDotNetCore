@@ -9,7 +9,7 @@ namespace Services
 {
 	public interface IEthereumQueueOutService
 	{
-		Task FirePaymentEvent(string userContract, decimal amount);
+		Task FirePaymentEvent(string userContract, decimal amount, string trHash);
 	}
 
 	public class EthereumQueueOutService : IEthereumQueueOutService
@@ -29,14 +29,15 @@ namespace Services
 		/// <param name="userContract"></param>
 		/// <param name="amount"></param>
 		/// <returns></returns>
-		public async Task FirePaymentEvent(string userContract, decimal amount)
+		public async Task FirePaymentEvent(string userContract, decimal amount, string trHash)
 		{
 			try
 			{
 				var model = new EthereumCashInModel
 				{
 					Amount = amount,
-					Contract = userContract
+					Contract = userContract,
+					TransactionHash = trHash
 				};
 
 				var json = JsonConvert.SerializeObject(model);
@@ -55,5 +56,6 @@ namespace Services
 		public string Type => "EthereumCashIn";
 		public decimal Amount { get; set; }
 		public string Contract { get; set; }
+		public string TransactionHash { get; set; }
 	}
 }
