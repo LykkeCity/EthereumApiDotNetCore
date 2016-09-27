@@ -55,6 +55,8 @@ namespace AzureRepositories
 							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, x);
 						case Constants.EmailNotifierQueue:
 							return new AzureQueueExt(settings.Db.ExchangeQueueConnString, x);
+						case Constants.ContractTransferQueue:
+							return new AzureQueueExt(settings.Db.DataConnString, x);
 						default:
 							throw new Exception("Queue is not registered");
 					}

@@ -32,7 +32,7 @@ namespace Services
 		}
 
 		public async Task<string> GetContract()
-		{
+		{			
 			var message = await _queue.GetRawMessageAsync();
 			if (message == null)
 				return null;

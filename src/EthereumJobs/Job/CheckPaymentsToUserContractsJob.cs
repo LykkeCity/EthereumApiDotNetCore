@@ -15,19 +15,19 @@ namespace EthereumJobs.Job
 
 		private readonly IContractService _contractService;
 		private readonly IPaymentService _paymentService;
-		private readonly IEthereumQueueOutService _queueOutService;
+		private readonly IContractTransferTransactionService _contractTransferTransactionService;
 		private readonly ILog _logger;
 
 		private bool _shouldCreateNewEvent;
 		private HexBigInteger _filter;
 
 		public CheckPaymentsToUserContractsJob(IContractService contractService, IPaymentService paymentService,
-												IEthereumQueueOutService queueOutService, ILog logger)
+												IContractTransferTransactionService contractTransferTransactionService, ILog logger)
 			: this("CheckPaymentsToUserContractsJob", TimerPeriodSeconds * 1000, logger)
 		{
 			_contractService = contractService;
 			_paymentService = paymentService;
-			_queueOutService = queueOutService;
+			_contractTransferTransactionService = contractTransferTransactionService;
 			_logger = logger;
 		}
 
@@ -83,7 +83,13 @@ namespace EthereumJobs.Job
 
 				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
 
-				await _queueOutService.FirePaymentEvent(log.Address, UnitConversion.Convert.FromWei(log.Amount), transaction);
+				await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
+				{
+					TransactionHash = transaction,
+					Contract = log.Address,
+					Amount = UnitConversion.Convert.FromWei(log.Amount),
+					CreateDt = DateTime.UtcNow
+				});
 
 				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
 

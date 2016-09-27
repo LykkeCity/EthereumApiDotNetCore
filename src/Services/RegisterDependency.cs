@@ -13,6 +13,7 @@ namespace Services
 			services.AddTransient<IEthereumQueueOutService, EthereumQueueOutService>();
 			services.AddTransient<IContractQueueService, ContractQueueService>();
 			services.AddTransient<IEmailNotifierService, EmailNotifierService>();
+			services.AddTransient<IContractTransferTransactionService, ContractTransferTransactionService>();
 		}
 	}
 }

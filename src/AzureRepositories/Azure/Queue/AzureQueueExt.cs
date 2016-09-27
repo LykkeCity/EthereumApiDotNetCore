@@ -67,7 +67,12 @@ namespace AzureRepositories.Azure.Queue
 			return await _queue.GetMessageAsync();
 		}
 
-		public async Task FinishRawMessageAsync(CloudQueueMessage message)
+	    public async Task<CloudQueueMessage> PeekRawMessageAsync()
+	    {
+		    return await _queue.PeekMessageAsync();
+	    }
+
+	    public async Task FinishRawMessageAsync(CloudQueueMessage message)
 		{
 			await _queue.DeleteMessageAsync(message);
 		}

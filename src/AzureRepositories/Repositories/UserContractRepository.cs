@@ -18,13 +18,19 @@ namespace AzureRepositories.Repositories
 		public string Address => RowKey;
 		public DateTime CreateDt { get; set; }
 
+		public int BalanceNotChangedCount { get; set; }
+
+		public decimal LastBalance { get; set; }
+
 		public static UserContractEntity Create(IUserContract userContract)
 		{
 			return new UserContractEntity
 			{
 				PartitionKey = GenerateParitionKey(),
 				RowKey = userContract.Address,
-				CreateDt = userContract.CreateDt
+				CreateDt = userContract.CreateDt,
+				LastBalance = userContract.LastBalance,
+				BalanceNotChangedCount = userContract.BalanceNotChangedCount
 			};
 		}
 
@@ -46,6 +52,19 @@ namespace AzureRepositories.Repositories
 
 			await _table.InsertAsync(entity);
 		}
+
+		public async Task ReplaceAsync(IUserContract contract)
+		{
+			var entity = UserContractEntity.Create(contract);
+
+			await _table.ReplaceAsync(entity, contractEntity =>
+			 {
+				 contractEntity.BalanceNotChangedCount = contractEntity.BalanceNotChangedCount;
+				 contractEntity.LastBalance = contractEntity.LastBalance;
+				 return contractEntity;
+			 });
+		}
+
 
 		public async Task<IEnumerable<IUserContract>> GetContractsAsync()
 		{

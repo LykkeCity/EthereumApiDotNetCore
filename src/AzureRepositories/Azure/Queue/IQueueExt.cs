@@ -31,6 +31,7 @@ namespace AzureRepositories.Azure.Queue
 
 		Task PutRawMessageAsync(string message);
 	    Task<CloudQueueMessage> GetRawMessageAsync();
+	    Task<CloudQueueMessage> PeekRawMessageAsync();
 	    Task FinishRawMessageAsync(CloudQueueMessage message);
 
 

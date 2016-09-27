@@ -29,6 +29,8 @@ namespace Services
 		Task<decimal> GetMainAccountBalance();
 
 		Task<decimal> GetUserContractBalance(string address);
+
+		Task<TransactionReceipt> GetTransactionReceipt(string transaction);
 	}
 
 	public class PaymentService : IPaymentService
@@ -61,16 +63,7 @@ namespace Services
 
 			var function = contract.GetFunction("transferMoney");
 
-			var transaction = await function.SendTransactionAsync(_settings.EthereumMainAccount, _settings.EthereumPrivateAccount, amount);
-
-			TransactionReceipt receipt;
-
-			while ((receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction)) == null)
-			{
-				await Task.Delay(100);
-			}
-
-			return receipt.TransactionHash;
+			return await function.SendTransactionAsync(_settings.EthereumMainAccount, _settings.EthereumPrivateAccount, amount);			
 		}
 
 		public async Task<decimal> GetMainAccountBalance()
@@ -85,6 +78,12 @@ namespace Services
 			var web3 = new Web3(_settings.EthereumUrl);
 			var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
 			return UnitConversion.Convert.FromWei(balance);
+		}
+
+		public async Task<TransactionReceipt> GetTransactionReceipt(string transaction)
+		{
+			var web3 = new Web3(_settings.EthereumUrl);			
+			return await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);			
 		}
 	}
 }

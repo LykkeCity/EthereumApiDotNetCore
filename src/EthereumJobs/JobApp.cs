@@ -36,6 +36,7 @@ namespace EthereumJobs
 			Services.GetService<CheckContractQueueCountJob>().Start();
 			Services.GetService<CheckPaymentsToUserContractsJob>().Start();
 			Services.GetService<RefreshContractQueueJob>().Start();
+			Services.GetService<TransferTransactionQueueJob>().Start();
 		}
 	}
 }

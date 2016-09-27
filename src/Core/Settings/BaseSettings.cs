@@ -60,6 +60,7 @@ namespace Core.Settings
 		public string DataConnString { get; set; }
 		public string LogsConnString { get; set; }
 
+
 		public string ExchangeQueueConnString { get; set; }
 		public string EthereumNotificationsConnString { get; set; }
 	}

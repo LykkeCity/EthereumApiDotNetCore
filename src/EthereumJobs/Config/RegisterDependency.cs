@@ -31,6 +31,8 @@ namespace EthereumJobs.Config
 			collection.AddSingleton<CheckPaymentsToUserContractsJob>();
 			collection.AddSingleton<RefreshContractQueueJob>();
 			collection.AddSingleton<MonitoringJob>();
+			collection.AddSingleton<TransferTransactionQueueJob>();
+			collection.AddSingleton<MonitoringContractBalance>();
 		}
 	}
 }
