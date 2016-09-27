@@ -15,7 +15,8 @@ namespace EthereumJobs.Job
 		private const int TimerPeriodSeconds = 2;
 
 
-		public TransferTransactionQueueJob(IContractTransferTransactionService contractTransferTransactionService, ILog log) : base("TransferTransactionQueueJob", TimerPeriodSeconds, log)
+		public TransferTransactionQueueJob(IContractTransferTransactionService contractTransferTransactionService, ILog log)
+			: base("TransferTransactionQueueJob", TimerPeriodSeconds * 1000, log)
 		{
 			_contractTransferTransactionService = contractTransferTransactionService;
 			_log = log;
@@ -31,7 +32,7 @@ namespace EthereumJobs.Job
 			}
 			catch (Exception ex)
 			{
-				_log.WriteError("EthereumWebJob", "TransferTransactionQueue", "", ex);
+				await _log.WriteError("EthereumWebJob", "TransferTransactionQueue", "", ex);
 			}
 		}
 	}

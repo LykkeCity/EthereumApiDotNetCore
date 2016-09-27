@@ -56,7 +56,7 @@ namespace EthereumJobs.Job
 
 				foreach (var item in logs)
 				{
-					await ProcessLogItem(item);
+					await _paymentService.ProcessPaymentEvent(item);
 				}
 			}
 			catch (Exception e)
@@ -66,41 +66,6 @@ namespace EthereumJobs.Job
 					_shouldCreateNewEvent = true;
 				throw;
 			}
-		}
-
-		/// <summary>
-		/// Process one payment event. Try to transfer from contract to main account (if failed, then it is duplicated event)
-		/// </summary>
-		/// <param name="log"></param>
-		/// <returns></returns>
-		internal async Task<bool> ProcessLogItem(UserPaymentEvent log)
-		{
-			try
-			{
-				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Start proces: event from {log.Address} for {log.Amount} WEI.");
-
-				var transaction = await _paymentService.TransferFromUserContract(log.Address, log.Amount);
-
-				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
-
-				await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
-				{
-					TransactionHash = transaction,
-					Contract = log.Address,
-					Amount = UnitConversion.Convert.FromWei(log.Amount),
-					CreateDt = DateTime.UtcNow
-				});
-
-				await _logger.WriteInfo("EthereumWebJob", "ProcessLogItem", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
-
-				return true;
-			}
-			catch (Exception e)
-			{
-				await _logger.WriteError("EthereumWebJob", "ProcessLogItem", "Failed to process item", e);
-			}
-
-			return false;
 		}
 	}
 }

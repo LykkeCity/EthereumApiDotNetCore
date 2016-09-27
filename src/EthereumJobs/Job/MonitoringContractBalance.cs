@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Log;
 using Core.Repositories;
 using Core.Timers;
+using Nethereum.Web3;
 using Services;
 
 namespace EthereumJobs.Job
@@ -18,15 +19,17 @@ namespace EthereumJobs.Job
 		private readonly IUserContractRepository _userContractRepository;
 		private readonly ILog _logger;
 		private readonly IPaymentService _paymentService;
+		private readonly IEmailNotifierService _emailNotifierService;
 
 
 		public MonitoringContractBalance(IUserContractRepository userContractRepository, ILog logger,
-			IPaymentService paymentService) :
-			base("MonitoringContractBalance", TimerPeriodSeconds, logger)
+			IPaymentService paymentService, IEmailNotifierService emailNotifierService) :
+			base("MonitoringContractBalance", TimerPeriodSeconds * 1000, logger)
 		{
 			_userContractRepository = userContractRepository;
 			_logger = logger;
 			_paymentService = paymentService;
+			_emailNotifierService = emailNotifierService;
 		}
 
 		public override async Task Execute()
@@ -48,9 +51,10 @@ namespace EthereumJobs.Job
 				{
 					if (userContract.BalanceNotChangedCount == AlertNotChangedBalanceCount && balance == userContract.LastBalance)
 					{
-						//TODO: send alert
+						await _paymentService.ProcessPaymentEvent(new Core.ContractEvents.UserPaymentEvent { Address = userContract.Address, Amount = UnitConversion.Convert.ToWei(balance) });
+						_emailNotifierService.Warning("User contract balance is freezed", $"User contract {userContract.Address} has constant amount of {userContract.LastBalance} ETH");
 					}
-					userContract.BalanceNotChangedCount = userContract.LastBalance == balance ? userContract.BalanceNotChangedCount++ : 0;
+					userContract.BalanceNotChangedCount = userContract.LastBalance == balance ? ++userContract.BalanceNotChangedCount : 0;
 					userContract.LastBalance = balance;
 
 					await _userContractRepository.ReplaceAsync(userContract);

@@ -22,6 +22,7 @@ namespace Services
 		Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
 		Task<string[]> GenerateUserContracts(int count = 10);
 		Task<BigInteger> GetCurrentBlock();
+		Task<TransactionReceipt> GetTransactionReceipt(string transaction);
 	}
 
 	public class ContractService : IContractService
@@ -179,5 +180,12 @@ namespace Services
 			var blockNumber = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
 			return blockNumber.Value;
 		}
+
+		public async Task<TransactionReceipt> GetTransactionReceipt(string transaction)
+		{
+			var web3 = new Web3(_settings.EthereumUrl);
+			return await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);
+		}
+
 	}
 }

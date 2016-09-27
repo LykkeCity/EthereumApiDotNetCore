@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Core.ContractEvents;
+using Core.Log;
 using Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
@@ -30,16 +32,20 @@ namespace Services
 
 		Task<decimal> GetUserContractBalance(string address);
 
-		Task<TransactionReceipt> GetTransactionReceipt(string transaction);
+		Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
 	}
 
 	public class PaymentService : IPaymentService
 	{
 		private readonly IBaseSettings _settings;
+		private readonly ILog _logger;
+		private readonly IContractTransferTransactionService _contractTransferTransactionService;
 
-		public PaymentService(IBaseSettings settings)
+		public PaymentService(IBaseSettings settings, ILog logger, IContractTransferTransactionService contractTransferTransactionService)
 		{
 			_settings = settings;
+			_logger = logger;
+			_contractTransferTransactionService = contractTransferTransactionService;
 		}
 
 		public async Task<string> TransferFromUserContract(string contractAddress, decimal amount)
@@ -63,7 +69,7 @@ namespace Services
 
 			var function = contract.GetFunction("transferMoney");
 
-			return await function.SendTransactionAsync(_settings.EthereumMainAccount, _settings.EthereumPrivateAccount, amount);			
+			return await function.SendTransactionAsync(_settings.EthereumMainAccount, _settings.EthereumPrivateAccount, amount);
 		}
 
 		public async Task<decimal> GetMainAccountBalance()
@@ -80,10 +86,34 @@ namespace Services
 			return UnitConversion.Convert.FromWei(balance);
 		}
 
-		public async Task<TransactionReceipt> GetTransactionReceipt(string transaction)
+		public async Task<bool> ProcessPaymentEvent(UserPaymentEvent log)
 		{
-			var web3 = new Web3(_settings.EthereumUrl);			
-			return await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);			
+			try
+			{
+				await _logger.WriteInfo("EthereumJob", "ProcessPaymentEvent", "", $"Start proces: event from {log.Address} for {log.Amount} WEI.");
+
+				var transaction = await TransferFromUserContract(log.Address, log.Amount);
+
+				await _logger.WriteInfo("EthereumJob", "ProcessPaymentEvent", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
+
+				await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
+				{
+					TransactionHash = transaction,
+					Contract = log.Address,
+					Amount = UnitConversion.Convert.FromWei(log.Amount),
+					CreateDt = DateTime.UtcNow
+				});
+
+				await _logger.WriteInfo("EthereumJob", "ProcessPaymentEvent", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
+
+				return true;
+			}
+			catch (Exception e)
+			{
+				await _logger.WriteError("EthereumJob", "ProcessPaymentEvent", "Failed to process item", e);
+			}
+
+			return false;
 		}
 	}
 }

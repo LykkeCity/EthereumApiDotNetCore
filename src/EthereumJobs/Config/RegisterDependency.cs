@@ -24,7 +24,6 @@ namespace EthereumJobs.Config
 
 		private static void RegisterJobs(IServiceCollection collection)
 		{
-			collection.AddTransient<RestoreUserContractEvents>();
 			collection.AddTransient<CatchOldUserContractEvents>();
 
 			collection.AddSingleton<CheckContractQueueCountJob>();

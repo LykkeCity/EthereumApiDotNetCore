@@ -13,13 +13,13 @@ namespace EthereumJobs.Actions
     {
 		private readonly ILog _logger;
 	    private readonly IContractService _contractService;
-	    private readonly CheckPaymentsToUserContractsJob _job;
+	    private readonly IPaymentService _paymentService;
 
-		public CatchOldUserContractEvents(ILog logger, IContractService contractService, CheckPaymentsToUserContractsJob job)
+		public CatchOldUserContractEvents(ILog logger, IContractService contractService, IPaymentService paymentService)
 		{
 			_logger = logger;
 			_contractService = contractService;
-			_job = job;
+			_paymentService = paymentService;
 		}
 
 		public async Task Start()
@@ -32,11 +32,11 @@ namespace EthereumJobs.Actions
 
 				var logs = await _contractService.GetNewPaymentEvents(filter);
 
-				foreach (var log in logs)
-					await _job.ProcessLogItem(log);
-
 				// recreate filter (we dont know about Ethereum node, if it was offline our old filter was deleted)
 				await _contractService.CreateFilterEventForUserContractPayment();
+
+				foreach (var log in logs)
+					await _paymentService.ProcessPaymentEvent(log);
 
 				Console.WriteLine("Checking finished!");
 			}

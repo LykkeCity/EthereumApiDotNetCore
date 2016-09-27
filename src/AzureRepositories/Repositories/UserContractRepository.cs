@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AzureRepositories.Azure;
 using Core.Repositories;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace AzureRepositories.Repositories
@@ -34,6 +36,24 @@ namespace AzureRepositories.Repositories
 			};
 		}
 
+		public override void ReadEntity(IDictionary<string, EntityProperty> properties, OperationContext operationContext)
+		{
+			base.ReadEntity(properties, operationContext);
+
+			foreach (var p in GetType().GetProperties().Where(x => x.PropertyType == typeof(decimal) && properties.ContainsKey(x.Name)))
+				p.SetValue(this, Convert.ToDecimal(properties[p.Name].StringValue));
+		}
+
+		public override IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
+		{
+			var properties = base.WriteEntity(operationContext);
+
+			foreach (var p in GetType().GetProperties().Where(x => x.PropertyType == typeof(decimal)))
+				properties.Add(p.Name, new EntityProperty(p.GetValue(this).ToString()));
+
+			return properties;
+		}
+
 
 	}
 
@@ -59,8 +79,8 @@ namespace AzureRepositories.Repositories
 
 			await _table.ReplaceAsync(entity, contractEntity =>
 			 {
-				 contractEntity.BalanceNotChangedCount = contractEntity.BalanceNotChangedCount;
-				 contractEntity.LastBalance = contractEntity.LastBalance;
+				 contractEntity.BalanceNotChangedCount = entity.BalanceNotChangedCount;
+				 contractEntity.LastBalance = entity.LastBalance;
 				 return contractEntity;
 			 });
 		}

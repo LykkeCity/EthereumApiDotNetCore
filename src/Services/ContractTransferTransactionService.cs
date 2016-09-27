@@ -27,19 +27,19 @@ namespace Services
 		/// <summary>
 		/// Returns true if transaction completed successfuly
 		/// </summary>		
-		Task<bool> CompleteTransaction();		
+		Task<bool> CompleteTransaction();
 	}
 
 	public class ContractTransferTransactionService : IContractTransferTransactionService
 	{
-		private readonly IPaymentService _paymentService;
 		private readonly IEthereumQueueOutService _queueOutService;
-		private IQueueExt _queue;
+		private readonly IContractService _contractService;
+		private readonly IQueueExt _queue;
 
-		public ContractTransferTransactionService(IPaymentService paymentService, Func<string, IQueueExt> queueFactory, IEthereumQueueOutService queueOutService)
+		public ContractTransferTransactionService(Func<string, IQueueExt> queueFactory, IEthereumQueueOutService queueOutService, IContractService contractService)
 		{
-			_paymentService = paymentService;
 			_queueOutService = queueOutService;
+			_contractService = contractService;
 			_queue = queueFactory(Constants.ContractTransferQueue);
 		}
 
@@ -50,18 +50,21 @@ namespace Services
 
 		public async Task<bool> CompleteTransaction()
 		{
-			var item = await _queue.PeekRawMessageAsync();
+			var item = await _queue.GetRawMessageAsync();
+
+			if (item == null)
+				return false;
 
 			var contractTransferTr = JsonConvert.DeserializeObject<ContractTransferTransaction>(item.AsString);
 
-			if (_paymentService.GetTransactionReceipt(contractTransferTr.TransactionHash) != null)
+			if (_contractService.GetTransactionReceipt(contractTransferTr.TransactionHash) != null)
 			{
 				await _queueOutService.FirePaymentEvent(contractTransferTr.Contract, contractTransferTr.Amount,
 					contractTransferTr.TransactionHash);
 				await _queue.FinishRawMessageAsync(item);
 				return true;
 			}
-			return false;			
+			return false;
 		}
 	}
 }
