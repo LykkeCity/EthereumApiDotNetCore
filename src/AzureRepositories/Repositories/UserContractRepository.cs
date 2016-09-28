@@ -73,6 +73,11 @@ namespace AzureRepositories.Repositories
 			await _table.InsertAsync(entity);
 		}
 
+		public async Task ProcessContractsAsync(Action<IEnumerable<IUserContract>> chunks)
+		{
+			await _table.GetDataByChunksAsync(chunks);
+		}
+
 		public async Task ReplaceAsync(IUserContract contract)
 		{
 			var entity = UserContractEntity.Create(contract);
@@ -85,10 +90,6 @@ namespace AzureRepositories.Repositories
 			 });
 		}
 
-
-		public async Task<IEnumerable<IUserContract>> GetContractsAsync()
-		{
-			return await _table.GetDataAsync(UserContractEntity.GenerateParitionKey());
-		}
+		
 	}
 }
