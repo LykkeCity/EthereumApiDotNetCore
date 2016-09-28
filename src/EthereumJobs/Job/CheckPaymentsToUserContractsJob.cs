@@ -14,20 +14,17 @@ namespace EthereumJobs.Job
 		private const int TimerPeriodSeconds = 5;
 
 		private readonly IContractService _contractService;
-		private readonly IPaymentService _paymentService;
-		private readonly IContractTransferTransactionService _contractTransferTransactionService;
+		private readonly IPaymentService _paymentService;		
 		private readonly ILog _logger;
 
 		private bool _shouldCreateNewEvent;
 		private HexBigInteger _filter;
 
-		public CheckPaymentsToUserContractsJob(IContractService contractService, IPaymentService paymentService,
-												IContractTransferTransactionService contractTransferTransactionService, ILog logger)
+		public CheckPaymentsToUserContractsJob(IContractService contractService, IPaymentService paymentService, ILog logger)
 			: this("CheckPaymentsToUserContractsJob", TimerPeriodSeconds * 1000, logger)
 		{
 			_contractService = contractService;
-			_paymentService = paymentService;
-			_contractTransferTransactionService = contractTransferTransactionService;
+			_paymentService = paymentService;			
 			_logger = logger;
 		}
 

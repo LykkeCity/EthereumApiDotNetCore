@@ -33,34 +33,43 @@ namespace EthereumJobs.Job
 		}
 
 		public override async Task Execute()
-		{
-			var contracts = (await _userContractRepository.GetContractsAsync()).ToList();
-			foreach (var userContract in contracts)
+		{			
+			await _userContractRepository.ProcessContractsAsync(async contracts =>
 			{
-				var balance = await _paymentService.GetUserContractBalance(userContract.Address);
-				if (balance == 0 && userContract.LastBalance == 0)
-					continue;
-				if (balance == 0 && userContract.LastBalance != 0)
-				{
-					userContract.LastBalance = 0;
-					userContract.BalanceNotChangedCount = 0;
-					await _userContractRepository.ReplaceAsync(userContract);
-					continue;
-				}
-				if (balance != 0)
-				{
-					if (userContract.BalanceNotChangedCount == AlertNotChangedBalanceCount && balance == userContract.LastBalance)
+				foreach (var userContract in contracts)
+				{					
+					var balance = await _paymentService.GetUserContractBalance(userContract.Address);
+					if (balance == 0 && userContract.LastBalance == 0)
+						continue;
+					if (balance == 0 && userContract.LastBalance != 0)
 					{
-						await _paymentService.ProcessPaymentEvent(new Core.ContractEvents.UserPaymentEvent { Address = userContract.Address, Amount = UnitConversion.Convert.ToWei(balance) });
-						_emailNotifierService.Warning("User contract balance is freezed", $"User contract {userContract.Address} has constant amount of {userContract.LastBalance} ETH");
+						userContract.LastBalance = 0;
+						userContract.BalanceNotChangedCount = 0;
+						await _userContractRepository.ReplaceAsync(userContract);
+						continue;
 					}
-					userContract.BalanceNotChangedCount = userContract.LastBalance == balance ? ++userContract.BalanceNotChangedCount : 0;
-					userContract.LastBalance = balance;
+					if (balance != 0)
+					{
+						if (userContract.BalanceNotChangedCount == AlertNotChangedBalanceCount && balance == userContract.LastBalance)
+						{
+							await
+								_paymentService.ProcessPaymentEvent(new Core.ContractEvents.UserPaymentEvent
+								{
+									Address = userContract.Address,
+									Amount = UnitConversion.Convert.ToWei(balance)
+								});
+							_emailNotifierService.Warning("User contract balance is freezed",
+								$"User contract {userContract.Address} has constant amount of {userContract.LastBalance} ETH");
+						}
+						userContract.BalanceNotChangedCount = userContract.LastBalance == balance
+							? ++userContract.BalanceNotChangedCount
+							: 0;
+						userContract.LastBalance = balance;
 
-					await _userContractRepository.ReplaceAsync(userContract);
+						await _userContractRepository.ReplaceAsync(userContract);
+					}
 				}
-
-			}
+			});
 
 		}
 	}

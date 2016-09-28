@@ -10,6 +10,7 @@ namespace Core.Repositories
 		string Address { get; }
 		DateTime CreateDt { get; }
         int BalanceNotChangedCount { get; set; }
+		
 		decimal LastBalance { get; set; }
 	}
 
@@ -24,7 +25,7 @@ namespace Core.Repositories
 	public interface IUserContractRepository
 	{
 		Task AddAsync(IUserContract contract);
-		Task<IEnumerable<IUserContract>> GetContractsAsync();
+		Task ProcessContractsAsync(Action<IEnumerable<IUserContract>> chunks);
 		Task ReplaceAsync(IUserContract contract);
 	}
 }
