@@ -602,6 +602,11 @@ namespace AzureRepositories.Azure.Tables
                 yieldResult(items);
             });
         }
+
+	    public void DeleteIfExists()
+	    {
+			Partitions.Clear();
+		}
     }
 
     public class WhereInMemory

@@ -7,12 +7,14 @@ namespace Core.Repositories
 	{
 		DateTime DateTime { get; set; }
 		string ServiceName { get; set; }
+		string Version { get; set; }
 	}
 
 	public class Monitoring : IMonitoring
 	{
 		public DateTime DateTime { get; set; }
 		public string ServiceName { get; set; }
+		public string Version { get; set; }
 	}
 
 	public interface IMonitoringRepository

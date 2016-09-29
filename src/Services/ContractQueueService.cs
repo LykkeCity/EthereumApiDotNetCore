@@ -32,21 +32,23 @@ namespace Services
 		}
 
 		public async Task<string> GetContract()
-		{			
+		{
+			Action throwAction = () =>
+			{
+				_emailNotifier.Warning("Ethereum", "User contract pool is empty!");
+				throw new BackendException(BackendExceptionType.ContractPoolEmpty);
+			};
 			var message = await _queue.GetRawMessageAsync();
 			if (message == null)
-				return null;
+				throwAction();
 
 			await _queue.FinishRawMessageAsync(message);
 
 			var contract = message.AsString;
 
 			if (string.IsNullOrWhiteSpace(contract))
-			{
-				_emailNotifier.Warning("Ethereum", "User contract pool is empty!");
-				throw new BackendException(BackendExceptionType.ContractPoolEmpty);
-			}
-			
+				throwAction();
+
 			return contract;
 		}
 

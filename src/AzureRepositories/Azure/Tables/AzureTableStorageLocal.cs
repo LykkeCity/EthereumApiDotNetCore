@@ -310,8 +310,13 @@ namespace AzureRepositories.Azure.Tables
             });
         }
 
+	    public void DeleteIfExists()
+	    {
+		    throw new NotImplementedException();
+	    }
 
-        private string CompileRequestString(string partitionKey, string rowKey)
+
+	    private string CompileRequestString(string partitionKey, string rowKey)
         {
             var requestString = _prefix + "/t/" + _tableName;
 

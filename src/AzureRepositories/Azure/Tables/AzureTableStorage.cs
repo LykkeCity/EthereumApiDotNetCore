@@ -29,7 +29,7 @@ namespace AzureRepositories.Azure.Tables
 
 
         public Task DoBatchAsync(TableBatchOperation batch)
-        {
+        {			
             return GetTable().ExecuteBatchAsync(batch);
         }
 
@@ -495,13 +495,30 @@ namespace AzureRepositories.Azure.Tables
             });
         }
 
-        private Task CreateTableIfNoExistsAsync()
+	    public void DeleteIfExists()
+	    {
+		    DeleteTableIfExists().Wait();		    
+	    }
+
+	    private Task CreateTableIfNoExistsAsync()
         {
             _cloudStorageAccount = CloudStorageAccount.Parse(_connstionString);
             var cloudTableClient = _cloudStorageAccount.CreateCloudTableClient();
-            _table = cloudTableClient.GetTableReference(_tableName);
+            _table = cloudTableClient.GetTableReference(_tableName);			
             return _table.CreateIfNotExistsAsync();
         }
+
+	    private async Task DeleteTableIfExists()
+	    {
+		    if (_table == null)
+		    {
+			    _cloudStorageAccount = CloudStorageAccount.Parse(_connstionString);
+			    var cloudTableClient = _cloudStorageAccount.CreateCloudTableClient();
+			    _table = cloudTableClient.GetTableReference(_tableName);
+		    }
+		    await  _table.DeleteIfExistsAsync();
+		    _table = null;
+	    }
 
         private CloudTable GetTable()
         {

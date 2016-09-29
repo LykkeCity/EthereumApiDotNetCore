@@ -1,3 +1,4 @@
+pragma solidity ^0.4.1;
 contract MainContract {
 
     event PaymentFromUser(address userAddress, uint amount);

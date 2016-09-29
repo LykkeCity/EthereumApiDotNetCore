@@ -24,7 +24,8 @@ namespace EthereumJobs.Job
 
 		public override async Task Execute()
 		{
-			await _repository.SaveAsync(new Monitoring { DateTime = DateTime.UtcNow, ServiceName = "EthereumJobService" });
+			await _repository.SaveAsync(new Monitoring { DateTime = DateTime.UtcNow, ServiceName = "EthereumJobService",
+				Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion});
 		}
 	}
 }

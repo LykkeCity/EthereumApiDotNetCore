@@ -63,7 +63,7 @@ namespace AzureRepositories.Repositories
 
 		public UserContractRepository(INoSQLTableStorage<UserContractEntity> table)
 		{
-			_table = table;
+			_table = table;			
 		}
 
 		public async Task AddAsync(IUserContract contract)
@@ -73,7 +73,7 @@ namespace AzureRepositories.Repositories
 			await _table.InsertAsync(entity);
 		}
 
-		public async Task ProcessContractsAsync(Action<IEnumerable<IUserContract>> chunks)
+		public async Task ProcessContractsAsync(Func<IEnumerable<IUserContract>,Task> chunks)
 		{
 			await _table.GetDataByChunksAsync(chunks);
 		}
@@ -90,6 +90,14 @@ namespace AzureRepositories.Repositories
 			 });
 		}
 
-		
+		public async Task<IUserContract> GetUserContractAsync(string address)
+		{
+			return await _table.GetDataAsync(UserContractEntity.GenerateParitionKey(), address);
+		}
+
+		public void DeleteTable()
+		{
+			_table.DeleteIfExists();
+		}
 	}
 }

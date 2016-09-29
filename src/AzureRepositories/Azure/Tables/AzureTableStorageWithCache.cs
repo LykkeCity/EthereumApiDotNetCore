@@ -161,8 +161,13 @@ namespace AzureRepositories.Azure.Tables
         public Task ExecuteAsync(TableQuery<T> rangeQuery, Action<IEnumerable<T>> yieldResult)
             => _table.ExecuteAsync(rangeQuery, yieldResult);
 
+	    public void DeleteIfExists()
+	    {
+		    throw new NotImplementedException();
+	    }
 
-        public IEnumerator<T> GetEnumerator()
+
+	    public IEnumerator<T> GetEnumerator()
             => _cache.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()

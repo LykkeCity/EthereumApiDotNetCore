@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<test-run id="0" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="3" portable-engine-version="3.3.0.0" start-time="2016-09-29 16:33:58Z" end-time="2016-09-29 16:34:02Z" duration="4.438696">
+  <test-suite type="Assembly" id="1011" name="tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" fullname="tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" runstate="Runnable" testcasecount="5" result="Passed" start-time="2016-09-29 16:33:58Z" end-time="2016-09-29 16:34:02Z" duration="4.264277" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="3">
+    <settings>
+      <setting name="WorkDirectory" value="E:\Projects\EthereumApiDotNetCore\tests" />
+    </settings>
+    <properties>
+      <property name="ParallelScope" value="None" />
+    </properties>
+    <test-suite type="SetUpFixture" id="1000" name="Tests" fullname="Tests.Config" classname="Tests.Config" runstate="Runnable" testcasecount="5" result="Passed" start-time="2016-09-29 16:33:58Z" end-time="2016-09-29 16:34:02Z" duration="4.250189" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="3">
+      <test-suite type="TestFixture" id="1001" name="ContractQueueServiceTests" fullname="Tests.ContractQueueServiceTests" classname="Tests.ContractQueueServiceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2016-09-29 16:33:59Z" end-time="2016-09-29 16:34:01Z" duration="1.232951" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-case id="1002" name="TestPushAndGetContract" fullname="Tests.ContractQueueServiceTests.TestPushAndGetContract" methodname="TestPushAndGetContract" classname="Tests.ContractQueueServiceTests" runstate="Runnable" seed="821968335" result="Passed" start-time="2016-09-29 16:34:00Z" end-time="2016-09-29 16:34:00Z" duration="0.621823" asserts="0" />
+        <test-case id="1003" name="TestSaveUserContract" fullname="Tests.ContractQueueServiceTests.TestSaveUserContract" methodname="TestSaveUserContract" classname="Tests.ContractQueueServiceTests" runstate="Runnable" seed="946777875" result="Passed" start-time="2016-09-29 16:34:00Z" end-time="2016-09-29 16:34:01Z" duration="0.556640" asserts="0" />
+      </test-suite>
+      <test-suite type="TestFixture" id="1004" name="EthereumQueueOutTests" fullname="Tests.EthereumQueueOutTests" classname="Tests.EthereumQueueOutTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:01Z" duration="0.233611" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-case id="1005" name="TestFirePaymentEvent" fullname="Tests.EthereumQueueOutTests.TestFirePaymentEvent" methodname="TestFirePaymentEvent" classname="Tests.EthereumQueueOutTests" runstate="Runnable" seed="1078825366" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:01Z" duration="0.225973" asserts="0" />
+      </test-suite>
+      <test-suite type="TestFixture" id="1006" name="PaymentServiceTests" fullname="Tests.PaymentServiceTests" classname="Tests.PaymentServiceTests" runstate="Runnable" testcasecount="0" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:01Z" duration="0.000297" total="0" passed="0" failed="0" inconclusive="0" skipped="0" asserts="0" />
+      <test-suite type="TestFixture" id="1007" name="TestContracts" fullname="Tests.TestContracts" classname="Tests.TestContracts" runstate="Runnable" testcasecount="1" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:01Z" duration="0.123920" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="1">
+        <test-case id="1008" name="TestContract" fullname="Tests.TestContracts.TestContract" methodname="TestContract" classname="Tests.TestContracts" runstate="Runnable" seed="1307827657" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:01Z" duration="0.118429" asserts="1" />
+      </test-suite>
+      <test-suite type="TestFixture" id="1009" name="TestMonitoringContractBalanceJob" fullname="Tests.TestMonitoringContractBalanceJob" classname="Tests.TestMonitoringContractBalanceJob" runstate="Runnable" testcasecount="1" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:02Z" duration="1.007645" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-case id="1010" name="TestExecute" fullname="Tests.TestMonitoringContractBalanceJob.TestExecute" methodname="TestExecute" classname="Tests.TestMonitoringContractBalanceJob" runstate="Runnable" seed="590730925" result="Passed" start-time="2016-09-29 16:34:01Z" end-time="2016-09-29 16:34:02Z" duration="0.999396" asserts="0" />
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

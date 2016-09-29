@@ -121,5 +121,7 @@ namespace AzureRepositories.Azure
         /// <param name="yieldResult">обратные вызовы кусками с информацией, полученной по сети</param>
         /// <returns>Task</returns>
         Task ExecuteAsync(TableQuery<T> rangeQuery, Action<IEnumerable<T>> yieldResult);
+
+	    void DeleteIfExists();
     }
 }

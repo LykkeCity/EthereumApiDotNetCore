@@ -12,6 +12,7 @@ namespace AzureRepositories.Repositories
 
 		public DateTime DateTime { get; set; }
 		public string ServiceName { get; set; }
+		public string Version { get; set; }
 
 		public static MonitoringEntity Create(IMonitoring monitoring)
 		{
@@ -19,7 +20,8 @@ namespace AzureRepositories.Repositories
 			{
 				PartitionKey = Key,
 				RowKey = monitoring.ServiceName,
-				DateTime = monitoring.DateTime
+				DateTime = monitoring.DateTime,
+				Version = monitoring.Version
 			};
 		}
 	}

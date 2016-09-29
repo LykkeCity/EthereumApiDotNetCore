@@ -33,11 +33,11 @@ namespace EthereumJobs.Job
 		}
 
 		public override async Task Execute()
-		{			
+		{
 			await _userContractRepository.ProcessContractsAsync(async contracts =>
 			{
 				foreach (var userContract in contracts)
-				{					
+				{
 					var balance = await _paymentService.GetUserContractBalance(userContract.Address);
 					if (balance == 0 && userContract.LastBalance == 0)
 						continue;
@@ -62,11 +62,11 @@ namespace EthereumJobs.Job
 								$"User contract {userContract.Address} has constant amount of {userContract.LastBalance} ETH");
 						}
 						userContract.BalanceNotChangedCount = userContract.LastBalance == balance
-							? ++userContract.BalanceNotChangedCount
+							? userContract.BalanceNotChangedCount + 1
 							: 0;
 						userContract.LastBalance = balance;
 
-						await _userContractRepository.ReplaceAsync(userContract);
+						await _userContractRepository.ReplaceAsync(userContract);						
 					}
 				}
 			});

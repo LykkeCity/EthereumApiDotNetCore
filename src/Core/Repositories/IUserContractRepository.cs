@@ -25,7 +25,9 @@ namespace Core.Repositories
 	public interface IUserContractRepository
 	{
 		Task AddAsync(IUserContract contract);
-		Task ProcessContractsAsync(Action<IEnumerable<IUserContract>> chunks);
+		Task ProcessContractsAsync(Func<IEnumerable<IUserContract>, Task> chunks);
 		Task ReplaceAsync(IUserContract contract);
+		Task<IUserContract> GetUserContractAsync(string address);
+		void DeleteTable();
 	}
 }

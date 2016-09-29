@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Core.Exceptions;
 using Core.Log;
 using Core.Timers;
 using Services;
@@ -33,6 +34,10 @@ namespace EthereumJobs.Job
 				{
 					var contract = await _contractQueueService.GetContract();
 					await _contractQueueService.PushContract(contract);
+				}
+				catch (BackendException)
+				{
+					return;
 				}
 				catch (Exception e)
 				{
