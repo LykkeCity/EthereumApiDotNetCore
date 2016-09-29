@@ -63,7 +63,7 @@ namespace Services
 			var balance = await web3.Eth.GetBalance.SendRequestAsync(contractAddress);
 
 			if (balance < amount)
-				throw new Exception($"TransferFromUserContract failed, contract balance is {balance}, amount is {amount}");
+				throw new Exception($"TransferFromUserContract failed, contract balance is {balance.Value}, amount is {amount}");
 
 			var contract = web3.Eth.GetContract(_settings.UserContract.Abi, contractAddress);
 
