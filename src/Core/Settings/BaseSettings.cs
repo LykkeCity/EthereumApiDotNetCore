@@ -19,6 +19,7 @@ namespace Core.Settings
 
 		int MinContractPoolLength { get; set; }
 		int MaxContractPoolLength { get; set; }
+		int ContractsPerRequest { get; set; }
 		decimal MainAccountMinBalance { get; set; }
 	}
 
@@ -46,6 +47,7 @@ namespace Core.Settings
 
 		public int MinContractPoolLength { get; set; } = 100;
 		public int MaxContractPoolLength { get; set; } = 200;
+		public int ContractsPerRequest { get; set; } = 50;
 		public decimal MainAccountMinBalance { get; set; } = 1.0m;
 	}
 

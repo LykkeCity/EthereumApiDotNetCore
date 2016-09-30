@@ -42,15 +42,18 @@ namespace EthereumJobs.Job
 		{
 			await InternalBalanceCheck();
 
-			if (await _contractQueueService.Count() < _settings.MinContractPoolLength)
+			var currentCount = await _contractQueueService.Count();
+			if (currentCount < _settings.MinContractPoolLength)
 			{
-				for (var i = 0; i < (_settings.MaxContractPoolLength - _settings.MinContractPoolLength) / ContractsPerRequest; i++)
+				while (currentCount < _settings.MaxContractPoolLength)
 				{
 					await InternalBalanceCheck();
 
-					var contracts = await _contractService.GenerateUserContracts(ContractsPerRequest);
+					var contracts = await _contractService.GenerateUserContracts(_settings.ContractsPerRequest);
 					foreach (var contract in contracts)
 						await _contractQueueService.PushContract(contract);
+
+					currentCount += _settings.ContractsPerRequest;
 				}
 			}
 		}

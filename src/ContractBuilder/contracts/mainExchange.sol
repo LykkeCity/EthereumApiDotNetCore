@@ -57,7 +57,7 @@ contract MainExchange {
         coin_contract.transferMultisig(from, to, amount, hash, sig);
     }
 
-    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {
+    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) private returns(bool) {
         bytes32 r;
         bytes32 s;
         uint8 v;
