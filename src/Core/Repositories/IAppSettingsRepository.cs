@@ -22,5 +22,6 @@ namespace Core.Repositories
 		Task SetSettingAsync(string key, string value);
 
 		Task<string> GetSettingAsync(string key);
+		void DeleteTable();
 	}
 }

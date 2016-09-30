@@ -16,9 +16,9 @@ namespace AzureRepositories
 		public static void RegisterAzureLogs(this IServiceCollection services, IBaseSettings settings, string logPrefix)
 		{
 			var logToTable = new LogToTable(
-				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, logPrefix + "Error", null),
-				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, logPrefix + "Warning", null),
-				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, logPrefix + "Info", null));
+				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, Constants.StoragePrefix + logPrefix + "Error", null),
+				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, Constants.StoragePrefix + logPrefix + "Warning", null),
+				new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, Constants.StoragePrefix + logPrefix + "Info", null));
 
 			services.AddSingleton(logToTable);
 			services.AddTransient<LogToConsole>();
@@ -29,15 +29,15 @@ namespace AzureRepositories
 		public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings)
 		{
 			services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
-				new AzureTableStorage<MonitoringEntity>(settings.Db.ExchangeQueueConnString, "Monitoring",
+				new AzureTableStorage<MonitoringEntity>(settings.Db.ExchangeQueueConnString, Constants.StoragePrefix + Constants.MonitoringTable,
 					provider.GetService<ILog>())));
 
 			services.AddSingleton<IUserContractRepository>(provider => new UserContractRepository(
-				new AzureTableStorage<UserContractEntity>(settings.Db.DataConnString, "UserContracts",
+				new AzureTableStorage<UserContractEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserContractsTable,
 					provider.GetService<ILog>())));
 
 			services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
-				new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, "AppSettings",
+				new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.AppSettingsTable,
 					provider.GetService<ILog>())));
 		}
 
@@ -50,13 +50,13 @@ namespace AzureRepositories
 					switch (x)
 					{
 						case Constants.EthereumContractQueue:
-							return new AzureQueueExt(settings.Db.DataConnString, x);
+							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
 						case Constants.EthereumOutQueue:
-							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, x);
+							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
 						case Constants.EmailNotifierQueue:
-							return new AzureQueueExt(settings.Db.ExchangeQueueConnString, x);
+							return new AzureQueueExt(settings.Db.ExchangeQueueConnString, Constants.StoragePrefix + x);
 						case Constants.ContractTransferQueue:
-							return new AzureQueueExt(settings.Db.DataConnString, x);
+							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
 						default:
 							throw new Exception("Queue is not registered");
 					}

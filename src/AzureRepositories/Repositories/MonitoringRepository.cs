@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AzureRepositories.Azure;
 using Core.Repositories;
@@ -39,6 +40,11 @@ namespace AzureRepositories.Repositories
 		{
 			var entity = MonitoringEntity.Create(monitoring);
 			await _table.InsertOrMergeAsync(entity);
+		}
+
+		public async Task<IEnumerable<IMonitoring>> GetList()
+		{
+			return await _table.GetDataAsync();
 		}
 	}
 }

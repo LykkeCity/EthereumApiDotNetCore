@@ -27,7 +27,7 @@ namespace EthereumApi.Controllers
 			// check ethereum node
 			var block = await _contractService.GetCurrentBlock();
 
-			return Ok(new { QueueCount = count, BlockNumber = block.ToString() });
+			return Ok(new { QueueCount = count, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion });
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Core.Repositories
@@ -20,5 +21,6 @@ namespace Core.Repositories
 	public interface IMonitoringRepository
 	{
 		Task SaveAsync(IMonitoring redirect);
+		Task<IEnumerable<IMonitoring>> GetList();
 	}
 }

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Core;
+using Core.Log;
 using Core.Settings;
 using EthereumJobs.Config;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +18,7 @@ namespace Tests
 	public class Config
 	{
 		public static IServiceProvider Services { get; set; }
-
+		public static ILog Logger => Services.GetService<ILog>();
 
 		private IBaseSettings ReadSettings()
 		{
@@ -42,6 +44,8 @@ namespace Tests
 		[OneTimeSetUp]
 		public void Initialize()
 		{
+			Constants.StoragePrefix = "tests";
+
 			IServiceCollection collection = new ServiceCollection();
 			var settings = ReadSettings();
 
@@ -51,7 +55,7 @@ namespace Tests
 
 			Services = collection.BuildServiceProvider();
 
-			Assert.DoesNotThrowAsync(() => Services.GetService<IContractService>().GetCurrentBlock(), "Please, run ethereum node (geth.exe)");		
+			Assert.DoesNotThrowAsync(() => Services.GetService<IContractService>().GetCurrentBlock(), "Please, run ethereum node (geth.exe)");
 		}
 	}
 }

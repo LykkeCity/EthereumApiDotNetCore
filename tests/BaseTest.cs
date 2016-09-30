@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AzureRepositories.Azure.Queue;
+using Core;
 using Core.Repositories;
 using NUnit.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +22,14 @@ namespace Tests
 		[TearDown]
 	    public void TearDown()
 		{
-			var userContractsRepo = Config.Services.GetService<IUserContractRepository>();
-			userContractsRepo.DeleteTable();
+			Config.Services.GetService<IUserContractRepository>().DeleteTable();			
+			Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
+
+			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
+			
+			queueFactory(Constants.ContractTransferQueue).ClearAsync().Wait();
+			queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
+
 			Console.WriteLine("Tear down");
 		}
 

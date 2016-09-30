@@ -13,7 +13,7 @@ namespace Tests
 	[TestFixture]
 	public class TestContracts : BaseTest
 	{
-		[Test]
+		//[Test]
 		public async Task TestContract()
 		{
 			var contractService = Config.Services.GetService<IContractService>();

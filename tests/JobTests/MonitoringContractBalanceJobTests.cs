@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Core.ContractEvents;
 using Core.Log;
 using Core.Repositories;
 using EthereumJobs.Job;
-using NUnit.Framework.Internal;
-using NUnit.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Nethereum.Web3.Contracts.Comparers;
+using NUnit.Framework;
 using Services;
 
-namespace Tests
+namespace Tests.JobTests
 {
 	[TestFixture]
 	public class TestMonitoringContractBalanceJob : BaseTest
 	{
 		[Test]
-		public async Task TestExecute()
+		public async Task TestMonitoringContractBalanceJobExecute()
 		{
 			var events = new List<UserPaymentEvent>();
 

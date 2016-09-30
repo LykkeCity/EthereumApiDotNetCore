@@ -42,5 +42,10 @@ namespace AzureRepositories.Repositories
 			var entity = await _table.GetDataAsync(AppSettingEntity.GeneratePartitionKey(), key);
 			return entity?.Value;
 		}
+
+		public void DeleteTable()
+		{
+			_table.DeleteIfExists();
+		}
 	}
 }
