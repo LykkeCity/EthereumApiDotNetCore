@@ -7,10 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Nethereum.Web3;
 using Services;
 using System.Diagnostics;
+using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Settings;
+using EthereumJobs.Job;
+using Microsoft.WindowsAzure.Storage.Queue;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
+using Newtonsoft.Json;
 
 namespace Tests
 {
@@ -66,6 +70,57 @@ namespace Tests
 
 			Assert.IsTrue(await ethereumtransactionService.IsTransactionExecuted(transaction, Constants.GasForUserContractTransafer));
 		}
+
+		[Test]
+		public async Task TestRefillAccount()
+		{
+			var amount = 0.01M;
+
+			var contractService = Config.Services.GetService<IContractService>();
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var ethereumtransactionService = Config.Services.GetService<IEthereumTransactionService>();
+			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
+			var firePaymentEventsQueue = queueFactory(Constants.EthereumOutQueue);
+			var transferContractQueue = queueFactory(Constants.ContractTransferQueue);
+
+
+			await contractService.CreateFilterEventForUserContractPayment();
+			var contract = await contractService.GenerateUserContract();
+
+			var web3 = new Web3(settings.EthereumUrl);
+			await web3.Personal.UnlockAccount.SendRequestAsync(settings.EthereumMainAccount, settings.EthereumMainAccountPassword, new HexBigInteger(120));
+			var tr = await web3.Eth.Transactions.SendTransaction.SendRequestAsync(new TransactionInput(null, contract, settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(UnitConversion.Convert.ToWei(amount))));
+
+			while (await ethereumtransactionService.GetTransactionReceipt(tr) == null)
+				await Task.Delay(100);
+
+			var checkPaymentJob = Config.Services.GetService<CheckPaymentsToUserContractsJob>();
+			await checkPaymentJob.Execute();
+
+			var transferTransactionJob = Config.Services.GetService<TransferTransactionQueueJob>();
+
+			var transferTr = JsonConvert.DeserializeObject<ContractTransferTransaction>(
+					(await transferContractQueue.PeekRawMessageAsync()).AsString).TransactionHash;
+
+			while (await ethereumtransactionService.GetTransactionReceipt(transferTr) == null)
+				await Task.Delay(100);
+
+			CloudQueueMessage paymentEvent = null;
+			int maxTryCnt = 10;
+
+			while ((paymentEvent = await firePaymentEventsQueue.GetRawMessageAsync()) == null && maxTryCnt-- > 0)
+			{
+				await transferTransactionJob.Execute();
+				await Task.Delay(300);
+			}
+			Assert.NotNull(paymentEvent);
+
+			var evnt = JsonConvert.DeserializeObject<EthereumCashInModel>(paymentEvent.AsString);
+
+			Assert.AreEqual(contract, evnt.Contract);
+			Assert.AreEqual(amount, evnt.Amount);
+		}
+
 
 		public class TansactionTrace
 		{

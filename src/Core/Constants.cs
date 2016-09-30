@@ -15,7 +15,7 @@
 		public const string UserContractsTable = "UserContracts";
 		public const string AppSettingsTable = "AppSettings";
 
-		public const int GasForUserContractTransafer = 100000;
+		public const int GasForUserContractTransafer = 50000;
 
 
 	}

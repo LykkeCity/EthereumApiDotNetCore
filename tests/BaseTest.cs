@@ -15,21 +15,21 @@ namespace Tests
 		[SetUp]
 	    public void Up()
 	    {
-		    Console.WriteLine("Setup test");
+			Config.Services.GetService<IUserContractRepository>().DeleteTable();
+			Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
+
+			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
+
+			queueFactory(Constants.ContractTransferQueue).ClearAsync().Wait();
+			queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
+
+			Console.WriteLine("Setup test");
 	    }
 
 
 		[TearDown]
 	    public void TearDown()
-		{
-			Config.Services.GetService<IUserContractRepository>().DeleteTable();			
-			Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
-
-			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
-			
-			queueFactory(Constants.ContractTransferQueue).ClearAsync().Wait();
-			queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
-
+		{			
 			Console.WriteLine("Tear down");
 		}
 
