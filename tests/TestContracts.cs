@@ -7,33 +7,64 @@ using Microsoft.Extensions.DependencyInjection;
 using Nethereum.Web3;
 using Services;
 using System.Diagnostics;
+using Core;
+using Core.Settings;
+using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace Tests
 {
 	[TestFixture]
 	public class TestContracts : BaseTest
 	{
-		//[Test]
-		public async Task TestContract()
+		[Test]
+		public async Task TestUserContractBigAmount()
 		{
-			var contractService = Config.Services.GetService<IContractService>();
-			//var paymentService = Config.Services.GetService<IPaymentService>();
-			//Assert.NotNull(paymentService);
-			//var tr = await paymentService.TransferFromUserContract("0x827f6785d9ab8a308bc3b906789762fb87ff03b7", UnitConversion.Convert.ToWei(1));
-			//Debug.WriteLine(tr);
-			var tr = "0x545ac4240e9b14e3a15de2bac0898aafdf45df088451b5b4adade6d0173f6fd1";
-			var r = await contractService.GetTransactionReceipt(tr);
-			var web3 = new Web3("http://localhost:8000/");
-			var logs =
-			 await
-			  web3.DebugGeth.TraceTransaction.SendRequestAsync(tr,
-			   new Nethereum.RPC.DebugGeth.DTOs.TraceTransactionOptions());
+			var address = "0xeac3466d109a22e8c51e066652e09dc85ec33615";
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var ethereumtransactionService = Config.Services.GetService<IEthereumTransactionService>();
 
-			var obj = logs.ToObject<TansactionTrace>();
-			if (obj.StructLogs?.Length > 0 && !string.IsNullOrWhiteSpace(obj.StructLogs[obj.StructLogs.Length - 1].Error))
-			{
-				var str = obj.StructLogs[obj.StructLogs.Length - 1].Error;
-			}
+			var web3 = new Web3(settings.EthereumUrl);
+
+			// unlock account for 120 seconds
+			await web3.Personal.UnlockAccount.SendRequestAsync(settings.EthereumMainAccount, settings.EthereumMainAccountPassword, new HexBigInteger(120));
+
+			var contract = web3.Eth.GetContract(settings.UserContract.Abi, address);
+
+			var function = contract.GetFunction("transferMoney");
+
+			var transaction = await function.SendTransactionAsync(settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(0), settings.EthereumPrivateAccount, 100m);
+
+			while (await ethereumtransactionService.GetTransactionReceipt(transaction) == null)
+				await Task.Delay(100);
+
+			Assert.IsFalse(await ethereumtransactionService.IsTransactionExecuted(transaction, Constants.GasForUserContractTransafer));
+		}
+
+		[Test]
+		public async Task TestUserContractWrongSender()
+		{
+			var account = "0x5912216a589cDEBc95798f2709c2D5a88c562bdB";
+			var pasword = "123456";
+			var address = "0xeac3466d109a22e8c51e066652e09dc85ec33615";
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var ethereumtransactionService = Config.Services.GetService<IEthereumTransactionService>();
+
+			var web3 = new Web3(settings.EthereumUrl);
+
+			// unlock account for 120 seconds
+			await web3.Personal.UnlockAccount.SendRequestAsync(account, pasword, new HexBigInteger(120));
+
+			var contract = web3.Eth.GetContract(settings.UserContract.Abi, address);
+
+			var function = contract.GetFunction("transferMoney");
+
+			var transaction = await function.SendTransactionAsync(settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(0), settings.EthereumPrivateAccount, 1m);
+
+			while (await ethereumtransactionService.GetTransactionReceipt(transaction) == null)
+				await Task.Delay(100);
+
+			Assert.IsTrue(await ethereumtransactionService.IsTransactionExecuted(transaction, Constants.GasForUserContractTransafer));
 		}
 
 		public class TansactionTrace

@@ -14,6 +14,7 @@ namespace Services
 			services.AddTransient<IContractQueueService, ContractQueueService>();
 			services.AddTransient<IEmailNotifierService, EmailNotifierService>();
 			services.AddTransient<IContractTransferTransactionService, ContractTransferTransactionService>();
+			services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
 		}
 	}
 }

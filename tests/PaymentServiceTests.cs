@@ -28,7 +28,7 @@ namespace Tests
 			var contract = "0x827F6785D9Ab8A308bc3b906789762fB87fF03b7";
 			var balance = 1.1M;
 			var service = Config.Services.GetService<IPaymentService>();
-			var contractService = Config.Services.GetService<IContractService>();
+			var ethereumtransactionService = Config.Services.GetService<IEthereumTransactionService>();
 
 			var exep = Assert.ThrowsAsync<Exception>(async () => await service.TransferFromUserContract(contract, balance));
 			Assert.IsTrue(exep.Message.Contains("TransferFromUserContract failed, contract balance is"));
@@ -38,7 +38,7 @@ namespace Tests
 			Assert.NotNull(tr);
 
 			TransactionReceipt receipt = null;
-			while ((receipt = await contractService.GetTransactionReceipt(tr)) == null)
+			while ((receipt = await ethereumtransactionService.GetTransactionReceipt(tr)) == null)
 			{
 				await Task.Delay(100);
 			}
