@@ -5,8 +5,10 @@ contract ColorCoin is Coin(0){
 
     function ColorCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(address receiver, uint amount) onlyowner {
+    function cashin(address receiver, uint amount) onlyowner payable {
 
+        if (msg.value > 0) throw; 
+        
         coinBalanceMultisig[receiver] += amount;
 
         CoinCashIn(receiver, amount);

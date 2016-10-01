@@ -5,7 +5,7 @@ contract EthCoin is Coin(0) {
 
     function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(address receiver, uint amount) onlyowner {
+    function cashin(address receiver, uint amount)  onlyowner payable {
 
         coinBalanceMultisig[receiver] += msg.value;
 
@@ -24,7 +24,7 @@ contract EthCoin is Coin(0) {
 
         coinBalanceMultisig[client] -= amount;
 
-        to.send(amount);
+        if (!to.send(amount)) throw;
 
         CoinCashOut(msg.sender, client, amount, to);
     }

@@ -1,6 +1,7 @@
 ﻿using Core.Log;
 using Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using Services.Coins;
 
 namespace Services
 {
@@ -15,6 +16,8 @@ namespace Services
 			services.AddTransient<IEmailNotifierService, EmailNotifierService>();
 			services.AddTransient<IContractTransferTransactionService, ContractTransferTransactionService>();
 			services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
+			services.AddTransient<ICoinContractService, CoinContractService>();
+			services.AddTransient<ICoinTransactionService, CoinTransactionService>();
 		}
 	}
 }

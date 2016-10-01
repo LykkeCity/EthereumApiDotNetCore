@@ -7,16 +7,14 @@ contract MainExchange {
         _owner = msg.sender;
     }
 
-    modifier onlyowner { if (msg.sender == _owner) _; }
+    modifier onlyowner { if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }
 
     // can be called only from contract owner
     // create swap transaction signed by exchange and check client signs
-    function swap(address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b,
-                    bytes32 hash, bytes client_a_sign, bytes client_b_sign) onlyowner returns(bool) {
+    function swap(address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, bytes client_a_sign, bytes client_b_sign) onlyowner returns(bool) {
         
-        if (hash != sha3(client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b)) {
-            throw;
-        }
+        bytes32  hash = sha3(client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); 
+
         if (!_checkClientSign(client_a, hash, client_a_sign)) {
             throw;                    
         }
@@ -33,11 +31,10 @@ contract MainExchange {
         return true;
     }
 
-    function cashout(address coinAddress, address client, address to, uint amount, bytes32 hash, bytes client_sign) onlyowner {
+    function cashout(address coinAddress, address client, address to, uint amount, bytes client_sign) onlyowner {
          
-        if (hash != sha3(coinAddress, client, to, amount)) {
-            throw;
-        }
+        bytes32 hash = sha3(coinAddress, client, to, amount);
+            
         if (!_checkClientSign(client, hash, client_sign)) {
             throw;                    
         }
@@ -71,7 +68,12 @@ contract MainExchange {
         return client_addr == ecrecover(hash, v, r, s);
     }
 
+    function ping() {
+        _lastPing = now;
+    }
+
     //private fields
 
     address _owner;
+    uint _lastPing;
 }

@@ -39,6 +39,11 @@ namespace AzureRepositories
 			services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
 				new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.AppSettingsTable,
 					provider.GetService<ILog>())));
+
+			services.AddSingleton<ICoinTransactionRepository>(provider => new CoinTransactionRepository(
+				new AzureTableStorage<CoinTransactionEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransactionsTable,
+					provider.GetService<ILog>())));
+
 		}
 
 		public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings)
@@ -56,6 +61,10 @@ namespace AzureRepositories
 						case Constants.EmailNotifierQueue:
 							return new AzureQueueExt(settings.Db.ExchangeQueueConnString, Constants.StoragePrefix + x);
 						case Constants.ContractTransferQueue:
+							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
+						case Constants.TransactionMonitoringQueue:
+							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
+						case Constants.CoinTransactionQueue:
 							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
 						default:
 							throw new Exception("Queue is not registered");

@@ -3,7 +3,7 @@ contract Coin {
 
     address _owner;
     address _exchangeContractAddress;
-
+    uint _lastPing;
     mapping (address => uint) public coinBalanceMultisig;
 
     event CoinCashIn(address caller, uint amount);
@@ -11,14 +11,12 @@ contract Coin {
     event CoinTransfer(address caller, address from, address to, uint amount);
 
     modifier onlyowner { if (msg.sender == _owner) _; }
-    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress) _; }
+    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _; }
 
     function Coin(address exchangeContractAddress) {
         _owner = msg.sender;
         _exchangeContractAddress = exchangeContractAddress;
-    }
-
-    function() { throw; }
+    }   
 
     function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {
         _exchangeContractAddress = newContractAddress;
@@ -40,7 +38,7 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(address receiver, uint amount) onlyowner { throw; }
+    function cashin(address receiver, uint amount)  onlyowner payable { throw; }
 
     // virtual method (if not implemented, then throws)
     function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig) onlyFromExchangeContract { throw; }
@@ -57,5 +55,9 @@ contract Coin {
         }
 
         return client_addr == ecrecover(hash, v, r, s);
+    }
+
+    function ping() {
+        _lastPing = now;
     }
 }
