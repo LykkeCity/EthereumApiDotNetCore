@@ -11,9 +11,12 @@ contract MainExchange {
 
     // can be called only from contract owner
     // create swap transaction signed by exchange and check client signs
-    function swap(address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, bytes client_a_sign, bytes client_b_sign) onlyowner returns(bool) {
+    function swap(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, bytes client_a_sign, bytes client_b_sign) onlyowner returns(bool) {
         
-        bytes32  hash = sha3(client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); 
+        if (_transactions[id])
+            throw;
+
+        bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); 
 
         if (!_checkClientSign(client_a, hash, client_a_sign)) {
             throw;                    
@@ -28,12 +31,17 @@ contract MainExchange {
         // trasfer amount_b in coin_b from client_b to client_a
         _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign);
 
+        _transactions[id] = true;
+
         return true;
     }
 
-    function cashout(address coinAddress, address client, address to, uint amount, bytes client_sign) onlyowner {
-         
-        bytes32 hash = sha3(coinAddress, client, to, amount);
+    function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign) onlyowner {
+        
+        if (_transactions[id])
+            throw;
+
+        bytes32 hash = sha3(id, coinAddress, client, to, amount);
             
         if (!_checkClientSign(client, hash, client_sign)) {
             throw;                    
@@ -41,6 +49,8 @@ contract MainExchange {
 
         var coin_contract = Coin(coinAddress);
         coin_contract.cashout(client, to, amount, hash, client_sign);
+
+        _transactions[id] = true;
     }
 
     // change coin exchange contract
@@ -76,4 +86,5 @@ contract MainExchange {
 
     address _owner;
     uint _lastPing;
+    mapping (uint => bool) public _transactions;
 }

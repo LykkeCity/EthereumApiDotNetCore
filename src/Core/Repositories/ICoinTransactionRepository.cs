@@ -27,5 +27,6 @@ namespace Core.Repositories
 		Task AddAsync(ICoinTransaction transaction);		
 		Task InsertOrReplaceAsync(ICoinTransaction transaction);
 		Task<ICoinTransaction> GetTransaction(string transactionHash);
+		void DeleteTable();
 	}
 }

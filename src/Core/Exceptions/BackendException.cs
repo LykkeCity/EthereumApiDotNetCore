@@ -5,7 +5,8 @@ namespace Core.Exceptions
 	public enum BackendExceptionType
 	{
 		None = 0,
-		ContractPoolEmpty = 1
+		ContractPoolEmpty = 1,
+		MissingRequiredParams = 2
 	}
 
 	public class BackendException : Exception

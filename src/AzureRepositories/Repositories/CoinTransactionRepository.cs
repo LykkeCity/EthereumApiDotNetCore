@@ -60,5 +60,10 @@ namespace AzureRepositories.Repositories
 		{
 			return await _table.GetDataAsync(CoinTransactionEntity.GeneratePartitionKey(), transactionHash);
 		}
+
+		public void DeleteTable()
+		{
+			_table.DeleteIfExists();
+		}
 	}
 }

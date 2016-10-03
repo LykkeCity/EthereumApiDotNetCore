@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Log;
 using Core.Timers;
 using Services;
+using Services.Coins;
 
 namespace EthereumJobs.Job
 {
@@ -18,7 +19,7 @@ namespace EthereumJobs.Job
 			_coinContractService = coinContractService;
 		}
 
-		public async override Task Execute()
+		public override async Task Execute()
 		{
 			await _coinContractService.PingMainExchangeContract();
 			//TODO : ping coin contracts

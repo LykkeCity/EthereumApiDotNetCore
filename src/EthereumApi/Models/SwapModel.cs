@@ -9,6 +9,9 @@ namespace EthereumApi.Models
     public class SwapModel
     {
 		[Required]
+	    public Guid Id { get; set; }
+
+	    [Required]
 		public string ClientA { get; set; }
 
 		[Required]

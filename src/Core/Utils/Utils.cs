@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Core.Utils
@@ -72,6 +73,14 @@ namespace Core.Utils
 			{
 				return defaultValue;
 			}
+		}
+
+		public static byte[] FixByteOrder(this byte[] array)
+		{
+			if (!BitConverter.IsLittleEndian)
+				return array;
+
+			return array.Reverse().ToArray();
 		}
 	}
 }

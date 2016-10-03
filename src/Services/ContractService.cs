@@ -15,8 +15,7 @@ namespace Services
 {
 	public interface IContractService
 	{
-		Task<string> GenerateMainContract();
-		Task<string> GenerateUserContract();
+		Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams);
 		Task<HexBigInteger> GetFilterEventForUserContractPayment();
 		Task<HexBigInteger> CreateFilterEventForUserContractPayment();
 		Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
@@ -35,7 +34,7 @@ namespace Services
 			_appSettings = appSettings;
 		}
 
-		public async Task<string> GenerateMainContract()
+		public async Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams)
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
 
@@ -43,7 +42,7 @@ namespace Services
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 
 			// deploy contract
-			var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(_settings.MainContract.Abi, _settings.MainContract.ByteCode, _settings.EthereumMainAccount, new HexBigInteger(500000));
+			var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(1000000), constructorParams);
 
 			// get contract transaction
 			TransactionReceipt receipt;
@@ -61,35 +60,7 @@ namespace Services
 			}
 
 			return receipt.ContractAddress;
-		}
 
-
-		public async Task<string> GenerateUserContract()
-		{
-			var web3 = new Web3(_settings.EthereumUrl);
-
-			// unlock account for 120 seconds
-			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
-
-			// deploy contract (pass mainContractAddress to contract contructor)
-			var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(_settings.UserContract.Abi, _settings.UserContract.ByteCode, _settings.EthereumMainAccount, new HexBigInteger(500000), _settings.EthereumMainContractAddress);
-
-			// get contract transaction
-			TransactionReceipt receipt;
-			while ((receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash)) == null)
-			{
-				await Task.Delay(100);
-			}
-
-			// check if contract byte code is deployed
-			var code = await web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
-
-			if (string.IsNullOrWhiteSpace(code) || code == "0x")
-			{
-				throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
-			}
-
-			return receipt.ContractAddress;
 		}
 
 		public async Task<HexBigInteger> GetFilterEventForUserContractPayment()

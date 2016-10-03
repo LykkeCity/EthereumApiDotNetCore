@@ -21,6 +21,7 @@
 
 
 		public const int GasForUserContractTransafer = 50000;
+		public const int GasForCoinTransaction = 200000;
 
 
 	}

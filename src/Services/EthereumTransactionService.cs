@@ -30,7 +30,7 @@ namespace Services
 			if (receipt == null)
 				return false;
 
-			if (receipt.GasUsed != new Nethereum.Hex.HexTypes.HexBigInteger(gasSended))
+			if (receipt.GasUsed.Value != new Nethereum.Hex.HexTypes.HexBigInteger(gasSended).Value)
 				return true;
 
 			var web3 = new Web3(_settings.EthereumUrl);

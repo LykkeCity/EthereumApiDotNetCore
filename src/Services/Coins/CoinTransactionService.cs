@@ -67,7 +67,7 @@ namespace Services.Coins
 				return false;
 
 			ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash);
-			bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash, Constants.GasForUserContractTransafer);
+			bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash, Constants.GasForCoinTransaction);
 
 			var confimations = await _contractService.GetCurrentBlock() - receipt.BlockNumber;
 			var coinTransaction = new CoinTransaction
