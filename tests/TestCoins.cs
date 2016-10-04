@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Settings;
 using NUnit.Framework;
@@ -17,6 +18,8 @@ using Nethereum.Core.Signing.Crypto;
 using Nethereum.Web3;
 using Core.Utils;
 using Nethereum.Hex.HexTypes;
+using Newtonsoft.Json;
+using Services.Coins.Models;
 
 namespace Tests
 {
@@ -99,12 +102,12 @@ namespace Tests
 			var ethCoin = settings.CoinContracts.FirstOrDefault(x => x.Value.Name == "Eth");
 			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
-			
+
 			var currentBalance_a = await coinService.GetBalance(colorCoin.Key, ClientA);
 			var currentBalance_b = await coinService.GetBalance(ethCoin.Key, ClientB);
 
 			var amount_a = 100;
-			var amount_b = 1;
+			var amount_b = 0.01M;
 
 			var cashin_a = await coinService.CashIn(colorCoin.Key, ClientA, amount_a);
 			var cashin_b = await coinService.CashIn(ethCoin.Key, ClientB, amount_b, true);
@@ -122,7 +125,7 @@ namespace Tests
 			Assert.AreEqual(currentBalance_b + ethCoin.Value.GetInternalValue(amount_b), midBalance_b);
 
 			var swap_amount_a = 50;
-			var swap_amount_b = 0.1m;
+			var swap_amount_b = 0.01m;
 
 			var guid = Guid.NewGuid();
 
@@ -151,6 +154,97 @@ namespace Tests
 
 			Assert.AreEqual(midBalance_a - colorCoin.Value.GetInternalValue(swap_amount_a), newBalance_a);
 			Assert.AreEqual(midBalance_b - ethCoin.Value.GetInternalValue(swap_amount_b), newBalance_b);
+		}
+
+
+		[Test]
+		public async Task TestCoinEvents()
+		{
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var colorCoin = settings.CoinContracts.FirstOrDefault(x => x.Value.Name == "Lykke");
+			var ethCoin = settings.CoinContracts.FirstOrDefault(x => x.Value.Name == "Eth");
+			var coinService = Config.Services.GetService<ICoinContractService>();
+			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
+			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
+			var eventQueue = queueFactory(Constants.CoinEventQueue);
+
+			await coinService.GetCoinContractFilters(true);
+			decimal amountColor = 2, amountEth = 0.02M, amountColorOut = 1, amountEthOut = 0.01M, amountColorSwap = 0.5M, amountEthSwap = 0.005M;
+
+			var cashin1 = await coinService.CashIn(colorCoin.Key, ClientA, amountColor);
+			var cashin2 = await coinService.CashIn(ethCoin.Key, ClientB, amountEth, true);
+
+			var guid1 = Guid.NewGuid();
+			var guid2 = Guid.NewGuid();
+
+			var strForHash = EthUtils.GuidToByteArray(guid1).ToHex() +
+						colorCoin.Key.HexToByteArray().ToHex() +
+						ClientA.HexToByteArray().ToHex() +
+						ClientB.HexToByteArray().ToHex() +
+						EthUtils.BigIntToArrayWithPadding(colorCoin.Value.GetInternalValue(amountColorOut)).ToHex();
+			var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+
+
+			var strForHash2 = EthUtils.GuidToByteArray(guid2).ToHex() +
+					ethCoin.Key.HexToByteArray().ToHex() +
+					ClientB.HexToByteArray().ToHex() +
+					ClientA.HexToByteArray().ToHex() +
+					EthUtils.BigIntToArrayWithPadding(ethCoin.Value.GetInternalValue(amountEthOut)).ToHex();
+			var hash2 = new Sha3Keccack().CalculateHash(strForHash2.HexToByteArray());
+
+			var cashOut1 = await coinService.CashOut(guid1, colorCoin.Key, ClientA, ClientB, amountColorOut, Sign(hash, PrivateKeyA).ToHex());
+			var cashOut2 = await coinService.CashOut(guid2, ethCoin.Key, ClientB, ClientA, amountEthOut, Sign(hash2, PrivateKeyB).ToHex());
+
+			var swapGuid = Guid.NewGuid();
+
+			var strForHash3 = EthUtils.GuidToByteArray(swapGuid).ToHex() +
+							ClientA.HexToByteArray().ToHex() +
+							ClientB.HexToByteArray().ToHex() +
+							colorCoin.Key.HexToByteArray().ToHex() +
+							ethCoin.Key.HexToByteArray().ToHex() +
+							EthUtils.BigIntToArrayWithPadding(colorCoin.Value.GetInternalValue(amountColorSwap)).ToHex() +
+							EthUtils.BigIntToArrayWithPadding(ethCoin.Value.GetInternalValue(amountEthSwap)).ToHex();
+			var hash3 = new Sha3Keccack().CalculateHash(strForHash3.HexToByteArray());
+
+			var swap3 = await coinService.Swap(swapGuid, ClientA, ClientB, colorCoin.Key, ethCoin.Key, amountColorSwap, amountEthSwap,
+				Sign(hash3, PrivateKeyA).ToHex(), Sign(hash3, PrivateKeyB).ToHex());
+
+
+			var transactions = new List<string> { cashin1, cashin2, cashOut1, cashOut2, swap3 };
+
+
+			while (transactions.Count > 0)
+			{
+				foreach (var trHash in transactions.ToList())
+				{
+					if ((await transactionService.GetTransactionReceipt(trHash)) != null)
+						transactions.Remove(trHash);
+				}
+				await Task.Delay(100);
+			}
+
+			await coinService.RetrieveEventLogs(false);
+
+			var messages = new List<CoinContractPublicEvent>();
+			for (int i = 0; i < 6; i++)
+			{
+				var msg = await eventQueue.GetRawMessageAsync();
+				if (msg != null)
+					messages.Add(JsonConvert.DeserializeObject<CoinContractPublicEvent>(msg.AsString));
+			}
+
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == colorCoin.Key && o.Amount == amountColor && o.Caller == ClientA),
+				"not found cashin1");
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == ethCoin.Key && o.Amount == amountEth && o.Caller == ClientB),
+				"not found cashin2");
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == colorCoin.Key && o.Amount == amountColorOut && o.From == ClientA),
+				"not found cashout1");
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == ethCoin.Key && o.Amount == amountEthOut && o.From == ClientB),
+				"not found cashout2");
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == colorCoin.Key && o.Amount == amountColorSwap && o.From == ClientA && o.To == ClientB),
+				"not found swap1");
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == ethCoin.Key && o.Amount == amountEthSwap && o.From == ClientB && o.To == ClientA),
+				"not found swap2");
 		}
 
 		private byte[] Sign(byte[] hash, string privateKey)

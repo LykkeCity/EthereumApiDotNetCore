@@ -5,25 +5,15 @@ using System.Numerics;
 using System.Threading.Tasks;
 using AzureRepositories.Azure.Queue;
 using Core;
+using Core.Log;
 using Core.Repositories;
 using Core.Settings;
 using Newtonsoft.Json;
+using Services.Coins.Models;
 
 namespace Services.Coins
 {
-	public class CoinTransactionMessage
-	{
-		public string TransactionHash { get; set; }
-	}
-
-	public class CoinTransactionCompleteEvent
-	{
-		public string TransactionHash { get; set; }
-
-		public int ConfirmationLevel { get; set; }
-
-		public bool Error { get; set; }
-	}
+	
 
 	public interface ICoinTransactionService
 	{
@@ -40,16 +30,18 @@ namespace Services.Coins
 		private readonly ICoinTransactionRepository _coinTransactionRepository;
 		private readonly IContractService _contractService;
 		private readonly IBaseSettings _baseSettings;
+		private readonly ILog _logger;
 		private readonly IQueueExt _coinTransationMonitoringQueue;
 		private readonly IQueueExt _coinTransactionQueue;
 
 		public CoinTransactionService(Func<string, IQueueExt> queueFactory, IEthereumTransactionService transactionService,
-			ICoinTransactionRepository coinTransactionRepository, IContractService contractService, IBaseSettings baseSettings)
+			ICoinTransactionRepository coinTransactionRepository, IContractService contractService, IBaseSettings baseSettings, ILog logger)
 		{
 			_transactionService = transactionService;
 			_coinTransactionRepository = coinTransactionRepository;
 			_contractService = contractService;
 			_baseSettings = baseSettings;
+			_logger = logger;
 			_coinTransationMonitoringQueue = queueFactory(Constants.TransactionMonitoringQueue);
 			_coinTransactionQueue = queueFactory(Constants.CoinTransactionQueue);
 		}
@@ -82,9 +74,10 @@ namespace Services.Coins
 			if (!error && coinTransaction.ConfirmationLevel != Level3Confirm)
 			{
 				await PutTransactionToQueue(coinTransaction.TransactionHash);
+				await _logger.WriteInfo("CoinTransactionService", "ProcessTransaction", "",
+						$"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
 			}
-			await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
-
+			await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);			
 			await _coinTransationMonitoringQueue.FinishRawMessageAsync(msg);
 			return true;
 		}
@@ -92,7 +85,7 @@ namespace Services.Coins
 		private async Task FireTransactionCompleteEvent(CoinTransaction coinTransaction, ICoinTransaction coinDbTransaction)
 		{
 			if (coinTransaction.ConfirmationLevel != coinDbTransaction?.ConfirmationLevel ||
-			    coinTransaction.Error != coinDbTransaction?.Error)
+				coinTransaction.Error != coinDbTransaction?.Error)
 			{
 				await _coinTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionCompleteEvent
 				{
@@ -100,6 +93,9 @@ namespace Services.Coins
 					ConfirmationLevel = coinTransaction.ConfirmationLevel,
 					Error = coinTransaction.Error
 				}));
+				await
+				_logger.WriteInfo("CoinTransactionService", "ProcessTransaction", "",
+					$"Put coin transaction {coinTransaction.TransactionHash} to finished queue with confimation level {coinTransaction.ConfirmationLevel}. Error = {coinTransaction.Error}");
 			}
 		}
 
@@ -123,5 +119,5 @@ namespace Services.Coins
 		{
 			await _coinTransationMonitoringQueue.PutRawMessageAsync(JsonConvert.SerializeObject(transaction));
 		}
-	}
+	}	
 }

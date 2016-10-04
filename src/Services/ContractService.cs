@@ -21,6 +21,8 @@ namespace Services
 		Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
 		Task<string[]> GenerateUserContracts(int count = 10);
 		Task<BigInteger> GetCurrentBlock();
+		Task<List<T>> GetEvents<T>(string address, string abi, string eventName, HexBigInteger filter) where T : new();
+		Task<HexBigInteger> CreateFilter(string address, string abi, string eventName);
 	}
 
 	public class ContractService : IContractService
@@ -74,28 +76,34 @@ namespace Services
 
 		public async Task<HexBigInteger> CreateFilterEventForUserContractPayment()
 		{
-			var contract = new Web3(_settings.EthereumUrl).Eth.GetContract(_settings.MainContract.Abi, _settings.EthereumMainContractAddress);
-			var filter = await contract.CreateFilterAsync();
-
+			var filter = await CreateFilter(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, "PaymentFromUser");
 			//save filter for next launch
 			await _appSettings.SetSettingAsync(Constants.EthereumFilterSettingKey, filter.HexValue);
-
 			return filter;
 		}
 
-		public async Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter)
+		public async Task<HexBigInteger> CreateFilter(string address, string abi, string eventName)
+		{
+			var contract = new Web3(_settings.EthereumUrl).Eth.GetContract(abi, address);
+			var filter = await contract.GetEvent(eventName).CreateFilterAsync();
+			return filter;
+		}
+
+		public async Task<List<T>> GetEvents<T>(string address, string abi, string eventName, HexBigInteger filter) where T : new()
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
-
-			var contract = web3.Eth.GetContract(_settings.MainContract.Abi, _settings.EthereumMainContractAddress);
-			var ev = contract.GetEvent("PaymentFromUser");
-
-			var logs = await ev.GetFilterChanges<UserPaymentEvent>(filter);
-
+			var contract = web3.Eth.GetContract(abi, address);
+			var ev = contract.GetEvent(eventName);
+			var events = await ev.GetFilterChanges<T>(filter);
+			if (events == null) return new List<T>();
 			// group by because of block chain reconstructions
-			return logs.GroupBy(x => new { x.Log.Address, x.Log.Data })
-						.Select(x => x.First().Event)
-						.ToArray();
+			return events.GroupBy(o => new { o.Log.Address, o.Log.Data }).Select(o => o.First()).Select(o => o.Event).ToList();
+		}
+
+
+		public async Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter)
+		{
+			return (await GetEvents<UserPaymentEvent>(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, "PaymentFromUser", filter)).ToArray();
 		}
 
 		public async Task<string[]> GenerateUserContracts(int count = 10)

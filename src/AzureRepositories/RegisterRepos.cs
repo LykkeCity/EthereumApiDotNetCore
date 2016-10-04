@@ -44,6 +44,9 @@ namespace AzureRepositories
 				new AzureTableStorage<CoinTransactionEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransactionsTable,
 					provider.GetService<ILog>())));
 
+			services.AddSingleton<ICoinContractFilterRepository>(provider => new CoinContractFilterRepository(
+				new AzureTableStorage<CoinContractFilterEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinFiltersTable,
+					provider.GetService<ILog>())));
 		}
 
 		public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings)
@@ -65,7 +68,9 @@ namespace AzureRepositories
 						case Constants.TransactionMonitoringQueue:
 							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
 						case Constants.CoinTransactionQueue:
-							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
+							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
+						case Constants.CoinEventQueue:
+							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
 						default:
 							throw new Exception("Queue is not registered");
 					}

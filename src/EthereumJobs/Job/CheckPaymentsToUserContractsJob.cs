@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Core.ContractEvents;
 using Core.Log;
 using Core.Timers;
+using Core.Utils;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Services;
@@ -17,7 +18,7 @@ namespace EthereumJobs.Job
 		private readonly IPaymentService _paymentService;		
 		private readonly ILog _logger;
 
-		private bool _shouldCreateNewEvent;
+		private bool _shouldCreateFilter;
 		private HexBigInteger _filter;
 
 		public CheckPaymentsToUserContractsJob(IContractService contractService, IPaymentService paymentService, ILog logger)
@@ -37,10 +38,10 @@ namespace EthereumJobs.Job
 		{
 			try
 			{
-				if (_shouldCreateNewEvent)
+				if (_shouldCreateFilter)
 				{
 					_filter = await _contractService.CreateFilterEventForUserContractPayment();
-					_shouldCreateNewEvent = false;
+					_shouldCreateFilter = false;
 				}
 
 				if (_filter == null)
@@ -57,10 +58,9 @@ namespace EthereumJobs.Job
 				}
 			}
 			catch (Exception e)
-			{
-				// ethereum, node is down
-				if (e.Message.Contains("when trying to send rpc"))
-					_shouldCreateNewEvent = true;
+			{				
+				if (e.IsNodeDown())
+					_shouldCreateFilter = true;
 				throw;
 			}
 		}

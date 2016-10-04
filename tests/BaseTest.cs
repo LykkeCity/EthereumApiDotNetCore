@@ -32,7 +32,7 @@ namespace Tests
 			queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
 			queueFactory(Constants.CoinTransactionQueue).ClearAsync().Wait();
 			queueFactory(Constants.TransactionMonitoringQueue).ClearAsync().Wait();
-
+		    queueFactory(Constants.CoinEventQueue).ClearAsync().Wait();
 
 			Console.WriteLine("Setup test");
 	    }

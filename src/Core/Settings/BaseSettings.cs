@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Common;
 
 namespace Core.Settings
 {
@@ -80,16 +81,16 @@ namespace Core.Settings
 
 		public BigInteger GetInternalValue(decimal i)
 		{
-			int countPlaces = BitConverter.GetBytes(decimal.GetBits(i)[3])[2];
+			var multy = new BigDecimal(BigInteger.Parse(Multiplier ?? "1"), 0);
+			var result = i * multy;
+			return (BigInteger)result;
+		}
 
-			if (countPlaces > 10)
-				throw new ArgumentOutOfRangeException(nameof(i));
-
-			var pow = (long)Math.Pow(10, countPlaces);
-			var number = i * pow;
-
-			var multiply = BigInteger.Multiply(BigInteger.Parse(Multiplier ?? "1"), new BigInteger(number));
-			return BigInteger.Divide(multiply, new BigInteger(pow));
+		public decimal GetExternalValue(BigInteger i)
+		{
+			var multy = BigInteger.Parse(Multiplier ?? "1");
+			var result = new BigDecimal(i, 0) / new BigDecimal(multy, 0);
+			return (decimal)result;
 		}
 	}
 
