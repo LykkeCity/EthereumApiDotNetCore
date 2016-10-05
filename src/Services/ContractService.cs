@@ -76,7 +76,7 @@ namespace Services
 
 		public async Task<HexBigInteger> CreateFilterEventForUserContractPayment()
 		{
-			var filter = await CreateFilter(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, "PaymentFromUser");
+			var filter = await CreateFilter(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, Constants.UserPaymentEvent);
 			//save filter for next launch
 			await _appSettings.SetSettingAsync(Constants.EthereumFilterSettingKey, filter.HexValue);
 			return filter;
@@ -103,7 +103,7 @@ namespace Services
 
 		public async Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter)
 		{
-			return (await GetEvents<UserPaymentEvent>(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, "PaymentFromUser", filter)).ToArray();
+			return (await GetEvents<UserPaymentEvent>(_settings.EthereumMainContractAddress, _settings.MainContract.Abi, Constants.UserPaymentEvent, filter)).ToArray();
 		}
 
 		public async Task<string[]> GenerateUserContracts(int count = 10)

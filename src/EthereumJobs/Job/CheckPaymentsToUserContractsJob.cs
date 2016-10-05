@@ -40,6 +40,7 @@ namespace EthereumJobs.Job
 			{
 				if (_shouldCreateFilter)
 				{
+					await _logger.WriteInfo("CheckPaymentsToUserContractsJob", "Execute", "", "Recreate payment filter");
 					_filter = await _contractService.CreateFilterEventForUserContractPayment();
 					_shouldCreateFilter = false;
 				}

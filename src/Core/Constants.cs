@@ -46,6 +46,8 @@
 		// app	settings keys
 		public const string EthereumFilterSettingKey = "ethereum-user-contract-filter";		
 
+		// user payment event
+		public const string UserPaymentEvent = "PaymentFromUser";
 
 		//coin contract event names
 		public const string CashInEvent = "CoinCashIn";
