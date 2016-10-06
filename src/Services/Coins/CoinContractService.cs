@@ -74,7 +74,7 @@ namespace Services.Coins
 			var coinContractB = _settings.CoinContracts[coinB];
 			var convertedAmountB = coinContractB.GetInternalValue(amountB);
 
-			var convertedId = new BigInteger(id.ToByteArray());
+			var convertedId = EthUtils.GuidToBigInteger(id);
 
 			var swap = contract.GetFunction("swap");
 			var tr = await swap.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
@@ -121,7 +121,7 @@ namespace Services.Coins
 			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
 			var cashout = contract.GetFunction("cashout");
 
-			var convertedId = new BigInteger(id.ToByteArray());
+			var convertedId = EthUtils.GuidToBigInteger(id);
 
 			var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
 						new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),

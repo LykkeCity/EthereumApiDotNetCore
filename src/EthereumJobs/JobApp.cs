@@ -23,6 +23,7 @@ namespace EthereumJobs
 			Services.GetService<MonitoringJob>().Start();
 
 			// restore contract payment events after service shutdown
+			await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
 			await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
 
 			Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");

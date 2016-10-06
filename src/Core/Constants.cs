@@ -30,6 +30,11 @@
 		/// Used to notify external services about events in coin contracts
 		/// </summary>
 		public const string CoinEventQueue = "ethereum-coin-event-queue";
+
+		/// <summary>
+		/// Used to process manual payments
+		/// </summary>
+		public const string UserContractManualQueue = "ethereum-user-payment-manual";
 		
 		//table names
 		public const string MonitoringTable = "Monitoring";

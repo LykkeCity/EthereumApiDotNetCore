@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.ABI.Encoders;
+using Nethereum.Hex.HexConvertors.Extensions;
 
 namespace Core.Utils
 {
@@ -21,8 +22,14 @@ namespace Core.Utils
 
 	    public static byte[] GuidToByteArray(Guid guid)
 	    {
-		    var b = new BigInteger(guid.ToByteArray());
-		    return new IntTypeEncoder().EncodeInt(b);
+		    return new IntTypeEncoder().EncodeInt(GuidToBigInteger(guid));
+	    }
+		
+	    public static BigInteger GuidToBigInteger(Guid guid)
+	    {
+			// for always positive BigInteger
+		    var s = "00" + guid.ToString("n");
+		    return new BigInteger(s.HexToByteArray().Reverse().ToArray());
 	    }
     }
 }

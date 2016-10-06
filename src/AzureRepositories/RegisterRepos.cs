@@ -71,6 +71,8 @@ namespace AzureRepositories
 							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
 						case Constants.CoinEventQueue:
 							return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
+						case Constants.UserContractManualQueue:
+							return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
 						default:
 							throw new Exception("Queue is not registered");
 					}

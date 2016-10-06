@@ -18,6 +18,7 @@ using Nethereum.Core.Signing.Crypto;
 using Nethereum.Web3;
 using Core.Utils;
 using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
 using Services.Coins.Models;
 
