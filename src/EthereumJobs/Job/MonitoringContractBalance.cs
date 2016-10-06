@@ -66,6 +66,8 @@ namespace EthereumJobs.Job
 							: 0;
 						userContract.LastBalance = balance;
 
+						await _logger.WriteWarning("MonitoringContractBalance", "Execute", "", $"User contract {userContract.Address} has {balance} ETH in {userContract.BalanceNotChangedCount} of 3 check");
+
 						await _userContractRepository.ReplaceAsync(userContract);						
 					}
 				}

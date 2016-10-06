@@ -13,7 +13,7 @@ namespace Services
 	{
 		Task<bool> ProcessManualEvent();
 	}
-
+	///TODO: Write tests
 	public class ManualEventsService : IManualEventsService
 	{
 		private readonly ILog _logger;
