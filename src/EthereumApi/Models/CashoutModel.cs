@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-	public class CashoutModel
+	public class CashoutModel : BaseCoinRequestModel
 	{
-		[Required]
-		public Guid Id { get; set; }
-
 		[Required]
 		public string Coin { get; set; }
 

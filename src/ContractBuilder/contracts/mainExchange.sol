@@ -13,7 +13,7 @@ contract MainExchange {
     // create swap transaction signed by exchange and check client signs
     function swap(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, bytes client_a_sign, bytes client_b_sign) onlyowner returns(bool) {
         
-        if (_transactions[id])
+        if (transactions[id])
             throw;
 
         bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); 
@@ -31,14 +31,14 @@ contract MainExchange {
         // trasfer amount_b in coin_b from client_b to client_a
         _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign);
 
-        _transactions[id] = true;
+        transactions[id] = true;
 
         return true;
     }
 
     function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign) onlyowner {
         
-        if (_transactions[id])
+        if (transactions[id])
             throw;
 
         bytes32 hash = sha3(id, coinAddress, client, to, amount);
@@ -50,7 +50,7 @@ contract MainExchange {
         var coin_contract = Coin(coinAddress);
         coin_contract.cashout(client, to, amount, hash, client_sign);
 
-        _transactions[id] = true;
+        transactions[id] = true;
     }
 
     // change coin exchange contract
@@ -86,5 +86,5 @@ contract MainExchange {
 
     address _owner;
     uint _lastPing;
-    mapping (uint => bool) public _transactions;
+    mapping (uint => bool) public transactions;
 }

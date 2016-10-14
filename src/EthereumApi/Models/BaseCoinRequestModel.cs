@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-    public class CashInModel : BaseCoinRequestModel
-	{
+    public class BaseCoinRequestModel
+    {
 		[Required]
-	    public string Coin { get; set; }
-
-	    [Required]
-		public string Receiver { get; set; }
+		public Guid Id { get; set; }
 
 		[Required]
-		public decimal Amount { get; set; }
+		public Guid RequestId { get; set; }
     }
 }

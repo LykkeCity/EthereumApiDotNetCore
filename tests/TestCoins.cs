@@ -39,7 +39,7 @@ namespace Tests
 
 			var amount = 100;
 
-			var result = await coinService.CashIn(colorCoin.Key, ClientA, amount);
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amount);
 
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
@@ -63,7 +63,7 @@ namespace Tests
 
 			var amount = 100;
 
-			var result = await coinService.CashIn(colorCoin.Key, ClientA, amount);
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amount);
 
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
@@ -110,8 +110,8 @@ namespace Tests
 			var amount_a = 100;
 			var amount_b = 0.01M;
 
-			var cashin_a = await coinService.CashIn(colorCoin.Key, ClientA, amount_a);
-			var cashin_b = await coinService.CashIn(ethCoin.Key, ClientB, amount_b, true);
+			var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amount_a);
+			var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amount_b, true);
 
 			while (await transactionService.GetTransactionReceipt(cashin_a) == null)
 				await Task.Delay(100);
@@ -172,8 +172,8 @@ namespace Tests
 			await coinService.GetCoinContractFilters(true);
 			decimal amountColor = 2, amountEth = 0.02M, amountColorOut = 1, amountEthOut = 0.01M, amountColorSwap = 0.5M, amountEthSwap = 0.005M;
 
-			var cashin1 = await coinService.CashIn(colorCoin.Key, ClientA, amountColor);
-			var cashin2 = await coinService.CashIn(ethCoin.Key, ClientB, amountEth, true);
+			var cashin1 = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amountColor);
+			var cashin2 = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amountEth, true);
 
 			var guid1 = Guid.NewGuid();
 			var guid2 = Guid.NewGuid();

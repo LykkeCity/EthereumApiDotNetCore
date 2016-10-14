@@ -3882,7 +3882,8 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "Microsoft.NETCore.App": "1.0.0",
           "Services": "1.0.0",
-          "Swashbuckle": "6.0.0-beta902"
+          "Swashbuckle": "6.0.0-beta902",
+          "System.Reflection.Extensions": "4.0.1"
         },
         "compile": {
           "netcoreapp1.0/EthereumApi.dll": {}
@@ -5304,7 +5305,7 @@
       ]
     },
     "Nethereum.ABI/1.0.0": {
-      "sha512": "SEuEzmnliNrOvv6jQny27ihDoSX3AonDwH9laAbv52AJ1Gt/TTG8KXPr1iVzP1glApOFKatRKu1rJLjW9x+tWQ==",
+      "sha512": "HbcniNBxKcZpYCicXCkSq9cN1PKTM26MFh1TK2iz5LwS6kXoNALiCDd2JMU1G2SpRMGocBbRMjudMQ4+itBq+g==",
       "type": "package",
       "path": "Nethereum.ABI/1.0.0",
       "files": [
@@ -5317,7 +5318,7 @@
       ]
     },
     "Nethereum.Hex/1.0.0": {
-      "sha512": "lk90Gnzm5xMeg2N/NkQvAId/ZKX3IAN+jmxd/daoFnK13dApg/FnEiNrK0Nw0GNSvAPjytAtfwOjuQ9iQzhoYA==",
+      "sha512": "9ScoJsJIjwCItezzGCZoji/DcIIPzKlsMGz0sPuVAZFkHa/JKDCVVkOEjiiPAxbL0HK2ZVpfA6X6v8P7Jagdew==",
       "type": "package",
       "path": "Nethereum.Hex/1.0.0",
       "files": [
@@ -5330,7 +5331,7 @@
       ]
     },
     "Nethereum.JsonRpc.Client/1.0.0": {
-      "sha512": "mmciP9qYowm6lvpePDo0EeXHaKQbdPV69ErPkGuWAvDYPUSq+9wp+w0ZGPSvvjzEpsyiyG6k3MTYuKFvZt6GJw==",
+      "sha512": "S9G6AyVbiu/Y/4cDbpAYzHF6ShFisqz5qJLsxnqarOs7+A78OxPYO883ok/VieLuZjgj8/xRouypAXePIhO1AA==",
       "type": "package",
       "path": "Nethereum.JsonRpc.Client/1.0.0",
       "files": [
@@ -5355,7 +5356,7 @@
       ]
     },
     "Nethereum.Web3/1.0.0": {
-      "sha512": "9VJYYZfBOaafXIPcwTgz5eCvgyXDCHAD7WaNCS6Zmccv8tBvtU07g8XNqINU58isvy3YuL00qtRGXbhi/1BOJA==",
+      "sha512": "g+mrTpRW1K897RtDlH021HVKip5MSbt0xWyo1aWqYCSiHsz3yb9Iafl4ppd0SXvhshJAuq0d3H7w2Ee8oHj0AA==",
       "type": "package",
       "path": "Nethereum.Web3/1.0.0",
       "files": [

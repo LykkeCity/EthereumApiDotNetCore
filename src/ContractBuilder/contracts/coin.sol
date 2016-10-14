@@ -5,6 +5,7 @@ contract Coin {
     address _exchangeContractAddress;
     uint _lastPing;
     mapping (address => uint) public coinBalanceMultisig;
+    mapping (uint => bool) public transactions;
 
     event CoinCashIn(address caller, uint amount);
     event CoinCashOut(address caller, address from, uint amount, address to);
@@ -38,7 +39,7 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(address receiver, uint amount)  onlyowner payable { throw; }
+    function cashin(uint id, address receiver, uint amount) onlyowner payable { throw; }
 
     // virtual method (if not implemented, then throws)
     function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig) onlyFromExchangeContract { throw; }

@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-    public class SwapModel
-    {
-		[Required]
-	    public Guid Id { get; set; }
-
+    public class SwapModel : BaseCoinRequestModel
+	{
 	    [Required]
 		public string ClientA { get; set; }
 
