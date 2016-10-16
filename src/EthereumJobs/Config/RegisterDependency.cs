@@ -33,6 +33,10 @@ namespace EthereumJobs.Config
 			collection.AddSingleton<MonitoringJob>();
 			collection.AddSingleton<TransferTransactionQueueJob>();
 			collection.AddSingleton<MonitoringContractBalance>();
+
+			collection.AddSingleton<ListenCoinContactsEvents>();
+			collection.AddSingleton<MonitoringCoinTransactionJob>();
+			collection.AddSingleton<PingContractsJob>();
 		}
 	}
 }

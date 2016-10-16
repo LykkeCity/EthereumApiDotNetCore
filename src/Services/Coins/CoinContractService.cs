@@ -148,7 +148,7 @@ namespace Services.Coins
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
 			var ping = contract.GetFunction("ping");
-			await ping.SendTransactionAsync(_settings.EthereumMainContractAddress);
+			await ping.SendTransactionAsync(_settings.EthereumMainAccount);
 		}
 
 		public async Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate)

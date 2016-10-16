@@ -13,7 +13,7 @@ using Services.Coins.Models;
 
 namespace Services.Coins
 {
-	
+
 
 	public interface ICoinTransactionService
 	{
@@ -74,10 +74,11 @@ namespace Services.Coins
 			if (!error && coinTransaction.ConfirmationLevel != Level3Confirm)
 			{
 				await PutTransactionToQueue(coinTransaction.TransactionHash);
-				await _logger.WriteInfo("CoinTransactionService", "ProcessTransaction", "",
-						$"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
+				if (coinTransaction.ConfirmationLevel != coinDbTransaction?.ConfirmationLevel)
+					await _logger.WriteInfo("CoinTransactionService", "ProcessTransaction", "",
+							$"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
 			}
-			await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);			
+			await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
 			await _coinTransationMonitoringQueue.FinishRawMessageAsync(msg);
 			return true;
 		}
@@ -119,5 +120,5 @@ namespace Services.Coins
 		{
 			await _coinTransationMonitoringQueue.PutRawMessageAsync(JsonConvert.SerializeObject(transaction));
 		}
-	}	
+	}
 }

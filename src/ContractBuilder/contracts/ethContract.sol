@@ -13,6 +13,8 @@ contract EthCoin is Coin(0) {
         coinBalanceMultisig[receiver] += msg.value;
 
         CoinCashIn(receiver, msg.value);
+
+        transactions[id] = true;
     }
 
     function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig) onlyFromExchangeContract {

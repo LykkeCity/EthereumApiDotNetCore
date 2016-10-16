@@ -15,7 +15,7 @@ namespace JobRunner
         public static void Main(string[] args)
         {
 			Console.Clear();
-	        Console.Title = "Ethereum Web Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+	        Console.Title = "Ethereum Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
 
 			var settings = GetSettings();
 			if (settings == null)

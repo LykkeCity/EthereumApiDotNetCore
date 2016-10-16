@@ -26,7 +26,7 @@ namespace AzureRepositories.Repositories
 			{
 				RowKey = transaction.TransactionHash,
 				PartitionKey = GeneratePartitionKey(),
-				ConfirmationLevel = 0,
+				ConfirmationLevel = transaction.ConfirmationLevel,
 				Error = transaction.Error
 			};
 		}

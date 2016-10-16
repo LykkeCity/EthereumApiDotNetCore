@@ -15,6 +15,8 @@ contract ColorCoin is Coin(0){
         coinBalanceMultisig[receiver] += amount;
 
         CoinCashIn(receiver, amount);
+        
+        transactions[id] = true;
     }
 
     // cashout coins (called only from exchange contract)

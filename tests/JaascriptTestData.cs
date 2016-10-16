@@ -33,6 +33,23 @@ namespace Tests
 			var sign = Sign(hash, private_key_a).ToHex();
 		}
 
+		[Test]
+		public void Test22()
+		{
+			var guid = new Guid("0b67caf2-0b02-4691-ac25-04858b0fa475");
+
+			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
+							"0x8c32ad594a6dc17b2e8b40af3df2c3ce1f79cdd4".HexToByteArray().ToHex() +
+							"0x5c711f0bfad342c4691b6e23cedcdf39e3fe03c1".HexToByteArray().ToHex() +
+							"0x33f53d968aee3cfe1ad460457a29827bfff33d8c".HexToByteArray().ToHex() +
+							EthUtils.BigIntToArrayWithPadding(9500).ToHex();
+
+			var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+
+			var sign = Sign(hash, "0x443dac9b6e682a887009cfd00690d0cac1905e494f84d03070174149c2d0cc76").ToHex();
+			Assert.AreEqual("6ddfe17c1ff216df529277ff7fc94bff41b6984d3de36d2132f452986743de4c44831c1bd41d58043705a60aa853d6beeb8b2e0dcdb09805c5dd28b7e3e705ce1b", sign);
+		}
+
 		private byte[] Sign(byte[] hash, string privateKey)
 		{
 			var key = new ECKey(privateKey.HexToByteArray(), true);

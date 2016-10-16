@@ -14,12 +14,13 @@
 		}
 	},
 
-	"frameworks": {
-		"netcoreapp1.0": {
-			"imports": [
-				"dotnet5.6",
-				"portable-net45+win8"
-			]
-		}
-	}
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
+    }
+  },
+  "userSecretsId": "aspnet-ApiRunner-20161016064014"
 }
