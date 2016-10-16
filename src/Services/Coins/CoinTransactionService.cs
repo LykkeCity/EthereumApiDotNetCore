@@ -85,7 +85,7 @@ namespace Services.Coins
 
 		private async Task FireTransactionCompleteEvent(CoinTransaction coinTransaction, ICoinTransaction coinDbTransaction)
 		{
-			if (coinTransaction.ConfirmationLevel != coinDbTransaction?.ConfirmationLevel ||
+			if (coinTransaction.ConfirmationLevel != (coinDbTransaction?.ConfirmationLevel ?? 0) ||
 				coinTransaction.Error != coinDbTransaction?.Error)
 			{
 				await _coinTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionCompleteEvent

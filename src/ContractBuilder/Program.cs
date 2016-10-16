@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using AzureRepositories.Azure.Blob;
 using Core.Settings;
@@ -83,7 +84,7 @@ namespace ContractBuilder
 		static async Task DeployCoinContract()
 		{
 			string name, path, multi;
-			int multiInt;
+			BigInteger multiInt;
 			do
 			{
 				Console.WriteLine("Enter coin name:");
@@ -98,7 +99,7 @@ namespace ContractBuilder
 			{
 				Console.WriteLine("Enter coin multiplier:");
 				multi = Console.ReadLine();
-			} while (string.IsNullOrWhiteSpace(multi) || !int.TryParse(multi, out multiInt));
+			} while (string.IsNullOrWhiteSpace(multi) || !BigInteger.TryParse(multi, out multiInt));
 
 			Console.WriteLine("Begin coin contract deployment process");
 			try

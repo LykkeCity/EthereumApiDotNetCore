@@ -1,3 +1,13 @@
+clientA:
+address - 0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a 
+private - 0xa29ecb8fc415e100e0731b62ed4dac2bdf98fbe78ffaea33f32938b303052984
+
+clientB:
+address - 0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812
+private - 0xeea45d2c35606d0645bfa97a4f568a940926d1da5689bbb815202c132ec1be0c
+
+cashin client A
+
 {
 	"Action":"CashIn",
 	"JsonData":"{
@@ -7,6 +17,8 @@
 	   \"TransactionId\":\"0b67caf2-0b02-4691-ac35-04858b0fa424\"
 	}"
 }
+
+cashout client A
 
 {
 	"Action":"CashOut",
@@ -19,6 +31,8 @@
 	   \"Sign\":\"0x0ed65cc8bed607fc245c0e44ca8c4ef5e246c527e17f87462bd6f6f2219bf65958cc4108f3163a9c319018dd48a9916ffd48a7783ffbcfefaa253f85bb74635d1b\"
 	}"
 }
+
+swap betwwen A and B
 
 {
 	"Action":"Swap",
@@ -36,8 +50,7 @@
 }
 
 
-0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a 
-0xa29ecb8fc415e100e0731b62ed4dac2bdf98fbe78ffaea33f32938b303052984
+cashin client B
 
 {
 	"Action":"CashIn",
@@ -49,7 +62,3 @@
 	}"
 }
 
-
-
-0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812
-0xeea45d2c35606d0645bfa97a4f568a940926d1da5689bbb815202c132ec1be0c
