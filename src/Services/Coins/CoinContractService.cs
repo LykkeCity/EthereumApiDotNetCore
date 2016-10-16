@@ -25,7 +25,7 @@ namespace Services.Coins
 		Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB,
 			string signAHex, string signBHex);
 
-		Task<string> CashIn(Guid id, string coinAddr, string receiver, decimal amount, bool ethCoin = false);
+		Task<string> CashIn(Guid id, string coinAddr, string receiver, decimal amount);
 
 		Task<string> CashOut(Guid id, string coinAddr, string clientAddr, string toAddr, decimal amount, string sign);
 
@@ -78,12 +78,12 @@ namespace Services.Coins
 
 			var swap = contract.GetFunction("swap");
 			var tr = await swap.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-					convertedId, clientA, clientB, coinA, coinB, convertedAmountA, convertedAmountB, signAHex.HexToByteArray(), signBHex.HexToByteArray());
+					convertedId, clientA, clientB, coinA, coinB, convertedAmountA, convertedAmountB, signAHex.HexToByteArray().FixByteOrder(), signBHex.HexToByteArray().FixByteOrder());
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
 		}
 
-		public async Task<string> CashIn(Guid id, string coinAddr, string receiver, decimal amount, bool ethCoin = false)
+		public async Task<string> CashIn(Guid id, string coinAddr, string receiver, decimal amount)
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
 
@@ -96,7 +96,7 @@ namespace Services.Coins
 
 			var cashin = contract.GetFunction("cashin");
 			string tr;
-			if (ethCoin)
+			if (_settings.CoinContracts[coinAddr].Payable)
 			{
 				tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
 							new HexBigInteger(convertedAmountA), convertedId, receiver, 0);
@@ -126,7 +126,7 @@ namespace Services.Coins
 
 			var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
 						new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-						convertedId, coinAddr, clientAddr, toAddr, convertedAmount, sign.HexToByteArray());
+						convertedId, coinAddr, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder());
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
 

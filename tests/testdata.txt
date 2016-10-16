@@ -1,0 +1,55 @@
+{
+	"Action":"CashIn",
+	"JsonData":"{
+	   \"Coin\":\"0x8c32ad594a6dc17b2e8b40af3df2c3ce1f79cdd4\",
+	   \"To\":\"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a\",
+	   \"Amount\":100,
+	   \"TransactionId\":\"0b67caf2-0b02-4691-ac35-04858b0fa424\"
+	}"
+}
+
+{
+	"Action":"CashOut",
+	"JsonData":"{
+	   \"Coin\":\"0x8c32ad594a6dc17b2e8b40af3df2c3ce1f79cdd4\",
+	   \"Client\":\"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a\",
+	   \"To\":\"0x33f53d968aee3cfe1ad460457a29827bfff33d8c\",
+	   \"Amount\":95,
+	   \"TransactionId\":\"0b67caf2-0b02-4691-ac25-04858b0fa475\",
+	   \"Sign\":\"0x0ed65cc8bed607fc245c0e44ca8c4ef5e246c527e17f87462bd6f6f2219bf65958cc4108f3163a9c319018dd48a9916ffd48a7783ffbcfefaa253f85bb74635d1b\"
+	}"
+}
+
+{
+	"Action":"Swap",
+	"JsonData":"{	   
+	   \"ClientA\":\"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a\",
+	   \"ClientB\":\"0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812\",
+	   \"CoinA\":\"0x8c32ad594a6dc17b2e8b40af3df2c3ce1f79cdd4\",
+	   \"CoinB\":\"0x15d14676da2991b571daa1276958c954f9ecbc44\",	   
+	   \"AmountA\":4,
+	   \"AmountB\":0.005,
+	   \"TransactionId\":\"2b67caf2-0b02-4691-ac25-04858b0fa475\",
+	   \"SignA\":\"0x0daa863911a8ba4c20af62246adb17d175068f05c7b9d3ab69e9a47e88c95ca079b8df9ab2424a2dc89043d2283296677029de2e28adc13d8bec78ab7bf3cd5c1b\",
+	   \"SignB\":\"0xd9637f0463f219a48b5bc76f5f60abcaed2c497974ed8b7106e38204a4561f8c64f872fb9d44ff49e6b9be35d99e9e65dfcd714d549d18e3b64f5aa4e427195c1c\"
+	}"
+}
+
+
+0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a 
+0xa29ecb8fc415e100e0731b62ed4dac2bdf98fbe78ffaea33f32938b303052984
+
+{
+	"Action":"CashIn",
+	"JsonData":"{
+	   \"Coin\":\"0x15d14676da2991b571daa1276958c954f9ecbc44\",
+	   \"To\":\"0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812\",
+	   \"Amount\":0.01,
+	   \"TransactionId\":\"4b67caf2-0b02-4691-ac35-04858b0fa424\"
+	}"
+}
+
+
+
+0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812
+0xeea45d2c35606d0645bfa97a4f568a940926d1da5689bbb815202c132ec1be0c

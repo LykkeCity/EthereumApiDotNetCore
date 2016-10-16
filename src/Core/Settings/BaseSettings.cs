@@ -78,6 +78,7 @@ namespace Core.Settings
 		public string Abi { get; set; }
 		public string ByteCode { get; set; }
 		public string Multiplier { get; set; }
+		public bool Payable { get; set; }
 
 		public BigInteger GetInternalValue(decimal i)
 		{

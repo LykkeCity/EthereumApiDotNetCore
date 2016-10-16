@@ -111,7 +111,7 @@ namespace Tests
 			var amount_b = 0.01M;
 
 			var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amount_a);
-			var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amount_b, true);
+			var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amount_b);
 
 			while (await transactionService.GetTransactionReceipt(cashin_a) == null)
 				await Task.Delay(100);
@@ -173,7 +173,7 @@ namespace Tests
 			decimal amountColor = 2, amountEth = 0.02M, amountColorOut = 1, amountEthOut = 0.01M, amountColorSwap = 0.5M, amountEthSwap = 0.005M;
 
 			var cashin1 = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amountColor);
-			var cashin2 = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amountEth, true);
+			var cashin2 = await coinService.CashIn(Guid.NewGuid(), ethCoin.Key, ClientB, amountEth);
 
 			var guid1 = Guid.NewGuid();
 			var guid2 = Guid.NewGuid();
@@ -258,7 +258,7 @@ namespace Tests
 			var v = new[] { signature.V }.ToHex();
 
 			var arr = (r + s + v).HexToByteArray();
-			return FixBytesOrder(arr);
+			return arr;
 		}
 
 		private byte[] FixBytesOrder(byte[] source)
