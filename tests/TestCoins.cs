@@ -96,6 +96,55 @@ namespace Tests
 		}
 
 		[Test]
+		public async Task TestTransfer()
+		{
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var colorCoin = settings.CoinContracts.FirstOrDefault(x => x.Value.Name == "Lykke");
+			var coinService = Config.Services.GetService<ICoinContractService>();
+			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
+
+			var currentBalance = await coinService.GetBalance(colorCoin.Key, ClientA);
+
+			var amount = 100;
+
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Key, ClientA, amount);
+
+			while (await transactionService.GetTransactionReceipt(result) == null)
+				await Task.Delay(100);
+
+			var midBalance = await coinService.GetBalance(colorCoin.Key, ClientA);
+
+			Assert.AreEqual(currentBalance + colorCoin.Value.GetInternalValue(amount), midBalance);
+
+			var clientBBalance = await coinService.GetBalance(colorCoin.Key, ClientB);
+
+			var guid = Guid.NewGuid();
+
+			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
+							colorCoin.Key.HexToByteArray().ToHex() +
+							ClientA.HexToByteArray().ToHex() +
+							ClientB.HexToByteArray().ToHex() +
+							EthUtils.BigIntToArrayWithPadding(colorCoin.Value.GetInternalValue(amount)).ToHex();
+
+			var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+
+			var sign = Sign(hash, PrivateKeyA).ToHex();
+			var transfer = await coinService.Transfer(guid, colorCoin.Key, ClientA, ClientB, amount, sign);
+
+			while (await transactionService.GetTransactionReceipt(transfer) == null)
+				await Task.Delay(100);
+
+			Assert.IsTrue(await transactionService.IsTransactionExecuted(transfer, Constants.GasForCoinTransaction));
+
+			var newBalance = await coinService.GetBalance(colorCoin.Key, ClientA);
+			var newClientBBalance = await coinService.GetBalance(colorCoin.Key, ClientB);
+
+			Assert.AreEqual(currentBalance, newBalance);
+			Assert.AreEqual(clientBBalance + colorCoin.Value.GetInternalValue(amount), newClientBBalance);
+		}
+
+
+		[Test]
 		public async Task TestCoinSwap()
 		{
 			var settings = Config.Services.GetService<IBaseSettings>();

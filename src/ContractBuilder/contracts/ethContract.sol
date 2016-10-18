@@ -5,7 +5,7 @@ contract EthCoin is Coin(0) {
 
     function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(uint id, address receiver, uint amount) onlyowner payable {
+    function cashin(uint id, address receiver, uint amount, bytes params) onlyowner payable {
 
         if (transactions[id])
             throw;
@@ -17,7 +17,7 @@ contract EthCoin is Coin(0) {
         transactions[id] = true;
     }
 
-    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig) onlyFromExchangeContract {
+    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {
 
         if (!_checkClientSign(client, hash, client_sig)) {
             throw;                    

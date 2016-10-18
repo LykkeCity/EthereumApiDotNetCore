@@ -78,6 +78,23 @@ namespace EthereumApi.Controllers
 			return Ok(new TransactionResponse { TransactionHash = transaction });
 		}
 
+		[Route("transfer")]
+		[HttpPost]
+		[Produces(typeof(TransactionResponse))]
+		public async Task<IActionResult> Transfer([FromBody] TransferModel model)
+		{
+			if (!ModelState.IsValid)
+				throw new BackendException(BackendExceptionType.MissingRequiredParams);
+
+			await Log("Transfer", "Begin Process", model);
+
+			var transaction = await _coinContractService.Transfer(model.Id, model.Coin, model.From, model.To, model.Amount, model.Sign);
+
+			await Log("Transfer", "End Process", model, transaction);
+
+			return Ok(new TransactionResponse { TransactionHash = transaction });
+		}
+
 		private async Task Log(string method, string status, object model, string transaction = "")
 		{
 			var properties = model.GetType().GetTypeInfo().GetProperties();

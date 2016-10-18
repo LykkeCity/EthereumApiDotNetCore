@@ -29,6 +29,8 @@ namespace Services.Coins
 
 		Task<string> CashOut(Guid id, string coinAddr, string clientAddr, string toAddr, decimal amount, string sign);
 
+		Task<string> Transfer(Guid id, string coinAddr, string from, string to, decimal amount, string sign);
+
 		Task<BigInteger> GetBalance(string coinAddr, string clientAddr);
 
 		Task PingMainExchangeContract();
@@ -78,7 +80,7 @@ namespace Services.Coins
 
 			var swap = contract.GetFunction("swap");
 			var tr = await swap.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-					convertedId, clientA, clientB, coinA, coinB, convertedAmountA, convertedAmountB, signAHex.HexToByteArray().FixByteOrder(), signBHex.HexToByteArray().FixByteOrder());
+					convertedId, clientA, clientB, coinA, coinB, convertedAmountA, convertedAmountB, signAHex.HexToByteArray().FixByteOrder(), signBHex.HexToByteArray().FixByteOrder(), new byte[0]);
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
 		}
@@ -99,12 +101,12 @@ namespace Services.Coins
 			if (_settings.CoinContracts[coinAddr].Payable)
 			{
 				tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
-							new HexBigInteger(convertedAmountA), convertedId, receiver, 0);
+							new HexBigInteger(convertedAmountA), convertedId, receiver, 0, new byte[0]);
 			}
 			else
 			{
 				tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
-							new HexBigInteger(0), convertedId, receiver, convertedAmountA);
+							new HexBigInteger(0), convertedId, receiver, convertedAmountA, new byte[0]);
 			}
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
@@ -126,10 +128,30 @@ namespace Services.Coins
 
 			var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
 						new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-						convertedId, coinAddr, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder());
+						convertedId, coinAddr, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
 
+		}
+
+		public async Task<string> Transfer(Guid id, string coinAddr, string from, string to, decimal amount, string sign)
+		{
+			var web3 = new Web3(_settings.EthereumUrl);
+
+			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
+
+			var coinContract = _settings.CoinContracts[coinAddr];
+			var convertedAmount = coinContract.GetInternalValue(amount);
+
+			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+			var cashout = contract.GetFunction("transfer");
+
+			var convertedId = EthUtils.GuidToBigInteger(id);
+			var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
+					new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+					convertedId, coinAddr, from, to, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+			await _cointTransactionService.PutTransactionToQueue(tr);
+			return tr;
 		}
 
 		public async Task<BigInteger> GetBalance(string coinAddr, string clientAddr)

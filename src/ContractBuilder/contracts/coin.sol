@@ -24,7 +24,7 @@ contract Coin {
     }
 
     // transfer coins (called only from exchange contract)
-    function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig) onlyFromExchangeContract {
+    function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {
         if (!_checkClientSign(from, hash, client_a_sig)) {
             throw;
         }
@@ -39,10 +39,10 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(uint id, address receiver, uint amount) onlyowner payable { throw; }
+    function cashin(uint id, address receiver, uint amount, bytes params) onlyowner payable { throw; }
 
     // virtual method (if not implemented, then throws)
-    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig) onlyFromExchangeContract { throw; }
+    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }
 
     function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {
         bytes32 r;
