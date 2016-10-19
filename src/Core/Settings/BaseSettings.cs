@@ -74,25 +74,9 @@ namespace Core.Settings
 
 	public class EthereumContract
 	{
-		public string Name { get; set; }
+	    public string Address { get; set; }
 		public string Abi { get; set; }
 		public string ByteCode { get; set; }
-		public string Multiplier { get; set; }
-		public bool Payable { get; set; }
-
-		public BigInteger GetInternalValue(decimal i)
-		{
-			var multy = new BigDecimal(BigInteger.Parse(Multiplier ?? "1"), 0);
-			var result = i * multy;
-			return (BigInteger)result;
-		}
-
-		public decimal GetExternalValue(BigInteger i)
-		{
-			var multy = BigInteger.Parse(Multiplier ?? "1");
-			var result = new BigDecimal(i, 0) / new BigDecimal(multy, 0);
-			return (decimal)result;
-		}
 	}
 
 	public class DbSettings

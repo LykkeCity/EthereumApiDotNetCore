@@ -5,9 +5,9 @@
 		/// <summary>
 		/// Used to change table and queue names in testing enviroment
 		/// </summary>
-		public static string StoragePrefix { get; set; } = "";		
+		public static string StoragePrefix { get; set; } = "";
 
-		public const string EthereumContractQueue = "ethereum-contract-queue";
+        public const string EthereumContractQueue = "ethereum-contract-queue";
 		public const string EthereumOutQueue = "ethereum-queue-out";
 		public const string EmailNotifierQueue = "emailsqueue";
 
@@ -42,9 +42,9 @@
 		public const string AppSettingsTable = "AppSettings";
 		public const string TransactionsTable = "Transactions";
 		public const string CoinFiltersTable = "CoinFilters";
+        public const string CoinTable = "CoinTable";
 
-
-		public const int GasForUserContractTransafer = 50000;
+        public const int GasForUserContractTransafer = 50000;
 		public const int GasForCoinTransaction = 200000;
 
 		
@@ -59,5 +59,6 @@
 		public const string CashOutEvent = "CoinCashOut";
 		public const string TransferEvent = "CoinTransfer";
 
-	}
+        public const string EthereumBlockchain = "Ethereum";
+    }
 }

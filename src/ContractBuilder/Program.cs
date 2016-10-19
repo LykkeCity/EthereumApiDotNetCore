@@ -83,8 +83,7 @@ namespace ContractBuilder
 
 		static async Task DeployCoinContract()
 		{
-			string name, path, multi;
-			BigInteger multiInt;
+		    string name, path;
 			do
 			{
 				Console.WriteLine("Enter coin name:");
@@ -95,11 +94,6 @@ namespace ContractBuilder
 				Console.WriteLine("Enter coin file name:");
 				path = Console.ReadLine();
 			} while (string.IsNullOrWhiteSpace(path) || !File.Exists(GetFilePath(path + ".abi")));
-			do
-			{
-				Console.WriteLine("Enter coin multiplier:");
-				multi = Console.ReadLine();
-			} while (string.IsNullOrWhiteSpace(multi) || !BigInteger.TryParse(multi, out multiInt));
 
 			Console.WriteLine("Begin coin contract deployment process");
 			try
@@ -110,9 +104,10 @@ namespace ContractBuilder
 				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, settings.EthereumMainExchangeContractAddress);
 				if (settings.CoinContracts == null)
 					settings.CoinContracts = new Dictionary<string, EthereumContract>();
-				settings.CoinContracts.Add(contractAddress, new EthereumContract { Name = name, Abi = abi, Multiplier = multi });
 
-				Console.WriteLine("New coin contract: " + contractAddress);
+			    settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
+
+                Console.WriteLine("New coin contract: " + contractAddress);
 
 				SaveSettings(settings);
 

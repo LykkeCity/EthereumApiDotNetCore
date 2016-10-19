@@ -12,6 +12,10 @@ namespace Tests
 {
     public class BaseTest
     {
+        public static string ColorCoin = "Lykke";
+        public static string EthCoin = "Eth";
+
+
 		public const string ClientA = "0x9b6700a94c69c328473b6d517e2d121ee4ebe374";
 		public const string PrivateKeyA = "7c7b1a1fcbab709113e8b3db6957e137d164fd4366fe30251ce4915f6675d73f";
 
@@ -20,7 +24,7 @@ namespace Tests
 
 
 		[SetUp]
-	    public void Up()
+	    public async Task Up()
 	    {
 			Config.Services.GetService<IUserContractRepository>().DeleteTable();
 			Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
@@ -34,7 +38,7 @@ namespace Tests
 			queueFactory(Constants.TransactionMonitoringQueue).ClearAsync().Wait();
 		    queueFactory(Constants.CoinEventQueue).ClearAsync().Wait();
 
-			Console.WriteLine("Setup test");
+            Console.WriteLine("Setup test");
 	    }
 
 

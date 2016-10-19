@@ -7,6 +7,8 @@ namespace Services.Coins.Models
 {
     public class CoinContractPublicEvent
     {
+        public string CoinName { get; set; }
+
 		public string Address { get; set; }
 
 		public string EventName { get; set; }
