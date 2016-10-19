@@ -29,7 +29,8 @@ namespace Services.Coins
 
 		Task<string> CashOut(Guid id, string coin, string clientAddr, string toAddr, decimal amount, string sign);
 
-		Task<string> Transfer(Guid id, string coinAddr, string from, string to, decimal amount, string sign);
+		Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign);
+
 		Task<BigInteger> GetBalance(string coin, string clientAddr);
 
 		Task PingMainExchangeContract();
@@ -138,22 +139,22 @@ namespace Services.Coins
 
 		}
 
-		public async Task<string> Transfer(Guid id, string coinAddr, string from, string to, decimal amount, string sign)
+		public async Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign)
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
 
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 
-			var coinContract = _settings.CoinContracts[coinAddr];
-			var convertedAmount = coinContract.GetInternalValue(amount);
+            var coinAFromDb = await _coinRepository.GetCoin(coin);
+            var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
 
-			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+            var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
 			var cashout = contract.GetFunction("transfer");
 
 			var convertedId = EthUtils.GuidToBigInteger(id);
 			var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
 					new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-					convertedId, coinAddr, from, to, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+					convertedId, coinAFromDb.Address, from, to, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
 			await _cointTransactionService.PutTransactionToQueue(tr);
 			return tr;
 		}
