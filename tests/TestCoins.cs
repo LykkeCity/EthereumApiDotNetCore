@@ -28,12 +28,12 @@ namespace Tests
 	[TestFixture]
 	public class TestCoins : BaseTest
 	{
-        [Test]
+		[Test]
 		public async Task TestCashin()
 		{
 			var coinService = Config.Services.GetService<ICoinContractService>();
-		    var coinRepository = Config.Services.GetService<ICoinRepository>();
-		    var colorCoin = await coinRepository.GetCoin(ColorCoin);
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var colorCoin = await coinRepository.GetCoin(ColorCoin);
 
 			var cointTransactionService = Config.Services.GetService<ICoinTransactionService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
@@ -46,6 +46,8 @@ namespace Tests
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
 
+
+
 			Assert.IsTrue(await cointTransactionService.ProcessTransaction());
 
 			var newBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
@@ -56,9 +58,9 @@ namespace Tests
 		[Test]
 		public async Task TestCashout()
 		{
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
-            var coinService = Config.Services.GetService<ICoinContractService>();
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var colorCoin = await coinRepository.GetCoin(ColorCoin);
+			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
 			var currentBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
@@ -100,10 +102,10 @@ namespace Tests
 		[Test]
 		public async Task TestTransfer()
 		{
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var colorCoin = await coinRepository.GetCoin(ColorCoin);
 
-            var coinService = Config.Services.GetService<ICoinContractService>();
+			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
 			var currentBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
@@ -150,11 +152,11 @@ namespace Tests
 		[Test]
 		public async Task TestCoinSwap()
 		{
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
-            var ethCoin = await coinRepository.GetCoin(EthCoin);
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var colorCoin = await coinRepository.GetCoin(ColorCoin);
+			var ethCoin = await coinRepository.GetCoin(EthCoin);
 
-            var coinService = Config.Services.GetService<ICoinContractService>();
+			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
 			var currentBalance_a = await coinService.GetBalance(colorCoin.Name, ClientA);
@@ -214,11 +216,11 @@ namespace Tests
 		[Test]
 		public async Task TestCoinEvents()
 		{
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
-            var ethCoin = await coinRepository.GetCoin(EthCoin);
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var colorCoin = await coinRepository.GetCoin(ColorCoin);
+			var ethCoin = await coinRepository.GetCoin(EthCoin);
 
-            var coinService = Config.Services.GetService<ICoinContractService>();
+			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 			var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
 			var eventQueue = queueFactory(Constants.CoinEventQueue);

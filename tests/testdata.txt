@@ -32,7 +32,7 @@ cashout client A
 	}"
 }
 
-swap betwwen A and B
+swap betwwen A and +B
 
 {
 	"Action":"Swap",
@@ -61,4 +61,95 @@ cashin client B
 	   \"TransactionId\":\"4b67caf2-0b02-4691-ac35-04858b0fa424\"
 	}"
 }
+
+
+///ROUTER
+
+//cashin clien A
+{    
+	"Action":"CashIn",
+	Parameters :{
+	    "TransactionId":"4b47caf2-0b02-4691-ac35-04858b9fa424",
+		"Asset":"Lykke",
+		"MultisigAddress":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"Amount":100.11
+	}
+}
+
+//cashout client A
+
+{    
+	"Action":"CashOut",
+	Parameters :{
+	    "TransactionId":"4b47caf2-0b02-4691-ac35-03858b9fa424",
+		"Asset":"Lykke",
+		"MultisigAddress":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"To":"0xb8e9d29b8840db97d9e0f9d7f940d8c3e2921e4a",
+		"Amount":50
+	}
+}
+
+
+//SWAP 
+{    
+	"Action":"Swap",
+	Parameters :{
+	    "TransactionId":"4b68caf2-0b02-4691-ac35-03858b9fa424",
+		"Asset1":"Lykke",
+		"Asset2":"Lykke",
+		"MultisigAddress1":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"MultisigAddress2":"0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812",
+		"Amount1":2.55,
+		"Amount2":0
+	}
+}
+
+//TRANSFER
+
+{    
+	"Action":"Transfer",
+	Parameters :{
+	    "TransactionId":"4b69caf2-0b02-4691-ac35-03858b9fa424",
+		"Asset":"Lykke",
+		"MultisigAddress":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"To":"0xb8e9d29b8840db97d9e0f9d7f940d8c3e2921e4a",
+		"Amount":0.05
+	}
+}
+
+//cashin bitcoin
+{    
+	"Action":"CashIn",
+	Parameters :{
+	    "TransactionId":"4b67caf2-0b02-4691-ac35-04858b9fa424",
+		"Asset":"Bit",
+		"MultisigAddress":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"Amount":100
+	}
+}
+//BAD SWAP
+{    
+	"Action":"Swap",
+	Parameters :{
+	    "TransactionId":"4b68caf2-1b02-4691-ac35-03858b9fa424",
+		"Asset1":"Bit",
+		"Asset2":"Lykke",
+		"MultisigAddress1":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+		"MultisigAddress2":"0x0ad7fb2ff5c6d4d96eb8064f8d1bc4b2235ac812",
+		"Amount1":2.55,
+		"Amount2":0
+	}
+}
+
+
+{
+"requestId":"dac34ddc-551e-451c-8beb-09ebbeed9d69",
+"client":"0xe8e9d29b8840db97d9e0f9d7f940d8c3e2921e2a",
+"Signature":"0xf4ea2e6a5bfc2b185777fdbcc8acb5c13245fe2942858ed9da903dc8d2e2de9f7c3be6a21815a1a701fdf6803acab97440f53a3d7e662afdf79b080797c0e7751b"
+}
+
+
+
+
+
 
