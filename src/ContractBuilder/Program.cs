@@ -31,6 +31,7 @@ namespace ContractBuilder
 				//Console.WriteLine("1. Deploy main contract from local json file");
 				Console.WriteLine("2. Deploy main exchange contract using local json file");
 				Console.WriteLine("3. Deploy coin contract using local json file");
+				Console.WriteLine("4. Deploy transfer using local json file");
 				Console.WriteLine("0. Exit");
 
 				var input = Console.ReadLine();
@@ -46,6 +47,9 @@ namespace ContractBuilder
 					case "3":
 						DeployCoinContract().Wait();
 						break;
+					case "4":
+						DeployTransferContract().Wait();
+						break;
 					case "0":
 						exit = true;
 						break;
@@ -58,6 +62,37 @@ namespace ContractBuilder
 			}
 		}
 
+		private static async Task DeployTransferContract()
+		{
+			Console.WriteLine("Begin transferContract deployment process");
+
+
+			try
+			{
+				var settings = GetCurrentSettings();
+
+				var abi = GetFileContent("TransferContract.abi");
+				var bytecode = GetFileContent("TransferContract.bin");
+
+				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode);
+				settings.TransferContract = new EthereumContract
+				{
+					Address = contractAddress,
+					Abi = abi,
+					ByteCode = bytecode
+				};
+				Console.WriteLine("New contract: " + contractAddress);
+				SaveSettings(settings);
+
+				Console.WriteLine("Contract address stored in generalsettings.json file");
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Action failed!");
+				Console.WriteLine(e.Message);
+			}
+		}
+
 		static async Task DeployMainContractLocal()
 		{
 			Console.WriteLine("Begin contract deployment process");
@@ -67,7 +102,8 @@ namespace ContractBuilder
 
 				string contractAddress = await new ContractService(settings, null).CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
 
-				settings.EthereumMainContractAddress = contractAddress;
+				settings.MainContract.Address = contractAddress;
+
 				Console.WriteLine("New contract: " + contractAddress);
 
 				SaveSettings(settings);
@@ -83,7 +119,7 @@ namespace ContractBuilder
 
 		static async Task DeployCoinContract()
 		{
-		    string name, path;
+			string name, path;
 			do
 			{
 				Console.WriteLine("Enter coin name:");
@@ -101,13 +137,13 @@ namespace ContractBuilder
 				var abi = GetFileContent(path + ".abi");
 				var bytecode = GetFileContent(path + ".bin");
 				var settings = GetCurrentSettings();
-				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, settings.EthereumMainExchangeContractAddress);
+				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
 				if (settings.CoinContracts == null)
 					settings.CoinContracts = new Dictionary<string, EthereumContract>();
 
-			    settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
+				settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
 
-                Console.WriteLine("New coin contract: " + contractAddress);
+				Console.WriteLine("New coin contract: " + contractAddress);
 
 				SaveSettings(settings);
 
@@ -130,8 +166,7 @@ namespace ContractBuilder
 				var bytecode = GetFileContent("MainExchange.bin");
 				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode);
 
-				settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode };
-				settings.EthereumMainExchangeContractAddress = contractAddress;
+				settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
 				Console.WriteLine("New main exchange contract: " + contractAddress);
 
 				SaveSettings(settings);

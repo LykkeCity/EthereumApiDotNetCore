@@ -5,7 +5,7 @@ contract EthCoin is Coin(0) {
 
     function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(uint id, address receiver, uint amount, bytes params) onlyowner payable {
+    function cashin(uint id, address receiver, uint amount, bytes params) payable {
 
         if (transactions[id])
             throw;

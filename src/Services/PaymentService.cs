@@ -70,7 +70,7 @@ namespace Services
 
 			var function = contract.GetFunction("transferMoney");
 
-			return await function.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(0), _settings.EthereumPrivateAccount, amount);
+			return await function.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(0), _settings.TransferContract.Address, amount);
 		}
 
 		public async Task<decimal> GetMainAccountBalance()

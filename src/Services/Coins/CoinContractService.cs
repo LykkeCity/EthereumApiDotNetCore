@@ -31,6 +31,8 @@ namespace Services.Coins
 
 		Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign);
 
+		Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
+
 		Task<BigInteger> GetBalance(string coin, string clientAddr);
 
 		Task PingMainExchangeContract();
@@ -71,7 +73,7 @@ namespace Services.Coins
 
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 
-			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
 
 		    var coinAFromDb = await _coinRepository.GetCoin(coinA);
             var coinBFromDb = await _coinRepository.GetCoin(coinB);
@@ -126,7 +128,7 @@ namespace Services.Coins
             var coinAFromDb = await _coinRepository.GetCoin(coin);
 			var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
 
-            var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+            var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
 			var cashout = contract.GetFunction("cashout");
 
 			var convertedId = EthUtils.GuidToBigInteger(id);
@@ -148,7 +150,7 @@ namespace Services.Coins
             var coinAFromDb = await _coinRepository.GetCoin(coin);
             var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
 
-            var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+            var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
 			var cashout = contract.GetFunction("transfer");
 
 			var convertedId = EthUtils.GuidToBigInteger(id);
@@ -156,6 +158,25 @@ namespace Services.Coins
 					new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
 					convertedId, coinAFromDb.Address, from, to, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
 			await _cointTransactionService.PutTransactionToQueue(tr);
+			return tr;
+		}
+
+		public async Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount)
+		{
+			var web3 = new Web3(_settings.EthereumUrl);
+
+			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
+
+			var coinDb = await _coinRepository.GetCoin(coin);
+			if (!coinDb.Payable)
+				throw new Exception("Coin must be payable");
+			var contract = web3.Eth.GetContract(_settings.TransferContract.Abi, _settings.TransferContract.Address);
+			var cashin = contract.GetFunction("cashin");
+
+			var blockchainAmount = amount.ToBlockchainAmount(coinDb.Multiplier);
+			var convertedId = EthUtils.GuidToBigInteger(id);
+			var tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
+						new HexBigInteger(0), convertedId, coinDb.Address,  receiver, blockchainAmount, Constants.GasForCoinTransaction, new byte[0]);
 			return tr;
 		}
 
@@ -174,7 +195,7 @@ namespace Services.Coins
 		{
 			var web3 = new Web3(_settings.EthereumUrl);
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
-			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.EthereumMainExchangeContractAddress);
+			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
 			var ping = contract.GetFunction("ping");
 			await ping.SendTransactionAsync(_settings.EthereumMainAccount);
 		}

@@ -97,8 +97,8 @@ namespace JobRunner
 				throw new Exception("EthereumMainAccount is missing");
 			if (string.IsNullOrWhiteSpace(settings.EthereumMainAccountPassword))
 				throw new Exception("EthereumMainAccountPassword is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumMainContractAddress))
-				throw new Exception("EthereumMainContractAddress is missing");
+			if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
+				throw new Exception("MainContract.Address is missing");
 			if (string.IsNullOrWhiteSpace(settings.EthereumPrivateAccount))
 				throw new Exception("EthereumPrivateAccount is missing");
 			if (string.IsNullOrWhiteSpace(settings.EthereumUrl))

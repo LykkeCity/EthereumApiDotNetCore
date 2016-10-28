@@ -10,11 +10,9 @@ namespace Core.Settings
 		string EthereumPrivateAccount { get; set; }
 		string EthereumMainAccount { get; set; }
 		string EthereumMainAccountPassword { get; set; }
-
-		string EthereumMainContractAddress { get; set; }
-		string EthereumMainExchangeContractAddress { get; set; }
-
+			
 		string EthereumUrl { get; set; }
+		string EthCoin { get; set; }
 
 		DbSettings Db { get; set; }
 
@@ -30,7 +28,8 @@ namespace Core.Settings
 		EthereumContract MainContract { get; set; }
 		EthereumContract UserContract { get; set; }
 		EthereumContract MainExchangeContract { get; set; }
-
+		EthereumContract TransferContract { get; set; }
+		
 		Dictionary<string, EthereumContract> CoinContracts { get; set; }
 	}
 
@@ -39,26 +38,22 @@ namespace Core.Settings
 		public EthereumContract MainContract { get; set; }
 		public EthereumContract UserContract { get; set; }
 		public EthereumContract MainExchangeContract { get; set; }
+		public EthereumContract TransferContract { get; set; }
 
 		public Dictionary<string, EthereumContract> CoinContracts { get; set; }
 
 		public string EthereumPrivateAccount { get; set; }
 
 		public string EthereumMainAccount { get; set; }
-		public string EthereumMainAccountPassword { get; set; }
-
-		/// <summary>
-		/// Ethereum main contract (which fires event) address
-		/// </summary>
-		public string EthereumMainContractAddress { get; set; }
-
-		public string EthereumMainExchangeContractAddress { get; set; }
+		public string EthereumMainAccountPassword { get; set; }			
 		public string EthereumEthCoinContract { get; set; }
 
 		/// <summary>
 		/// Ethereum geth URL
 		/// </summary>
 		public string EthereumUrl { get; set; }
+
+		public string EthCoin { get; set; } = "Eth";
 
 		public DbSettings Db { get; set; }
 
