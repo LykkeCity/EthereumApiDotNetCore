@@ -316,5 +316,48 @@ namespace Tests
 			var arr = (r + s + v).HexToByteArray();
 			return arr;
 		}
+
+		[Test]
+		public async Task TestTransferContract()
+		{
+			var settings = Config.Services.GetService<IBaseSettings>();
+			var coinService = Config.Services.GetService<ICoinContractService>();
+
+			var coinRepository = Config.Services.GetService<ICoinRepository>();
+			var coin = await coinRepository.GetCoin(settings.EthCoin);
+
+			var ethereumtransactionService = Config.Services.GetService<IEthereumTransactionService>();
+
+			var amount = 0.1M;
+			var web3 = new Web3(settings.EthereumUrl);
+
+			var initBalance = UnitConversion.Convert.FromWei(await web3.Eth.GetBalance.SendRequestAsync(settings.TransferContract.Address));
+
+			await web3.Personal.UnlockAccount.SendRequestAsync(settings.EthereumMainAccount, settings.EthereumMainAccountPassword, new HexBigInteger(120));
+			var tr = await web3.Eth.Transactions.SendTransaction.SendRequestAsync(new TransactionInput(null, settings.TransferContract.Address, settings.EthereumMainAccount, new HexBigInteger(Constants.GasForUserContractTransafer), new HexBigInteger(UnitConversion.Convert.ToWei(amount))));
+
+			while (await ethereumtransactionService.GetTransactionReceipt(tr) == null)
+				await Task.Delay(100);
+
+			var newBalance =
+				UnitConversion.Convert.FromWei(await web3.Eth.GetBalance.SendRequestAsync(settings.TransferContract.Address));
+
+			Assert.AreEqual(initBalance + amount, newBalance);
+
+			var clientABalance = await coinService.GetBalance(settings.EthCoin, ClientA);
+
+		    tr = await coinService.CashinOverTransferContract(Guid.NewGuid(), settings.EthCoin, ClientA, amount);
+
+			while (await ethereumtransactionService.GetTransactionReceipt(tr) == null)
+				await Task.Delay(100);
+
+			var newClientABalance = await coinService.GetBalance(settings.EthCoin, ClientA);
+
+			Assert.AreEqual(clientABalance + amount.ToBlockchainAmount(coin.Multiplier), newClientABalance );
+
+			newBalance =  UnitConversion.Convert.FromWei(await web3.Eth.GetBalance.SendRequestAsync(settings.TransferContract.Address));
+
+			Assert.AreEqual(initBalance, newBalance);			
+		}
 	}
 }
