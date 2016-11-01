@@ -29,7 +29,7 @@ namespace AzureRepositories
         public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings)
         {
             services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
-                new AzureTableStorage<MonitoringEntity>(settings.Db.ExchangeQueueConnString, Constants.StoragePrefix + Constants.MonitoringTable,
+                new AzureTableStorage<MonitoringEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.MonitoringTable,
                     provider.GetService<ILog>())));
 
             services.AddSingleton<IUserContractRepository>(provider => new UserContractRepository(
@@ -49,7 +49,7 @@ namespace AzureRepositories
                     provider.GetService<ILog>())));
 
             services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
-                new AzureTableStorage<CoinEntity>(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + Constants.CoinTable,
+                new AzureTableStorage<CoinEntity>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable,
                     provider.GetService<ILog>()))));
         }
 
@@ -64,17 +64,17 @@ namespace AzureRepositories
                         case Constants.EthereumContractQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.EthereumOutQueue:
-                            return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);
                         case Constants.EmailNotifierQueue:
-                            return new AzureQueueExt(settings.Db.ExchangeQueueConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.ContractTransferQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.TransactionMonitoringQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.CoinTransactionQueue:
-                            return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.EthereumHandlerConnString, Constants.StoragePrefix + x);
                         case Constants.CoinEventQueue:
-                            return new AzureQueueExt(settings.Db.EthereumNotificationsConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);
                         case Constants.UserContractManualQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         default:

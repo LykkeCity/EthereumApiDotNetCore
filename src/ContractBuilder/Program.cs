@@ -38,10 +38,10 @@ namespace ContractBuilder
 
 				switch (input)
 				{
-					//case "1":
-					//	DeployMainContractLocal().Wait();
-					//	break;
-					case "2":
+                    case "1":
+                        DeployMainContractLocal().Wait();
+                        break;
+                    case "2":
 						DeployMainExchangeContract().Wait();
 						break;
 					case "3":

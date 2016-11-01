@@ -85,10 +85,10 @@ namespace Tests
             foreach (var item in settings.CoinContracts)
                 await coinRepo.InsertOrReplace(new Coin
                 {
-                    Address = item.Value.Address,
-                    Name = item.Key,
+                    AssetAddress = item.Value.Address,
+                    Id = item.Key,
                     Multiplier = testSetting.CoinContracts[item.Key].Multiplier,
-                    Payable = testSetting.CoinContracts[item.Key].Payable,
+                    BlockchainDepositEnabled = testSetting.CoinContracts[item.Key].Payable,
                     Blockchain = "ethereum"
                 });
 
@@ -103,7 +103,7 @@ namespace Tests
 
         public class TestContract : EthereumContract
         {
-            public string Multiplier { get; set; }
+            public int Multiplier { get; set; }
             public bool Payable { get; set; }
         }
     }

@@ -33,15 +33,17 @@ namespace Tests
 			var userContractRepositoty = Config.Services.GetService<IUserContractRepository>();
 
 			var contract = "testcontract";
+		    var wallet = "user-wallet";
 			await contractQueueService.PushContract(contract);
 
-			await contractQueueService.GetContractAndSave();
+			await contractQueueService.GetContractAndSave(wallet);
 
 			var userContract = await userContractRepositoty.GetUserContractAsync(contract);
 
 			Assert.NotNull(userContract);
 			Assert.AreEqual(contract, userContract.Address);
+            Assert.AreEqual(wallet, userContract.UserWallet);
 
-		}
+        }
 	}
 }

@@ -33,20 +33,20 @@ namespace Core.Utils
 		    return new BigInteger(s.HexToByteArray().Reverse().ToArray());
 	    }
 
-        public static BigInteger ToBlockchainAmount(this decimal amount, string multiplier)
+        public static BigInteger ToBlockchainAmount(this decimal amount, int multiplier)
         {
-            if (string.IsNullOrEmpty(multiplier))
-                throw new Exception("Multiplier is empty");
-            var multy = new BigDecimal(BigInteger.Parse(multiplier), 0);
+            if (multiplier == 0)
+                throw new Exception("Multiplier is ZERO");
+            var multy = new BigDecimal(BigInteger.Pow(10, multiplier), 0);
             var result = amount * multy;
             return (BigInteger)result;
         }
 
-        public static decimal FromBlockchainAmount(this BigInteger amount, string multiplier)
+        public static decimal FromBlockchainAmount(this BigInteger amount, int multiplier)
         {
-            if (string.IsNullOrEmpty(multiplier))
-                throw new Exception("Multiplier is empty");
-            var multy = BigInteger.Parse(multiplier);
+            if (multiplier == 0)
+                throw new Exception("Multiplier is ZERO");
+            var multy = BigInteger.Pow(10, multiplier);
             var result = new BigDecimal(amount, 0) / new BigDecimal(multy, 0);
             return (decimal)result;
         }

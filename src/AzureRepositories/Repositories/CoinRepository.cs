@@ -11,24 +11,24 @@ namespace AzureRepositories.Repositories
 {
     public class CoinEntity : TableEntity, ICoin
     {
-        public const string Key = "Blockchain";
+        public const string Key = "Asset";
         
-        public string Name => RowKey;
+        public string Id => RowKey;
         public string Blockchain { get; set; }
-        public string Address { get; set; }
-        public string Multiplier { get; set; }
-        public bool Payable { get; set; }
+        public string AssetAddress { get; set; }
+        public int Multiplier { get; set; }
+        public bool BlockchainDepositEnabled { get; set; }
 
         public static CoinEntity CreateCoinEntity(ICoin coin)
         {
             return new CoinEntity
             {
-                Address = coin.Address,
-                RowKey = coin.Name,
+                AssetAddress = coin.AssetAddress,
+                RowKey = coin.Id,
                 Multiplier = coin.Multiplier,
                 Blockchain = coin.Blockchain,
                 PartitionKey = Key,
-                Payable = coin.Payable
+                BlockchainDepositEnabled = coin.BlockchainDepositEnabled
             };
         }
     }
@@ -43,11 +43,11 @@ namespace AzureRepositories.Repositories
             _table = table;
         }
 
-        public async Task<ICoin> GetCoin(string coinName)
+        public async Task<ICoin> GetCoin(string coinId)
         {
-            var coin = await _table.GetDataAsync(CoinEntity.Key, coinName);
+            var coin = await _table.GetDataAsync(CoinEntity.Key, coinId);
             if (coin == null)
-                throw new Exception("Unknown coin name - " + coinName);
+                throw new Exception("Unknown coin name - " + coinId);
             return coin;
         }
 
@@ -58,7 +58,7 @@ namespace AzureRepositories.Repositories
 
         public async Task<ICoin> GetCoinByAddress(string coinAddress)
         {
-            var coin = (await _table.GetDataAsync(CoinEntity.Key, x => x.Address == coinAddress)).FirstOrDefault();
+            var coin = (await _table.GetDataAsync(CoinEntity.Key, x => x.AssetAddress == coinAddress)).FirstOrDefault();
             if (coin == null)
                 throw new Exception("Unknown coin address - " + coinAddress);
             return coin;

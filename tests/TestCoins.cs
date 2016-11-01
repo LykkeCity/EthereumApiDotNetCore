@@ -37,11 +37,11 @@ namespace Tests
 
 			var cointTransactionService = Config.Services.GetService<ICoinTransactionService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
-			var currentBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var currentBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			var amount = 100m;
 
-			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Name, ClientA, amount);
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount);
 
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
@@ -50,7 +50,7 @@ namespace Tests
 
 			Assert.IsTrue(await cointTransactionService.ProcessTransaction());
 
-			var newBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var newBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			Assert.AreEqual(currentBalance + amount.ToBlockchainAmount(colorCoin.Multiplier), newBalance);
 		}
@@ -63,23 +63,23 @@ namespace Tests
 			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
-			var currentBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var currentBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			var amount = 100m;
 
-			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Name, ClientA, amount);
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount);
 
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
 
-			var midBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var midBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			Assert.AreEqual(currentBalance + amount.ToBlockchainAmount(colorCoin.Multiplier), midBalance);
 
 			var guid = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-							colorCoin.Address.HexToByteArray().ToHex() +
+							colorCoin.AssetAddress.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amount.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -87,14 +87,14 @@ namespace Tests
 			var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
 
 			var sign = Sign(hash, PrivateKeyA).ToHex();
-			var cashout = await coinService.CashOut(guid, colorCoin.Name, ClientA, ClientA, amount, sign);
+			var cashout = await coinService.CashOut(guid, colorCoin.Id, ClientA, ClientA, amount, sign);
 
 			while (await transactionService.GetTransactionReceipt(cashout) == null)
 				await Task.Delay(100);
 
 			Assert.IsTrue(await transactionService.IsTransactionExecuted(cashout, Constants.GasForCoinTransaction));
 
-			var newBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var newBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			Assert.AreEqual(currentBalance, newBalance);
 		}
@@ -108,25 +108,25 @@ namespace Tests
 			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
-			var currentBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var currentBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			var amount = 100m;
 
-			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Name, ClientA, amount);
+			var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount);
 
 			while (await transactionService.GetTransactionReceipt(result) == null)
 				await Task.Delay(100);
 
-			var midBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
+			var midBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
 			Assert.AreEqual(currentBalance + amount.ToBlockchainAmount(colorCoin.Multiplier), midBalance);
 
-			var clientBBalance = await coinService.GetBalance(colorCoin.Name, ClientB);
+			var clientBBalance = await coinService.GetBalance(colorCoin.Id, ClientB);
 
 			var guid = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-							colorCoin.Address.HexToByteArray().ToHex() +
+							colorCoin.AssetAddress.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amount.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -134,15 +134,15 @@ namespace Tests
 			var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
 
 			var sign = Sign(hash, PrivateKeyA).ToHex();
-			var transfer = await coinService.Transfer(guid, colorCoin.Name, ClientA, ClientB, amount, sign);
+			var transfer = await coinService.Transfer(guid, colorCoin.Id, ClientA, ClientB, amount, sign);
 
 			while (await transactionService.GetTransactionReceipt(transfer) == null)
 				await Task.Delay(100);
 
 			Assert.IsTrue(await transactionService.IsTransactionExecuted(transfer, Constants.GasForCoinTransaction));
 
-			var newBalance = await coinService.GetBalance(colorCoin.Name, ClientA);
-			var newClientBBalance = await coinService.GetBalance(colorCoin.Name, ClientB);
+			var newBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
+			var newClientBBalance = await coinService.GetBalance(colorCoin.Id, ClientB);
 
 			Assert.AreEqual(currentBalance, newBalance);
 			Assert.AreEqual(clientBBalance + amount.ToBlockchainAmount(colorCoin.Multiplier), newClientBBalance);
@@ -159,14 +159,14 @@ namespace Tests
 			var coinService = Config.Services.GetService<ICoinContractService>();
 			var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
-			var currentBalance_a = await coinService.GetBalance(colorCoin.Name, ClientA);
-			var currentBalance_b = await coinService.GetBalance(ethCoin.Name, ClientB);
+			var currentBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+			var currentBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
 			var amount_a = 100m;
 			var amount_b = 0.01M;
 
-			var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Name, ClientA, amount_a);
-			var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Name, ClientB, amount_b);
+			var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount_a);
+			var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Id, ClientB, amount_b);
 
 			while (await transactionService.GetTransactionReceipt(cashin_a) == null)
 				await Task.Delay(100);
@@ -174,8 +174,8 @@ namespace Tests
 			while (await transactionService.GetTransactionReceipt(cashin_b) == null)
 				await Task.Delay(100);
 
-			var midBalance_a = await coinService.GetBalance(colorCoin.Name, ClientA);
-			var midBalance_b = await coinService.GetBalance(ethCoin.Name, ClientB);
+			var midBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+			var midBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
 			Assert.AreEqual(currentBalance_a + amount_a.ToBlockchainAmount(colorCoin.Multiplier), midBalance_a);
 			Assert.AreEqual(currentBalance_b + amount_b.ToBlockchainAmount(ethCoin.Multiplier), midBalance_b);
@@ -188,8 +188,8 @@ namespace Tests
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
-							colorCoin.Address.HexToByteArray().ToHex() +
-							ethCoin.Address.HexToByteArray().ToHex() +
+							colorCoin.AssetAddress.HexToByteArray().ToHex() +
+							ethCoin.AssetAddress.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
 							EthUtils.BigIntToArrayWithPadding(swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 
@@ -198,15 +198,15 @@ namespace Tests
 			var sign_a = Sign(hash, PrivateKeyA).ToHex();
 			var sign_b = Sign(hash, PrivateKeyB).ToHex();
 
-			var swap = await coinService.Swap(guid, ClientA, ClientB, colorCoin.Name, ethCoin.Name, swap_amount_a, swap_amount_b, sign_a, sign_b);
+			var swap = await coinService.Swap(guid, ClientA, ClientB, colorCoin.Id, ethCoin.Id, swap_amount_a, swap_amount_b, sign_a, sign_b);
 
 			while (await transactionService.GetTransactionReceipt(swap) == null)
 				await Task.Delay(100);
 
 			Assert.IsTrue(await transactionService.IsTransactionExecuted(swap, Constants.GasForCoinTransaction));
 
-			var newBalance_a = await coinService.GetBalance(colorCoin.Name, ClientA);
-			var newBalance_b = await coinService.GetBalance(ethCoin.Name, ClientB);
+			var newBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+			var newBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
 			Assert.AreEqual(midBalance_a - swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier), newBalance_a);
 			Assert.AreEqual(midBalance_b - swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier), newBalance_b);
@@ -228,14 +228,14 @@ namespace Tests
 			await coinService.GetCoinContractFilters(true);
 			decimal amountColor = 2, amountEth = 0.02M, amountColorOut = 1, amountEthOut = 0.01M, amountColorSwap = 0.5M, amountEthSwap = 0.005M;
 
-			var cashin1 = await coinService.CashIn(Guid.NewGuid(), colorCoin.Name, ClientA, amountColor);
-			var cashin2 = await coinService.CashIn(Guid.NewGuid(), ethCoin.Name, ClientB, amountEth);
+			var cashin1 = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amountColor);
+			var cashin2 = await coinService.CashIn(Guid.NewGuid(), ethCoin.Id, ClientB, amountEth);
 
 			var guid1 = Guid.NewGuid();
 			var guid2 = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid1).ToHex() +
-						colorCoin.Address.HexToByteArray().ToHex() +
+						colorCoin.AssetAddress.HexToByteArray().ToHex() +
 						ClientA.HexToByteArray().ToHex() +
 						ClientB.HexToByteArray().ToHex() +
 						EthUtils.BigIntToArrayWithPadding(amountColorOut.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -243,27 +243,27 @@ namespace Tests
 
 
 			var strForHash2 = EthUtils.GuidToByteArray(guid2).ToHex() +
-					ethCoin.Address.HexToByteArray().ToHex() +
+					ethCoin.AssetAddress.HexToByteArray().ToHex() +
 					ClientB.HexToByteArray().ToHex() +
 					ClientA.HexToByteArray().ToHex() +
 					EthUtils.BigIntToArrayWithPadding(amountEthOut.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 			var hash2 = new Sha3Keccack().CalculateHash(strForHash2.HexToByteArray());
 
-			var cashOut1 = await coinService.CashOut(guid1, colorCoin.Name, ClientA, ClientB, amountColorOut, Sign(hash, PrivateKeyA).ToHex());
-			var cashOut2 = await coinService.CashOut(guid2, ethCoin.Name, ClientB, ClientA, amountEthOut, Sign(hash2, PrivateKeyB).ToHex());
+			var cashOut1 = await coinService.CashOut(guid1, colorCoin.Id, ClientA, ClientB, amountColorOut, Sign(hash, PrivateKeyA).ToHex());
+			var cashOut2 = await coinService.CashOut(guid2, ethCoin.Id, ClientB, ClientA, amountEthOut, Sign(hash2, PrivateKeyB).ToHex());
 
 			var swapGuid = Guid.NewGuid();
 
 			var strForHash3 = EthUtils.GuidToByteArray(swapGuid).ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
-							colorCoin.Address.HexToByteArray().ToHex() +
-							ethCoin.Address.HexToByteArray().ToHex() +
+							colorCoin.AssetAddress.HexToByteArray().ToHex() +
+							ethCoin.AssetAddress.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amountColorSwap.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amountEthSwap.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 			var hash3 = new Sha3Keccack().CalculateHash(strForHash3.HexToByteArray());
 
-			var swap3 = await coinService.Swap(swapGuid, ClientA, ClientB, colorCoin.Name, ethCoin.Name, amountColorSwap, amountEthSwap,
+			var swap3 = await coinService.Swap(swapGuid, ClientA, ClientB, colorCoin.Id, ethCoin.Id, amountColorSwap, amountEthSwap,
 				Sign(hash3, PrivateKeyA).ToHex(), Sign(hash3, PrivateKeyB).ToHex());
 
 
@@ -290,17 +290,17 @@ namespace Tests
 					messages.Add(JsonConvert.DeserializeObject<CoinContractPublicEvent>(msg.AsString));
 			}
 
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == colorCoin.Address && o.Amount == amountColor && o.Caller == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColor && o.Caller == ClientA),
 				"not found cashin1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == ethCoin.Address && o.Amount == amountEth && o.Caller == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEth && o.Caller == ClientB),
 				"not found cashin2");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == colorCoin.Address && o.Amount == amountColorOut && o.From == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColorOut && o.From == ClientA),
 				"not found cashout1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == ethCoin.Address && o.Amount == amountEthOut && o.From == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEthOut && o.From == ClientB),
 				"not found cashout2");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == colorCoin.Address && o.Amount == amountColorSwap && o.From == ClientA && o.To == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColorSwap && o.From == ClientA && o.To == ClientB),
 				"not found swap1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == ethCoin.Address && o.Amount == amountEthSwap && o.From == ClientB && o.To == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEthSwap && o.From == ClientB && o.To == ClientA),
 				"not found swap2");
 		}
 
