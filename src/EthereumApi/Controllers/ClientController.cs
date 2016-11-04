@@ -18,8 +18,23 @@ namespace EthereumApi.Controllers
             _contractQueueService = contractQueueService;
         }
 
-        [Route("register/{userWallet}")]
+        [Route("register")]
         [HttpPost]
+        [Produces(typeof(RegisterResponse))]
+        public async Task<IActionResult> NewClientOld()
+        {
+            var contract = await _contractQueueService.GetContractAndSave(null);
+
+            var response = new RegisterResponse
+            {
+                Contract = contract
+            };
+
+            return Ok(response);
+        }
+
+        [Route("register/{userWallet}")]
+        [HttpGet]
         [Produces(typeof(RegisterResponse))]
         public async Task<IActionResult> NewClient(string userWallet)
         {
