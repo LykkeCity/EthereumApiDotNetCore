@@ -29,8 +29,8 @@ namespace Core.Settings
 		EthereumContract UserContract { get; set; }
 		EthereumContract MainExchangeContract { get; set; }
 		EthereumContract TransferContract { get; set; }
-		
-		Dictionary<string, EthereumContract> CoinContracts { get; set; }
+
+	    Dictionary<string, EthereumContract> CoinContracts { get; set; }
 	}
 
 	public class BaseSettings : IBaseSettings
@@ -40,9 +40,9 @@ namespace Core.Settings
 		public EthereumContract MainExchangeContract { get; set; }
 		public EthereumContract TransferContract { get; set; }
 
-		public Dictionary<string, EthereumContract> CoinContracts { get; set; }
+		public Dictionary<string, EthereumContract> CoinContracts { get; set; } = new Dictionary<string, EthereumContract>();
 
-		public string EthereumPrivateAccount { get; set; }
+        public string EthereumPrivateAccount { get; set; }
 
 		public string EthereumMainAccount { get; set; }
 		public string EthereumMainAccountPassword { get; set; }			
