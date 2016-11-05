@@ -51,7 +51,7 @@ namespace EthereumApi.Controllers
             return Ok(response);
         }
 
-        [Route("addWallet/{userWallet}")]
+        [Route("addWallet")]
         [HttpPost]
         public async Task<IActionResult> AddUserWallet([FromBody]AddWalletModel model)
         {
