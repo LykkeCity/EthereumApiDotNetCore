@@ -123,14 +123,21 @@ namespace JobRunner
                 throw new Exception("EthereumHandlerConnString is missing");
 
             if (string.IsNullOrWhiteSpace(settings.MainContract?.Abi))
-				throw new Exception("MainContract abi is invalid");
-			if (string.IsNullOrWhiteSpace(settings.MainContract?.ByteCode))
-				throw new Exception("MainContract bytecode is invalid");
+                throw new Exception("MainContract abi is invalid");
+            if (string.IsNullOrWhiteSpace(settings.MainContract?.ByteCode))
+                throw new Exception("MainContract bytecode is invalid");
+            if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
+                throw new Exception("MainContract.Address is missing");
 
-			if (string.IsNullOrWhiteSpace(settings.UserContract?.Abi))
-				throw new Exception("UserContract abi is invalid");
-			if (string.IsNullOrWhiteSpace(settings.UserContract?.ByteCode))
-				throw new Exception("UserContract bytecode is invalid");
-		}
+            if (string.IsNullOrWhiteSpace(settings.UserContract?.Abi))
+                throw new Exception("UserContract abi is invalid");
+            if (string.IsNullOrWhiteSpace(settings.UserContract?.ByteCode))
+                throw new Exception("UserContract bytecode is invalid");
+
+            if (string.IsNullOrWhiteSpace(settings.MainExchangeContract?.Abi))
+                throw new Exception("MainExchangeContract.Abi is missing");
+            if (string.IsNullOrWhiteSpace(settings.MainExchangeContract?.Address))
+                throw new Exception("MainExchangeContract.Address is missing");
+        }
 	}
 }
