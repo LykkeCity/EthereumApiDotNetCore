@@ -193,6 +193,9 @@ namespace Services.Coins
 
 		public async Task PingMainExchangeContract()
 		{
+            if (_settings.MainExchangeContract == null)
+                return;
+
 			var web3 = new Web3(_settings.EthereumUrl);
 			await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 			var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
