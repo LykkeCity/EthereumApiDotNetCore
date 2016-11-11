@@ -42,7 +42,7 @@
 		public const string AppSettingsTable = "AppSettings";
 		public const string TransactionsTable = "Transactions";
 		public const string CoinFiltersTable = "CoinFilters";
-        public const string CoinTable = "CoinTable";
+        public const string CoinTable = "Dictionaries";
 
         public const int GasForUserContractTransafer = 50000;
 		public const int GasForCoinTransaction = 200000;
