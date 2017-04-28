@@ -24,7 +24,7 @@ namespace EthereumJobs
 
             // restore contract payment events after service shutdown
             await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
-            await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
+            //await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
 
             Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
@@ -33,11 +33,11 @@ namespace EthereumJobs
 
         public void RunJobs()
         {
-            Services.GetService<CheckContractQueueCountJob>().Start();
-            Services.GetService<CheckPaymentsToUserContractsJob>().Start();
-            Services.GetService<RefreshContractQueueJob>().Start();
+            //Services.GetService<CheckContractQueueCountJob>().Start();
+            //Services.GetService<CheckPaymentsToUserContractsJob>().Start();
+            //Services.GetService<RefreshContractQueueJob>().Start();
             Services.GetService<TransferTransactionQueueJob>().Start();
-            Services.GetService<MonitoringContractBalance>().Start();
+           // Services.GetService<MonitoringContractBalance>().Start();
             Services.GetService<ListenCoinContactsEvents>().Start();
             Services.GetService<MonitoringCoinTransactionJob>().Start();
             Services.GetService<PingContractsJob>().Start();

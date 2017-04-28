@@ -32,7 +32,7 @@ namespace Services
 
         Task<decimal> GetUserContractBalance(string address);
 
-        Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
+        //Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
         Task<BigInteger> GetTransferContractBalanceInWei(string transferContractAddress);
     }
 
@@ -40,13 +40,12 @@ namespace Services
     {
         private readonly IBaseSettings _settings;
         private readonly ILog _logger;
-        private readonly IContractTransferTransactionService _contractTransferTransactionService;
+        //private readonly IContractTransferTransactionService _contractTransferTransactionService;
 
-        public PaymentService(IBaseSettings settings, ILog logger, IContractTransferTransactionService contractTransferTransactionService)
+        public PaymentService(IBaseSettings settings, ILog logger)
         {
             _settings = settings;
             _logger = logger;
-            _contractTransferTransactionService = contractTransferTransactionService;
         }
 
         public async Task<string> TransferFromUserContract(string contractAddress, decimal amount)
@@ -97,34 +96,34 @@ namespace Services
             return balance.Value;
         }
 
-        public async Task<bool> ProcessPaymentEvent(UserPaymentEvent log)
-        {
-            try
-            {
-                await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Start proces: event from {log.Address} for {log.Amount} WEI.");
+        //public async Task<bool> ProcessPaymentEvent(UserPaymentEvent log)
+        //{
+        //    try
+        //    {
+        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Start proces: event from {log.Address} for {log.Amount} WEI.");
 
-                var transaction = await TransferFromUserContract(log.Address, log.Amount);
+        //        var transaction = await TransferFromUserContract(log.Address, log.Amount);
 
-                await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
+        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
 
-                await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
-                {
-                    TransactionHash = transaction,
-                    Contract = log.Address,
-                    Amount = UnitConversion.Convert.FromWei(log.Amount),
-                    CreateDt = DateTime.UtcNow
-                });
+        //        await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
+        //        {
+        //            TransactionHash = transaction,
+        //            Contract = log.Address,
+        //            Amount = UnitConversion.Convert.FromWei(log.Amount),
+        //            CreateDt = DateTime.UtcNow
+        //        });
 
-                await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
+        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
 
-                return true;
-            }
-            catch (Exception e)
-            {
-                await _logger.WriteErrorAsync("EthereumJob", "ProcessPaymentEvent", "Failed to process item", e);
-            }
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _logger.WriteErrorAsync("EthereumJob", "ProcessPaymentEvent", "Failed to process item", e);
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
     }
 }

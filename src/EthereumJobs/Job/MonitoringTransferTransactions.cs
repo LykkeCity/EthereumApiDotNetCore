@@ -10,7 +10,7 @@ using System;
 
 namespace EthereumJobs.Job
 {
-    public class MonitoringTransferContracts : TimerPeriod
+    public class MonitoringTransferTransactions : TimerPeriod
     {
 
         private const int TimerPeriodSeconds = 60 * 30;
@@ -27,7 +27,7 @@ namespace EthereumJobs.Job
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
 
-        public MonitoringTransferContracts(BaseSettings settings,
+        public MonitoringTransferTransactions(BaseSettings settings,
             ErcInterfaceService ercInterfaceService,
             ITransferContractRepository transferContractsRepository,
             ILog logger,
@@ -38,7 +38,7 @@ namespace EthereumJobs.Job
             IUserTransferWalletRepository userTransferWalletRepository,
             ITransferContractTransactionService transferContractTransactionService
             ) :
-            base("MonitoringTransferContracts", TimerPeriodSeconds * 1000, logger)
+            base("MonitoringTransferTransactions", TimerPeriodSeconds * 1000, logger)
         {
             _ercInterfaceService = ercInterfaceService;
             _settings = settings;
@@ -54,46 +54,16 @@ namespace EthereumJobs.Job
 
         public override async Task Execute()
         {
-            await _transferContractsRepository.ProcessAllAsync(async (item) =>
+            try
             {
-                //it is a transfer wallet
-                IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
-                if (wallet == null || wallet.LastBalance == 0)
+                while (await _transferContractTransactionService.CompleteTransfer() && Working)
                 {
-                    BigInteger balance;
-
-                    if (!item.ContainsEth)
-                    {
-                        balance =
-                        await _ercInterfaceService.GetBalanceForExternalToken(item.ContractAddress, item.ExternalTokenAddress);
-                    }
-                    else
-                    {
-                        balance = await _paymentService.GetTransferContractBalanceInWei(item.ContractAddress);
-                    }
-
-                    if (balance > 0)
-                    {
-
-                        await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-                        {
-                            LastBalance = balance,
-                            TransferContractAddress = item.ContractAddress,
-                            UserAddress = item.UserAddress,
-                            UpdateDate = DateTime.UtcNow
-                        });
-
-                        await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
-                        {
-                            Amount = balance,
-                            UserAddress = item.UserAddress,
-                            CoinAdapterAddress = item.CoinAdapterAddress,
-                            ContractAddress = item.ContractAddress,
-                            CreateDt = DateTime.UtcNow
-                        });
-                    }
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                await _logger.WriteErrorAsync("EthereumJob", "MonitoringTransferTransactions", "", ex);
+            }
         }
     }
 }

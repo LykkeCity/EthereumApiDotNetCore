@@ -8,12 +8,11 @@ namespace EthereumApi.Controllers
     [Produces("application/json")]
     public class SystemController : Controller
     {
-        private readonly IContractQueueService _contractQueueService;
+        //private readonly IContractQueueService _contractQueueService;
         private readonly IContractService _contractService;
 
-        public SystemController(IContractQueueService contractQueueService, IContractService contractService)
+        public SystemController(IContractService contractService)
         {
-            _contractQueueService = contractQueueService;
             _contractService = contractService;
         }
 
@@ -23,12 +22,12 @@ namespace EthereumApi.Controllers
         public async Task<IActionResult> NewClient()
         {
             // check contract queue
-            var count = await _contractQueueService.Count();
+            //var count = await _contractQueueService.Count();
 
             // check ethereum node
             var block = await _contractService.GetCurrentBlock();
 
-            return Ok(new { QueueCount = count, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion });
+            return Ok(new { QueueCount = 0, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion });
         }
     }
 }

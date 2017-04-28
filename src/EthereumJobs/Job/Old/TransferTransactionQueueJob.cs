@@ -8,32 +8,32 @@ using Common.Log;
 
 namespace EthereumJobs.Job
 {
-	public class TransferTransactionQueueJob : TimerPeriod
-	{
-		private readonly IContractTransferTransactionService _contractTransferTransactionService;
-		private readonly ILog _log;
-		private const int TimerPeriodSeconds = 2;
+    public class TransferTransactionQueueJob : TimerPeriod
+    {
+        private readonly ITransferContractTransactionService _contractTransferTransactionService;
+        private readonly ILog _log;
+        private const int TimerPeriodSeconds = 2;
 
 
-		public TransferTransactionQueueJob(IContractTransferTransactionService contractTransferTransactionService, ILog log)
-			: base("TransferTransactionQueueJob", TimerPeriodSeconds * 1000, log)
-		{
-			_contractTransferTransactionService = contractTransferTransactionService;
-			_log = log;
-		}
+        public TransferTransactionQueueJob(ITransferContractTransactionService contractTransferTransactionService, ILog log)
+            : base("TransferTransactionQueueJob", TimerPeriodSeconds * 1000, log)
+        {
+            _contractTransferTransactionService = contractTransferTransactionService;
+            _log = log;
+        }
 
-		public override async Task Execute()
-		{
-			try
-			{
-				while (await _contractTransferTransactionService.CompleteTransaction() && Working)
-				{
-				}
-			}
-			catch (Exception ex)
-			{
-				await _log.WriteErrorAsync("EthereumWebJob", "TransferTransactionQueue", "", ex);
-			}
-		}
-	}
+        public override async Task Execute()
+        {
+            try
+            {
+                while (await _contractTransferTransactionService.CompleteTransfer() && Working)
+                {
+                }
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync("EthereumWebJob", "TransferTransactionQueue", "", ex);
+            }
+        }
+    }
 }

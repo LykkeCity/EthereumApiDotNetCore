@@ -24,15 +24,15 @@ namespace EthereumJobs.Config
 
 		private static void RegisterJobs(IServiceCollection collection)
 		{
-			collection.AddTransient<CatchOldUserContractEvents>();
+			//collection.AddTransient<CatchOldUserContractEvents>();
 			collection.AddTransient<ProcessManualEvents>();
 
-			collection.AddSingleton<CheckContractQueueCountJob>();
-			collection.AddSingleton<CheckPaymentsToUserContractsJob>();
-			collection.AddSingleton<RefreshContractQueueJob>();
+			//collection.AddSingleton<CheckContractQueueCountJob>();
+			//collection.AddSingleton<CheckPaymentsToUserContractsJob>();
+			//collection.AddSingleton<RefreshContractQueueJob>();
 			collection.AddSingleton<MonitoringJob>();
 			collection.AddSingleton<TransferTransactionQueueJob>();
-			collection.AddSingleton<MonitoringContractBalance>();
+			//collection.AddSingleton<MonitoringContractBalance>();
 
 			collection.AddSingleton<ListenCoinContactsEvents>();
 			collection.AddSingleton<MonitoringCoinTransactionJob>();

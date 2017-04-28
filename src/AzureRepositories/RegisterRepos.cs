@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using AzureStorage.Queue;
 using Common.Log;
+using AzureStorage.Tables.Templates.Index;
 
 namespace AzureRepositories
 {
@@ -45,8 +46,10 @@ namespace AzureRepositories
                     provider.GetService<ILog>())));
 
             services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
-                new AzureTableStorage<CoinEntity>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable,
-                    provider.GetService<ILog>()))));
+                new AzureTableStorage<CoinEntity>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable
+                    ,provider.GetService<ILog>())
+                , new AzureTableStorage<AzureIndex>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable
+                   , provider.GetService<ILog>())) ));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings)

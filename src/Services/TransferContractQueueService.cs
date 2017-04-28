@@ -92,10 +92,10 @@ namespace Services
                     LastBalance = 0,
                     TransferContractAddress = contractTransferTr.ContractAddress,
                     UpdateDate = DateTime.UtcNow,
-                    UserAddress = 
+                    UserAddress = contractTransferTr.UserAddress
                 });
                 await _logger.WriteInfoAsync("ContractTransferTransactionService", "TransferToCoinContract", "",
-                    $"Transfered {contractTransferTr.Amount} Eth from transfer contract to \"{_baseSettings.EthCoin}\" by transaction \"{tr}\". Receiver = {contractEntity.UserWallet}");
+                    $"Transfered {contractTransferTr.Amount} Eth from transfer contract to \"{_baseSettings.EthCoin}\" by transaction \"{tr}\". Receiver = {contractEntity.CoinAdapterAddress}");
             }
             catch (Exception e)
             {
