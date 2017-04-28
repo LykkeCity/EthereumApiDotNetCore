@@ -66,8 +66,8 @@ namespace Services
             });
         }
 
-        public async Task RecieveFromTransferContract(Guid id, string transferContractAddress,
-            string coinAdapterAddress, decimal amount, bool containsEth)
+        public async Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,
+            string coinAdapterAddress, BigInteger amount, bool containsEth)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
@@ -91,10 +91,11 @@ namespace Services
             }
 
             var cashin = contract.GetFunction("cashin");
-            var blockchainAmount = amount.ToBlockchainAmount(coinDb.Multiplier);
+            var blockchainAmount = amount;
             var convertedId = EthUtils.GuidToBigInteger(id);
             string tr;
-            if (containsEth)
+
+            if (!containsEth)
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
                 new HexBigInteger(Constants.GasForCoinTransaction),
@@ -105,8 +106,8 @@ namespace Services
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
                new HexBigInteger(Constants.GasForCoinTransaction),
-                       new HexBigInteger(0), convertedId, coinDb.AdapterAddress,
-                       coinAdapterAddress, blockchainAmount, Constants.GasForCoinTransaction, new byte[0]);
+                       new HexBigInteger(blockchainAmount), convertedId, coinDb.AdapterAddress,
+                       coinAdapterAddress, 0, Constants.GasForCoinTransaction, new byte[0]);
             }
 
             return tr;

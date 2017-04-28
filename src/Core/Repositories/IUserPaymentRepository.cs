@@ -10,6 +10,7 @@ namespace Core.Repositories
         string UserAddress { get; set; }
         string ContractAddress { get; set; }
         string Amount { get; set; }
+        DateTime CreatedDate { get; set; }
     }
 
     public class UserPayment : IUserPayment
@@ -17,6 +18,7 @@ namespace Core.Repositories
         public string ContractAddress { get; set; }
         public string UserAddress { get; set; }
         public string Amount { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public interface IUserPaymentRepository

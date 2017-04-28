@@ -33,6 +33,7 @@ namespace Services
         Task<decimal> GetUserContractBalance(string address);
 
         Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
+        Task<BigInteger> GetTransferContractBalanceInWei(string transferContractAddress);
     }
 
     public class PaymentService : IPaymentService
@@ -76,6 +77,7 @@ namespace Services
         {
             var web3 = new Web3(_settings.EthereumUrl);
             var balance = await web3.Eth.GetBalance.SendRequestAsync(_settings.EthereumMainAccount);
+
             return UnitConversion.Convert.FromWei(balance);
         }
 
@@ -83,7 +85,16 @@ namespace Services
         {
             var web3 = new Web3(_settings.EthereumUrl);
             var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
+
             return UnitConversion.Convert.FromWei(balance);
+        }
+
+        public async Task<BigInteger> GetTransferContractBalanceInWei(string address)
+        {
+            var web3 = new Web3(_settings.EthereumUrl);
+            var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
+
+            return balance.Value;
         }
 
         public async Task<bool> ProcessPaymentEvent(UserPaymentEvent log)
