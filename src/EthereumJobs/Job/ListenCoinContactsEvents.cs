@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Log;
 using Core.Settings;
 using Core.Timers;
 using Core.Utils;
 using Services;
 using Services.Coins;
+using Common.Log;
 
 namespace EthereumJobs.Job
 {

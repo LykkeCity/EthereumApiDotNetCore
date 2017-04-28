@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 using Core.Exceptions;
-using Core.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Common.Log;
 
 namespace EthereumApi
 {
@@ -37,7 +37,7 @@ namespace EthereumApi
 			}
 			else
 			{
-				_logger.WriteError("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception);
+				_logger.WriteErrorAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception);
 				ex = new ApiException
 				{
 					Error = new ApiError

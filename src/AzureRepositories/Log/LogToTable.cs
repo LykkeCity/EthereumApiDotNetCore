@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AzureStorage;
+using Common.Log;
+using System;
 using System.Threading.Tasks;
-using AzureRepositories.Azure;
-using Core.Log;
 
 namespace AzureRepositories.Log
 {
@@ -35,22 +35,22 @@ namespace AzureRepositories.Log
 				await _infoTableStorage.InsertAndGenerateRowKeyAsTimeAsync(newEntity, dt);
 		}
 
-		public Task WriteInfo(string component, string process, string context, string info, DateTime? dateTime = null)
+		public Task WriteInfoAsync(string component, string process, string context, string info, DateTime? dateTime = null)
 		{
 			return Insert("info", component, process, context, null, null, info, dateTime);
 		}
 
-		public Task WriteWarning(string component, string process, string context, string info, DateTime? dateTime = null)
+		public Task WriteWarningAsync(string component, string process, string context, string info, DateTime? dateTime = null)
 		{
 			return Insert("warning", component, process, context, null, null, info, dateTime);
 		}
 
-		public Task WriteError(string component, string process, string context, Exception type, DateTime? dateTime = null)
+		public Task WriteErrorAsync(string component, string process, string context, Exception type, DateTime? dateTime = null)
 		{
 			return Insert("error", component, process, context, type.GetType().ToString(), type.StackTrace, type.Message, dateTime);
 		}
 
-		public Task WriteFatalError(string component, string process, string context, Exception type, DateTime? dateTime = null)
+		public Task WriteFatalErrorAsync(string component, string process, string context, Exception type, DateTime? dateTime = null)
 		{
 			return Insert("fatalerror", component, process, context, type.GetType().ToString(), type.StackTrace, type.Message, dateTime);
 		}

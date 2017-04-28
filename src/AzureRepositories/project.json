@@ -3,10 +3,12 @@
 
   "dependencies": {
     "Core": "1.0.0",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "Lykke.AzureStorage": "1.2.20",
+    "Lykke.Common": "1.1.69",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
     "NETStandard.Library": "1.6.0",
     "System.Reflection.TypeExtensions": "4.1.0",
-    "WindowsAzure.Storage": "7.2.1"
+    "WindowsAzure.Storage": "8.1.1"
   },
 
   "frameworks": {

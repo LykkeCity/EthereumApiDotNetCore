@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Nethereum.Web3;
 using Services;
 using System.Diagnostics;
-using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Settings;
 using EthereumJobs.Job;
@@ -15,6 +14,7 @@ using Microsoft.WindowsAzure.Storage.Queue;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
+using AzureStorage.Queue;
 
 namespace Tests
 {
@@ -112,7 +112,7 @@ namespace Tests
 			var transferTransactionJob = Config.Services.GetService<TransferTransactionQueueJob>();
 
 			var transferTr = JsonConvert.DeserializeObject<ContractTransferTransaction>(
-					(await transferContractQueue.PeekRawMessageAsync()).AsString).TransactionHash;
+					(await transferContractQueue.GetRawMessageAsync()).AsString).TransactionHash;
 
 			while (await ethereumtransactionService.GetTransactionReceipt(transferTr) == null)
 				await Task.Delay(100);

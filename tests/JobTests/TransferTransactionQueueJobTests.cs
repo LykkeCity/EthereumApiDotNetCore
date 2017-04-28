@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
 using EthereumJobs.Job;
 using NUnit.Framework;
@@ -10,6 +9,7 @@ using Tests;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Services;
+using AzureStorage.Queue;
 
 namespace Tests.JobTests
 {

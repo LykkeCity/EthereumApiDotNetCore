@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Exceptions;
-using Core.Log;
 using Core.Repositories;
+using AzureStorage.Queue;
+using Common.Log;
 
 namespace Services
 {
@@ -84,7 +84,7 @@ namespace Services
             }
             catch (Exception e)
             {
-                await _logger.WriteError("ContractQueueService", "UpdateUserWallet", $"{contract} - {userWallet}", e);
+                await _logger.WriteErrorAsync("ContractQueueService", "UpdateUserWallet", $"{contract} - {userWallet}", e);
                 throw;
             }
         }
@@ -97,7 +97,7 @@ namespace Services
             }
             catch (Exception e)
             {
-                await _logger.WriteError("ContractQueueService", "SaveContractAsync", contract, e);
+                await _logger.WriteErrorAsync("ContractQueueService", "SaveContractAsync", contract, e);
             }
         }
     }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Core.Log;
 using Core.Timers.Interfaces;
+using Common.Log;
 
 namespace Core.Timers
 {
@@ -28,7 +26,7 @@ namespace Core.Timers
 		{
 			try
 			{
-				_log.WriteFatalError(_componentName, "Loop", "", exception).Wait();
+				_log.WriteFatalErrorAsync(_componentName, "Loop", "", exception).Wait();
 			}
 			catch (Exception)
 			{

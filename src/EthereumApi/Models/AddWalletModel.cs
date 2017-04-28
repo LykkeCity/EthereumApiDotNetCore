@@ -6,12 +6,23 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-    public class AddWalletModel
+    public class AddCoinModel
     {
         [Required]
-        public string UserContract { get; set; }
+        public string Name { get; set; }
+        [Required]
+        public string Blockchain { get; set; }
+        [Required]
+        public int Multiplier { get; set; }
 
         [Required]
-        public string UserWallet { get; set; }
+        public bool BlockchainDepositEnabled { get; set; }
+
+        [Required]
+        public string Abi { get; set; }
+
+        [Required]
+        public string ByteCode { get; set; }
+
     }
 }

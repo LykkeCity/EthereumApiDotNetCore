@@ -1,7 +1,7 @@
 ﻿using System;
-using AzureRepositories.Azure.Queue;
 using Core;
 using Newtonsoft.Json;
+using AzureStorage.Queue;
 
 namespace Services
 {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
 using NUnit.Framework.Internal;
 using NUnit.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Services;
+using AzureStorage.Queue;
 
 namespace Tests
 {

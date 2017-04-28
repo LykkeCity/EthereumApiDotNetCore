@@ -1,26 +1,23 @@
 {
-	"version": "1.0.0",
-	"buildOptions": {
-		"emitEntryPoint": true
-	},
+  "version": "1.0.0",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
 
-	"dependencies": {
-		"Core": "1.0.0",
-		"EthereumApi": "1.0.0",
-		"Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
-		"Microsoft.NETCore.App": {
-			"type": "platform",
-			"version": "1.0.0"
-		}
-	},
+  "dependencies": {
+    "Core": "1.0.0",
+    "EthereumApi": "1.0.0-*",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
+    "Microsoft.NETCore.App": "1.1.1"
+  },
 
   "frameworks": {
-    "netcoreapp1.0": {
-      "imports": [
-        "dotnet5.6",
-        "portable-net45+win8"
-      ]
+    "netcoreapp1.1": {
+      "imports": [ "portable-net45+win8" ]
     }
+  },
+  "runtimes": {
+    "win10-x64": {}
   },
   "userSecretsId": "aspnet-ApiRunner-20161016064014"
 }

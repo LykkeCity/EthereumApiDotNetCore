@@ -2,28 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure;
 using Core;
 using Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
+using AzureStorage;
+using AzureStorage.Tables.Templates.Index;
 
 namespace AzureRepositories.Repositories
 {
     public class CoinEntity : TableEntity, ICoin
     {
         public const string Key = "Asset";
-        
+
         public string Id => RowKey;
         public string Blockchain { get; set; }
-        public string AssetAddress { get; set; }
+        public string AdapterAddress { get; set; }
         public int Multiplier { get; set; }
         public bool BlockchainDepositEnabled { get; set; }
+
+        public string Name { get; set; }
 
         public static CoinEntity CreateCoinEntity(ICoin coin)
         {
             return new CoinEntity
             {
-                AssetAddress = coin.AssetAddress,
+                Name = coin.Name,
+                AdapterAddress = coin.AdapterAddress,
                 RowKey = coin.Id,
                 Multiplier = coin.Multiplier,
                 Blockchain = coin.Blockchain,
@@ -37,9 +41,12 @@ namespace AzureRepositories.Repositories
     public class CoinRepository : ICoinRepository
     {
         private readonly INoSQLTableStorage<CoinEntity> _table;
+        private readonly INoSQLTableStorage<AzureIndex> _addressIndex;
+        private const string _addressIndexName = "AddressIndex";
 
-        public CoinRepository(INoSQLTableStorage<CoinEntity> table)
+        public CoinRepository(INoSQLTableStorage<CoinEntity> table, INoSQLTableStorage<AzureIndex> addressIndex)
         {
+            _addressIndex = addressIndex;
             _table = table;
         }
 
@@ -48,19 +55,26 @@ namespace AzureRepositories.Repositories
             var coin = await _table.GetDataAsync(CoinEntity.Key, coinId);
             if (coin == null)
                 throw new Exception("Unknown coin name - " + coinId);
+
             return coin;
         }
 
         public async Task InsertOrReplace(ICoin coin)
         {
-            await _table.InsertOrReplaceAsync(CoinEntity.CreateCoinEntity(coin));
+            var entity = CoinEntity.CreateCoinEntity(coin);
+            var index = AzureIndex.Create(_addressIndexName, coin.AdapterAddress, entity);
+
+            await _table.InsertOrReplaceAsync(entity);
+            await _addressIndex.InsertAsync(index);
         }
 
         public async Task<ICoin> GetCoinByAddress(string coinAddress)
         {
-            var coin = (await _table.GetDataAsync(CoinEntity.Key, x => x.AssetAddress == coinAddress)).FirstOrDefault();
-            if (coin == null)
+            AzureIndex index = await _addressIndex.GetDataAsync(_addressIndexName, coinAddress);
+            if (index == null)
                 throw new Exception("Unknown coin address - " + coinAddress);
+            var coin = await _table.GetDataAsync(index);
+
             return coin;
         }
     }

@@ -9,7 +9,7 @@ contract MainExchange {
 
     modifier onlyowner { if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }
 
-    // can be called only from contract owner
+    // can be called only from contract owner (Is Lykke contract owner?)
     // create swap transaction signed by exchange and check client signs
     function swap(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, 
                 bytes client_a_sign, bytes client_b_sign, bytes params) onlyowner returns(bool) {

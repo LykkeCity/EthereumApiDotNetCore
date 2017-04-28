@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Core.Repositories
 {
-
     public interface ICoinContractFilter
     {
         string EventName { get; }

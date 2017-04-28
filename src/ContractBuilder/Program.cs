@@ -1,218 +1,234 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Blob;
 using Core.Settings;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using Services;
 
 namespace ContractBuilder
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var exit = false;
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var exit = false;
 
-			var configurationBuilder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json");
-			var configuration = configurationBuilder.Build();
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+            var configuration = configurationBuilder.Build();
 
-			while (!exit)
-			{
-				Console.WriteLine("Choose number: ");
-				//Console.WriteLine("1. Deploy main contract from local json file");
-				Console.WriteLine("2. Deploy main exchange contract using local json file");
-				Console.WriteLine("3. Deploy coin contract using local json file");
-				Console.WriteLine("4. Deploy transfer using local json file");
-				Console.WriteLine("0. Exit");
+            while (!exit)
+            {
+                Console.WriteLine("Choose number: ");
+                //Console.WriteLine("1. Deploy main contract from local json file");
+                Console.WriteLine("2. Deploy main exchange contract using local json file");
+                Console.WriteLine("3. Deploy coin contract using local json file");
+                Console.WriteLine("4. Deploy transfer using local json file");
+                Console.WriteLine("0. Exit");
 
-				var input = Console.ReadLine();
+                var input = Console.ReadLine();
 
-				switch (input)
-				{
-                    case "1":
-                        DeployMainContractLocal().Wait();
-                        break;
+                switch (input)
+                {
+                    //case "1":
+                    //    DeployMainContractLocal().Wait();
+                    //    break;
                     case "2":
-						DeployMainExchangeContract().Wait();
-						break;
-					case "3":
-						DeployCoinContract().Wait();
-						break;
-					case "4":
-						DeployTransferContract().Wait();
-						break;
-					case "0":
-						exit = true;
-						break;
-					default:
-						Console.WriteLine("Bad input!");
-						continue;
-				}
+                        DeployMainExchangeContract().Wait();
+                        break;
+                    case "3":
+                        DeployCoinContract().Wait();
+                        break;
+                    case "4":
+                        DeployTokenTransferContract().Wait();
+                        break;
+                    case "0":
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Bad input!");
+                        continue;
+                }
 
-				Console.WriteLine("Done!");
-			}
-		}
+                Console.WriteLine("Done!");
+            }
+        }
 
-		private static async Task DeployTransferContract()
-		{
-			Console.WriteLine("Begin transferContract deployment process");
+        private static async Task DeployTokenTransferContract()
+        {
+            Console.WriteLine("Begin tokenTransferContract deployment process");
 
+            try
+            {
+                string transferName = null;
+                bool exit = false;
+                Console.WriteLine("Choose transfer contract type:");
+                Console.WriteLine("1 - Ethereum transfer contract");
+                Console.WriteLine("2 - Token transfer contract");
+                while (!exit)
+                { 
 
-			try
-			{
-				var settings = GetCurrentSettings();
+                    var input = Console.ReadLine();
+                    switch (input)
+                    {
+                        case "1":
+                            transferName = "TokenTransferContract";
+                            exit = true;
+                            break;
 
-				var abi = GetFileContent("TransferContract.abi");
-				var bytecode = GetFileContent("TransferContract.bin");
+                        case "2":
+                            transferName = "EthTransferContract";
+                            exit = true;
+                            break;
+                        default: 
+                            break;
+                    }
+                 }
 
-				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode);
-				settings.TransferContract = new EthereumContract
-				{
-					Address = contractAddress,
-					Abi = abi,
-					ByteCode = bytecode
-				};
-				Console.WriteLine("New contract: " + contractAddress);
-				SaveSettings(settings);
+                Console.WriteLine("Write Client Address (you have one attempt):");
+                var clientAddress = Console.ReadLine();
 
-				Console.WriteLine("Contract address stored in generalsettings.json file");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Action failed!");
-				Console.WriteLine(e.Message);
-			}
-		}
+                var settings = GetCurrentSettings();
 
-		static async Task DeployMainContractLocal()
-		{
-			Console.WriteLine("Begin contract deployment process");
-			try
-			{
-				var settings = GetCurrentSettings();
+                var abi = GetFileContent($"{transferName}.abi");
+                var bytecode = GetFileContent($"{transferName}.bin");
 
-				string contractAddress = await new ContractService(settings, null).CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
+                string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, clientAddress);
+                settings.TransferContract = new EthereumContract
+                {
+                    Address = contractAddress,
+                    Abi = abi,
+                    ByteCode = bytecode
+                };
+                Console.WriteLine("New contract: " + contractAddress);
+                SaveSettings(settings);
 
-				settings.MainContract.Address = contractAddress;
+                Console.WriteLine("Contract address stored in generalsettings.json file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Action failed!");
+                Console.WriteLine(e.Message);
+            }
+        }
 
-				Console.WriteLine("New contract: " + contractAddress);
+        static async Task DeployMainContractLocal()
+        {
+            Console.WriteLine("Begin contract deployment process");
+            try
+            {
+                var settings = GetCurrentSettings();
 
-				SaveSettings(settings);
+                string contractAddress = await new ContractService(settings, null).CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
 
-				Console.WriteLine("Contract address stored in generalsettings.json file");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Action failed!");
-				Console.WriteLine(e.Message);
-			}
-		}
+                settings.MainContract.Address = contractAddress;
 
-		static async Task DeployCoinContract()
-		{
-			string name, path;
-			do
-			{
-				Console.WriteLine("Enter coin name:");
-				name = Console.ReadLine();
-			} while (string.IsNullOrWhiteSpace(name));
-			do
-			{
-				Console.WriteLine("Enter coin file name:");
-				path = Console.ReadLine();
-			} while (string.IsNullOrWhiteSpace(path) || !File.Exists(GetFilePath(path + ".abi")));
+                Console.WriteLine("New contract: " + contractAddress);
 
-			Console.WriteLine("Begin coin contract deployment process");
-			try
-			{
-				var abi = GetFileContent(path + ".abi");
-				var bytecode = GetFileContent(path + ".bin");
-				var settings = GetCurrentSettings();
-				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
-				if (settings.CoinContracts == null)
-					settings.CoinContracts = new Dictionary<string, EthereumContract>();
+                SaveSettings(settings);
 
-				settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
+                Console.WriteLine("Contract address stored in generalsettings.json file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Action failed!");
+                Console.WriteLine(e.Message);
+            }
+        }
 
-				Console.WriteLine("New coin contract: " + contractAddress);
+        static async Task DeployCoinContract()
+        {
+            string name, path;
+            do
+            {
+                Console.WriteLine("Enter coin name:");
+                name = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(name));
+            do
+            {
+                Console.WriteLine("Enter coin file name:");
+                path = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(path) || !File.Exists(GetFilePath(path + ".abi")));
 
-				SaveSettings(settings);
+            Console.WriteLine("Begin coin contract deployment process");
+            try
+            {
+                var abi = GetFileContent(path + ".abi");
+                var bytecode = GetFileContent(path + ".bin");
+                var settings = GetCurrentSettings();
+                string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
+                if (settings.CoinContracts == null)
+                    settings.CoinContracts = new Dictionary<string, EthereumContract>();
 
-				Console.WriteLine("Contract address stored in generalsettings.json file");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Action failed!");
-				Console.WriteLine(e.Message);
-			}
-		}
+                settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
 
-		static async Task DeployMainExchangeContract()
-		{
-			Console.WriteLine("Begin main exchange contract deployment process");
-			try
-			{
-				var settings = GetCurrentSettings();
-				var abi = GetFileContent("MainExchange.abi");
-				var bytecode = GetFileContent("MainExchange.bin");
-				string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode);
+                Console.WriteLine("New coin contract: " + contractAddress);
 
-				settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
-				Console.WriteLine("New main exchange contract: " + contractAddress);
+                SaveSettings(settings);
 
-				SaveSettings(settings);
+                Console.WriteLine("Contract address stored in generalsettings.json file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Action failed!");
+                Console.WriteLine(e.Message);
+            }
+        }
 
-				Console.WriteLine("Contract address stored in generalsettings.json file");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Action failed!");
-				Console.WriteLine(e.Message);
-			}
-		}
+        static async Task DeployMainExchangeContract()
+        {
+            Console.WriteLine("Begin main exchange contract deployment process");
+            try
+            {
+                var settings = GetCurrentSettings();
+                var abi = GetFileContent("MainExchange.abi");
+                var bytecode = GetFileContent("MainExchange.bin");
+                string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode);
 
-		static BaseSettings GetCurrentSettings()
-		{
-			var json = File.ReadAllText(GetSettingsPath());
-			var settings = JsonConvert.DeserializeObject<BaseSettings>(json);
-			return settings;
-		}
+                settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                Console.WriteLine("New main exchange contract: " + contractAddress);
 
-		static void SaveSettings(BaseSettings settings)
-		{
-			File.WriteAllText(GetSettingsPath(), JsonConvert.SerializeObject(settings, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
-		}
+                SaveSettings(settings);
 
-		static string GetFilePath(string fileName)
-		{
-#if DEBUG
-			return Path.Combine("contracts", "bin", fileName);
-#else
-			return Path.Combine("contracts", "bin", fileName);
-#endif
-		}
+                Console.WriteLine("Contract address stored in generalsettings.json file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Action failed!");
+                Console.WriteLine(e.Message);
+            }
+        }
 
-		static string GetFileContent(string fileName)
-		{
-			return File.ReadAllText(GetFilePath(fileName));
-		}
+        static BaseSettings GetCurrentSettings()
+        {
+            var json = File.ReadAllText(GetSettingsPath());
+            var settings = JsonConvert.DeserializeObject<BaseSettings>(json);
+            return settings;
+        }
 
-		static string GetSettingsPath()
-		{
-#if DEBUG
-			return "..\\..\\settings\\generalsettings.json";
-#else
-			return "generalsettings.json";
-#endif
-		}
-	}
+        static void SaveSettings(BaseSettings settings)
+        {
+            File.WriteAllText(GetSettingsPath(), JsonConvert.SerializeObject(settings, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+
+        static string GetFilePath(string fileName)
+        {
+            return Path.Combine("compiled", fileName);
+        }
+
+        static string GetFileContent(string fileName)
+        {
+            return File.ReadAllText(GetFilePath(fileName));
+        }
+
+        static string GetSettingsPath()
+        {
+            return "generalsettings.json";
+        }
+    }
 }
+
+//eth.sendTransaction({from:eth.coinbase, to:0xdd436bac8e76da5a9a73b1999c319dde2da85f8d, value: web3.toWei(0.05, "ether")}) 

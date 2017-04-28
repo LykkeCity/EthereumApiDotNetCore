@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Log;
 using Core.Repositories;
 using Core.Settings;
 using EthereumJobs.Config;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Services;
+using Common.Log;
 
 // ReSharper disable once CheckNamespace
 namespace Tests
@@ -85,7 +85,7 @@ namespace Tests
             foreach (var item in settings.CoinContracts)
                 await coinRepo.InsertOrReplace(new Coin
                 {
-                    AssetAddress = item.Value.Address,
+                    AdapterAddress = item.Value.Address,
                     Id = item.Key,
                     Multiplier = testSetting.CoinContracts[item.Key].Multiplier,
                     BlockchainDepositEnabled = testSetting.CoinContracts[item.Key].Payable,

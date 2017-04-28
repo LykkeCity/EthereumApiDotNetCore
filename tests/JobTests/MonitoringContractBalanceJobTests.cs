@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.ContractEvents;
-using Core.Log;
 using Core.Repositories;
 using EthereumJobs.Job;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using Services;
+using Common.Log;
 
 namespace Tests.JobTests
 {

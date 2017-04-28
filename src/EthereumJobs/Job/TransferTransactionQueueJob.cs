@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Log;
 using Core.Timers;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Job
 {
@@ -32,7 +32,7 @@ namespace EthereumJobs.Job
 			}
 			catch (Exception ex)
 			{
-				await _log.WriteError("EthereumWebJob", "TransferTransactionQueue", "", ex);
+				await _log.WriteErrorAsync("EthereumWebJob", "TransferTransactionQueue", "", ex);
 			}
 		}
 	}

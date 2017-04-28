@@ -14,112 +14,108 @@ namespace ApiRunner
     {
         public static void Main(string[] args)
         {
-			var arguments = args.Select(t => t.Split('=')).ToDictionary(spl => spl[0].Trim('-'), spl => spl[1]);
+            var arguments = args.Select(t => t.Split('=')).ToDictionary(spl => spl[0].Trim('-'), spl => spl[1]);
 
-			Console.Clear();
-			Console.Title = "Ethereum Self-hosted API - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+            Console.Clear();
+            Console.Title = "Ethereum Self-hosted API - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
 
-			var settings = GetSettings(arguments);
-			if (settings == null)
-			{
-				Console.WriteLine("Press any key to exit...");
-				Console.ReadKey();
-				return;
-			}
-			
-			try
-			{
-				CheckSettings(settings);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine("Press any key to exit...");
-				Console.ReadKey();
-				return;
-			}
+            var settings = GetSettings(arguments);
+            if (settings == null)
+            {
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-			var url = $"http://*:{arguments["port"]}";
+            try
+            {
+                CheckSettings(settings);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-			var host = new WebHostBuilder()
-			   .UseKestrel()
-			   .UseUrls(url)
-			   .UseContentRoot(Directory.GetCurrentDirectory())
-			   .UseIISIntegration()
-			   .ConfigureServices(collection => collection.AddSingleton<IBaseSettings>(settings))
-			   .UseStartup<Startup>()
-			   .Build();
+            var url = $"http://*:{arguments["port"]}";
 
-			Console.WriteLine($"Web Server is running - {url}");
-			Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+            var host = new WebHostBuilder()
+               .UseKestrel()
+               .UseUrls(url)
+               .UseContentRoot(Directory.GetCurrentDirectory())
+               .UseIISIntegration()
+               .ConfigureServices(collection => collection.AddSingleton<IBaseSettings>(settings))
+               .UseStartup<Startup>()
+               .Build();
 
-			host.Run();
-		}
+            Console.WriteLine($"Web Server is running - {url}");
+            Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
 
-		static BaseSettings GetSettings(Dictionary<string, string> arguments)
-		{
-			var settingsData = ReadSettingsFile();
+            host.Run();
+        }
 
-			if (string.IsNullOrWhiteSpace(settingsData))
-			{
-				Console.WriteLine("Please, provide generalsettings.json file");
-				return null;
-			}
+        static BaseSettings GetSettings(Dictionary<string, string> arguments)
+        {
+            var settingsData = ReadSettingsFile();
 
-
-			if (!arguments.ContainsKey("port"))
-			{
-				Console.WriteLine("Please, specify command line parameters:");
-				Console.WriteLine("-port=<port> # port for web server");
-				return null;
-			}
-
-			var settings = GeneralSettingsReader.ReadSettingsFromData<BaseSettings>(settingsData);
-
-			return settings;
-		}
+            if (string.IsNullOrWhiteSpace(settingsData))
+            {
+                Console.WriteLine("Please, provide generalsettings.json file");
+                return null;
+            }
 
 
-		static string ReadSettingsFile()
-		{
-#if DEBUG
-			return File.ReadAllText(@"..\..\settings\generalsettings.json");
-#else
-			return File.ReadAllText("generalsettings.json");
-#endif
-		}
+            if (!arguments.ContainsKey("port"))
+            {
+                Console.WriteLine("Please, specify command line parameters:");
+                Console.WriteLine("-port=<port> # port for web server");
+                return null;
+            }
+
+            var settings = GeneralSettingsReader.ReadSettingsFromData<BaseSettings>(settingsData);
+
+            return settings;
+        }
 
 
-		static void CheckSettings(BaseSettings settings)
-		{
-			if (string.IsNullOrWhiteSpace(settings.EthereumMainAccount))
-				throw new Exception("EthereumMainAccount is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumMainAccountPassword))
-				throw new Exception("EthereumMainAccountPassword is missing");
-			if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
-				throw new Exception("MainContract.Address is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumPrivateAccount))
-				throw new Exception("EthereumPrivateAccount is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumUrl))
-				throw new Exception("EthereumUrl is missing");
+        static string ReadSettingsFile()
+        {
+            return File.ReadAllText("generalsettings.json");
+        }
 
-			if (string.IsNullOrWhiteSpace(settings.Db?.DataConnString))
-				throw new Exception("DataConnString is missing");
 
-			if (string.IsNullOrWhiteSpace(settings.Db?.LogsConnString))
-				throw new Exception("LogsConnString is missing");
+        static void CheckSettings(BaseSettings settings)
+        {
+            if (string.IsNullOrWhiteSpace(settings.EthereumMainAccount))
+                throw new Exception("EthereumMainAccount is missing");
+            if (string.IsNullOrWhiteSpace(settings.EthereumMainAccountPassword))
+                throw new Exception("EthereumMainAccountPassword is missing");
+            if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
+                throw new Exception("MainContract.Address is missing");
+            //if (string.IsNullOrWhiteSpace(settings.EthereumPrivateAccount))
+            //    throw new Exception("EthereumPrivateAccount is missing");
+            if (string.IsNullOrWhiteSpace(settings.EthereumUrl))
+                throw new Exception("EthereumUrl is missing");
 
-			if (string.IsNullOrWhiteSpace(settings.Db?.DictsConnString))
-				throw new Exception("DictsConnString is missing");
+            if (string.IsNullOrWhiteSpace(settings.Db?.DataConnString))
+                throw new Exception("DataConnString is missing");
 
-			if (string.IsNullOrWhiteSpace(settings.Db?.SharedConnString))
-				throw new Exception("SharedConnString is missing");
+            if (string.IsNullOrWhiteSpace(settings.Db?.LogsConnString))
+                throw new Exception("LogsConnString is missing");
+
+            if (string.IsNullOrWhiteSpace(settings.Db?.DictsConnString))
+                throw new Exception("DictsConnString is missing");
+
+            if (string.IsNullOrWhiteSpace(settings.Db?.SharedConnString))
+                throw new Exception("SharedConnString is missing");
 
             if (string.IsNullOrWhiteSpace(settings.Db?.SharedTransactionConnString))
                 throw new Exception("SharedTransactionConnString is missing");
 
-            if (string.IsNullOrWhiteSpace(settings.Db?.EthereumHandlerConnString))
-                throw new Exception("EthereumHandlerConnString is missing");
+            //if (string.IsNullOrWhiteSpace(settings.Db?.EthereumHandlerConnString))
+            //    throw new Exception("EthereumHandlerConnString is missing");
 
             if (string.IsNullOrWhiteSpace(settings.MainContract?.Abi))
                 throw new Exception("MainContract abi is invalid");
@@ -138,5 +134,5 @@ namespace ApiRunner
             if (string.IsNullOrWhiteSpace(settings.MainExchangeContract?.Address))
                 throw new Exception("MainExchangeContract.Address is missing");
         }
-	}
+    }
 }

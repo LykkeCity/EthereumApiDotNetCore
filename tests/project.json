@@ -4,10 +4,11 @@
   "dependencies": {
     "NUnit": "3.4.1",
     "Microsoft.Extensions.DependencyInjection": "1.0.0",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
     "dotnet-test-nunit": "3.4.0-beta-2",
     "EthereumJobs": "1.0.0",
-    "Moq": "4.6.38-alpha"
+    "Moq": "4.6.38-alpha",
+    "Microsoft.NETCore.App": "1.1.1"
   },
 
   "testRunner": "nunit",

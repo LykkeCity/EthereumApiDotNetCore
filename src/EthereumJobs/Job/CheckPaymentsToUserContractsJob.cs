@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core.ContractEvents;
-using Core.Log;
 using Core.Timers;
 using Core.Utils;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Job
 {
@@ -41,7 +41,7 @@ namespace EthereumJobs.Job
 				if (_shouldCreateFilter)
 				{
 					_filter = await _contractService.CreateFilterEventForUserContractPayment();
-					await _logger.WriteInfo("CheckPaymentsToUserContractsJob", "Execute", "", "Recreate payment filter");
+					await _logger.WriteInfoAsync("CheckPaymentsToUserContractsJob", "Execute", "", "Recreate payment filter");
 					_shouldCreateFilter = false;
 				}
 

@@ -4,9 +4,9 @@
 	"dependencies": {
 		"Core": "1.0.0",
 		"AzureRepositories": "1.0.0",
-		"Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
 		"NETStandard.Library": "1.6.0",
-		"Nethereum.Web3": "1.0.0"
+    "Nethereum.Web3": "1.0.6"
 	},
 
 	"frameworks": {

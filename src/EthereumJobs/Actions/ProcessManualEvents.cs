@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Log;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Actions
 {
@@ -29,7 +29,7 @@ namespace EthereumJobs.Actions
 			}
 			catch (Exception ex)
 			{
-				await _logger.WriteError("EthereumJob", "ProcessManualEvents", "", ex);
+				await _logger.WriteErrorAsync("EthereumJob", "ProcessManualEvents", "", ex);
 			}
 		}
 	}

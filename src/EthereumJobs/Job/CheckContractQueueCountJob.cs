@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core.Log;
 using Core.Settings;
 using Core.Timers;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Job
 {
@@ -67,7 +67,7 @@ namespace EthereumJobs.Job
 				{
 					string message =
 						$"Main account {_settings.EthereumMainAccount} balance is less that {_settings.MainAccountMinBalance} ETH !";
-					await _logger.WriteWarning("EthereumWebJob", "InternalBalanceCheck", "", message);
+					await _logger.WriteWarningAsync("EthereumWebJob", "InternalBalanceCheck", "", message);
 
 					if (!_balanceWarningSended)
 						_emailNotifier.Warning("Ethereum worker", message);
@@ -82,7 +82,7 @@ namespace EthereumJobs.Job
 			}
 			catch (Exception e)
 			{
-				await _logger.WriteError("EthereumWebJob", "InternalBalanceCheck", "", e);
+				await _logger.WriteErrorAsync("EthereumWebJob", "InternalBalanceCheck", "", e);
 			}
 		}
 	}

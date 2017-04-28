@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
-using Core.Log;
 using Newtonsoft.Json;
+using Common.Log;
+using AzureStorage.Queue;
 
 namespace Services
 {
@@ -38,7 +38,7 @@ namespace Services
 
 			var trHash = await _paymentService.TransferFromUserContract(obj.Address, obj.Amount);
 
-			await _logger.WriteInfo("ManualEventsService", "ProcessItem", "", $"Transfer manual payment from {obj.Address}, amount: {obj.Amount} ETH, hash: {trHash}");
+			await _logger.WriteInfoAsync("ManualEventsService", "ProcessItem", "", $"Transfer manual payment from {obj.Address}, amount: {obj.Amount} ETH, hash: {trHash}");
 
 			await _queue.FinishRawMessageAsync(item);
 

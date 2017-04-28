@@ -8,41 +8,39 @@ using EthereumJobs.Config;
 
 namespace EthereumJobs
 {
-	public class JobApp
-	{
-		public IServiceProvider Services { get; set; }
+    public class JobApp
+    {
+        public IServiceProvider Services { get; set; }
 
-		public async void Run(IBaseSettings settings)
-		{
-			IServiceCollection collection = new ServiceCollection();
-			collection.InitJobDependencies(settings);
+        public async void Run(IBaseSettings settings)
+        {
+            IServiceCollection collection = new ServiceCollection();
+            collection.InitJobDependencies(settings);
 
-			Services = collection.BuildServiceProvider();
+            Services = collection.BuildServiceProvider();
 
-			// start monitoring
-			Services.GetService<MonitoringJob>().Start();
+            // start monitoring
+            Services.GetService<MonitoringJob>().Start();
 
-			// restore contract payment events after service shutdown
-			await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
-			await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
+            // restore contract payment events after service shutdown
+            await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
+            await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
 
-			Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
+            Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
-			RunJobs();
-		}
+            RunJobs();
+        }
 
-		public void RunJobs()
-		{
-			Services.GetService<CheckContractQueueCountJob>().Start();
-			Services.GetService<CheckPaymentsToUserContractsJob>().Start();
-			Services.GetService<RefreshContractQueueJob>().Start();
-			Services.GetService<TransferTransactionQueueJob>().Start();
-			Services.GetService<MonitoringContractBalance>().Start();
-
-			Services.GetService<ListenCoinContactsEvents>().Start();
-			Services.GetService<MonitoringCoinTransactionJob>().Start();
-			Services.GetService<PingContractsJob>().Start();
-
-		}
-	}
+        public void RunJobs()
+        {
+            Services.GetService<CheckContractQueueCountJob>().Start();
+            Services.GetService<CheckPaymentsToUserContractsJob>().Start();
+            Services.GetService<RefreshContractQueueJob>().Start();
+            Services.GetService<TransferTransactionQueueJob>().Start();
+            Services.GetService<MonitoringContractBalance>().Start();
+            Services.GetService<ListenCoinContactsEvents>().Start();
+            Services.GetService<MonitoringCoinTransactionJob>().Start();
+            Services.GetService<PingContractsJob>().Start();
+        }
+    }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core.Exceptions;
-using Core.Log;
 using Core.Timers;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Job
 {
@@ -41,7 +41,7 @@ namespace EthereumJobs.Job
 				}
 				catch (Exception e)
 				{
-					await _logger.WriteError("EthereumWebJob", "RefreshQueue", "", e);
+					await _logger.WriteErrorAsync("EthereumWebJob", "RefreshQueue", "", e);
 				}
 			}
 		}

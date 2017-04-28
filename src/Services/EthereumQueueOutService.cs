@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
-using Core.Log;
 using Newtonsoft.Json;
+using AzureStorage.Queue;
+using Common.Log;
 
 namespace Services
 {
@@ -24,7 +24,7 @@ namespace Services
 		}
 
 		/// <summary>
-		/// Sends event for ethereum poayment to azure queue
+		/// Sends event for ethereum payment to azure queue
 		/// </summary>
 		/// <param name="userContract"></param>
 		/// <param name="amount"></param>
@@ -46,7 +46,7 @@ namespace Services
 			}
 			catch (Exception e)
 			{
-				await _logger.WriteError("ApiCallService", "FirePaymentEvent", $"Contract : {userContract}, amount: {amount}", e);
+				await _logger.WriteErrorAsync("ApiCallService", "FirePaymentEvent", $"Contract : {userContract}, amount: {amount}", e);
 			}
 		}
 	}

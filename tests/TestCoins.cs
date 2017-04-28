@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Repositories;
 using Core.Settings;
@@ -22,6 +21,7 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
 using Services.Coins.Models;
+using AzureStorage.Queue;
 
 namespace Tests
 {
@@ -79,7 +79,7 @@ namespace Tests
 			var guid = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-							colorCoin.AssetAddress.HexToByteArray().ToHex() +
+							colorCoin.AdapterAddress.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amount.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -126,7 +126,7 @@ namespace Tests
 			var guid = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-							colorCoin.AssetAddress.HexToByteArray().ToHex() +
+							colorCoin.AdapterAddress.HexToByteArray().ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amount.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -188,8 +188,8 @@ namespace Tests
 			var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
-							colorCoin.AssetAddress.HexToByteArray().ToHex() +
-							ethCoin.AssetAddress.HexToByteArray().ToHex() +
+							colorCoin.AdapterAddress.HexToByteArray().ToHex() +
+							ethCoin.AdapterAddress.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
 							EthUtils.BigIntToArrayWithPadding(swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 
@@ -235,7 +235,7 @@ namespace Tests
 			var guid2 = Guid.NewGuid();
 
 			var strForHash = EthUtils.GuidToByteArray(guid1).ToHex() +
-						colorCoin.AssetAddress.HexToByteArray().ToHex() +
+						colorCoin.AdapterAddress.HexToByteArray().ToHex() +
 						ClientA.HexToByteArray().ToHex() +
 						ClientB.HexToByteArray().ToHex() +
 						EthUtils.BigIntToArrayWithPadding(amountColorOut.ToBlockchainAmount(colorCoin.Multiplier)).ToHex();
@@ -243,7 +243,7 @@ namespace Tests
 
 
 			var strForHash2 = EthUtils.GuidToByteArray(guid2).ToHex() +
-					ethCoin.AssetAddress.HexToByteArray().ToHex() +
+					ethCoin.AdapterAddress.HexToByteArray().ToHex() +
 					ClientB.HexToByteArray().ToHex() +
 					ClientA.HexToByteArray().ToHex() +
 					EthUtils.BigIntToArrayWithPadding(amountEthOut.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
@@ -257,8 +257,8 @@ namespace Tests
 			var strForHash3 = EthUtils.GuidToByteArray(swapGuid).ToHex() +
 							ClientA.HexToByteArray().ToHex() +
 							ClientB.HexToByteArray().ToHex() +
-							colorCoin.AssetAddress.HexToByteArray().ToHex() +
-							ethCoin.AssetAddress.HexToByteArray().ToHex() +
+							colorCoin.AdapterAddress.HexToByteArray().ToHex() +
+							ethCoin.AdapterAddress.HexToByteArray().ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amountColorSwap.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
 							EthUtils.BigIntToArrayWithPadding(amountEthSwap.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 			var hash3 = new Sha3Keccack().CalculateHash(strForHash3.HexToByteArray());
@@ -290,17 +290,17 @@ namespace Tests
 					messages.Add(JsonConvert.DeserializeObject<CoinContractPublicEvent>(msg.AsString));
 			}
 
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColor && o.Caller == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == colorCoin.AdapterAddress && o.Amount == amountColor && o.Caller == ClientA),
 				"not found cashin1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEth && o.Caller == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashInEvent && o.Address == ethCoin.AdapterAddress && o.Amount == amountEth && o.Caller == ClientB),
 				"not found cashin2");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColorOut && o.From == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == colorCoin.AdapterAddress && o.Amount == amountColorOut && o.From == ClientA),
 				"not found cashout1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEthOut && o.From == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.CashOutEvent && o.Address == ethCoin.AdapterAddress && o.Amount == amountEthOut && o.From == ClientB),
 				"not found cashout2");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == colorCoin.AssetAddress && o.Amount == amountColorSwap && o.From == ClientA && o.To == ClientB),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == colorCoin.AdapterAddress && o.Amount == amountColorSwap && o.From == ClientA && o.To == ClientB),
 				"not found swap1");
-			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == ethCoin.AssetAddress && o.Amount == amountEthSwap && o.From == ClientB && o.To == ClientA),
+			Assert.IsTrue(messages.Any(o => o.EventName == Constants.TransferEvent && o.Address == ethCoin.AdapterAddress && o.Amount == amountEthSwap && o.From == ClientB && o.To == ClientA),
 				"not found swap2");
 		}
 

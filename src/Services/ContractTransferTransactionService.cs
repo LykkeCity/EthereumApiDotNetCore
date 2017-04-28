@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
-using Core.Log;
 using Core.Repositories;
 using Core.Settings;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using Services.Coins;
+using AzureStorage.Queue;
+using Common.Log;
 
 namespace Services
 {
@@ -45,7 +45,8 @@ namespace Services
         private readonly IQueueExt _queue;
         private readonly IUserContractRepository _userContractRepository;
 
-        public ContractTransferTransactionService(Func<string, IQueueExt> queueFactory, IEthereumQueueOutService queueOutService,
+        public ContractTransferTransactionService(Func<string, IQueueExt> queueFactory,
+            IEthereumQueueOutService queueOutService,
             IEthereumTransactionService ethereumTransactionService,
             ILog logger,
             ICoinContractService coinContractService,
@@ -83,13 +84,13 @@ namespace Services
                 await _queueOutService.FirePaymentEvent(contractTransferTr.Contract, contractTransferTr.Amount,
                     contractTransferTr.TransactionHash);
                 await
-                    _logger.WriteInfo("ContractTransferTransactionService", "CompleteTransaction", "",
+                    _logger.WriteInfoAsync("ContractTransferTransactionService", "CompleteTransaction", "",
                         $"Message sended to ethereum-queue-out : Event from {contractTransferTr.Contract}. Transaction: {contractTransferTr.TransactionHash}");
             }
             else
             {
                 await
-                    _logger.WriteInfo("ContractTransferTransactionService", "CompleteTransaction", "",
+                    _logger.WriteInfoAsync("ContractTransferTransactionService", "CompleteTransaction", "",
                         $"Transaction failed! : Event from {contractTransferTr.Contract}. Transaction: {contractTransferTr.TransactionHash}");
             }
 
@@ -104,12 +105,12 @@ namespace Services
                 var contractEntity = await _userContractRepository.GetUserContractAsync(contractTransferTr.Contract);
 
                 var tr = await _coinContractService.CashinOverTransferContract(new Guid(item.Id), _baseSettings.EthCoin, contractEntity.UserWallet, contractTransferTr.Amount);
-                await _logger.WriteInfo("ContractTransferTransactionService", "TransferToEthCoinContract", "",
+                await _logger.WriteInfoAsync("ContractTransferTransactionService", "TransferToEthCoinContract", "",
                     $"Transfered {contractTransferTr.Amount} Eth from transfer contract to \"{_baseSettings.EthCoin}\" by transaction \"{tr}\". Receiver = {contractEntity.UserWallet}");
             }
             catch (Exception e)
             {
-                await _logger.WriteError("ContractTransferTransactionService", "TransferToEthCoinContract",
+                await _logger.WriteErrorAsync("ContractTransferTransactionService", "TransferToEthCoinContract",
                             $"{contractTransferTr.Contract} - {contractTransferTr.TransactionHash}", e);
             }
         }

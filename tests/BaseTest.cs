@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureRepositories.Azure.Queue;
 using Core;
 using Core.Repositories;
 using NUnit.Framework;
 using Microsoft.Extensions.DependencyInjection;
+using AzureStorage.Queue;
 
 namespace Tests
 {

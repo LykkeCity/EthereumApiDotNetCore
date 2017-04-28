@@ -1,13 +1,13 @@
 ﻿using System;
-using AzureRepositories.Azure.Queue;
-using AzureRepositories.Azure.Tables;
 using AzureRepositories.Log;
 using AzureRepositories.Repositories;
 using Core;
-using Core.Log;
 using Core.Repositories;
 using Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using AzureStorage.Tables;
+using AzureStorage.Queue;
+using Common.Log;
 
 namespace AzureRepositories
 {

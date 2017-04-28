@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Log;
 using Core.Repositories;
 using EthereumJobs.Job;
 using Services;
+using Common.Log;
 
 namespace EthereumJobs.Actions
 {
@@ -42,7 +42,7 @@ namespace EthereumJobs.Actions
 			}
 			catch (Exception e)
 			{
-				await _logger.WriteError("CatchOldUserContractEvents", "Start", "", e);
+				await _logger.WriteErrorAsync("CatchOldUserContractEvents", "Start", "", e);
 			}
 		}
 	}
