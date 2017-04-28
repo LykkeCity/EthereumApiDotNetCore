@@ -32,10 +32,6 @@ namespace AzureRepositories
                 new AzureTableStorage<MonitoringEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.MonitoringTable,
                     provider.GetService<ILog>())));
 
-            services.AddSingleton<IUserContractRepository>(provider => new UserContractRepository(
-                new AzureTableStorage<UserContractEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserContractsTable,
-                    provider.GetService<ILog>())));
-
             services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
                 new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.AppSettingsTable,
                     provider.GetService<ILog>())));

@@ -167,7 +167,7 @@ namespace Services.Coins
             var coinDb = await _coinRepository.GetCoin(coin);
             if (!coinDb.BlockchainDepositEnabled)
                 throw new Exception("Coin must be payable");
-            var contract = web3.Eth.GetContract(_settings.TransferContract.Abi, _settings.TransferContract.Address);
+            var contract = web3.Eth.GetContract(_settings.TokenTransferContract.Abi, _settings.TokenTransferContract.Address);
             var cashin = contract.GetFunction("cashin");
 
             var blockchainAmount = amount.ToBlockchainAmount(coinDb.Multiplier);

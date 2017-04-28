@@ -97,7 +97,7 @@ namespace ContractBuilder
                 var bytecode = GetFileContent($"{transferName}.bin");
 
                 string contractAddress = await new ContractService(settings, null).CreateContract(abi, bytecode, clientAddress);
-                settings.TransferContract = new EthereumContract
+                settings.TokenTransferContract = new EthereumContract
                 {
                     Address = contractAddress,
                     Abi = abi,
