@@ -7,6 +7,7 @@ using Core.Repositories;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;
+using AzureStorage.Tables.Templates.Index;
 
 namespace AzureRepositories.Repositories
 {
@@ -47,15 +48,27 @@ namespace AzureRepositories.Repositories
     public class TransferContractRepository : ITransferContractRepository
     {
         private readonly INoSQLTableStorage<TransferContractEntity> _table;
+        private readonly INoSQLTableStorage<AzureIndex> _userAdapterIndex;
+        private const string _indexPartition = "UserAdapterIndex";
 
-        public TransferContractRepository(INoSQLTableStorage<TransferContractEntity> table)
+        public TransferContractRepository(INoSQLTableStorage<TransferContractEntity> table, INoSQLTableStorage<AzureIndex> userAdapterIndex)
         {
             _table = table;
+            _userAdapterIndex = userAdapterIndex;
         }
 
         public async Task<ITransferContract> GetAsync(string contractAddress)
         {
             ITransferContract result = await _table.GetDataAsync(TransferContractEntity.GenerateParitionKey(), contractAddress);
+
+            return result;
+        }
+
+        public async Task<ITransferContract> GetAsync(string userAddress, string coinAdapterAddress)
+        {
+            var index = await _userAdapterIndex.GetDataAsync(_indexPartition,
+                GenerateUserAdapterRowKey(userAddress, coinAdapterAddress));
+            ITransferContract result = await _table.GetDataAsync(index);
 
             return result;
         }
@@ -74,8 +87,16 @@ namespace AzureRepositories.Repositories
         public async Task SaveAsync(ITransferContract transferContract)
         {
             var entity = TransferContractEntity.Create(transferContract);
+            var index = new AzureIndex(_indexPartition,
+                GenerateUserAdapterRowKey(entity.UserAddress, entity.CoinAdapterAddress), entity);
 
             await _table.InsertAsync(entity);
+            await _userAdapterIndex.InsertOrReplaceAsync(index);
+        }
+
+        private static string GenerateUserAdapterRowKey(string userAddress, string coinAdapterAddress)
+        {
+            return $"{userAddress}_{coinAdapterAddress}";
         }
     }
 }

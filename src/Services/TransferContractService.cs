@@ -28,9 +28,16 @@ namespace Services
             _settings = settings;
         }
 
-        public async Task CreateTransferContract(string userAddress, string coinAdapterAddress,
+        public async Task<string> CreateTransferContract(string userAddress, string coinAdapterAddress,
             string externalTokenAddress, bool containsEth)
         {
+            ITransferContract contract = await GetTransferContract(userAddress, coinAdapterAddress);
+
+            if (contract != null)
+            {
+                throw new Exception($"Transfer account for {userAddress} - {coinAdapterAddress} already exists");
+            }
+
             ICoin coin = await _coinRepository.GetCoinByAddress(coinAdapterAddress);
 
             if (coin == null)
@@ -64,6 +71,15 @@ namespace Services
                 ExternalTokenAddress = externalTokenAddress,
                 UserAddress = userAddress,
             });
+
+            return transferContractAddress;
+        }
+
+        public async Task<ITransferContract> GetTransferContract(string userAddress, string coinAdapterAddress)
+        {
+            ITransferContract contract = await _transferContractRepository.GetAsync(userAddress, coinAdapterAddress);
+
+            return contract;
         }
 
         public async Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,

@@ -11,23 +11,35 @@ namespace Services
     {
         private readonly ICoinRepository _coinRepository;
         private readonly IContractService _contractService;
+        private readonly IEthereumContractRepository _ethereumContractRepository;
         private readonly BaseSettings _settings;
 
         public AssetContractService(BaseSettings settings,IContractService contractService, 
-            ITransferContractRepository transferContractRepository, ICoinRepository coinRepository)
+            ITransferContractRepository transferContractRepository, ICoinRepository coinRepository,
+            IEthereumContractRepository ethereumContractRepository)
         {
             _settings = settings;
             _contractService = contractService;
             _coinRepository = coinRepository;
+            _ethereumContractRepository = ethereumContractRepository;
         }
 
-        public async Task CreateCoinContract(ICoin coin, INewEthereumContract coinContract)
+        public async Task<string> CreateCoinContract(ICoin coin, INewEthereumContract coinContract)
         {
             string coinAdapterAddress = 
                 await _contractService.CreateContract(coinContract.Abi, 
                 coinContract.ByteCode, _settings.MainExchangeContract.Address);
             coin.AdapterAddress = coinAdapterAddress;
             await _coinRepository.InsertOrReplace(coin);
+
+            await _ethereumContractRepository.SaveAsync(new Core.Repositories.EthereumContract()
+            {
+                Abi = coinContract.Abi,
+                ByteCode = coinContract.ByteCode,
+                ContractAddress = coinAdapterAddress
+            });
+
+            return coinAdapterAddress;
         }
     }
 }

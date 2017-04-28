@@ -28,5 +28,6 @@ namespace Core.Repositories
         Task SaveAsync(ITransferContract transferContract);
         Task<ITransferContract> GetAsync(string transferContractAddress);
         Task ProcessAllAsync(Func<ITransferContract, Task> processAction);
+        Task<ITransferContract> GetAsync(string userAddress, string coinAdapterAddress);
     }
 }
