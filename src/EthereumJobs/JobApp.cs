@@ -37,10 +37,18 @@ namespace EthereumJobs
             //Services.GetService<CheckPaymentsToUserContractsJob>().Start();
             //Services.GetService<RefreshContractQueueJob>().Start();
             Services.GetService<TransferTransactionQueueJob>().Start();
-           // Services.GetService<MonitoringContractBalance>().Start();
+            Services.GetService<TransferTransactionQueueJob>().Start();
+            // Services.GetService<MonitoringContractBalance>().Start();
             Services.GetService<ListenCoinContactsEvents>().Start();
             Services.GetService<MonitoringCoinTransactionJob>().Start();
             Services.GetService<PingContractsJob>().Start();
+
+            #region NewJobs
+
+            Services.GetService<MonitoringTransferContracts>().Start();
+            Services.GetService<MonitoringTransferTransactions>().Start();
+
+            #endregion
         }
     }
 }

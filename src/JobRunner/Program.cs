@@ -14,95 +14,91 @@ namespace JobRunner
     {
         public static void Main(string[] args)
         {
-			Console.Clear();
-	        Console.Title = "Ethereum Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+            Console.Clear();
+            Console.Title = "Ethereum Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
 
-			var settings = GetSettings();
-			if (settings == null)
-			{
-				Console.WriteLine("Press any key to exit...");
-				Console.ReadKey();
-				return;
-			}
+            var settings = GetSettings();
+            if (settings == null)
+            {
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-			try
-			{
-				CheckSettings(settings);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine("Press any key to exit...");
-				Console.ReadKey();
-				return;
-			}
+            try
+            {
+                CheckSettings(settings);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-			Console.WriteLine("Settings checked!");
-			
-			try
-			{
-				var app = new JobApp();
-				app.Run(settings);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("cannot start jobs! Exception: " + e.Message);
-				Console.WriteLine("Press any key to exit...");
-				Console.ReadKey();
-				return;
-			}
+            Console.WriteLine("Settings checked!");
 
-			Console.WriteLine("Web job started");
-			Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+            try
+            {
+                var app = new JobApp();
+                app.Run(settings);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("cannot start jobs! Exception: " + e.Message);
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-			Console.WriteLine("Press 'q' to quit.");
+            Console.WriteLine("Web job started");
+            Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
 
-			while (Console.ReadLine() != "q") continue;
-		}
+            Console.WriteLine("Press 'q' to quit.");
 
-		static BaseSettings GetSettings()
-		{
-			var settingsData = ReadSettingsFile();
+            while (Console.ReadLine() != "q") continue;
+        }
 
-			if (string.IsNullOrWhiteSpace(settingsData))
-			{
-				Console.WriteLine("Please, provide generalsettings.json file");
-				return null;
-			}
+        static BaseSettings GetSettings()
+        {
+            var settingsData = ReadSettingsFile();
 
-			BaseSettings settings = GeneralSettingsReader.ReadSettingsFromData<BaseSettings>(settingsData);
+            if (string.IsNullOrWhiteSpace(settingsData))
+            {
+                Console.WriteLine("Please, provide generalsettings.json file");
+                return null;
+            }
 
-			return settings;
-		}
+            BaseSettings settings = GeneralSettingsReader.ReadSettingsFromData<BaseSettings>(settingsData);
 
-		static string ReadSettingsFile()
-		{
-			try
-			{
-#if DEBUG
-				return File.ReadAllText(@"..\..\settings\generalsettings.json");
-#else
-				return File.ReadAllText("generalsettings.json");
-#endif
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
-		}
+            return settings;
+        }
 
-		static void CheckSettings(BaseSettings settings)
-		{
-			if (string.IsNullOrWhiteSpace(settings.EthereumMainAccount))
-				throw new Exception("EthereumMainAccount is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumMainAccountPassword))
-				throw new Exception("EthereumMainAccountPassword is missing");
-			if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
-				throw new Exception("MainContract.Address is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumPrivateAccount))
-				throw new Exception("EthereumPrivateAccount is missing");
-			if (string.IsNullOrWhiteSpace(settings.EthereumUrl))
-				throw new Exception("EthereumUrl is missing");
+        static string ReadSettingsFile()
+        {
+            try
+            {
+                return File.ReadAllText("generalsettings.json");
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        static void CheckSettings(BaseSettings settings)
+        {
+            if (string.IsNullOrWhiteSpace(settings.EthereumMainAccount))
+                throw new Exception("EthereumMainAccount is missing");
+            if (string.IsNullOrWhiteSpace(settings.EthereumMainAccountPassword))
+                throw new Exception("EthereumMainAccountPassword is missing");
+            if (string.IsNullOrWhiteSpace(settings.MainContract?.Address))
+                throw new Exception("MainContract.Address is missing");
+            if (string.IsNullOrWhiteSpace(settings.EthereumPrivateAccount))
+                throw new Exception("EthereumPrivateAccount is missing");
+            if (string.IsNullOrWhiteSpace(settings.EthereumUrl))
+                throw new Exception("EthereumUrl is missing");
 
             if (string.IsNullOrWhiteSpace(settings.Db?.DataConnString))
                 throw new Exception("DataConnString is missing");
@@ -139,5 +135,5 @@ namespace JobRunner
             if (string.IsNullOrWhiteSpace(settings.MainExchangeContract?.Address))
                 throw new Exception("MainExchangeContract.Address is missing");
         }
-	}
+    }
 }
