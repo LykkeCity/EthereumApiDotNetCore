@@ -15,5 +15,8 @@ namespace EthereumApi.Models
 
         [Required]
         public string UserAddress { get; set; }
+
+        [Required]
+        public bool IsAdapterWithEthereum{ get; set; }
     }
 }
