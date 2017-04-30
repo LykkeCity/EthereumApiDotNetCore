@@ -1,0 +1,898 @@
+PragmaDirective
+   Source: "pragma solidity ^0.4.1;"
+ImportDirective "./coin.sol"
+   Source: "import \"./coin.sol\";"
+ContractDefinition "MainExchange"
+   Source: "contract MainExchange {\r\n\r\n    function MainExchange() {\r\n        _owner = msg.sender;\r\n    }\r\n\r\n    modifier onlyowner { if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }\r\n\r\n    // can be called only from contract owner (Is Lykke contract owner?)\r\n    // create swap transaction signed by exchange and check client signs\r\n    function swap(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, \r\n                bytes client_a_sign, bytes client_b_sign, bytes params) onlyowner returns(bool) {\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); \r\n\r\n        if (!_checkClientSign(client_a, hash, client_a_sign)) {\r\n            throw;                    \r\n        }\r\n        if (!_checkClientSign(client_b, hash, client_b_sign)) {\r\n            throw;\r\n        }\r\n\r\n        // trasfer amount_a in coin_a from client_a to client_b\r\n        _transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params);\r\n\r\n        // trasfer amount_b in coin_b from client_b to client_a\r\n        _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params);\r\n\r\n        transactions[id] = true;\r\n\r\n        return true;\r\n    }\r\n\r\n    function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, coinAddress, client, to, amount);\r\n            \r\n        if (!_checkClientSign(client, hash, client_sign)) {\r\n            throw;                    \r\n        }\r\n\r\n        var coin_contract = Coin(coinAddress);\r\n        coin_contract.cashout(client, to, amount, hash, client_sign, params);\r\n\r\n        transactions[id] = true;\r\n    }\r\n\r\n    function transfer(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params) onlyowner {\r\n        if (transactions[id])\r\n            throw;\r\n        bytes32 hash = sha3(id, coinAddress, from, to, amount);\r\n        if (!_checkClientSign(from, hash, sign)) {\r\n            throw;                    \r\n        }\r\n        _transferCoins(coinAddress, from, to, amount, hash, sign, params);\r\n        \r\n        transactions[id] = true; \r\n    }\r\n\r\n    // change coin exchange contract\r\n    function changeMainContractInCoin(address coinContract, address newMainContract) onlyowner {\r\n        var coin_contract = Coin(coinContract);\r\n        coin_contract.changeExchangeContract(newMainContract);\r\n    }\r\n\r\n    function _transferCoins(address contractAddress, address from, address to, uint amount, bytes32 hash, bytes sig, bytes params) private {\r\n        var coin_contract = Coin(contractAddress);\r\n        coin_contract.transferMultisig(from, to, amount, hash, sig, params);\r\n    }\r\n\r\n    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) private returns(bool) {\r\n        bytes32 r;\r\n        bytes32 s;\r\n        uint8 v;\r\n\r\n        assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return client_addr == ecrecover(hash, v, r, s);\r\n    }\r\n\r\n    function ping() {\r\n        _lastPing = now;\r\n    }\r\n\r\n    //private fields\r\n\r\n    address _owner;\r\n    uint _lastPing;\r\n    mapping (uint => bool) public transactions;\r\n}"
+  FunctionDefinition "MainExchange" - public
+     Source: "function MainExchange() {\r\n        _owner = msg.sender;\r\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\r\n        _owner = msg.sender;\r\n    }"
+      ExpressionStatement
+         Source: "_owner = msg.sender"
+        Assignment using operator =
+           Type: address
+           Source: "_owner = msg.sender"
+          Identifier _owner
+             Type: address
+             Source: "_owner"
+          MemberAccess to member sender
+             Type: address
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+  ModifierDefinition "onlyowner"
+     Source: "modifier onlyowner { if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{ if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }"
+      IfStatement
+         Source: "if (msg.sender == _owner || (now - _lastPing) > 30 days) _"
+        BinaryOperation using operator ||
+           Type: bool
+           Source: "msg.sender == _owner || (now - _lastPing) > 30 days"
+          BinaryOperation using operator ==
+             Type: bool
+             Source: "msg.sender == _owner"
+            MemberAccess to member sender
+               Type: address
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+            Identifier _owner
+               Type: address
+               Source: "_owner"
+          BinaryOperation using operator >
+             Type: bool
+             Source: "(now - _lastPing) > 30 days"
+            TupleExpression
+               Type: uint256
+               Source: "(now - _lastPing)"
+              BinaryOperation using operator -
+                 Type: uint256
+                 Source: "now - _lastPing"
+                Identifier now
+                   Type: uint256
+                   Source: "now"
+                Identifier _lastPing
+                   Type: uint256
+                   Source: "_lastPing"
+            Literal, token: [no token] value: 30
+               Type: int_const 2592000
+               Source: "30 days"
+        PlaceholderStatement
+           Source: "_"
+  FunctionDefinition "swap" - public
+     Source: "function swap(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, \r\n                bytes client_a_sign, bytes client_b_sign, bytes params) onlyowner returns(bool) {\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); \r\n\r\n        if (!_checkClientSign(client_a, hash, client_a_sign)) {\r\n            throw;                    \r\n        }\r\n        if (!_checkClientSign(client_b, hash, client_b_sign)) {\r\n            throw;\r\n        }\r\n\r\n        // trasfer amount_a in coin_a from client_a to client_b\r\n        _transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params);\r\n\r\n        // trasfer amount_b in coin_b from client_b to client_a\r\n        _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params);\r\n\r\n        transactions[id] = true;\r\n\r\n        return true;\r\n    }"
+    ParameterList
+       Source: "(uint id, address client_a, address client_b, address coinAddress_a, address coinAddress_b, uint amount_a, uint amount_b, \r\n                bytes client_a_sign, bytes client_b_sign, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "client_a"
+         Type: address
+         Source: "address client_a"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "client_b"
+         Type: address
+         Source: "address client_b"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "coinAddress_a"
+         Type: address
+         Source: "address coinAddress_a"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "coinAddress_b"
+         Type: address
+         Source: "address coinAddress_b"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount_a"
+         Type: uint256
+         Source: "uint amount_a"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "amount_b"
+         Type: uint256
+         Source: "uint amount_b"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "client_a_sign"
+         Type: bytes memory
+         Source: "bytes client_a_sign"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "client_b_sign"
+         Type: bytes memory
+         Source: "bytes client_b_sign"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b); \r\n\r\n        if (!_checkClientSign(client_a, hash, client_a_sign)) {\r\n            throw;                    \r\n        }\r\n        if (!_checkClientSign(client_b, hash, client_b_sign)) {\r\n            throw;\r\n        }\r\n\r\n        // trasfer amount_a in coin_a from client_a to client_b\r\n        _transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params);\r\n\r\n        // trasfer amount_b in coin_b from client_b to client_a\r\n        _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params);\r\n\r\n        transactions[id] = true;\r\n\r\n        return true;\r\n    }"
+      IfStatement
+         Source: "if (transactions[id])\r\n            throw"
+        IndexAccess
+           Type: bool
+           Source: "transactions[id]"
+          Identifier transactions
+             Type: mapping(uint256 => bool)
+             Source: "transactions"
+          Identifier id
+             Type: uint256
+             Source: "id"
+        Throw
+           Source: "throw"
+      VariableDeclarationStatement
+         Source: "bytes32 hash = sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b)"
+        VariableDeclaration "hash"
+           Type: bytes32
+           Source: "bytes32 hash"
+          ElementaryTypeName bytes32
+             Source: "bytes32"
+        FunctionCall
+           Type: bytes32
+           Source: "sha3(id, client_a, client_b, coinAddress_a, coinAddress_b, amount_a, amount_b)"
+          Identifier sha3
+             Type: function () returns (bytes32)
+             Source: "sha3"
+          Identifier id
+             Type: uint256
+             Source: "id"
+          Identifier client_a
+             Type: address
+             Source: "client_a"
+          Identifier client_b
+             Type: address
+             Source: "client_b"
+          Identifier coinAddress_a
+             Type: address
+             Source: "coinAddress_a"
+          Identifier coinAddress_b
+             Type: address
+             Source: "coinAddress_b"
+          Identifier amount_a
+             Type: uint256
+             Source: "amount_a"
+          Identifier amount_b
+             Type: uint256
+             Source: "amount_b"
+      IfStatement
+         Source: "if (!_checkClientSign(client_a, hash, client_a_sign)) {\r\n            throw;                    \r\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!_checkClientSign(client_a, hash, client_a_sign)"
+          FunctionCall
+             Type: bool
+             Source: "_checkClientSign(client_a, hash, client_a_sign)"
+            Identifier _checkClientSign
+               Type: function (address,bytes32,bytes memory) returns (bool)
+               Source: "_checkClientSign"
+            Identifier client_a
+               Type: address
+               Source: "client_a"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier client_a_sign
+               Type: bytes memory
+               Source: "client_a_sign"
+        Block
+           Source: "{\r\n            throw;                    \r\n        }"
+          Throw
+             Source: "throw"
+      IfStatement
+         Source: "if (!_checkClientSign(client_b, hash, client_b_sign)) {\r\n            throw;\r\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!_checkClientSign(client_b, hash, client_b_sign)"
+          FunctionCall
+             Type: bool
+             Source: "_checkClientSign(client_b, hash, client_b_sign)"
+            Identifier _checkClientSign
+               Type: function (address,bytes32,bytes memory) returns (bool)
+               Source: "_checkClientSign"
+            Identifier client_b
+               Type: address
+               Source: "client_b"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier client_b_sign
+               Type: bytes memory
+               Source: "client_b_sign"
+        Block
+           Source: "{\r\n            throw;\r\n        }"
+          Throw
+             Source: "throw"
+      ExpressionStatement
+         Source: "_transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "_transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params)"
+          Identifier _transferCoins
+             Type: function (address,address,address,uint256,bytes32,bytes memory,bytes memory)
+             Source: "_transferCoins"
+          Identifier coinAddress_a
+             Type: address
+             Source: "coinAddress_a"
+          Identifier client_a
+             Type: address
+             Source: "client_a"
+          Identifier client_b
+             Type: address
+             Source: "client_b"
+          Identifier amount_a
+             Type: uint256
+             Source: "amount_a"
+          Identifier hash
+             Type: bytes32
+             Source: "hash"
+          Identifier client_a_sign
+             Type: bytes memory
+             Source: "client_a_sign"
+          Identifier params
+             Type: bytes memory
+             Source: "params"
+      ExpressionStatement
+         Source: "_transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "_transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params)"
+          Identifier _transferCoins
+             Type: function (address,address,address,uint256,bytes32,bytes memory,bytes memory)
+             Source: "_transferCoins"
+          Identifier coinAddress_b
+             Type: address
+             Source: "coinAddress_b"
+          Identifier client_b
+             Type: address
+             Source: "client_b"
+          Identifier client_a
+             Type: address
+             Source: "client_a"
+          Identifier amount_b
+             Type: uint256
+             Source: "amount_b"
+          Identifier hash
+             Type: bytes32
+             Source: "hash"
+          Identifier client_b_sign
+             Type: bytes memory
+             Source: "client_b_sign"
+          Identifier params
+             Type: bytes memory
+             Source: "params"
+      ExpressionStatement
+         Source: "transactions[id] = true"
+        Assignment using operator =
+           Type: bool
+           Source: "transactions[id] = true"
+          IndexAccess
+             Type: bool
+             Source: "transactions[id]"
+            Identifier transactions
+               Type: mapping(uint256 => bool)
+               Source: "transactions"
+            Identifier id
+               Type: uint256
+               Source: "id"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "cashout" - public
+     Source: "function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, coinAddress, client, to, amount);\r\n            \r\n        if (!_checkClientSign(client, hash, client_sign)) {\r\n            throw;                    \r\n        }\r\n\r\n        var coin_contract = Coin(coinAddress);\r\n        coin_contract.cashout(client, to, amount, hash, client_sign, params);\r\n\r\n        transactions[id] = true;\r\n    }"
+    ParameterList
+       Source: "(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "coinAddress"
+         Type: address
+         Source: "address coinAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "client"
+         Type: address
+         Source: "address client"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "to"
+         Type: address
+         Source: "address to"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "client_sign"
+         Type: bytes memory
+         Source: "bytes client_sign"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        \r\n        if (transactions[id])\r\n            throw;\r\n\r\n        bytes32 hash = sha3(id, coinAddress, client, to, amount);\r\n            \r\n        if (!_checkClientSign(client, hash, client_sign)) {\r\n            throw;                    \r\n        }\r\n\r\n        var coin_contract = Coin(coinAddress);\r\n        coin_contract.cashout(client, to, amount, hash, client_sign, params);\r\n\r\n        transactions[id] = true;\r\n    }"
+      IfStatement
+         Source: "if (transactions[id])\r\n            throw"
+        IndexAccess
+           Type: bool
+           Source: "transactions[id]"
+          Identifier transactions
+             Type: mapping(uint256 => bool)
+             Source: "transactions"
+          Identifier id
+             Type: uint256
+             Source: "id"
+        Throw
+           Source: "throw"
+      VariableDeclarationStatement
+         Source: "bytes32 hash = sha3(id, coinAddress, client, to, amount)"
+        VariableDeclaration "hash"
+           Type: bytes32
+           Source: "bytes32 hash"
+          ElementaryTypeName bytes32
+             Source: "bytes32"
+        FunctionCall
+           Type: bytes32
+           Source: "sha3(id, coinAddress, client, to, amount)"
+          Identifier sha3
+             Type: function () returns (bytes32)
+             Source: "sha3"
+          Identifier id
+             Type: uint256
+             Source: "id"
+          Identifier coinAddress
+             Type: address
+             Source: "coinAddress"
+          Identifier client
+             Type: address
+             Source: "client"
+          Identifier to
+             Type: address
+             Source: "to"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+      IfStatement
+         Source: "if (!_checkClientSign(client, hash, client_sign)) {\r\n            throw;                    \r\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!_checkClientSign(client, hash, client_sign)"
+          FunctionCall
+             Type: bool
+             Source: "_checkClientSign(client, hash, client_sign)"
+            Identifier _checkClientSign
+               Type: function (address,bytes32,bytes memory) returns (bool)
+               Source: "_checkClientSign"
+            Identifier client
+               Type: address
+               Source: "client"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier client_sign
+               Type: bytes memory
+               Source: "client_sign"
+        Block
+           Source: "{\r\n            throw;                    \r\n        }"
+          Throw
+             Source: "throw"
+      VariableDeclarationStatement
+         Source: "var coin_contract = Coin(coinAddress)"
+        VariableDeclaration "coin_contract"
+           Type: contract Coin
+           Source: "var coin_contract"
+        FunctionCall
+           Type: contract Coin
+           Source: "Coin(coinAddress)"
+          Identifier Coin
+             Type: type(contract Coin)
+             Source: "Coin"
+          Identifier coinAddress
+             Type: address
+             Source: "coinAddress"
+      ExpressionStatement
+         Source: "coin_contract.cashout(client, to, amount, hash, client_sign, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "coin_contract.cashout(client, to, amount, hash, client_sign, params)"
+          MemberAccess to member cashout
+             Type: function (address,address,uint256,bytes32,bytes memory,bytes memory) external
+             Source: "coin_contract.cashout"
+            Identifier coin_contract
+               Type: contract Coin
+               Source: "coin_contract"
+          Identifier client
+             Type: address
+             Source: "client"
+          Identifier to
+             Type: address
+             Source: "to"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+          Identifier hash
+             Type: bytes32
+             Source: "hash"
+          Identifier client_sign
+             Type: bytes memory
+             Source: "client_sign"
+          Identifier params
+             Type: bytes memory
+             Source: "params"
+      ExpressionStatement
+         Source: "transactions[id] = true"
+        Assignment using operator =
+           Type: bool
+           Source: "transactions[id] = true"
+          IndexAccess
+             Type: bool
+             Source: "transactions[id]"
+            Identifier transactions
+               Type: mapping(uint256 => bool)
+               Source: "transactions"
+            Identifier id
+               Type: uint256
+               Source: "id"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+  FunctionDefinition "transfer" - public
+     Source: "function transfer(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params) onlyowner {\r\n        if (transactions[id])\r\n            throw;\r\n        bytes32 hash = sha3(id, coinAddress, from, to, amount);\r\n        if (!_checkClientSign(from, hash, sign)) {\r\n            throw;                    \r\n        }\r\n        _transferCoins(coinAddress, from, to, amount, hash, sign, params);\r\n        \r\n        transactions[id] = true; \r\n    }"
+    ParameterList
+       Source: "(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "coinAddress"
+         Type: address
+         Source: "address coinAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "from"
+         Type: address
+         Source: "address from"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "to"
+         Type: address
+         Source: "address to"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "sign"
+         Type: bytes memory
+         Source: "bytes sign"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        if (transactions[id])\r\n            throw;\r\n        bytes32 hash = sha3(id, coinAddress, from, to, amount);\r\n        if (!_checkClientSign(from, hash, sign)) {\r\n            throw;                    \r\n        }\r\n        _transferCoins(coinAddress, from, to, amount, hash, sign, params);\r\n        \r\n        transactions[id] = true; \r\n    }"
+      IfStatement
+         Source: "if (transactions[id])\r\n            throw"
+        IndexAccess
+           Type: bool
+           Source: "transactions[id]"
+          Identifier transactions
+             Type: mapping(uint256 => bool)
+             Source: "transactions"
+          Identifier id
+             Type: uint256
+             Source: "id"
+        Throw
+           Source: "throw"
+      VariableDeclarationStatement
+         Source: "bytes32 hash = sha3(id, coinAddress, from, to, amount)"
+        VariableDeclaration "hash"
+           Type: bytes32
+           Source: "bytes32 hash"
+          ElementaryTypeName bytes32
+             Source: "bytes32"
+        FunctionCall
+           Type: bytes32
+           Source: "sha3(id, coinAddress, from, to, amount)"
+          Identifier sha3
+             Type: function () returns (bytes32)
+             Source: "sha3"
+          Identifier id
+             Type: uint256
+             Source: "id"
+          Identifier coinAddress
+             Type: address
+             Source: "coinAddress"
+          Identifier from
+             Type: address
+             Source: "from"
+          Identifier to
+             Type: address
+             Source: "to"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+      IfStatement
+         Source: "if (!_checkClientSign(from, hash, sign)) {\r\n            throw;                    \r\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!_checkClientSign(from, hash, sign)"
+          FunctionCall
+             Type: bool
+             Source: "_checkClientSign(from, hash, sign)"
+            Identifier _checkClientSign
+               Type: function (address,bytes32,bytes memory) returns (bool)
+               Source: "_checkClientSign"
+            Identifier from
+               Type: address
+               Source: "from"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier sign
+               Type: bytes memory
+               Source: "sign"
+        Block
+           Source: "{\r\n            throw;                    \r\n        }"
+          Throw
+             Source: "throw"
+      ExpressionStatement
+         Source: "_transferCoins(coinAddress, from, to, amount, hash, sign, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "_transferCoins(coinAddress, from, to, amount, hash, sign, params)"
+          Identifier _transferCoins
+             Type: function (address,address,address,uint256,bytes32,bytes memory,bytes memory)
+             Source: "_transferCoins"
+          Identifier coinAddress
+             Type: address
+             Source: "coinAddress"
+          Identifier from
+             Type: address
+             Source: "from"
+          Identifier to
+             Type: address
+             Source: "to"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+          Identifier hash
+             Type: bytes32
+             Source: "hash"
+          Identifier sign
+             Type: bytes memory
+             Source: "sign"
+          Identifier params
+             Type: bytes memory
+             Source: "params"
+      ExpressionStatement
+         Source: "transactions[id] = true"
+        Assignment using operator =
+           Type: bool
+           Source: "transactions[id] = true"
+          IndexAccess
+             Type: bool
+             Source: "transactions[id]"
+            Identifier transactions
+               Type: mapping(uint256 => bool)
+               Source: "transactions"
+            Identifier id
+               Type: uint256
+               Source: "id"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+  FunctionDefinition "changeMainContractInCoin" - public
+     Source: "function changeMainContractInCoin(address coinContract, address newMainContract) onlyowner {\r\n        var coin_contract = Coin(coinContract);\r\n        coin_contract.changeExchangeContract(newMainContract);\r\n    }"
+    ParameterList
+       Source: "(address coinContract, address newMainContract)"
+      VariableDeclaration "coinContract"
+         Type: address
+         Source: "address coinContract"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "newMainContract"
+         Type: address
+         Source: "address newMainContract"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        var coin_contract = Coin(coinContract);\r\n        coin_contract.changeExchangeContract(newMainContract);\r\n    }"
+      VariableDeclarationStatement
+         Source: "var coin_contract = Coin(coinContract)"
+        VariableDeclaration "coin_contract"
+           Type: contract Coin
+           Source: "var coin_contract"
+        FunctionCall
+           Type: contract Coin
+           Source: "Coin(coinContract)"
+          Identifier Coin
+             Type: type(contract Coin)
+             Source: "Coin"
+          Identifier coinContract
+             Type: address
+             Source: "coinContract"
+      ExpressionStatement
+         Source: "coin_contract.changeExchangeContract(newMainContract)"
+        FunctionCall
+           Type: tuple()
+           Source: "coin_contract.changeExchangeContract(newMainContract)"
+          MemberAccess to member changeExchangeContract
+             Type: function (address) external
+             Source: "coin_contract.changeExchangeContract"
+            Identifier coin_contract
+               Type: contract Coin
+               Source: "coin_contract"
+          Identifier newMainContract
+             Type: address
+             Source: "newMainContract"
+  FunctionDefinition "_transferCoins"
+     Source: "function _transferCoins(address contractAddress, address from, address to, uint amount, bytes32 hash, bytes sig, bytes params) private {\r\n        var coin_contract = Coin(contractAddress);\r\n        coin_contract.transferMultisig(from, to, amount, hash, sig, params);\r\n    }"
+    ParameterList
+       Source: "(address contractAddress, address from, address to, uint amount, bytes32 hash, bytes sig, bytes params)"
+      VariableDeclaration "contractAddress"
+         Type: address
+         Source: "address contractAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "from"
+         Type: address
+         Source: "address from"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "to"
+         Type: address
+         Source: "address to"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "hash"
+         Type: bytes32
+         Source: "bytes32 hash"
+        ElementaryTypeName bytes32
+           Source: "bytes32"
+      VariableDeclaration "sig"
+         Type: bytes memory
+         Source: "bytes sig"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\r\n        var coin_contract = Coin(contractAddress);\r\n        coin_contract.transferMultisig(from, to, amount, hash, sig, params);\r\n    }"
+      VariableDeclarationStatement
+         Source: "var coin_contract = Coin(contractAddress)"
+        VariableDeclaration "coin_contract"
+           Type: contract Coin
+           Source: "var coin_contract"
+        FunctionCall
+           Type: contract Coin
+           Source: "Coin(contractAddress)"
+          Identifier Coin
+             Type: type(contract Coin)
+             Source: "Coin"
+          Identifier contractAddress
+             Type: address
+             Source: "contractAddress"
+      ExpressionStatement
+         Source: "coin_contract.transferMultisig(from, to, amount, hash, sig, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "coin_contract.transferMultisig(from, to, amount, hash, sig, params)"
+          MemberAccess to member transferMultisig
+             Type: function (address,address,uint256,bytes32,bytes memory,bytes memory) external
+             Source: "coin_contract.transferMultisig"
+            Identifier coin_contract
+               Type: contract Coin
+               Source: "coin_contract"
+          Identifier from
+             Type: address
+             Source: "from"
+          Identifier to
+             Type: address
+             Source: "to"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+          Identifier hash
+             Type: bytes32
+             Source: "hash"
+          Identifier sig
+             Type: bytes memory
+             Source: "sig"
+          Identifier params
+             Type: bytes memory
+             Source: "params"
+  FunctionDefinition "_checkClientSign"
+     Source: "function _checkClientSign(address client_addr, bytes32 hash, bytes sig) private returns(bool) {\r\n        bytes32 r;\r\n        bytes32 s;\r\n        uint8 v;\r\n\r\n        assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return client_addr == ecrecover(hash, v, r, s);\r\n    }"
+    ParameterList
+       Source: "(address client_addr, bytes32 hash, bytes sig)"
+      VariableDeclaration "client_addr"
+         Type: address
+         Source: "address client_addr"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "hash"
+         Type: bytes32
+         Source: "bytes32 hash"
+        ElementaryTypeName bytes32
+           Source: "bytes32"
+      VariableDeclaration "sig"
+         Type: bytes memory
+         Source: "bytes sig"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\r\n        bytes32 r;\r\n        bytes32 s;\r\n        uint8 v;\r\n\r\n        assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return client_addr == ecrecover(hash, v, r, s);\r\n    }"
+      VariableDeclarationStatement
+         Source: "bytes32 r;"
+        VariableDeclaration "r"
+           Type: bytes32
+           Source: "bytes32 r"
+          ElementaryTypeName bytes32
+             Source: "bytes32"
+      VariableDeclarationStatement
+         Source: "bytes32 s;"
+        VariableDeclaration "s"
+           Type: bytes32
+           Source: "bytes32 s"
+          ElementaryTypeName bytes32
+             Source: "bytes32"
+      VariableDeclarationStatement
+         Source: "uint8 v;"
+        VariableDeclaration "v"
+           Type: uint8
+           Source: "uint8 v"
+          ElementaryTypeName uint8
+             Source: "uint8"
+      InlineAssembly
+         Source: "assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return"
+      Return
+         Source: "return client_addr == ecrecover(hash, v, r, s)"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "client_addr == ecrecover(hash, v, r, s)"
+          Identifier client_addr
+             Type: address
+             Source: "client_addr"
+          FunctionCall
+             Type: address
+             Source: "ecrecover(hash, v, r, s)"
+            Identifier ecrecover
+               Type: function (bytes32,uint8,bytes32,bytes32) returns (address)
+               Source: "ecrecover"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier v
+               Type: uint8
+               Source: "v"
+            Identifier r
+               Type: bytes32
+               Source: "r"
+            Identifier s
+               Type: bytes32
+               Source: "s"
+  FunctionDefinition "ping" - public
+     Source: "function ping() {\r\n        _lastPing = now;\r\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\r\n        _lastPing = now;\r\n    }"
+      ExpressionStatement
+         Source: "_lastPing = now"
+        Assignment using operator =
+           Type: uint256
+           Source: "_lastPing = now"
+          Identifier _lastPing
+             Type: uint256
+             Source: "_lastPing"
+          Identifier now
+             Type: uint256
+             Source: "now"
+  VariableDeclaration "_owner"
+     Type: address
+     Source: "address _owner"
+    ElementaryTypeName address
+       Source: "address"
+  VariableDeclaration "_lastPing"
+     Type: uint256
+     Source: "uint _lastPing"
+    ElementaryTypeName uint
+       Source: "uint"
+  VariableDeclaration "transactions"
+     Type: mapping(uint256 => bool)
+     Source: "mapping (uint => bool) public transactions"
+    Mapping
+       Source: "mapping (uint => bool)"
+      ElementaryTypeName uint
+         Source: "uint"
+      ElementaryTypeName bool
+         Source: "bool"

@@ -1,0 +1,174 @@
+PragmaDirective
+   Source: "pragma solidity ^0.4.1;"
+ImportDirective "./coin.sol"
+   Source: "import \"./coin.sol\";"
+ContractDefinition "TransferBaseContract"
+   Source: "contract TransferBaseContract {\r\n    address _owner;  \r\n    address _userAddress;\r\n    address _coinAdapterAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }\r\n\r\n    function() payable {\r\n    }\r\n\r\n    function kill() onlyowner{\r\n        suicide(_owner);\r\n    }\r\n\r\n    function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        throw;\r\n    }\r\n}"
+  VariableDeclaration "_owner"
+     Type: address
+     Source: "address _owner"
+    ElementaryTypeName address
+       Source: "address"
+  VariableDeclaration "_userAddress"
+     Type: address
+     Source: "address _userAddress"
+    ElementaryTypeName address
+       Source: "address"
+  VariableDeclaration "_coinAdapterAddress"
+     Type: address
+     Source: "address _coinAdapterAddress"
+    ElementaryTypeName address
+       Source: "address"
+  ModifierDefinition "onlyowner"
+     Source: "modifier onlyowner { if (msg.sender == _owner) _; }"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{ if (msg.sender == _owner) _; }"
+      IfStatement
+         Source: "if (msg.sender == _owner) _"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "msg.sender == _owner"
+          MemberAccess to member sender
+             Type: address
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier _owner
+             Type: address
+             Source: "_owner"
+        PlaceholderStatement
+           Source: "_"
+  FunctionDefinition "TransferBaseContract" - public
+     Source: "function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
+    ParameterList
+       Source: "(address userAddress, address coinAdapterAddress)"
+      VariableDeclaration "userAddress"
+         Type: address
+         Source: "address userAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "coinAdapterAddress"
+         Type: address
+         Source: "address coinAdapterAddress"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
+      ExpressionStatement
+         Source: "_owner = msg.sender"
+        Assignment using operator =
+           Type: address
+           Source: "_owner = msg.sender"
+          Identifier _owner
+             Type: address
+             Source: "_owner"
+          MemberAccess to member sender
+             Type: address
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      ExpressionStatement
+         Source: "_userAddress = userAddress"
+        Assignment using operator =
+           Type: address
+           Source: "_userAddress = userAddress"
+          Identifier _userAddress
+             Type: address
+             Source: "_userAddress"
+          Identifier userAddress
+             Type: address
+             Source: "userAddress"
+      ExpressionStatement
+         Source: "_coinAdapterAddress = coinAdapterAddress"
+        Assignment using operator =
+           Type: address
+           Source: "_coinAdapterAddress = coinAdapterAddress"
+          Identifier _coinAdapterAddress
+             Type: address
+             Source: "_coinAdapterAddress"
+          Identifier coinAdapterAddress
+             Type: address
+             Source: "coinAdapterAddress"
+  FunctionDefinition "" - public
+     Source: "function() payable {\r\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\r\n    }"
+  FunctionDefinition "kill" - public
+     Source: "function kill() onlyowner{\r\n        suicide(_owner);\r\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        suicide(_owner);\r\n    }"
+      ExpressionStatement
+         Source: "suicide(_owner)"
+        FunctionCall
+           Type: tuple()
+           Source: "suicide(_owner)"
+          Identifier suicide
+             Type: function (address)
+             Source: "suicide"
+          Identifier _owner
+             Type: address
+             Source: "_owner"
+  FunctionDefinition "cashin" - public
+     Source: "function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        throw;\r\n    }"
+    ParameterList
+       Source: "(uint id, address coin, address receiver, uint amount, uint gas, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "coin"
+         Type: address
+         Source: "address coin"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "receiver"
+         Type: address
+         Source: "address receiver"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "gas"
+         Type: uint256
+         Source: "uint gas"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        throw;\r\n    }"
+      Throw
+         Source: "throw"

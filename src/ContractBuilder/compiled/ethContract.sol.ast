@@ -1,0 +1,276 @@
+PragmaDirective
+   Source: "pragma solidity ^0.4.1;"
+ImportDirective "./coin.sol"
+   Source: "import \"./coin.sol\";"
+ContractDefinition "EthCoin"
+   Source: "contract EthCoin is Coin(0) {\r\n\r\n    function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }\r\n\r\n    function cashin(uint id, address receiver, uint amount, bytes params) payable {\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }\r\n\r\n    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }\r\n}"
+  InheritanceSpecifier
+     Source: "Coin(0)"
+    UserDefinedTypeName "Coin"
+       Source: "Coin"
+    Literal, token: [no token] value: 0
+       Type: int_const 0
+       Source: "0"
+  FunctionDefinition "EthCoin" - public
+     Source: "function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }"
+    ParameterList
+       Source: "(address exchangeContractAddress)"
+      VariableDeclaration "exchangeContractAddress"
+         Type: address
+         Source: "address exchangeContractAddress"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    ModifierInvocation "Coin"
+       Source: "Coin(exchangeContractAddress)"
+      Identifier Coin
+         Type: type(contract Coin)
+         Source: "Coin"
+      Identifier exchangeContractAddress
+         Type: address
+         Source: "exchangeContractAddress"
+    Block
+       Source: "{ }"
+  FunctionDefinition "cashin" - public
+     Source: "function cashin(uint id, address receiver, uint amount, bytes params) payable {\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }"
+    ParameterList
+       Source: "(uint id, address receiver, uint amount, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "receiver"
+         Type: address
+         Source: "address receiver"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }"
+      IfStatement
+         Source: "if (transactions[id])\r\n            throw"
+        IndexAccess
+           Type: bool
+           Source: "transactions[id]"
+          Identifier transactions
+             Type: mapping(uint256 => bool)
+             Source: "transactions"
+          Identifier id
+             Type: uint256
+             Source: "id"
+        Throw
+           Source: "throw"
+      ExpressionStatement
+         Source: "coinBalanceMultisig[receiver] += msg.value"
+        Assignment using operator +=
+           Type: uint256
+           Source: "coinBalanceMultisig[receiver] += msg.value"
+          IndexAccess
+             Type: uint256
+             Source: "coinBalanceMultisig[receiver]"
+            Identifier coinBalanceMultisig
+               Type: mapping(address => uint256)
+               Source: "coinBalanceMultisig"
+            Identifier receiver
+               Type: address
+               Source: "receiver"
+          MemberAccess to member value
+             Type: uint256
+             Source: "msg.value"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      ExpressionStatement
+         Source: "CoinCashIn(receiver, msg.value)"
+        FunctionCall
+           Type: tuple()
+           Source: "CoinCashIn(receiver, msg.value)"
+          Identifier CoinCashIn
+             Type: function (address,uint256) constant
+             Source: "CoinCashIn"
+          Identifier receiver
+             Type: address
+             Source: "receiver"
+          MemberAccess to member value
+             Type: uint256
+             Source: "msg.value"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      ExpressionStatement
+         Source: "transactions[id] = true"
+        Assignment using operator =
+           Type: bool
+           Source: "transactions[id] = true"
+          IndexAccess
+             Type: bool
+             Source: "transactions[id]"
+            Identifier transactions
+               Type: mapping(uint256 => bool)
+               Source: "transactions"
+            Identifier id
+               Type: uint256
+               Source: "id"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+  FunctionDefinition "cashout" - public
+     Source: "function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }"
+    ParameterList
+       Source: "(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params)"
+      VariableDeclaration "client"
+         Type: address
+         Source: "address client"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "to"
+         Type: address
+         Source: "address to"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "hash"
+         Type: bytes32
+         Source: "bytes32 hash"
+        ElementaryTypeName bytes32
+           Source: "bytes32"
+      VariableDeclaration "client_sig"
+         Type: bytes memory
+         Source: "bytes client_sig"
+        ElementaryTypeName bytes
+           Source: "bytes"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyFromExchangeContract"
+       Source: "onlyFromExchangeContract"
+      Identifier onlyFromExchangeContract
+         Type: modifier ()
+         Source: "onlyFromExchangeContract"
+    Block
+       Source: "{\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }"
+      IfStatement
+         Source: "if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!_checkClientSign(client, hash, client_sig)"
+          FunctionCall
+             Type: bool
+             Source: "_checkClientSign(client, hash, client_sig)"
+            Identifier _checkClientSign
+               Type: function (address,bytes32,bytes memory) returns (bool)
+               Source: "_checkClientSign"
+            Identifier client
+               Type: address
+               Source: "client"
+            Identifier hash
+               Type: bytes32
+               Source: "hash"
+            Identifier client_sig
+               Type: bytes memory
+               Source: "client_sig"
+        Block
+           Source: "{\r\n            throw;                    \r\n        }"
+          Throw
+             Source: "throw"
+      IfStatement
+         Source: "if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }"
+        BinaryOperation using operator <
+           Type: bool
+           Source: "coinBalanceMultisig[client] < amount"
+          IndexAccess
+             Type: uint256
+             Source: "coinBalanceMultisig[client]"
+            Identifier coinBalanceMultisig
+               Type: mapping(address => uint256)
+               Source: "coinBalanceMultisig"
+            Identifier client
+               Type: address
+               Source: "client"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+        Block
+           Source: "{\r\n            throw;\r\n        }"
+          Throw
+             Source: "throw"
+      ExpressionStatement
+         Source: "coinBalanceMultisig[client] -= amount"
+        Assignment using operator -=
+           Type: uint256
+           Source: "coinBalanceMultisig[client] -= amount"
+          IndexAccess
+             Type: uint256
+             Source: "coinBalanceMultisig[client]"
+            Identifier coinBalanceMultisig
+               Type: mapping(address => uint256)
+               Source: "coinBalanceMultisig"
+            Identifier client
+               Type: address
+               Source: "client"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+      IfStatement
+         Source: "if (!to.send(amount)) throw"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!to.send(amount)"
+          FunctionCall
+             Type: bool
+             Source: "to.send(amount)"
+            MemberAccess to member send
+               Type: function (uint256) returns (bool)
+               Source: "to.send"
+              Identifier to
+                 Type: address
+                 Source: "to"
+            Identifier amount
+               Type: uint256
+               Source: "amount"
+        Throw
+           Source: "throw"
+      ExpressionStatement
+         Source: "CoinCashOut(msg.sender, client, amount, to)"
+        FunctionCall
+           Type: tuple()
+           Source: "CoinCashOut(msg.sender, client, amount, to)"
+          Identifier CoinCashOut
+             Type: function (address,address,uint256,address) constant
+             Source: "CoinCashOut"
+          MemberAccess to member sender
+             Type: address
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier client
+             Type: address
+             Source: "client"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+          Identifier to
+             Type: address
+             Source: "to"

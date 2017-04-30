@@ -3,8 +3,8 @@ import "./coin.sol";
 
 contract TransferBaseContract {
     address _owner;  
-    address _userAddress
-    address _coinAdapterAddress
+    address _userAddress;
+    address _coinAdapterAddress;
 
     modifier onlyowner { if (msg.sender == _owner) _; }
 
@@ -18,7 +18,7 @@ contract TransferBaseContract {
     }
 
     function kill() onlyowner{
-        this.suicide(_owner)
+        suicide(_owner);
     }
 
     function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {

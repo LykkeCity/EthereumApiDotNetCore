@@ -1,0 +1,152 @@
+PragmaDirective
+   Source: "pragma solidity ^0.4.1;"
+ImportDirective "./coin.sol"
+   Source: "import \"./coin.sol\";"
+ImportDirective "./transferBaseContract.sol"
+   Source: "import \"./transferBaseContract.sol\";"
+ContractDefinition "TokenTransferContract"
+   Source: "contract TokenTransferContract is TransferBaseContract{\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TokenTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }\r\n\r\n    function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }\r\n}"
+  InheritanceSpecifier
+     Source: "TransferBaseContract"
+    UserDefinedTypeName "TransferBaseContract"
+       Source: "TransferBaseContract"
+  ModifierDefinition "onlyowner"
+     Source: "modifier onlyowner { if (msg.sender == _owner) _; }"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{ if (msg.sender == _owner) _; }"
+      IfStatement
+         Source: "if (msg.sender == _owner) _"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "msg.sender == _owner"
+          MemberAccess to member sender
+             Type: address
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier _owner
+             Type: address
+             Source: "_owner"
+        PlaceholderStatement
+           Source: "_"
+  FunctionDefinition "TokenTransferContract" - public
+     Source: "function TokenTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }"
+    ParameterList
+       Source: "(address userAddress, address coinAdapterAddress)"
+      VariableDeclaration "userAddress"
+         Type: address
+         Source: "address userAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "coinAdapterAddress"
+         Type: address
+         Source: "address coinAdapterAddress"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    ModifierInvocation "TransferBaseContract"
+       Source: "TransferBaseContract(userAddress, coinAdapterAddress)"
+      Identifier TransferBaseContract
+         Type: type(contract TransferBaseContract)
+         Source: "TransferBaseContract"
+      Identifier userAddress
+         Type: address
+         Source: "userAddress"
+      Identifier coinAdapterAddress
+         Type: address
+         Source: "coinAdapterAddress"
+    Block
+       Source: "{        \r\n    }"
+  FunctionDefinition "cashin" - public
+     Source: "function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }"
+    ParameterList
+       Source: "(uint id, address coin, address receiver, uint amount, uint gas, bytes params)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint id"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "coin"
+         Type: address
+         Source: "address coin"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "receiver"
+         Type: address
+         Source: "address receiver"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "amount"
+         Type: uint256
+         Source: "uint amount"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "gas"
+         Type: uint256
+         Source: "uint gas"
+        ElementaryTypeName uint
+           Source: "uint"
+      VariableDeclaration "params"
+         Type: bytes memory
+         Source: "bytes params"
+        ElementaryTypeName bytes
+           Source: "bytes"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }"
+      VariableDeclarationStatement
+         Source: "var coin_contract = Coin(coin)"
+        VariableDeclaration "coin_contract"
+           Type: contract Coin
+           Source: "var coin_contract"
+        FunctionCall
+           Type: contract Coin
+           Source: "Coin(coin)"
+          Identifier Coin
+             Type: type(contract Coin)
+             Source: "Coin"
+          Identifier coin
+             Type: address
+             Source: "coin"
+      ExpressionStatement
+         Source: "coin_contract.cashin.gas(gas)(id, receiver, amount, params)"
+        FunctionCall
+           Type: tuple()
+           Source: "coin_contract.cashin.gas(gas)(id, receiver, amount, params)"
+          FunctionCall
+             Type: function (uint256,address,uint256,bytes memory) payable external
+             Source: "coin_contract.cashin.gas(gas)"
+            MemberAccess to member gas
+               Type: function (uint256) returns (function (uint256,address,uint256,bytes memory) payable external)
+               Source: "coin_contract.cashin.gas"
+              MemberAccess to member cashin
+                 Type: function (uint256,address,uint256,bytes memory) payable external
+                 Source: "coin_contract.cashin"
+                Identifier coin_contract
+                   Type: contract Coin
+                   Source: "coin_contract"
+            Identifier gas
+               Type: uint256
+               Source: "gas"
+          Identifier id
+             Type: uint256
+             Source: "id"
+          Identifier receiver
+             Type: address
+             Source: "receiver"
+          Identifier amount
+             Type: uint256
+             Source: "amount"
+          Identifier params
+             Type: bytes memory
+             Source: "params"

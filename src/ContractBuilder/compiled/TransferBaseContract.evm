@@ -1,0 +1,369 @@
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":49:685  contract TransferBaseContract {... */
+  mstore(0x40, 0x60)
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":231:444  function TransferBaseContract(address userAddress, address coinAdapterAddress) {        ... */
+  jumpi(tag_1, iszero(callvalue))
+  invalid
+tag_1:
+  mload(0x40)
+  0x40
+  dup1
+  bytecodeSize
+  dup4
+  codecopy
+  dup2
+  add
+  0x40
+  mstore
+  dup1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap2
+  swap1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap2
+  swap1
+  pop
+  pop
+tag_2:
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":338:348  msg.sender */
+  caller
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":329:335  _owner */
+  0x0
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":329:348  _owner = msg.sender */
+  0x100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":374:385  userAddress */
+  dup2
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":359:371  _userAddress */
+  0x1
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":359:385  _userAddress = userAddress */
+  0x100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":418:436  coinAdapterAddress */
+  dup1
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":396:415  _coinAdapterAddress */
+  0x2
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":396:436  _coinAdapterAddress = coinAdapterAddress */
+  0x100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":231:444  function TransferBaseContract(address userAddress, address coinAdapterAddress) {        ... */
+tag_3:
+  pop
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":49:685  contract TransferBaseContract {... */
+tag_4:
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x0
+  codecopy
+  0x0
+  return
+stop
+
+sub_0: assembly {
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":49:685  contract TransferBaseContract {... */
+      mstore(0x40, 0x60)
+      jumpi(tag_1, iszero(calldatasize))
+      calldataload(0x0)
+      0x100000000000000000000000000000000000000000000000000000000
+      swap1
+      div
+      0xffffffff
+      and
+      dup1
+      0x41c0e1b5
+      eq
+      tag_2
+      jumpi
+      dup1
+      0xda3dbd4d
+      eq
+      tag_3
+      jumpi
+    tag_1:
+      tag_4
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":452:479  function() payable {... */
+    tag_5:
+    tag_6:
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":49:685  contract TransferBaseContract {... */
+    tag_4:
+      stop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":487:546  function kill() onlyowner{... */
+    tag_2:
+      jumpi(tag_7, iszero(callvalue))
+      invalid
+    tag_7:
+      tag_8
+      jump(tag_9)
+    tag_8:
+      stop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":554:682  function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {... */
+    tag_3:
+      jumpi(tag_10, iszero(callvalue))
+      invalid
+    tag_10:
+      tag_11
+      0x4
+      dup1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup3
+      add
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup1
+      dup1
+      0x1f
+      add
+      0x20
+      dup1
+      swap2
+      div
+      mul
+      0x20
+      add
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      swap4
+      swap3
+      swap2
+      swap1
+      dup2
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup4
+      dup1
+      dup3
+      dup5
+      calldatacopy
+      dup3
+      add
+      swap2
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_12)
+    tag_11:
+      stop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":487:546  function kill() onlyowner{... */
+    tag_9:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":211:217  _owner */
+      0x0
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:217  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:207  msg.sender */
+      caller
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:217  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":193:220  if (msg.sender == _owner) _ */
+      iszero
+      tag_14
+      jumpi
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":531:537  _owner */
+      0x0
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":523:538  suicide(_owner) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      selfdestruct
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":219:220  _ */
+    tag_15:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":193:220  if (msg.sender == _owner) _ */
+    tag_14:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":487:546  function kill() onlyowner{... */
+    tag_13:
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":554:682  function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {... */
+    tag_12:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":211:217  _owner */
+      0x0
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:217  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:207  msg.sender */
+      caller
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":197:217  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":193:220  if (msg.sender == _owner) _ */
+      iszero
+      tag_17
+      jumpi
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":669:674  throw */
+      revert(0x0, 0x0)
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":219:220  _ */
+    tag_18:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":193:220  if (msg.sender == _owner) _ */
+    tag_17:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\transferBaseContract.sol":554:682  function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {... */
+    tag_16:
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+}

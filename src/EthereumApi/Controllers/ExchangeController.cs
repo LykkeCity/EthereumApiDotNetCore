@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Exceptions;
-using Core.Log;
 using EthereumApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -106,7 +105,7 @@ namespace EthereumApi.Controllers
             if (!string.IsNullOrWhiteSpace(transaction))
                 builder.Append($"Transaction: [{transaction}]");
 
-            await _logger.WriteInfo("CoinController", method, status, builder.ToString());
+            await _logger.WriteInfoAsync("CoinController", method, status, builder.ToString());
         }
     }
 }

@@ -2,11 +2,11 @@ pragma solidity ^0.4.1;
 import "./coin.sol";
 import "./transferBaseContract.sol";
 
-contract EthTransferContract {
+contract EthTransferContract is TransferBaseContract{
 
     modifier onlyowner { if (msg.sender == _owner) _; }
 
-    function EthTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(address userAddress, address coinAdapterAddress) {        
+    function EthTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        
     }
 
     function() payable{
