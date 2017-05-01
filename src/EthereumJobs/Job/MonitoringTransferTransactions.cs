@@ -20,15 +20,15 @@ namespace EthereumJobs.Job
         private readonly IPaymentService _paymentService;
         private readonly IEmailNotifierService _emailNotifierService;
         private readonly ITransferContractRepository _transferContractsRepository;
-        private readonly BaseSettings _settings;
-        private readonly ErcInterfaceService _ercInterfaceService;
+        private readonly IBaseSettings _settings;
+        private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IUserPaymentRepository _userPaymentRepository;
         private readonly TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
 
-        public MonitoringTransferTransactions(BaseSettings settings,
-            ErcInterfaceService ercInterfaceService,
+        public MonitoringTransferTransactions(IBaseSettings settings,
+            IErcInterfaceService ercInterfaceService,
             ITransferContractRepository transferContractsRepository,
             ILog logger,
             IPaymentService paymentService,

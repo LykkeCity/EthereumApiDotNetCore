@@ -26,16 +26,21 @@ namespace Services
      */
 
     //TODO: compile ERC20 contract
-    public class ErcInterfaceService
+    public interface IErcInterfaceService
     {
-        private readonly BaseSettings _settings;
+        Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress);
+    }
 
-        public ErcInterfaceService(BaseSettings settings)
+    public class ErcInterfaceService : IErcInterfaceService
+    {
+        private readonly IBaseSettings _settings;
+
+        public ErcInterfaceService(IBaseSettings settings)
         {
             _settings = settings;
         }
 
-        public async Task<BigInteger> GetBalanceForExternalToken(string transferContractAddress,string externalTokenAddress)
+        public async Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress)
         {
             Web3 web3 = new Web3(_settings.EthereumUrl);
             Contract contract = web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);

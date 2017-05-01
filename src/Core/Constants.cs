@@ -60,5 +60,8 @@
         public const string TransferEvent = "CoinTransfer";
 
         public const string EthereumBlockchain = "Ethereum";
+        public const string TransferContractTable = "TransferContract";
+        public const string EthereumContractsBlob = "EthereumContracts";
+        public const string UserTransferWalletTable = "UserTransferWallet";
     }
 }

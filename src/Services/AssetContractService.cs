@@ -12,10 +12,11 @@ namespace Services
         private readonly ICoinRepository _coinRepository;
         private readonly IContractService _contractService;
         private readonly IEthereumContractRepository _ethereumContractRepository;
-        private readonly BaseSettings _settings;
+        private readonly IBaseSettings _settings;
 
-        public AssetContractService(BaseSettings settings,IContractService contractService, 
-            ITransferContractRepository transferContractRepository, ICoinRepository coinRepository,
+        public AssetContractService(IBaseSettings settings,
+            IContractService contractService, 
+            ICoinRepository coinRepository,
             IEthereumContractRepository ethereumContractRepository)
         {
             _settings = settings;

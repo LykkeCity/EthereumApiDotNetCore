@@ -20,7 +20,9 @@ namespace Services
 
         public string UserAddress { get; set; }
         public string CoinAdapterAddress { get; set; }
-        public BigInteger Amount { get; set; }
+        
+        //System.Numerics.BigInteger
+        public string Amount { get; set; }
         public DateTime CreateDt { get; set; }
     }
 
@@ -83,10 +85,11 @@ namespace Services
         {
             try
             {
+                var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
 
                 var tr = await _transferContractService.RecievePaymentFromTransferContract(Guid.Parse(item.Id), contractEntity.ContractAddress,
-                    contractEntity.CoinAdapterAddress, contractTransferTr.Amount, contractEntity.ContainsEth);
+                    contractEntity.CoinAdapterAddress, amount, contractEntity.ContainsEth);
                 await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                 {
                     LastBalance = 0,

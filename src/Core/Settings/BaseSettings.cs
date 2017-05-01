@@ -29,8 +29,11 @@ namespace Core.Settings
         EthereumContract UserContract { get; set; }
         EthereumContract MainExchangeContract { get; set; }
         EthereumContract TokenTransferContract { get; set; }
+        EthereumContract EthTransferContract { get; set; }
 
         Dictionary<string, EthereumContract> CoinContracts { get; set; }
+
+        string ERC20ABI { get; set; }
     }
 
     public class BaseSettings : IBaseSettings

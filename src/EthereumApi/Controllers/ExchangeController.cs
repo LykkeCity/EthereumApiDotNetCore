@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Exceptions;
 using EthereumApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 using Services.Coins;
 using Common.Log;
 

@@ -15,7 +15,7 @@ using Core.Repositories;
 
 namespace EthereumApi.Controllers
 {
-    [Route("api/asset")]
+    [Route("api/transition")]
     [Produces("application/json")]
     public class TransitionContractsController : Controller
     {
@@ -30,7 +30,7 @@ namespace EthereumApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [Produces(typeof(RegisterResponse))]
         public async Task<IActionResult> CreateTransferContract([FromBody]CreateTransitionContractModel model)
         {
             if (!ModelState.IsValid)
@@ -40,7 +40,7 @@ namespace EthereumApi.Controllers
 
             //await Log("Transition", "Create", model);
 
-            string contractAddress = await _transferContractService.CreateTransferContract(model.UserAddress, 
+            string contractAddress = await _transferContractService.CreateTransferContract(model.UserAddress,
                 model.CoinAdapterAddress,
                 model.ExternalTokenAddress, model.IsAdapterWithEthereum);
 
@@ -52,8 +52,8 @@ namespace EthereumApi.Controllers
 
         [Route("contractAddress/{userAddress}/{coinAdapterAddress}")]
         [HttpGet]
-        [Produces(typeof(TransactionResponse))]
-        public async Task<IActionResult>  GetAddress(string userAddress, string coinAdapterAddress)
+        [Produces(typeof(RegisterResponse))]
+        public async Task<IActionResult> GetAddress(string userAddress, string coinAdapterAddress)
         {
             if (!ModelState.IsValid)
             {

@@ -20,15 +20,15 @@ namespace EthereumJobs.Job
         private readonly IPaymentService _paymentService;
         private readonly IEmailNotifierService _emailNotifierService;
         private readonly ITransferContractRepository _transferContractsRepository;
-        private readonly BaseSettings _settings;
-        private readonly ErcInterfaceService _ercInterfaceService;
+        private readonly IBaseSettings _settings;
+        private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IUserPaymentRepository _userPaymentRepository;
         private readonly TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
 
-        public MonitoringTransferContracts(BaseSettings settings,
-            ErcInterfaceService ercInterfaceService,
+        public MonitoringTransferContracts(IBaseSettings settings,
+            IErcInterfaceService ercInterfaceService,
             ITransferContractRepository transferContractsRepository,
             ILog logger,
             IPaymentService paymentService,
@@ -65,7 +65,7 @@ namespace EthereumJobs.Job
                     if (!item.ContainsEth)
                     {
                         balance =
-                        await _ercInterfaceService.GetBalanceForExternalToken(item.ContractAddress, item.ExternalTokenAddress);
+                        await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, item.ExternalTokenAddress);
                     }
                     else
                     {
@@ -85,7 +85,7 @@ namespace EthereumJobs.Job
 
                         await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
                         {
-                            Amount = balance,
+                            Amount = balance.ToString(),
                             UserAddress = item.UserAddress,
                             CoinAdapterAddress = item.CoinAdapterAddress,
                             ContractAddress = item.ContractAddress,

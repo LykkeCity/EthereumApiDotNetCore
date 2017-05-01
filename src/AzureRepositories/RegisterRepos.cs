@@ -29,9 +29,26 @@ namespace AzureRepositories
 
         public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings)
         {
+            var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.SharedConnString);
+                services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
+
+            services.AddSingleton<ITransferContractRepository>(provider => new TransferContractRepository(
+                new AzureTableStorage<TransferContractEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.TransferContractTable,
+                provider.GetService<ILog>()),
+                new AzureTableStorage<AzureIndex>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.TransferContractTable,
+                provider.GetService<ILog>())));
+
+            services.AddSingleton<IUserPaymentRepository>(provider => new UserPaymentRepository());
+
+            services.AddSingleton<IUserTransferWalletRepository>(provider => new UserTransferWalletRepository(
+               new AzureTableStorage<UserTransferWalletEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.UserTransferWalletTable,
+                   provider.GetService<ILog>())
+                   ));
+
             services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
                 new AzureTableStorage<MonitoringEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.MonitoringTable,
-                    provider.GetService<ILog>())));
+                    provider.GetService<ILog>())
+                    ));
 
             services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
                 new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.AppSettingsTable,

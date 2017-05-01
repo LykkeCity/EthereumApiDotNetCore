@@ -16,11 +16,11 @@ namespace Services
     {
         private readonly ICoinRepository _coinRepository;
         private readonly IContractService _contractService;
-        private readonly BaseSettings _settings;
+        private readonly IBaseSettings _settings;
         private readonly ITransferContractRepository _transferContractRepository;
 
         public TransferContractService(IContractService contractService,
-            ITransferContractRepository transferContractRepository, ICoinRepository coinRepository, BaseSettings settings)
+            ITransferContractRepository transferContractRepository, ICoinRepository coinRepository, IBaseSettings settings)
         {
             _coinRepository = coinRepository;
             _contractService = contractService;
@@ -88,9 +88,9 @@ namespace Services
             var web3 = new Web3(_settings.EthereumUrl);
 
             await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                _settings.EthereumMainAccountPassword, new HexBigInteger(120));
+                _settings.EthereumMainAccountPassword, 120);
 
-            ICoin coinDb = await _coinRepository.GetCoin(coinAdapterAddress);
+            ICoin coinDb = await _coinRepository.GetCoinByAddress(coinAdapterAddress);
 
             if (!coinDb.BlockchainDepositEnabled)
                 throw new Exception("Coin must be payable");

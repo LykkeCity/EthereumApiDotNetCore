@@ -18,6 +18,11 @@ namespace Services
             services.AddTransient<ICoinContractService, CoinContractService>();
             services.AddTransient<ICoinTransactionService, CoinTransactionService>();
             services.AddTransient<IManualEventsService, ManualEventsService>();
+
+            services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
+            services.AddTransient<AssetContractService>();
+            services.AddTransient<TransferContractService>();
+            services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
         }
     }
 }

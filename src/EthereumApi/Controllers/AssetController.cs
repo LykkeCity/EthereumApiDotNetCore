@@ -41,7 +41,6 @@ namespace EthereumApi.Controllers
 
             ICoin asset = new Coin()
             {
-                AdapterAddress = model.AdapterAddress,
                 Blockchain = model.Blockchain,
                 BlockchainDepositEnabled = true,
                 Id = "",
