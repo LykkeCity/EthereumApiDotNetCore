@@ -6,11 +6,24 @@ using Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Services;
+using Nethereum.Web3;
+using Nethereum.ABI.FunctionEncoding.Attributes;
 
 namespace ContractBuilder
 {
+    public class DebugEvent
+    {
+        /* int _eventNumber,
+        string _value*/
+        [Parameter("int", "_eventNumber", 1, false)]
+        public string EventNumber { get; set; }
+
+        [Parameter("string", "_value", 2, false)]
+        public string Value { get; set; }
+    }
     public class Program
     {
+
         public static void Main(string[] args)
         {
             var exit = false;
@@ -227,6 +240,28 @@ namespace ContractBuilder
         static string GetSettingsPath()
         {
             return "generalsettings.json";
+        }
+
+        static void WriteEventsForContract()
+        {
+            Web3 client = new Web3("http://localhost:8000");
+
+            var contract = client.Eth.GetContract("[{\"constant\":false,\"inputs\":[],\"name\":\"kill\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coin\",\"type\":\"address\"},{\"name\":\"receiver\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"gas\",\"type\":\"uint256\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"cashin\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"userAddress\",\"type\":\"address\"},{\"name\":\"coinAdapterAddress\",\"type\":\"address\"}],\"payable\":false,\"type\":\"constructor\"},{\"payable\":true,\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_eventNumber\",\"type\":\"int256\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"string\"}],\"name\":\"DebugEvent\",\"type\":\"event\"}]\n"
+                , "0xe3a61032878b47b12403e89241656d78a9201f9d");
+            var @event = contract.GetEvent("DebugEvent");
+            //var lastBlock = client.Eth.Blocks.GetBlockNumber.SendRequestAsync().Result;
+            //var previousBlock = (ulong)(lastBlock.Value - 40000);
+
+            var allEvents = @event.GetAllChanges<DebugEvent>(new Nethereum.RPC.Eth.Filters.NewFilterInput()
+            {
+                FromBlock = new Nethereum.RPC.Eth.DTOs.BlockParameter(849740),
+                ToBlock = new Nethereum.RPC.Eth.DTOs.BlockParameter(849745)
+            }).Result;
+
+            foreach (var item in allEvents)
+            {
+                Console.WriteLine($"{item.Event.EventNumber} {item.Event.Value}");
+            }
         }
     }
 }

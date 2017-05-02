@@ -27,7 +27,7 @@ namespace AzureRepositories.Repositories
 
         public DateTime UpdateDate { get; set; }
 
-        public BigInteger LastBalance { get; set; }
+        public string LastBalance { get; set; }
 
         public static UserTransferWalletEntity Create(IUserTransferWallet userTransferWallet)
         {
@@ -38,7 +38,7 @@ namespace AzureRepositories.Repositories
                 UpdateDate = userTransferWallet.UpdateDate,
                 UserAddress = userTransferWallet.UserAddress,
                 TransferContractAddress = userTransferWallet.TransferContractAddress,
-                LastBalance = userTransferWallet.LastBalance,
+                LastBalance = userTransferWallet.LastBalance
             };
         }
     }

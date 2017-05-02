@@ -1,20 +1,14 @@
-pragma solidity ^0.4.1;
+pragma solidity ^0.4.9;
 import "./coin.sol";
 
 contract EthCoin is Coin(0) {
 
     function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(uint id, address receiver, uint amount, bytes params) payable {
-
-        if (transactions[id])
-            throw;
-        
+    function cashin(address receiver, uint amount) onlyowner payable {
         coinBalanceMultisig[receiver] += msg.value;
 
         CoinCashIn(receiver, msg.value);
-
-        transactions[id] = true;
     }
 
     function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {

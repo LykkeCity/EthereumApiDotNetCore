@@ -43,7 +43,7 @@ namespace EthereumApi.Controllers
             {
                 Blockchain = model.Blockchain,
                 BlockchainDepositEnabled = true,
-                Id = "",
+                Id = "1",
                 Multiplier = model.Multiplier,
                 Name = model.Name,
             };

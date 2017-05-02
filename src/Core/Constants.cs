@@ -46,6 +46,7 @@
 
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
+        public const int GasForEthCashin = 800000;
 
 
         // app	settings keys

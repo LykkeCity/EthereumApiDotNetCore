@@ -1,5 +1,5 @@
 PragmaDirective
-   Source: "pragma solidity ^0.4.1;"
+   Source: "pragma solidity ^0.4.9;"
 ImportDirective "./coin.sol"
    Source: "import \"./coin.sol\";"
 ContractDefinition "MainExchange"

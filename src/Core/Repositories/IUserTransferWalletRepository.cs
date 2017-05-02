@@ -11,7 +11,7 @@ namespace Core.Repositories
         string UserAddress { get; }
         string TransferContractAddress { get; }
         DateTime UpdateDate { get; }
-        BigInteger LastBalance { get; set; }
+        string LastBalance { get; set; }
     }
 
     public class UserTransferWallet : IUserTransferWallet
@@ -19,7 +19,7 @@ namespace Core.Repositories
         public string UserAddress { get; set; }
         public string TransferContractAddress { get; set; }
         public DateTime UpdateDate { get; set; }
-        public BigInteger LastBalance { get; set; }
+        public string LastBalance { get; set; }
     }
 
     public interface IUserTransferWalletRepository

@@ -56,8 +56,8 @@ namespace Services
             }
             else
             {
-                abi = _settings.EthTransferContract.Abi;
-                byteCode = _settings.EthTransferContract.ByteCode;
+                abi = _settings.TokenTransferContract.Abi;
+                byteCode = _settings.TokenTransferContract.ByteCode;
             }
 
             string transferContractAddress = await _contractService.CreateContract(abi, byteCode,
@@ -83,7 +83,7 @@ namespace Services
         }
 
         public async Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,
-            string coinAdapterAddress, BigInteger amount, bool containsEth)
+            string coinAdapterAddress, string userAddress, BigInteger amount, bool containsEth)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
@@ -111,19 +111,16 @@ namespace Services
             var convertedId = EthUtils.GuidToBigInteger(id);
             string tr;
 
+            //function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params)
             if (!containsEth)
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-                new HexBigInteger(Constants.GasForCoinTransaction),
-                        new HexBigInteger(0), convertedId, coinDb.AdapterAddress,
-                        coinAdapterAddress, blockchainAmount, Constants.GasForCoinTransaction, new byte[0]);
+                new HexBigInteger(Constants.GasForCoinTransaction));
             }
             else
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-               new HexBigInteger(Constants.GasForCoinTransaction),
-                       new HexBigInteger(blockchainAmount), convertedId, coinDb.AdapterAddress,
-                       coinAdapterAddress, 0, Constants.GasForCoinTransaction, new byte[0]);
+               new HexBigInteger(Constants.GasForEthCashin), new HexBigInteger(0));
             }
 
             return tr;

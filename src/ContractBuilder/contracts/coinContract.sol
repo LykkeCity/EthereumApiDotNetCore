@@ -1,22 +1,16 @@
-pragma solidity ^0.4.1;
+pragma solidity ^0.4.9;
 import "./coin.sol";
 
 contract ColorCoin is Coin(0){
 
     function ColorCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }
 
-    function cashin(uint id, address receiver, uint amount, bytes params) onlyowner payable {
-
-        if (transactions[id])
-            throw;
-
+    function cashin(address receiver, uint amount) onlyowner payable {
         if (msg.value > 0) throw; 
         
         coinBalanceMultisig[receiver] += amount;
 
         CoinCashIn(receiver, amount);
-        
-        transactions[id] = true;
     }
 
     // cashout coins (called only from exchange contract)

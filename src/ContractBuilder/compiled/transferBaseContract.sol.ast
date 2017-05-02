@@ -1,9 +1,7 @@
 PragmaDirective
-   Source: "pragma solidity ^0.4.1;"
-ImportDirective "./coin.sol"
-   Source: "import \"./coin.sol\";"
+   Source: "pragma solidity ^0.4.9;"
 ContractDefinition "TransferBaseContract"
-   Source: "contract TransferBaseContract {\r\n    address _owner;  \r\n    address _userAddress;\r\n    address _coinAdapterAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }\r\n\r\n    function() payable {\r\n    }\r\n\r\n    function kill() onlyowner{\r\n        suicide(_owner);\r\n    }\r\n\r\n    function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        throw;\r\n    }\r\n}"
+   Source: "contract TransferBaseContract {\r\n    address _owner;  \r\n    address _userAddress;\r\n    address _coinAdapterAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }\r\n}"
   VariableDeclaration "_owner"
      Type: address
      Source: "address _owner"
@@ -95,80 +93,3 @@ ContractDefinition "TransferBaseContract"
           Identifier coinAdapterAddress
              Type: address
              Source: "coinAdapterAddress"
-  FunctionDefinition "" - public
-     Source: "function() payable {\r\n    }"
-    ParameterList
-       Source: "()"
-    ParameterList
-       Source: ""
-    Block
-       Source: "{\r\n    }"
-  FunctionDefinition "kill" - public
-     Source: "function kill() onlyowner{\r\n        suicide(_owner);\r\n    }"
-    ParameterList
-       Source: "()"
-    ParameterList
-       Source: ""
-    ModifierInvocation "onlyowner"
-       Source: "onlyowner"
-      Identifier onlyowner
-         Type: modifier ()
-         Source: "onlyowner"
-    Block
-       Source: "{\r\n        suicide(_owner);\r\n    }"
-      ExpressionStatement
-         Source: "suicide(_owner)"
-        FunctionCall
-           Type: tuple()
-           Source: "suicide(_owner)"
-          Identifier suicide
-             Type: function (address)
-             Source: "suicide"
-          Identifier _owner
-             Type: address
-             Source: "_owner"
-  FunctionDefinition "cashin" - public
-     Source: "function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        throw;\r\n    }"
-    ParameterList
-       Source: "(uint id, address coin, address receiver, uint amount, uint gas, bytes params)"
-      VariableDeclaration "id"
-         Type: uint256
-         Source: "uint id"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "coin"
-         Type: address
-         Source: "address coin"
-        ElementaryTypeName address
-           Source: "address"
-      VariableDeclaration "receiver"
-         Type: address
-         Source: "address receiver"
-        ElementaryTypeName address
-           Source: "address"
-      VariableDeclaration "amount"
-         Type: uint256
-         Source: "uint amount"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "gas"
-         Type: uint256
-         Source: "uint gas"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "params"
-         Type: bytes memory
-         Source: "bytes params"
-        ElementaryTypeName bytes
-           Source: "bytes"
-    ParameterList
-       Source: ""
-    ModifierInvocation "onlyowner"
-       Source: "onlyowner"
-      Identifier onlyowner
-         Type: modifier ()
-         Source: "onlyowner"
-    Block
-       Source: "{\r\n        throw;\r\n    }"
-      Throw
-         Source: "throw"

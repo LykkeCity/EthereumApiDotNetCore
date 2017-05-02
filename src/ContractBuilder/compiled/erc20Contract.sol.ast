@@ -1,5 +1,5 @@
 PragmaDirective
-   Source: "pragma solidity ^0.4.4;"
+   Source: "pragma solidity ^0.4.9;"
 ContractDefinition "ERC20Interface"
    Source: "contract ERC20Interface {\r\n    event Transfer(address indexed from, address indexed to, uint256 value);\r\n    event Approval(address indexed from, address indexed spender, uint256 value);\r\n\r\n    function totalSupply() constant returns (uint256 supply);\r\n    function balanceOf(address _owner) constant returns (uint256 balance);\r\n    function transfer(address _to, uint256 _value) returns (bool success);\r\n    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);\r\n    function approve(address _spender, uint256 _value) returns (bool success);\r\n    function allowance(address _owner, address _spender) constant returns (uint256 remaining);\r\n}"
   EventDefinition "Transfer"

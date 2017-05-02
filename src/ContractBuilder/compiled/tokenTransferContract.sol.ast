@@ -1,15 +1,22 @@
 PragmaDirective
-   Source: "pragma solidity ^0.4.1;"
+   Source: "pragma solidity ^0.4.9;"
 ImportDirective "./coin.sol"
    Source: "import \"./coin.sol\";"
 ImportDirective "./transferBaseContract.sol"
    Source: "import \"./transferBaseContract.sol\";"
+ImportDirective "./erc20Contract.sol"
+   Source: "import \"./erc20Contract.sol\";"
 ContractDefinition "TokenTransferContract"
-   Source: "contract TokenTransferContract is TransferBaseContract{\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TokenTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }\r\n\r\n    function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }\r\n}"
+   Source: "contract TokenTransferContract is TransferBaseContract{\r\n\r\n    address _externalTokenAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TokenTransferContract(address userAddress, address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(userAddress, coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }\r\n\r\n    function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }\r\n}"
   InheritanceSpecifier
      Source: "TransferBaseContract"
     UserDefinedTypeName "TransferBaseContract"
        Source: "TransferBaseContract"
+  VariableDeclaration "_externalTokenAddress"
+     Type: address
+     Source: "address _externalTokenAddress"
+    ElementaryTypeName address
+       Source: "address"
   ModifierDefinition "onlyowner"
      Source: "modifier onlyowner { if (msg.sender == _owner) _; }"
     ParameterList
@@ -33,9 +40,9 @@ ContractDefinition "TokenTransferContract"
         PlaceholderStatement
            Source: "_"
   FunctionDefinition "TokenTransferContract" - public
-     Source: "function TokenTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }"
+     Source: "function TokenTransferContract(address userAddress, address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(userAddress, coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }"
     ParameterList
-       Source: "(address userAddress, address coinAdapterAddress)"
+       Source: "(address userAddress, address coinAdapterAddress, address externalTokenAddress)"
       VariableDeclaration "userAddress"
          Type: address
          Source: "address userAddress"
@@ -44,6 +51,11 @@ ContractDefinition "TokenTransferContract"
       VariableDeclaration "coinAdapterAddress"
          Type: address
          Source: "address coinAdapterAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "externalTokenAddress"
+         Type: address
+         Source: "address externalTokenAddress"
         ElementaryTypeName address
            Source: "address"
     ParameterList
@@ -60,41 +72,22 @@ ContractDefinition "TokenTransferContract"
          Type: address
          Source: "coinAdapterAddress"
     Block
-       Source: "{        \r\n    }"
+       Source: "{\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }"
+      ExpressionStatement
+         Source: "_externalTokenAddress = externalTokenAddress"
+        Assignment using operator =
+           Type: address
+           Source: "_externalTokenAddress = externalTokenAddress"
+          Identifier _externalTokenAddress
+             Type: address
+             Source: "_externalTokenAddress"
+          Identifier externalTokenAddress
+             Type: address
+             Source: "externalTokenAddress"
   FunctionDefinition "cashin" - public
-     Source: "function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params) onlyowner {\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }"
+     Source: "function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }"
     ParameterList
-       Source: "(uint id, address coin, address receiver, uint amount, uint gas, bytes params)"
-      VariableDeclaration "id"
-         Type: uint256
-         Source: "uint id"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "coin"
-         Type: address
-         Source: "address coin"
-        ElementaryTypeName address
-           Source: "address"
-      VariableDeclaration "receiver"
-         Type: address
-         Source: "address receiver"
-        ElementaryTypeName address
-           Source: "address"
-      VariableDeclaration "amount"
-         Type: uint256
-         Source: "uint amount"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "gas"
-         Type: uint256
-         Source: "uint gas"
-        ElementaryTypeName uint
-           Source: "uint"
-      VariableDeclaration "params"
-         Type: bytes memory
-         Source: "bytes params"
-        ElementaryTypeName bytes
-           Source: "bytes"
+       Source: "()"
     ParameterList
        Source: ""
     ModifierInvocation "onlyowner"
@@ -103,50 +96,81 @@ ContractDefinition "TokenTransferContract"
          Type: modifier ()
          Source: "onlyowner"
     Block
-       Source: "{\r\n        var coin_contract = Coin(coin);\r\n        coin_contract.cashin.gas(gas)(id, receiver, amount, params);\r\n    }"
+       Source: "{\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }"
       VariableDeclarationStatement
-         Source: "var coin_contract = Coin(coin)"
+         Source: "var erc20Token = ERC20Interface(_externalTokenAddress)"
+        VariableDeclaration "erc20Token"
+           Type: contract ERC20Interface
+           Source: "var erc20Token"
+        FunctionCall
+           Type: contract ERC20Interface
+           Source: "ERC20Interface(_externalTokenAddress)"
+          Identifier ERC20Interface
+             Type: type(contract ERC20Interface)
+             Source: "ERC20Interface"
+          Identifier _externalTokenAddress
+             Type: address
+             Source: "_externalTokenAddress"
+      VariableDeclarationStatement
+         Source: "var tokenBalance = erc20Token.balanceOf(this)"
+        VariableDeclaration "tokenBalance"
+           Type: uint256
+           Source: "var tokenBalance"
+        FunctionCall
+           Type: uint256
+           Source: "erc20Token.balanceOf(this)"
+          MemberAccess to member balanceOf
+             Type: function (address) constant external returns (uint256)
+             Source: "erc20Token.balanceOf"
+            Identifier erc20Token
+               Type: contract ERC20Interface
+               Source: "erc20Token"
+          Identifier this
+             Type: contract TokenTransferContract
+             Source: "this"
+      IfStatement
+         Source: "if (tokenBalance <= 0) {\r\n            throw;\r\n        }"
+        BinaryOperation using operator <=
+           Type: bool
+           Source: "tokenBalance <= 0"
+          Identifier tokenBalance
+             Type: uint256
+             Source: "tokenBalance"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\r\n            throw;\r\n        }"
+          Throw
+             Source: "throw"
+      VariableDeclarationStatement
+         Source: "var coin_contract = Coin(_coinAdapterAddress)"
         VariableDeclaration "coin_contract"
            Type: contract Coin
            Source: "var coin_contract"
         FunctionCall
            Type: contract Coin
-           Source: "Coin(coin)"
+           Source: "Coin(_coinAdapterAddress)"
           Identifier Coin
              Type: type(contract Coin)
              Source: "Coin"
-          Identifier coin
+          Identifier _coinAdapterAddress
              Type: address
-             Source: "coin"
+             Source: "_coinAdapterAddress"
       ExpressionStatement
-         Source: "coin_contract.cashin.gas(gas)(id, receiver, amount, params)"
+         Source: "coin_contract.cashin(_userAddress, tokenBalance)"
         FunctionCall
            Type: tuple()
-           Source: "coin_contract.cashin.gas(gas)(id, receiver, amount, params)"
-          FunctionCall
-             Type: function (uint256,address,uint256,bytes memory) payable external
-             Source: "coin_contract.cashin.gas(gas)"
-            MemberAccess to member gas
-               Type: function (uint256) returns (function (uint256,address,uint256,bytes memory) payable external)
-               Source: "coin_contract.cashin.gas"
-              MemberAccess to member cashin
-                 Type: function (uint256,address,uint256,bytes memory) payable external
-                 Source: "coin_contract.cashin"
-                Identifier coin_contract
-                   Type: contract Coin
-                   Source: "coin_contract"
-            Identifier gas
-               Type: uint256
-               Source: "gas"
-          Identifier id
-             Type: uint256
-             Source: "id"
-          Identifier receiver
+           Source: "coin_contract.cashin(_userAddress, tokenBalance)"
+          MemberAccess to member cashin
+             Type: function (address,uint256) payable external
+             Source: "coin_contract.cashin"
+            Identifier coin_contract
+               Type: contract Coin
+               Source: "coin_contract"
+          Identifier _userAddress
              Type: address
-             Source: "receiver"
-          Identifier amount
+             Source: "_userAddress"
+          Identifier tokenBalance
              Type: uint256
-             Source: "amount"
-          Identifier params
-             Type: bytes memory
-             Source: "params"
+             Source: "tokenBalance"

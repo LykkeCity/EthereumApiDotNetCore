@@ -58,7 +58,9 @@ namespace EthereumJobs.Job
             {
                 //it is a transfer wallet
                 IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
-                if (wallet == null || wallet.LastBalance == 0)
+                if (wallet == null ||
+                    string.IsNullOrEmpty(wallet.LastBalance) ||
+                    wallet.LastBalance == "0")
                 {
                     BigInteger balance;
 
@@ -77,7 +79,7 @@ namespace EthereumJobs.Job
 
                         await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                         {
-                            LastBalance = balance,
+                            LastBalance = balance.ToString(),
                             TransferContractAddress = item.ContractAddress,
                             UserAddress = item.UserAddress,
                             UpdateDate = DateTime.UtcNow

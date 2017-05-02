@@ -1,11 +1,10 @@
-pragma solidity ^0.4.1;
+pragma solidity ^0.4.9;
 contract Coin {
 
     address _owner;
     address _exchangeContractAddress;
     uint _lastPing;
     mapping (address => uint) public coinBalanceMultisig;
-    mapping (uint => bool) public transactions;
 
     event CoinCashIn(address caller, uint amount);
     event CoinCashOut(address caller, address from, uint amount, address to);
@@ -39,7 +38,7 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(uint id, address receiver, uint amount, bytes params) onlyowner payable { throw; }
+    function cashin(address receiver, uint amount) onlyowner payable { throw; }
 
     // virtual method (if not implemented, then throws)
     function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }
@@ -56,6 +55,10 @@ contract Coin {
         }
 
         return client_addr == ecrecover(hash, v, r, s);
+    }
+
+    function balanceOf(address _owner) constant {
+         
     }
 
     function ping() {

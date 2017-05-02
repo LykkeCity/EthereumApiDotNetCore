@@ -1,4 +1,4 @@
-pragma solidity ^0.4.1;
+pragma solidity ^0.4.9;
 import "./coin.sol";
 
 contract MainExchange {

@@ -1,9 +1,9 @@
 PragmaDirective
-   Source: "pragma solidity ^0.4.1;"
+   Source: "pragma solidity ^0.4.9;"
 ImportDirective "./coin.sol"
    Source: "import \"./coin.sol\";"
 ContractDefinition "EthCoin"
-   Source: "contract EthCoin is Coin(0) {\r\n\r\n    function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }\r\n\r\n    function cashin(uint id, address receiver, uint amount, bytes params) payable {\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }\r\n\r\n    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }\r\n}"
+   Source: "contract EthCoin is Coin(0) {\r\n\r\n    function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }\r\n\r\n    function cashin(address receiver, uint amount) onlyowner payable {\r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n    }\r\n\r\n    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }\r\n}"
   InheritanceSpecifier
      Source: "Coin(0)"
     UserDefinedTypeName "Coin"
@@ -33,14 +33,9 @@ ContractDefinition "EthCoin"
     Block
        Source: "{ }"
   FunctionDefinition "cashin" - public
-     Source: "function cashin(uint id, address receiver, uint amount, bytes params) payable {\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }"
+     Source: "function cashin(address receiver, uint amount) onlyowner payable {\r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n    }"
     ParameterList
-       Source: "(uint id, address receiver, uint amount, bytes params)"
-      VariableDeclaration "id"
-         Type: uint256
-         Source: "uint id"
-        ElementaryTypeName uint
-           Source: "uint"
+       Source: "(address receiver, uint amount)"
       VariableDeclaration "receiver"
          Type: address
          Source: "address receiver"
@@ -51,28 +46,15 @@ ContractDefinition "EthCoin"
          Source: "uint amount"
         ElementaryTypeName uint
            Source: "uint"
-      VariableDeclaration "params"
-         Type: bytes memory
-         Source: "bytes params"
-        ElementaryTypeName bytes
-           Source: "bytes"
     ParameterList
        Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
     Block
-       Source: "{\r\n\r\n        if (transactions[id])\r\n            throw;\r\n        \r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n\r\n        transactions[id] = true;\r\n    }"
-      IfStatement
-         Source: "if (transactions[id])\r\n            throw"
-        IndexAccess
-           Type: bool
-           Source: "transactions[id]"
-          Identifier transactions
-             Type: mapping(uint256 => bool)
-             Source: "transactions"
-          Identifier id
-             Type: uint256
-             Source: "id"
-        Throw
-           Source: "throw"
+       Source: "{\r\n        coinBalanceMultisig[receiver] += msg.value;\r\n\r\n        CoinCashIn(receiver, msg.value);\r\n    }"
       ExpressionStatement
          Source: "coinBalanceMultisig[receiver] += msg.value"
         Assignment using operator +=
@@ -110,23 +92,6 @@ ContractDefinition "EthCoin"
             Identifier msg
                Type: msg
                Source: "msg"
-      ExpressionStatement
-         Source: "transactions[id] = true"
-        Assignment using operator =
-           Type: bool
-           Source: "transactions[id] = true"
-          IndexAccess
-             Type: bool
-             Source: "transactions[id]"
-            Identifier transactions
-               Type: mapping(uint256 => bool)
-               Source: "transactions"
-            Identifier id
-               Type: uint256
-               Source: "id"
-          Literal, token: true value: true
-             Type: bool
-             Source: "true"
   FunctionDefinition "cashout" - public
      Source: "function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {\r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        if (!to.send(amount)) throw;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }"
     ParameterList
