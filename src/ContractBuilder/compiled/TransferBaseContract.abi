@@ -1,1 +1,1 @@
-[{"inputs":[{"name":"userAddress","type":"address"},{"name":"coinAdapterAddress","type":"address"}],"payable":false,"type":"constructor"}]
+[{"inputs":[{"name":"coinAdapterAddress","type":"address"}],"payable":false,"type":"constructor"}]

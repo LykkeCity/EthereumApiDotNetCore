@@ -2809,6 +2809,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
+          "Lykke.AzureStorage": "1.2.20",
           "Lykke.Common": "1.1.69",
           "NETStandard.Library": "1.6.0",
           "Nethereum.ABI": "1.0.6",
@@ -5873,6 +5874,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
+          "Lykke.AzureStorage": "1.2.20",
           "Lykke.Common": "1.1.69",
           "NETStandard.Library": "1.6.0",
           "Nethereum.ABI": "1.0.6",

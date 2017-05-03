@@ -1,4 +1,4 @@
-    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:840  contract EthCoin is Coin(0) {... */
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:978  contract EthCoin is Coin(0) {... */
   mstore(0x40, 0x60)
     /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":86:169  function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { } */
   jumpi(tag_1, iszero(callvalue))
@@ -28,14 +28,14 @@ tag_1:
 tag_2:
     /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":141:164  exchangeContractAddress */
   dup1
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":583:729  function Coin(address exchangeContractAddress) {... */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":646:792  function Coin(address exchangeContractAddress) {... */
 tag_3:
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":650:660  msg.sender */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":713:723  msg.sender */
   caller
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":641:647  _owner */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":704:710  _owner */
   0x0
   0x0
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":641:660  _owner = msg.sender */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":704:723  _owner = msg.sender */
   0x100
   exp
   dup2
@@ -54,12 +54,12 @@ tag_3:
   swap1
   sstore
   pop
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":698:721  exchangeContractAddress */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":761:784  exchangeContractAddress */
   dup1
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":671:695  _exchangeContractAddress */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":734:758  _exchangeContractAddress */
   0x1
   0x0
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":671:721  _exchangeContractAddress = exchangeContractAddress */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":734:784  _exchangeContractAddress = exchangeContractAddress */
   0x100
   exp
   dup2
@@ -78,13 +78,13 @@ tag_3:
   swap1
   sstore
   pop
-    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":583:729  function Coin(address exchangeContractAddress) {... */
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":646:792  function Coin(address exchangeContractAddress) {... */
 tag_4:
   pop
     /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":86:169  function EthCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { } */
 tag_5:
   pop
-    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:840  contract EthCoin is Coin(0) {... */
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:978  contract EthCoin is Coin(0) {... */
 tag_6:
   dataSize(sub_0)
   dup1
@@ -96,7 +96,7 @@ tag_6:
 stop
 
 sub_0: assembly {
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:840  contract EthCoin is Coin(0) {... */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":49:978  contract EthCoin is Coin(0) {... */
       mstore(0x40, 0x60)
       jumpi(tag_1, iszero(calldatasize))
       calldataload(0x0)
@@ -111,43 +111,63 @@ sub_0: assembly {
       tag_2
       jumpi
       dup1
-      0x388f3cd3
+      0x249b4d4f
       eq
       tag_3
       jumpi
       dup1
-      0x5c36b186
+      0x388f3cd3
       eq
       tag_4
       jumpi
       dup1
-      0x67aa963c
+      0x527f4ff1
       eq
       tag_5
       jumpi
       dup1
-      0x70a2efa0
+      0x5c36b186
       eq
       tag_6
       jumpi
       dup1
-      0x9d16aca6
+      0x67aa963c
       eq
       tag_7
       jumpi
       dup1
-      0xc902d1b6
+      0x70a08231
       eq
       tag_8
+      jumpi
+      dup1
+      0x70a2efa0
+      eq
+      tag_9
+      jumpi
+      dup1
+      0x9d16aca6
+      eq
+      tag_10
+      jumpi
+      dup1
+      0xc902d1b6
+      eq
+      tag_11
+      jumpi
+      dup1
+      0xf1679095
+      eq
+      tag_12
       jumpi
     tag_1:
       invalid
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":129:181  mapping (address => uint) public coinBalanceMultisig */
     tag_2:
-      jumpi(tag_9, iszero(callvalue))
+      jumpi(tag_13, iszero(callvalue))
       invalid
-    tag_9:
-      tag_10
+    tag_13:
+      tag_14
       0x4
       dup1
       dup1
@@ -162,8 +182,8 @@ sub_0: assembly {
       swap1
       pop
       pop
-      jump(tag_11)
-    tag_10:
+      jump(tag_15)
+    tag_14:
       mload(0x40)
       dup1
       dup3
@@ -180,9 +200,12 @@ sub_0: assembly {
       sub
       swap1
       return
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:347  function cashin(address receiver, uint amount) onlyowner payable {... */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":188:244  mapping (address => address) public transferContractUser */
     tag_3:
-      tag_12
+      jumpi(tag_16, iszero(callvalue))
+      invalid
+    tag_16:
+      tag_17
       0x4
       dup1
       dup1
@@ -195,34 +218,33 @@ sub_0: assembly {
       swap1
       swap2
       swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
       pop
       pop
-      jump(tag_13)
-    tag_12:
-      stop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2139:2189  function ping() {... */
-    tag_4:
-      jumpi(tag_14, iszero(callvalue))
-      invalid
-    tag_14:
-      tag_15
-      jump(tag_16)
-    tag_15:
-      stop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":957:1423  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
-    tag_5:
-      jumpi(tag_17, iszero(callvalue))
-      invalid
+      jump(tag_18)
     tag_17:
-      tag_18
+      mload(0x40)
+      dup1
+      dup3
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:485  function cashin(address receiver, uint amount) onlyowner payable {... */
+    tag_4:
+      tag_19
       0x4
       dup1
       dup1
@@ -237,326 +259,232 @@ sub_0: assembly {
       swap1
       dup1
       calldataload
-      0xffffffffffffffffffffffffffffffffffffffff
-      and
       swap1
       0x20
       add
       swap1
       swap2
       swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      not(0x0)
-      and
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup3
-      add
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup1
-      dup1
-      0x1f
-      add
-      0x20
-      dup1
-      swap2
-      div
-      mul
-      0x20
-      add
-      mload(0x40)
-      swap1
-      dup2
-      add
-      0x40
-      mstore
-      dup1
-      swap4
-      swap3
-      swap2
-      swap1
-      dup2
-      dup2
-      mstore
-      0x20
-      add
-      dup4
-      dup4
-      dup1
-      dup3
-      dup5
-      calldatacopy
-      dup3
-      add
-      swap2
       pop
       pop
-      pop
-      pop
-      pop
-      pop
-      swap2
-      swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup3
-      add
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup1
-      dup1
-      0x1f
-      add
-      0x20
-      dup1
-      swap2
-      div
-      mul
-      0x20
-      add
-      mload(0x40)
-      swap1
-      dup2
-      add
-      0x40
-      mstore
-      dup1
-      swap4
-      swap3
-      swap2
-      swap1
-      dup2
-      dup2
-      mstore
-      0x20
-      add
-      dup4
-      dup4
-      dup1
-      dup3
-      dup5
-      calldatacopy
-      dup3
-      add
-      swap2
-      pop
-      pop
-      pop
-      pop
-      pop
-      pop
-      swap2
-      swap1
-      pop
-      pop
-      jump(tag_19)
-    tag_18:
+      jump(tag_20)
+    tag_19:
       stop
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":355:837  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
-    tag_6:
-      jumpi(tag_20, iszero(callvalue))
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2552:2872  function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{... */
+    tag_5:
+      jumpi(tag_21, iszero(callvalue))
       invalid
-    tag_20:
-      tag_21
-      0x4
-      dup1
-      dup1
-      calldataload
-      0xffffffffffffffffffffffffffffffffffffffff
-      and
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      0xffffffffffffffffffffffffffffffffffffffff
-      and
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      not(0x0)
-      and
-      swap1
-      0x20
-      add
-      swap1
-      swap2
-      swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup3
-      add
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup1
-      dup1
-      0x1f
-      add
-      0x20
-      dup1
-      swap2
-      div
-      mul
-      0x20
-      add
-      mload(0x40)
-      swap1
-      dup2
-      add
-      0x40
-      mstore
-      dup1
-      swap4
-      swap3
-      swap2
-      swap1
-      dup2
-      dup2
-      mstore
-      0x20
-      add
-      dup4
-      dup4
-      dup1
-      dup3
-      dup5
-      calldatacopy
-      dup3
-      add
-      swap2
-      pop
-      pop
-      pop
-      pop
-      pop
-      pop
-      swap2
-      swap1
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup3
-      add
-      dup1
-      calldataload
-      swap1
-      0x20
-      add
-      swap1
-      dup1
-      dup1
-      0x1f
-      add
-      0x20
-      dup1
-      swap2
-      div
-      mul
-      0x20
-      add
-      mload(0x40)
-      swap1
-      dup2
-      add
-      0x40
-      mstore
-      dup1
-      swap4
-      swap3
-      swap2
-      swap1
-      dup2
-      dup2
-      mstore
-      0x20
-      add
-      dup4
-      dup4
-      dup1
-      dup3
-      dup5
-      calldatacopy
-      dup3
-      add
-      swap2
-      pop
-      pop
-      pop
-      pop
-      pop
-      pop
-      swap2
-      swap1
-      pop
-      pop
-      jump(tag_22)
     tag_21:
+      tag_22
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_23)
+    tag_22:
       stop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":740:889  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
-    tag_7:
-      jumpi(tag_23, iszero(callvalue))
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2880:2930  function ping() {... */
+    tag_6:
+      jumpi(tag_24, iszero(callvalue))
       invalid
-    tag_23:
-      tag_24
+    tag_24:
+      tag_25
+      jump(tag_26)
+    tag_25:
+      stop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1020:1486  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
+    tag_7:
+      jumpi(tag_27, iszero(callvalue))
+      invalid
+    tag_27:
+      tag_28
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      not(0x0)
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup3
+      add
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup1
+      dup1
+      0x1f
+      add
+      0x20
+      dup1
+      swap2
+      div
+      mul
+      0x20
+      add
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      swap4
+      swap3
+      swap2
+      swap1
+      dup2
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup4
+      dup1
+      dup3
+      dup5
+      calldatacopy
+      dup3
+      add
+      swap2
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup3
+      add
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup1
+      dup1
+      0x1f
+      add
+      0x20
+      dup1
+      swap2
+      div
+      mul
+      0x20
+      add
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      swap4
+      swap3
+      swap2
+      swap1
+      dup2
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup4
+      dup1
+      dup3
+      dup5
+      calldatacopy
+      dup3
+      add
+      swap2
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_29)
+    tag_28:
+      stop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2202:2347  function balanceOf(address owner) constant returns(uint) {... */
+    tag_8:
+      jumpi(tag_30, iszero(callvalue))
+      invalid
+    tag_30:
+      tag_31
       0x4
       dup1
       dup1
@@ -571,15 +499,220 @@ sub_0: assembly {
       swap1
       pop
       pop
-      jump(tag_25)
-    tag_24:
-      stop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1773:2131  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
-    tag_8:
-      jumpi(tag_26, iszero(callvalue))
+      jump(tag_32)
+    tag_31:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":493:975  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
+    tag_9:
+      jumpi(tag_33, iszero(callvalue))
       invalid
-    tag_26:
-      tag_27
+    tag_33:
+      tag_34
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      not(0x0)
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup3
+      add
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup1
+      dup1
+      0x1f
+      add
+      0x20
+      dup1
+      swap2
+      div
+      mul
+      0x20
+      add
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      swap4
+      swap3
+      swap2
+      swap1
+      dup2
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup4
+      dup1
+      dup3
+      dup5
+      calldatacopy
+      dup3
+      add
+      swap2
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup3
+      add
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      dup1
+      dup1
+      0x1f
+      add
+      0x20
+      dup1
+      swap2
+      div
+      mul
+      0x20
+      add
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      swap4
+      swap3
+      swap2
+      swap1
+      dup2
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup4
+      dup1
+      dup3
+      dup5
+      calldatacopy
+      dup3
+      add
+      swap2
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_35)
+    tag_34:
+      stop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":803:952  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
+    tag_10:
+      jumpi(tag_36, iszero(callvalue))
+      invalid
+    tag_36:
+      tag_37
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_38)
+    tag_37:
+      stop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1836:2194  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
+    tag_11:
+      jumpi(tag_39, iszero(callvalue))
+      invalid
+    tag_39:
+      tag_40
       0x4
       dup1
       dup1
@@ -662,8 +795,8 @@ sub_0: assembly {
       swap1
       pop
       pop
-      jump(tag_28)
-    tag_27:
+      jump(tag_41)
+    tag_40:
       mload(0x40)
       dup1
       dup3
@@ -671,6 +804,48 @@ sub_0: assembly {
       iszero
       iszero
       iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2355:2544  function getTransferAddressUser(address transferAddress) constant returns(address){... */
+    tag_12:
+      jumpi(tag_42, iszero(callvalue))
+      invalid
+    tag_42:
+      tag_43
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_44)
+    tag_43:
+      mload(0x40)
+      dup1
+      dup3
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
       dup2
       mstore
       0x20
@@ -685,7 +860,7 @@ sub_0: assembly {
       swap1
       return
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":129:181  mapping (address => uint) public coinBalanceMultisig */
-    tag_11:
+    tag_15:
       mstore(0x20, 0x3)
       dup1
       0x0
@@ -699,9 +874,31 @@ sub_0: assembly {
       sload
       dup2
       jump	// out
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:347  function cashin(address receiver, uint amount) onlyowner payable {... */
-    tag_13:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":442:448  _owner */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":188:244  mapping (address => address) public transferContractUser */
+    tag_18:
+      mstore(0x20, 0x4)
+      dup1
+      0x0
+      mstore
+      sha3(0x0, 0x40)
+      0x0
+      swap2
+      pop
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:485  function cashin(address receiver, uint amount) onlyowner payable {... */
+    tag_20:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:268  var userAddress */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":505:511  _owner */
       0x0
       0x0
       swap1
@@ -713,28 +910,26 @@ sub_0: assembly {
       div
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":428:448  msg.sender == _owner */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:511  msg.sender == _owner */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":428:438  msg.sender */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:501  msg.sender */
       caller
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":428:448  msg.sender == _owner */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:511  msg.sender == _owner */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":424:451  if (msg.sender == _owner) _ */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":487:514  if (msg.sender == _owner) _ */
       iszero
-      tag_30
+      tag_46
       jumpi
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":286:295  msg.value */
-      callvalue
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:272  coinBalanceMultisig */
-      0x3
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:282  coinBalanceMultisig[receiver] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":271:291  transferContractUser */
+      0x4
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":271:301  transferContractUser[receiver] */
       0x0
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":273:281  receiver */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":292:300  receiver */
       dup5
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:282  coinBalanceMultisig[receiver] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":271:301  transferContractUser[receiver] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -751,7 +946,63 @@ sub_0: assembly {
       0x0
       sha3
       0x0
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:295  coinBalanceMultisig[receiver] += msg.value */
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":253:301  var userAddress = transferContractUser[receiver] */
+      swap1
+      pop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":341:342  0 */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":318:343  userAddress == address(0) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":318:329  userAddress */
+      dup2
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":318:343  userAddress == address(0) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":314:377  if (userAddress == address(0)) {... */
+      iszero
+      tag_48
+      jumpi
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":360:365  throw */
+      revert(0x0, 0x0)
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":314:377  if (userAddress == address(0)) {... */
+    tag_48:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":424:433  msg.value */
+      callvalue
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":388:407  coinBalanceMultisig */
+      0x3
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":388:420  coinBalanceMultisig[userAddress] */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":408:419  userAddress */
+      dup4
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":388:420  coinBalanceMultisig[userAddress] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":388:433  coinBalanceMultisig[userAddress] += msg.value */
       dup3
       dup3
       sload
@@ -763,13 +1014,13 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":308:339  CoinCashIn(receiver, msg.value) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":446:477  CoinCashIn(receiver, msg.value) */
       0xdc509038db9392ff7578ddab410c947e5d76edb206238e1335952081694d438f
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":319:327  receiver */
-      dup3
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":329:338  msg.value */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":457:465  receiver */
+      dup4
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":467:476  msg.value */
       callvalue
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":308:339  CoinCashIn(receiver, msg.value) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":446:477  CoinCashIn(receiver, msg.value) */
       mload(0x40)
       dup1
       dup4
@@ -796,32 +1047,170 @@ sub_0: assembly {
       sub
       swap1
       log1
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":450:451  _ */
-    tag_31:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":424:451  if (msg.sender == _owner) _ */
-    tag_30:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:347  function cashin(address receiver, uint amount) onlyowner payable {... */
-    tag_29:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":513:514  _ */
+    tag_47:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":487:514  if (msg.sender == _owner) _ */
+    tag_46:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":177:485  function cashin(address receiver, uint amount) onlyowner payable {... */
+    tag_45:
+      pop
       pop
       pop
       jump	// out
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2139:2189  function ping() {... */
-    tag_16:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2178:2181  now */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2552:2872  function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{... */
+    tag_23:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2651:2669  var oldUserAddress */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":505:511  _owner */
+      0x0
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:511  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:501  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":491:511  msg.sender == _owner */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":487:514  if (msg.sender == _owner) _ */
+      iszero
+      tag_50
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2672:2692  transferContractUser */
+      0x4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2672:2709  transferContractUser[transferAddress] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2693:2708  transferAddress */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2672:2709  transferContractUser[transferAddress] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2651:2709  var oldUserAddress = transferContractUser[transferAddress] */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2762:2763  0 */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress == address(0) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2750  oldUserAddress */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress == address(0) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress == address(0)) {... */
+      iszero
+      tag_52
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2782:2787  throw */
+      revert(0x0, 0x0)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress == address(0)) {... */
+    tag_52:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2853:2864  userAddress */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2813:2833  transferContractUser */
+      0x4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2813:2850  transferContractUser[transferAddress] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2834:2849  transferAddress */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2813:2850  transferContractUser[transferAddress] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2813:2864  transferContractUser[transferAddress] = userAddress */
+      0x100
+      exp
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":513:514  _ */
+    tag_51:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":487:514  if (msg.sender == _owner) _ */
+    tag_50:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2552:2872  function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{... */
+    tag_49:
+      pop
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2880:2930  function ping() {... */
+    tag_26:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2919:2922  now */
       timestamp
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2166:2175  _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2907:2916  _lastPing */
       0x2
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2166:2181  _lastPing = now */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2907:2922  _lastPing = now */
       dup2
       swap1
       sstore
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2139:2189  function ping() {... */
-    tag_32:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2880:2930  function ping() {... */
+    tag_53:
       jump	// out
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":957:1423  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
-    tag_19:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":514:538  _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1020:1486  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
+    tag_29:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":577:601  _exchangeContractAddress */
       0x1
       0x0
       swap1
@@ -833,68 +1222,68 @@ sub_0: assembly {
       div
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:510  msg.sender */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:573  msg.sender */
       caller
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
       dup1
-      tag_34
+      tag_55
       jumpi
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":562:569  30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":625:632  30 days */
       0x278d00
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":549:558  _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":612:621  _lastPing */
       sload(0x2)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:546  now */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:609  now */
       timestamp
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:558  now - _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:621  now - _lastPing */
       sub
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":542:569  (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":605:632  (now - _lastPing) > 30 days */
       gt
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
-    tag_34:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+    tag_55:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
       iszero
-      tag_35
+      tag_56
       jumpi
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1111:1153  _checkClientSign(from, hash, client_a_sig) */
-      tag_37
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1128:1132  from */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1174:1216  _checkClientSign(from, hash, client_a_sig) */
+      tag_58
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1191:1195  from */
       dup7
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1134:1138  hash */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1197:1201  hash */
       dup5
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1140:1152  client_a_sig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1203:1215  client_a_sig */
       dup5
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1111:1127  _checkClientSign */
-      tag_28
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1111:1153  _checkClientSign(from, hash, client_a_sig) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1174:1190  _checkClientSign */
+      tag_41
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1174:1216  _checkClientSign(from, hash, client_a_sig) */
       jump	// in
-    tag_37:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1110:1153  !_checkClientSign(from, hash, client_a_sig) */
+    tag_58:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1173:1216  !_checkClientSign(from, hash, client_a_sig) */
       iszero
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1106:1187  if (!_checkClientSign(from, hash, client_a_sig)) {... */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1169:1250  if (!_checkClientSign(from, hash, client_a_sig)) {... */
       iszero
-      tag_38
+      tag_59
       jumpi
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1170:1175  throw */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1233:1238  throw */
       revert(0x0, 0x0)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1106:1187  if (!_checkClientSign(from, hash, client_a_sig)) {... */
-    tag_38:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1229:1235  amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1169:1250  if (!_checkClientSign(from, hash, client_a_sig)) {... */
+    tag_59:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1292:1298  amount */
       dup4
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1201:1220  coinBalanceMultisig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1264:1283  coinBalanceMultisig */
       0x3
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1201:1226  coinBalanceMultisig[from] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1264:1289  coinBalanceMultisig[from] */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1221:1225  from */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1284:1288  from */
       dup9
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1201:1226  coinBalanceMultisig[from] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1264:1289  coinBalanceMultisig[from] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -911,25 +1300,25 @@ sub_0: assembly {
       0x0
       sha3
       sload
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1201:1235  coinBalanceMultisig[from] < amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1264:1298  coinBalanceMultisig[from] < amount */
       lt
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1197:1269  if (coinBalanceMultisig[from] < amount) {... */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1260:1332  if (coinBalanceMultisig[from] < amount) {... */
       iszero
-      tag_39
+      tag_60
       jumpi
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1252:1257  throw */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1315:1320  throw */
       revert(0x0, 0x0)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1197:1269  if (coinBalanceMultisig[from] < amount) {... */
-    tag_39:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1310:1316  amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1260:1332  if (coinBalanceMultisig[from] < amount) {... */
+    tag_60:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1373:1379  amount */
       dup4
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1281:1300  coinBalanceMultisig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1344:1363  coinBalanceMultisig */
       0x3
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1281:1306  coinBalanceMultisig[from] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1344:1369  coinBalanceMultisig[from] */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1301:1305  from */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1364:1368  from */
       dup9
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1281:1306  coinBalanceMultisig[from] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1344:1369  coinBalanceMultisig[from] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -946,7 +1335,7 @@ sub_0: assembly {
       0x0
       sha3
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1281:1316  coinBalanceMultisig[from] -= amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1344:1379  coinBalanceMultisig[from] -= amount */
       dup3
       dup3
       sload
@@ -958,15 +1347,15 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1354:1360  amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1417:1423  amount */
       dup4
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1327:1346  coinBalanceMultisig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1390:1409  coinBalanceMultisig */
       0x3
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1327:1350  coinBalanceMultisig[to] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1390:1413  coinBalanceMultisig[to] */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1347:1349  to */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1410:1412  to */
       dup8
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1327:1350  coinBalanceMultisig[to] */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1390:1413  coinBalanceMultisig[to] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -983,7 +1372,7 @@ sub_0: assembly {
       0x0
       sha3
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1327:1360  coinBalanceMultisig[to] += amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1390:1423  coinBalanceMultisig[to] += amount */
       dup3
       dup3
       sload
@@ -995,17 +1384,17 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1373:1415  CoinTransfer(msg.sender, from, to, amount) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1436:1478  CoinTransfer(msg.sender, from, to, amount) */
       0xad61cab1dd9ce7c4095cf8876c832e5400db787afab09d55b74b8c75dcd6538c
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1386:1396  msg.sender */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1449:1459  msg.sender */
       caller
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1398:1402  from */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1461:1465  from */
       dup8
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1404:1406  to */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1467:1469  to */
       dup8
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1408:1414  amount */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1471:1477  amount */
       dup8
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1373:1415  CoinTransfer(msg.sender, from, to, amount) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1436:1478  CoinTransfer(msg.sender, from, to, amount) */
       mload(0x40)
       dup1
       dup6
@@ -1052,12 +1441,12 @@ sub_0: assembly {
       sub
       swap1
       log1
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":571:572  _ */
-    tag_36:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
-    tag_35:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":957:1423  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
-    tag_33:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":634:635  _ */
+    tag_57:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+    tag_56:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1020:1486  function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {... */
+    tag_54:
       pop
       pop
       pop
@@ -1065,9 +1454,53 @@ sub_0: assembly {
       pop
       pop
       jump	// out
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":355:837  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
-    tag_22:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":514:538  _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2202:2347  function balanceOf(address owner) constant returns(uint) {... */
+    tag_32:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2253:2257  uint */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2271:2282  var balance */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2285:2304  coinBalanceMultisig */
+      0x3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2285:2311  coinBalanceMultisig[owner] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2305:2310  owner */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2285:2311  coinBalanceMultisig[owner] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2271:2311  var balance = coinBalanceMultisig[owner] */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2332:2339  balance */
+      dup1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2325:2339  return balance */
+      swap2
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2202:2347  function balanceOf(address owner) constant returns(uint) {... */
+    tag_61:
+      pop
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":493:975  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
+    tag_35:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":577:601  _exchangeContractAddress */
       0x1
       0x0
       swap1
@@ -1079,68 +1512,68 @@ sub_0: assembly {
       div
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:510  msg.sender */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:573  msg.sender */
       caller
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
       dup1
-      tag_41
+      tag_63
       jumpi
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":562:569  30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":625:632  30 days */
       0x278d00
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":549:558  _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":612:621  _lastPing */
       sload(0x2)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:546  now */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:609  now */
       timestamp
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:558  now - _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:621  now - _lastPing */
       sub
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":542:569  (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":605:632  (now - _lastPing) > 30 days */
       gt
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
-    tag_41:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+    tag_63:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
       iszero
-      tag_42
+      tag_64
       jumpi
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":502:544  _checkClientSign(client, hash, client_sig) */
-      tag_44
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":519:525  client */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":640:682  _checkClientSign(client, hash, client_sig) */
+      tag_66
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":657:663  client */
       dup7
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":527:531  hash */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":665:669  hash */
       dup5
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":533:543  client_sig */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":671:681  client_sig */
       dup5
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":502:518  _checkClientSign */
-      tag_28
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":502:544  _checkClientSign(client, hash, client_sig) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":640:656  _checkClientSign */
+      tag_41
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":640:682  _checkClientSign(client, hash, client_sig) */
       jump	// in
-    tag_44:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":501:544  !_checkClientSign(client, hash, client_sig) */
+    tag_66:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":639:682  !_checkClientSign(client, hash, client_sig) */
       iszero
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":497:598  if (!_checkClientSign(client, hash, client_sig)) {... */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":635:736  if (!_checkClientSign(client, hash, client_sig)) {... */
       iszero
-      tag_45
+      tag_67
       jumpi
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":561:566  throw */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":699:704  throw */
       revert(0x0, 0x0)
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":497:598  if (!_checkClientSign(client, hash, client_sig)) {... */
-    tag_45:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":644:650  amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":635:736  if (!_checkClientSign(client, hash, client_sig)) {... */
+    tag_67:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":782:788  amount */
       dup4
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":614:633  coinBalanceMultisig */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":752:771  coinBalanceMultisig */
       0x3
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":614:641  coinBalanceMultisig[client] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":752:779  coinBalanceMultisig[client] */
       0x0
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":634:640  client */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":772:778  client */
       dup9
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":614:641  coinBalanceMultisig[client] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":752:779  coinBalanceMultisig[client] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -1157,25 +1590,25 @@ sub_0: assembly {
       0x0
       sha3
       sload
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":614:650  coinBalanceMultisig[client] < amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":752:788  coinBalanceMultisig[client] < amount */
       lt
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":610:684  if (coinBalanceMultisig[client] < amount) {... */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":748:822  if (coinBalanceMultisig[client] < amount) {... */
       iszero
-      tag_46
+      tag_68
       jumpi
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":667:672  throw */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":805:810  throw */
       revert(0x0, 0x0)
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":610:684  if (coinBalanceMultisig[client] < amount) {... */
-    tag_46:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":727:733  amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":748:822  if (coinBalanceMultisig[client] < amount) {... */
+    tag_68:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":865:871  amount */
       dup4
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":696:715  coinBalanceMultisig */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":834:853  coinBalanceMultisig */
       0x3
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":696:723  coinBalanceMultisig[client] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":834:861  coinBalanceMultisig[client] */
       0x0
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":716:722  client */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":854:860  client */
       dup9
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":696:723  coinBalanceMultisig[client] */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":834:861  coinBalanceMultisig[client] */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xffffffffffffffffffffffffffffffffffffffff
@@ -1192,7 +1625,7 @@ sub_0: assembly {
       0x0
       sha3
       0x0
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":696:733  coinBalanceMultisig[client] -= amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":834:871  coinBalanceMultisig[client] -= amount */
       dup3
       dup3
       sload
@@ -1204,16 +1637,16 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":751:753  to */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":889:891  to */
       dup5
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":751:758  to.send */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":889:896  to.send */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":751:766  to.send(amount) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":889:904  to.send(amount) */
       0x8fc
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":759:765  amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":897:903  amount */
       dup6
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":751:766  to.send(amount) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":889:904  to.send(amount) */
       swap1
       dup2
       iszero
@@ -1238,27 +1671,27 @@ sub_0: assembly {
       pop
       pop
       pop
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":750:766  !to.send(amount) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":888:904  !to.send(amount) */
       iszero
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":746:773  if (!to.send(amount)) throw */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":884:911  if (!to.send(amount)) throw */
       iszero
-      tag_47
+      tag_69
       jumpi
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":768:773  throw */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":906:911  throw */
       revert(0x0, 0x0)
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":746:773  if (!to.send(amount)) throw */
-    tag_47:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":786:829  CoinCashOut(msg.sender, client, amount, to) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":884:911  if (!to.send(amount)) throw */
+    tag_69:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":924:967  CoinCashOut(msg.sender, client, amount, to) */
       0xb738640f073498e0d6972822683c983aa8b6e547c093aed0eea99917c7656a31
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":798:808  msg.sender */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":936:946  msg.sender */
       caller
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":810:816  client */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":948:954  client */
       dup8
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":818:824  amount */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":956:962  amount */
       dup7
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":826:828  to */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":964:966  to */
       dup9
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":786:829  CoinCashOut(msg.sender, client, amount, to) */
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":924:967  CoinCashOut(msg.sender, client, amount, to) */
       mload(0x40)
       dup1
       dup6
@@ -1305,12 +1738,12 @@ sub_0: assembly {
       sub
       swap1
       log1
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":571:572  _ */
-    tag_43:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
-    tag_42:
-        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":355:837  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
-    tag_40:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":634:635  _ */
+    tag_65:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+    tag_64:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\ethContract.sol":493:975  function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {... */
+    tag_62:
       pop
       pop
       pop
@@ -1318,9 +1751,9 @@ sub_0: assembly {
       pop
       pop
       jump	// out
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":740:889  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
-    tag_25:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":514:538  _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":803:952  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
+    tag_38:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":577:601  _exchangeContractAddress */
       0x1
       0x0
       swap1
@@ -1332,42 +1765,42 @@ sub_0: assembly {
       div
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:510  msg.sender */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:573  msg.sender */
       caller
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:538  msg.sender == _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:601  msg.sender == _exchangeContractAddress */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
       dup1
-      tag_49
+      tag_71
       jumpi
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":562:569  30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":625:632  30 days */
       0x278d00
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":549:558  _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":612:621  _lastPing */
       sload(0x2)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:546  now */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:609  now */
       timestamp
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":543:558  now - _lastPing */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":606:621  now - _lastPing */
       sub
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":542:569  (now - _lastPing) > 30 days */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":605:632  (now - _lastPing) > 30 days */
       gt
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":500:569  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
-    tag_49:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":563:632  msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days */
+    tag_71:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
       iszero
-      tag_50
+      tag_72
       jumpi
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":863:881  newContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":926:944  newContractAddress */
       dup1
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":836:860  _exchangeContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":899:923  _exchangeContractAddress */
       0x1
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":836:881  _exchangeContractAddress = newContractAddress */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":899:944  _exchangeContractAddress = newContractAddress */
       0x100
       exp
       dup2
@@ -1386,68 +1819,68 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":571:572  _ */
-    tag_51:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":496:572  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
-    tag_50:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":740:889  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
-    tag_48:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":634:635  _ */
+    tag_73:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":559:635  if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _ */
+    tag_72:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":803:952  function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {... */
+    tag_70:
       pop
       jump	// out
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1773:2131  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
-    tag_28:
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1853:1857  bool */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1836:2194  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
+    tag_41:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1916:1920  bool */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1870:1879  bytes32 r */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1933:1942  bytes32 r */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1890:1899  bytes32 s */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1953:1962  bytes32 s */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1910:1917  uint8 v */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1973:1980  uint8 v */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1974:1976  32 */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2037:2039  32 */
       0x20
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1969:1972  sig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2032:2035  sig */
       dup6
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1965:1968  add */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2028:2031  add */
       add
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1959:1964  mload */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2022:2027  mload */
       mload
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1954:1978  r := mload(add(sig, 32)) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2017:2041  r := mload(add(sig, 32)) */
       swap3
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2012:2014  64 */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2075:2077  64 */
       0x40
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2007:2010  sig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2070:2073  sig */
       dup6
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2003:2006  add */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2066:2069  add */
       add
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1997:2002  mload */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2060:2065  mload */
       mload
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1992:2016  s := mload(add(sig, 64)) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2055:2079  s := mload(add(sig, 64)) */
       swap2
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2050:2052  65 */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2113:2115  65 */
       0x41
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2045:2048  sig */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2108:2111  sig */
       dup6
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2041:2044  add */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2104:2107  add */
       add
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2035:2040  mload */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2098:2103  mload */
       mload
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2030:2054  v := mload(add(sig, 65)) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2093:2117  v := mload(add(sig, 65)) */
       swap1
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2099:2123  ecrecover(hash, v, r, s) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2162:2186  ecrecover(hash, v, r, s) */
       0x1
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2109:2113  hash */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2172:2176  hash */
       dup7
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2115:2116  v */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2178:2179  v */
       dup3
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2118:2119  r */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2181:2182  r */
       dup6
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2121:2122  s */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2184:2185  s */
       dup6
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2099:2123  ecrecover(hash, v, r, s) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2162:2186  ecrecover(hash, v, r, s) */
       mload(0x40)
       dup1
       0x0
@@ -1517,27 +1950,27 @@ sub_0: assembly {
       call
       iszero
       iszero
-      tag_53
+      tag_75
       jumpi
       invalid
-    tag_53:
+    tag_75:
       pop
       pop
       mload(sub(mload(0x40), 0x20))
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2084:2123  client_addr == ecrecover(hash, v, r, s) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2147:2186  client_addr == ecrecover(hash, v, r, s) */
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2084:2095  client_addr */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2147:2158  client_addr */
       dup8
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2084:2123  client_addr == ecrecover(hash, v, r, s) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2147:2186  client_addr == ecrecover(hash, v, r, s) */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2077:2123  return client_addr == ecrecover(hash, v, r, s) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2140:2186  return client_addr == ecrecover(hash, v, r, s) */
       swap4
       pop
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1773:2131  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
-    tag_52:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":1836:2194  function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {... */
+    tag_74:
       pop
       pop
       pop
@@ -1545,6 +1978,59 @@ sub_0: assembly {
       swap3
       pop
       pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2355:2544  function getTransferAddressUser(address transferAddress) constant returns(address){... */
+    tag_44:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2429:2436  address */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2449:2464  var userAddress */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2467:2487  transferContractUser */
+      0x4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2467:2504  transferContractUser[transferAddress] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2488:2503  transferAddress */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2467:2504  transferContractUser[transferAddress] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2449:2504  var userAddress = transferContractUser[transferAddress] */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2525:2536  userAddress */
+      dup1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2518:2536  return userAddress */
+      swap2
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2355:2544  function getTransferAddressUser(address transferAddress) constant returns(address){... */
+    tag_76:
+      pop
+      swap2
+      swap1
       pop
       jump	// out
 }

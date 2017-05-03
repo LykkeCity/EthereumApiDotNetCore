@@ -3,7 +3,7 @@ PragmaDirective
 ImportDirective "./coin.sol"
    Source: "import \"./coin.sol\";"
 ContractDefinition "ColorCoin"
-   Source: "contract ColorCoin is Coin(0){\r\n\r\n    function ColorCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }\r\n\r\n    function cashin(address receiver, uint amount) onlyowner payable {\r\n        if (msg.value > 0) throw; \r\n        \r\n        coinBalanceMultisig[receiver] += amount;\r\n\r\n        CoinCashIn(receiver, amount);\r\n    }\r\n\r\n    // cashout coins (called only from exchange contract)\r\n    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { \r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }\r\n}"
+   Source: "contract ColorCoin is Coin(0){\r\n\r\n    function ColorCoin(address exchangeContractAddress) Coin(exchangeContractAddress) { }\r\n\r\n    function cashin(address receiver, uint amount) onlyowner payable {\r\n        if (msg.value > 0) throw; \r\n        \r\n        var userAddress = transferContractUser[receiver];\r\n\r\n        if (userAddress == address(0)) {\r\n            throw;\r\n        }\r\n        coinBalanceMultisig[userAddress] += amount;\r\n\r\n        CoinCashIn(userAddress, amount);\r\n    }\r\n\r\n    // cashout coins (called only from exchange contract)\r\n    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { \r\n\r\n        if (!_checkClientSign(client, hash, client_sig)) {\r\n            throw;                    \r\n        }\r\n\r\n        if (coinBalanceMultisig[client] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[client] -= amount;\r\n\r\n        CoinCashOut(msg.sender, client, amount, to);\r\n    }\r\n}"
   InheritanceSpecifier
      Source: "Coin(0)"
     UserDefinedTypeName "Coin"
@@ -33,7 +33,7 @@ ContractDefinition "ColorCoin"
     Block
        Source: "{ }"
   FunctionDefinition "cashin" - public
-     Source: "function cashin(address receiver, uint amount) onlyowner payable {\r\n        if (msg.value > 0) throw; \r\n        \r\n        coinBalanceMultisig[receiver] += amount;\r\n\r\n        CoinCashIn(receiver, amount);\r\n    }"
+     Source: "function cashin(address receiver, uint amount) onlyowner payable {\r\n        if (msg.value > 0) throw; \r\n        \r\n        var userAddress = transferContractUser[receiver];\r\n\r\n        if (userAddress == address(0)) {\r\n            throw;\r\n        }\r\n        coinBalanceMultisig[userAddress] += amount;\r\n\r\n        CoinCashIn(userAddress, amount);\r\n    }"
     ParameterList
        Source: "(address receiver, uint amount)"
       VariableDeclaration "receiver"
@@ -54,7 +54,7 @@ ContractDefinition "ColorCoin"
          Type: modifier ()
          Source: "onlyowner"
     Block
-       Source: "{\r\n        if (msg.value > 0) throw; \r\n        \r\n        coinBalanceMultisig[receiver] += amount;\r\n\r\n        CoinCashIn(receiver, amount);\r\n    }"
+       Source: "{\r\n        if (msg.value > 0) throw; \r\n        \r\n        var userAddress = transferContractUser[receiver];\r\n\r\n        if (userAddress == address(0)) {\r\n            throw;\r\n        }\r\n        coinBalanceMultisig[userAddress] += amount;\r\n\r\n        CoinCashIn(userAddress, amount);\r\n    }"
       IfStatement
          Source: "if (msg.value > 0) throw"
         BinaryOperation using operator >
@@ -71,34 +71,69 @@ ContractDefinition "ColorCoin"
              Source: "0"
         Throw
            Source: "throw"
+      VariableDeclarationStatement
+         Source: "var userAddress = transferContractUser[receiver]"
+        VariableDeclaration "userAddress"
+           Type: address
+           Source: "var userAddress"
+        IndexAccess
+           Type: address
+           Source: "transferContractUser[receiver]"
+          Identifier transferContractUser
+             Type: mapping(address => address)
+             Source: "transferContractUser"
+          Identifier receiver
+             Type: address
+             Source: "receiver"
+      IfStatement
+         Source: "if (userAddress == address(0)) {\r\n            throw;\r\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "userAddress == address(0)"
+          Identifier userAddress
+             Type: address
+             Source: "userAddress"
+          FunctionCall
+             Type: address
+             Source: "address(0)"
+            ElementaryTypeNameExpression address
+               Type: type(address)
+               Source: "address"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\r\n            throw;\r\n        }"
+          Throw
+             Source: "throw"
       ExpressionStatement
-         Source: "coinBalanceMultisig[receiver] += amount"
+         Source: "coinBalanceMultisig[userAddress] += amount"
         Assignment using operator +=
            Type: uint256
-           Source: "coinBalanceMultisig[receiver] += amount"
+           Source: "coinBalanceMultisig[userAddress] += amount"
           IndexAccess
              Type: uint256
-             Source: "coinBalanceMultisig[receiver]"
+             Source: "coinBalanceMultisig[userAddress]"
             Identifier coinBalanceMultisig
                Type: mapping(address => uint256)
                Source: "coinBalanceMultisig"
-            Identifier receiver
+            Identifier userAddress
                Type: address
-               Source: "receiver"
+               Source: "userAddress"
           Identifier amount
              Type: uint256
              Source: "amount"
       ExpressionStatement
-         Source: "CoinCashIn(receiver, amount)"
+         Source: "CoinCashIn(userAddress, amount)"
         FunctionCall
            Type: tuple()
-           Source: "CoinCashIn(receiver, amount)"
+           Source: "CoinCashIn(userAddress, amount)"
           Identifier CoinCashIn
              Type: function (address,uint256) constant
              Source: "CoinCashIn"
-          Identifier receiver
+          Identifier userAddress
              Type: address
-             Source: "receiver"
+             Source: "userAddress"
           Identifier amount
              Type: uint256
              Source: "amount"

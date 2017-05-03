@@ -1,4 +1,5 @@
-﻿using Core.Settings;
+﻿using Core.Notifiers;
+using Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Coins;
 
@@ -22,7 +23,17 @@ namespace Services
             services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
             services.AddTransient<AssetContractService>();
             services.AddTransient<TransferContractService>();
+            services.AddTransient<ExternalTokenService>();
+            services.AddTransient<TransferContractPoolService>();
+            services.AddTransient<ITransferContractQueueService, TransferContractQueueService>();
+            services.AddTransient<ITransferContractQueueServiceFactory, TransferContractQueueServiceFactory>();
+            services.AddTransient<ITransferContractService, TransferContractService>();
+            services.AddTransient<TransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
+
             services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
+            services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
+            
+            services.AddTransient<ISlackNotifier, SlackNotifier>();
         }
     }
 }

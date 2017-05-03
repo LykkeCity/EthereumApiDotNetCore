@@ -7,7 +7,7 @@ ImportDirective "./transferBaseContract.sol"
 ImportDirective "./erc20Contract.sol"
    Source: "import \"./erc20Contract.sol\";"
 ContractDefinition "TokenTransferContract"
-   Source: "contract TokenTransferContract is TransferBaseContract{\r\n\r\n    address _externalTokenAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TokenTransferContract(address userAddress, address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(userAddress, coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }\r\n\r\n    function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }\r\n}"
+   Source: "contract TokenTransferContract is TransferBaseContract{\r\n\r\n    address _externalTokenAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TokenTransferContract(address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }\r\n\r\n    function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n\r\n        erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance);\r\n        coin_contract.cashin(this, tokenBalance);\r\n    }\r\n}"
   InheritanceSpecifier
      Source: "TransferBaseContract"
     UserDefinedTypeName "TransferBaseContract"
@@ -40,14 +40,9 @@ ContractDefinition "TokenTransferContract"
         PlaceholderStatement
            Source: "_"
   FunctionDefinition "TokenTransferContract" - public
-     Source: "function TokenTransferContract(address userAddress, address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(userAddress, coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }"
+     Source: "function TokenTransferContract(address coinAdapterAddress, address externalTokenAddress) \r\n        TransferBaseContract(coinAdapterAddress) {\r\n            _externalTokenAddress = externalTokenAddress;\r\n    }"
     ParameterList
-       Source: "(address userAddress, address coinAdapterAddress, address externalTokenAddress)"
-      VariableDeclaration "userAddress"
-         Type: address
-         Source: "address userAddress"
-        ElementaryTypeName address
-           Source: "address"
+       Source: "(address coinAdapterAddress, address externalTokenAddress)"
       VariableDeclaration "coinAdapterAddress"
          Type: address
          Source: "address coinAdapterAddress"
@@ -61,13 +56,10 @@ ContractDefinition "TokenTransferContract"
     ParameterList
        Source: ""
     ModifierInvocation "TransferBaseContract"
-       Source: "TransferBaseContract(userAddress, coinAdapterAddress)"
+       Source: "TransferBaseContract(coinAdapterAddress)"
       Identifier TransferBaseContract
          Type: type(contract TransferBaseContract)
          Source: "TransferBaseContract"
-      Identifier userAddress
-         Type: address
-         Source: "userAddress"
       Identifier coinAdapterAddress
          Type: address
          Source: "coinAdapterAddress"
@@ -85,7 +77,7 @@ ContractDefinition "TokenTransferContract"
              Type: address
              Source: "externalTokenAddress"
   FunctionDefinition "cashin" - public
-     Source: "function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }"
+     Source: "function cashin() onlyowner {\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n\r\n        erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance);\r\n        coin_contract.cashin(this, tokenBalance);\r\n    }"
     ParameterList
        Source: "()"
     ParameterList
@@ -96,7 +88,7 @@ ContractDefinition "TokenTransferContract"
          Type: modifier ()
          Source: "onlyowner"
     Block
-       Source: "{\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin(_userAddress, tokenBalance);\r\n    }"
+       Source: "{\r\n        var erc20Token = ERC20Interface(_externalTokenAddress);\r\n        var tokenBalance = erc20Token.balanceOf(this);\r\n\r\n        if (tokenBalance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n\r\n        erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance);\r\n        coin_contract.cashin(this, tokenBalance);\r\n    }"
       VariableDeclarationStatement
          Source: "var erc20Token = ERC20Interface(_externalTokenAddress)"
         VariableDeclaration "erc20Token"
@@ -158,19 +150,39 @@ ContractDefinition "TokenTransferContract"
              Type: address
              Source: "_coinAdapterAddress"
       ExpressionStatement
-         Source: "coin_contract.cashin(_userAddress, tokenBalance)"
+         Source: "erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance)"
+        FunctionCall
+           Type: bool
+           Source: "erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance)"
+          MemberAccess to member transferFrom
+             Type: function (address,address,uint256) external returns (bool)
+             Source: "erc20Token.transferFrom"
+            Identifier erc20Token
+               Type: contract ERC20Interface
+               Source: "erc20Token"
+          Identifier this
+             Type: contract TokenTransferContract
+             Source: "this"
+          Identifier _coinAdapterAddress
+             Type: address
+             Source: "_coinAdapterAddress"
+          Identifier tokenBalance
+             Type: uint256
+             Source: "tokenBalance"
+      ExpressionStatement
+         Source: "coin_contract.cashin(this, tokenBalance)"
         FunctionCall
            Type: tuple()
-           Source: "coin_contract.cashin(_userAddress, tokenBalance)"
+           Source: "coin_contract.cashin(this, tokenBalance)"
           MemberAccess to member cashin
              Type: function (address,uint256) payable external
              Source: "coin_contract.cashin"
             Identifier coin_contract
                Type: contract Coin
                Source: "coin_contract"
-          Identifier _userAddress
-             Type: address
-             Source: "_userAddress"
+          Identifier this
+             Type: contract TokenTransferContract
+             Source: "this"
           Identifier tokenBalance
              Type: uint256
              Source: "tokenBalance"

@@ -68,6 +68,12 @@ namespace AzureRepositories.Repositories
         {
             var index = await _userAdapterIndex.GetDataAsync(_indexPartition,
                 GenerateUserAdapterRowKey(userAddress, coinAdapterAddress));
+
+            if (index == null)
+            {
+                return null;
+            }
+
             ITransferContract result = await _table.GetDataAsync(index);
 
             return result;
@@ -75,7 +81,7 @@ namespace AzureRepositories.Repositories
 
         public async Task ProcessAllAsync(Func<ITransferContract, Task> processAction)
         {
-            await _table.GetDataByChunksAsync(TransferContractEntity.GenerateParitionKey(), async (items) => 
+            await _table.GetDataByChunksAsync(TransferContractEntity.GenerateParitionKey(), async (items) =>
             {
                 foreach (var item in items)
                 {
@@ -87,11 +93,15 @@ namespace AzureRepositories.Repositories
         public async Task SaveAsync(ITransferContract transferContract)
         {
             var entity = TransferContractEntity.Create(transferContract);
-            var index = new AzureIndex(_indexPartition,
+
+            await _table.InsertOrReplaceAsync(entity);
+            if (string.IsNullOrEmpty(entity.UserAddress))
+            {
+                var index = new AzureIndex(_indexPartition,
                 GenerateUserAdapterRowKey(entity.UserAddress, entity.CoinAdapterAddress), entity);
 
-            await _table.InsertAsync(entity);
-            await _userAdapterIndex.InsertOrReplaceAsync(index);
+                await _userAdapterIndex.InsertOrReplaceAsync(index);
+            }
         }
 
         private static string GenerateUserAdapterRowKey(string userAddress, string coinAdapterAddress)

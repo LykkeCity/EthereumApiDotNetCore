@@ -8,9 +8,14 @@ contract ColorCoin is Coin(0){
     function cashin(address receiver, uint amount) onlyowner payable {
         if (msg.value > 0) throw; 
         
-        coinBalanceMultisig[receiver] += amount;
+        var userAddress = transferContractUser[receiver];
 
-        CoinCashIn(receiver, amount);
+        if (userAddress == address(0)) {
+            throw;
+        }
+        coinBalanceMultisig[userAddress] += amount;
+
+        CoinCashIn(userAddress, amount);
     }
 
     // cashout coins (called only from exchange contract)

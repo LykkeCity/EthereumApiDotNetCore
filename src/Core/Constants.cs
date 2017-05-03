@@ -7,9 +7,12 @@
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
 
+        public const string TransferContractUserAssignmentQueueName = "transfer-contract-user-assignment";
+        public const string SlackNotifierQueue = "slack-notifications";
         public const string EthereumContractQueue = "ethereum-contract-queue";
         public const string EthereumOutQueue = "ethereum-queue-out";
         public const string EmailNotifierQueue = "emailsqueue";
+        public const string ContractPoolQueuePrefix = "ethereum-tc-pool";
 
         /// <summary>
         /// Used to internal monitoring of refill transactions
@@ -64,5 +67,6 @@
         public const string TransferContractTable = "TransferContract";
         public const string EthereumContractsBlob = "EthereumContracts";
         public const string UserTransferWalletTable = "UserTransferWallet";
+        public const string ExternalTokenTable = "ExternalToken";
     }
 }

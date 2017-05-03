@@ -12,8 +12,10 @@ namespace Core.Repositories
         string Id { get; }
         string Name { get; }
         string AdapterAddress { get; set; }
+        string ExternalTokenAddress { get; set; }
         int Multiplier { get; }
         bool BlockchainDepositEnabled { get; }
+        bool ContainsEth { get; set; }
     }
 
     public class Coin : ICoin
@@ -24,10 +26,13 @@ namespace Core.Repositories
         public int Multiplier { get; set; }
         public bool BlockchainDepositEnabled { get; set; }
         public string Name { get; set; }
+        public string ExternalTokenAddress { get; set; }
+        public bool ContainsEth { get; set; }
     }
 
     public interface ICoinRepository
     {
+        Task ProcessAllAsync(Func<ICoin, Task> processAction);
         Task<ICoin> GetCoin(string id);
         Task InsertOrReplace(ICoin coin);
         Task<ICoin> GetCoinByAddress(string coinAddress);

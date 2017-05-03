@@ -22,6 +22,10 @@ namespace AzureRepositories.Repositories
 
         public string Name { get; set; }
 
+        public bool ContainsEth { get; set; }
+
+        public string ExternalTokenAddress { get; set; }
+
         public static CoinEntity CreateCoinEntity(ICoin coin)
         {
             return new CoinEntity
@@ -32,7 +36,9 @@ namespace AzureRepositories.Repositories
                 Multiplier = coin.Multiplier,
                 Blockchain = coin.Blockchain,
                 PartitionKey = Key,
-                BlockchainDepositEnabled = coin.BlockchainDepositEnabled
+                BlockchainDepositEnabled = coin.BlockchainDepositEnabled,
+                ContainsEth = coin.ContainsEth,
+                ExternalTokenAddress = coin.ExternalTokenAddress
             };
         }
     }
@@ -76,6 +82,17 @@ namespace AzureRepositories.Repositories
             var coin = await _table.GetDataAsync(index);
 
             return coin;
+        }
+
+        public async Task ProcessAllAsync(Func<ICoin, Task> processAction)
+        {
+            await _table.GetDataByChunksAsync(CoinEntity.Key, async (items) =>
+            {
+                foreach (var item in items)
+                {
+                    await processAction(item);
+                }
+            });
         }
     }
 }

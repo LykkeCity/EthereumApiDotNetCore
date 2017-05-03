@@ -5,6 +5,7 @@ contract Coin {
     address _exchangeContractAddress;
     uint _lastPing;
     mapping (address => uint) public coinBalanceMultisig;
+    mapping (address => address) public transferContractUser;
 
     event CoinCashIn(address caller, uint amount);
     event CoinCashOut(address caller, address from, uint amount, address to);
@@ -57,8 +58,26 @@ contract Coin {
         return client_addr == ecrecover(hash, v, r, s);
     }
 
-    function balanceOf(address _owner) constant {
+    function balanceOf(address owner) constant returns(uint) {
+         var balance = coinBalanceMultisig[owner];
+
+         return balance;
+    }
+
+    function getTransferAddressUser(address transferAddress) constant returns(address){
+         var userAddress = transferContractUser[transferAddress];
+
+         return userAddress;
+    }
+
+    function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
+         var oldUserAddress = transferContractUser[transferAddress];
          
+         if (oldUserAddress == address(0)) {
+             throw;
+         }
+
+         transferContractUser[transferAddress] = userAddress;
     }
 
     function ping() {

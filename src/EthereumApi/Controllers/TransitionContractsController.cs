@@ -20,9 +20,9 @@ namespace EthereumApi.Controllers
     public class TransitionContractsController : Controller
     {
         private readonly ILog _logger;
-        private readonly TransferContractService _transferContractService;
+        private readonly ITransferContractService _transferContractService;
 
-        public TransitionContractsController(TransferContractService transferContractService, ILog logger)
+        public TransitionContractsController(ITransferContractService transferContractService, ILog logger)
         {
             _transferContractService = transferContractService;
             _logger = logger;
@@ -38,11 +38,8 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            //await Log("Transition", "Create", model);
-
             string contractAddress = await _transferContractService.CreateTransferContract(model.UserAddress,
-                model.CoinAdapterAddress,
-                model.ExternalTokenAddress, model.IsAdapterWithEthereum);
+                model.CoinAdapterAddress);
 
             return Ok(new RegisterResponse
             {

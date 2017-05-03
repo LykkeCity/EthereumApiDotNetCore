@@ -1,0 +1,1452 @@
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":55:514  contract ExternalToken is ERC20Token {... */
+  mstore(0x40, 0x60)
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":129:236  function ExternalToken(address issuer) {... */
+  jumpi(tag_1, iszero(callvalue))
+  invalid
+tag_1:
+  mload(0x40)
+  0x20
+  dup1
+  bytecodeSize
+  dup4
+  codecopy
+  dup2
+  add
+  0x40
+  mstore
+  dup1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap2
+  swap1
+  pop
+  pop
+tag_2:
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":141:170  function ERC20Token () {... */
+tag_3:
+tag_4:
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":185:191  issuer */
+  dup1
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":175:182  _issuer */
+  0x2
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":175:191  _issuer = issuer */
+  0x100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":89:155  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF */
+  0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":198:206  accounts */
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":198:216  accounts [_issuer] */
+  0x0
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":208:215  _issuer */
+  0x2
+  0x0
+  swap1
+  sload
+  swap1
+  0x100
+  exp
+  swap1
+  div
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":198:216  accounts [_issuer] */
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  dup2
+  mstore
+  0x20
+  add
+  swap1
+  dup2
+  mstore
+  0x20
+  add
+  0x0
+  sha3
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":198:230  accounts [_issuer] = MAX_UINT256 */
+  dup2
+  swap1
+  sstore
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":129:236  function ExternalToken(address issuer) {... */
+tag_5:
+  pop
+    /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":55:514  contract ExternalToken is ERC20Token {... */
+tag_6:
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x0
+  codecopy
+  0x0
+  return
+stop
+
+sub_0: assembly {
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":55:514  contract ExternalToken is ERC20Token {... */
+      mstore(0x40, 0x60)
+      jumpi(tag_1, iszero(calldatasize))
+      calldataload(0x0)
+      0x100000000000000000000000000000000000000000000000000000000
+      swap1
+      div
+      0xffffffff
+      and
+      dup1
+      0x95ea7b3
+      eq
+      tag_2
+      jumpi
+      dup1
+      0x18160ddd
+      eq
+      tag_3
+      jumpi
+      dup1
+      0x23b872dd
+      eq
+      tag_4
+      jumpi
+      dup1
+      0x33a581d2
+      eq
+      tag_5
+      jumpi
+      dup1
+      0x70a08231
+      eq
+      tag_6
+      jumpi
+      dup1
+      0xa9059cbb
+      eq
+      tag_7
+      jumpi
+      dup1
+      0xdd62ed3e
+      eq
+      tag_8
+      jumpi
+    tag_1:
+      invalid
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1210:1406  function approve (address _spender, uint256 _value) returns (bool success) {... */
+    tag_2:
+      jumpi(tag_9, iszero(callvalue))
+      invalid
+    tag_9:
+      tag_10
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_11)
+    tag_10:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":242:361  function totalSupply () constant returns (uint256 supply) {... */
+    tag_3:
+      jumpi(tag_12, iszero(callvalue))
+      invalid
+    tag_12:
+      tag_13
+      jump(tag_14)
+    tag_13:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":670:1204  function transferFrom (address _from, address _to, uint256 _value)... */
+    tag_4:
+      jumpi(tag_15, iszero(callvalue))
+      invalid
+    tag_15:
+      tag_16
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_17)
+    tag_16:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":47:155  uint256 constant public MAX_UINT256 =... */
+    tag_5:
+      jumpi(tag_18, iszero(callvalue))
+      invalid
+    tag_18:
+      tag_19
+      jump(tag_20)
+    tag_19:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":367:511  function balanceOf (address _owner) constant returns (uint256 balance) {... */
+    tag_6:
+      jumpi(tag_21, iszero(callvalue))
+      invalid
+    tag_21:
+      tag_22
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_23)
+    tag_22:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":290:664  function transfer (address _to, uint256 _value) returns (bool success) {... */
+    tag_7:
+      jumpi(tag_24, iszero(callvalue))
+      invalid
+    tag_24:
+      tag_25
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_26)
+    tag_25:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1412:1555  function allowance (address _owner, address _spender) constant... */
+    tag_8:
+      jumpi(tag_27, iszero(callvalue))
+      invalid
+    tag_27:
+      tag_28
+      0x4
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap2
+      swap1
+      pop
+      pop
+      jump(tag_29)
+    tag_28:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1210:1406  function approve (address _spender, uint256 _value) returns (bool success) {... */
+    tag_11:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1271:1283  bool success */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1328:1334  _value */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1302  allowances */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1315  allowances [msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1304:1314  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1315  allowances [msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1325  allowances [msg.sender][_spender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1316:1324  _spender */
+      dup6
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1325  allowances [msg.sender][_spender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1292:1334  allowances [msg.sender][_spender] = _value */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1363:1371  _spender */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1341:1380  Approval (msg.sender, _spender, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1351:1361  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1341:1380  Approval (msg.sender, _spender, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1373:1379  _value */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1341:1380  Approval (msg.sender, _spender, _value) */
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1396:1400  true */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1389:1400  return true */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1210:1406  function approve (address _spender, uint256 _value) returns (bool success) {... */
+    tag_30:
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":242:361  function totalSupply () constant returns (uint256 supply) {... */
+    tag_14:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":284:298  uint256 supply */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":314:355  safeSub (MAX_UINT256, accounts [_issuer]) */
+      tag_32
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":89:155  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF */
+      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":336:344  accounts */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":336:354  accounts [_issuer] */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":346:353  _issuer */
+      0x2
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":336:354  accounts [_issuer] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":314:321  safeSub */
+      tag_33
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":314:355  safeSub (MAX_UINT256, accounts [_issuer]) */
+      jump	// in
+    tag_32:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":307:355  return safeSub (MAX_UINT256, accounts [_issuer]) */
+      swap1
+      pop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":242:361  function totalSupply () constant returns (uint256 supply) {... */
+    tag_31:
+      swap1
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":670:1204  function transferFrom (address _from, address _to, uint256 _value)... */
+    tag_17:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":749:761  bool success */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":807:813  _value */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:784  allowances */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:792  allowances [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":786:791  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:792  allowances [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:804  allowances [_from][msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":793:803  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:804  allowances [_from][msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":774:813  allowances [_from][msg.sender] < _value */
+      lt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":770:827  if (allowances [_from][msg.sender] < _value) return false */
+      iszero
+      tag_35
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":822:827  false */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":815:827  return false */
+      swap1
+      pop
+      jump(tag_34)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":770:827  if (allowances [_from][msg.sender] < _value) return false */
+    tag_35:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":857:863  _value */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":838:846  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":838:854  accounts [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":848:853  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":838:854  accounts [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":838:863  accounts [_from] < _value */
+      lt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":834:877  if (accounts [_from] < _value) return false */
+      iszero
+      tag_36
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":872:877  false */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":865:877  return false */
+      swap1
+      pop
+      jump(tag_34)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":834:877  if (accounts [_from] < _value) return false */
+    tag_36:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":926:974  safeSub (allowances [_from][msg.sender], _value) */
+      tag_37
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":935:945  allowances */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":935:953  allowances [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":947:952  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":935:953  allowances [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":935:965  allowances [_from][msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":954:964  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":935:965  allowances [_from][msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":967:973  _value */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":926:933  safeSub */
+      tag_33
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":926:974  safeSub (allowances [_from][msg.sender], _value) */
+      jump	// in
+    tag_37:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:896  allowances */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:904  allowances [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":898:903  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:904  allowances [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:916  allowances [_from][msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":905:915  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:916  allowances [_from][msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":886:974  allowances [_from][msg.sender] =... */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":996:997  0 */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":987:993  _value */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":987:997  _value > 0 */
+      gt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":987:1013  _value > 0 && _from != _to */
+      dup1
+      iszero
+      tag_38
+      jumpi
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1010:1013  _to */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1001:1013  _from != _to */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1001:1006  _from */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1001:1013  _from != _to */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+      iszero
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":987:1013  _value > 0 && _from != _to */
+    tag_38:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":983:1181  if (_value > 0 && _from != _to) {... */
+      iszero
+      tag_39
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1043:1077  safeSub (accounts [_from], _value) */
+      tag_40
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1052:1060  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1052:1068  accounts [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1062:1067  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1052:1068  accounts [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1070:1076  _value */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1043:1050  safeSub */
+      tag_33
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1043:1077  safeSub (accounts [_from], _value) */
+      jump	// in
+    tag_40:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1024:1032  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1024:1040  accounts [_from] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1034:1039  _from */
+      dup7
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1024:1040  accounts [_from] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1024:1077  accounts [_from] = safeSub (accounts [_from], _value) */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1103:1135  safeAdd (accounts [_to], _value) */
+      tag_41
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1112:1120  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1112:1126  accounts [_to] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1122:1125  _to */
+      dup6
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1112:1126  accounts [_to] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1128:1134  _value */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1103:1110  safeAdd */
+      tag_42
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1103:1135  safeAdd (accounts [_to], _value) */
+      jump	// in
+    tag_41:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1086:1094  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1086:1100  accounts [_to] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1096:1099  _to */
+      dup6
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1086:1100  accounts [_to] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1086:1135  accounts [_to] = safeAdd (accounts [_to], _value) */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1161:1164  _to */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1144:1173  Transfer (_from, _to, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1154:1159  _from */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1144:1173  Transfer (_from, _to, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1166:1172  _value */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1144:1173  Transfer (_from, _to, _value) */
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":983:1181  if (_value > 0 && _from != _to) {... */
+    tag_39:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1194:1198  true */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1187:1198  return true */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":670:1204  function transferFrom (address _from, address _to, uint256 _value)... */
+    tag_34:
+      swap4
+      swap3
+      pop
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":47:155  uint256 constant public MAX_UINT256 =... */
+    tag_20:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":89:155  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF */
+      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":47:155  uint256 constant public MAX_UINT256 =... */
+      dup2
+      jump	// out
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":367:511  function balanceOf (address _owner) constant returns (uint256 balance) {... */
+    tag_23:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":421:436  uint256 balance */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":462:469  _issuer */
+      0x2
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:469  _owner == _issuer */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:458  _owner */
+      dup3
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:469  _owner == _issuer */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:505  _owner == _issuer ? 0 : ERC20Token.balanceOf (_owner) */
+      tag_44
+      jumpi
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":476:505  ERC20Token.balanceOf (_owner) */
+      tag_45
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":498:504  _owner */
+      dup3
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":476:496  ERC20Token.balanceOf */
+      tag_46
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":476:505  ERC20Token.balanceOf (_owner) */
+      jump	// in
+    tag_45:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:505  _owner == _issuer ? 0 : ERC20Token.balanceOf (_owner) */
+      jump(tag_47)
+    tag_44:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":472:473  0 */
+      0x0
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":452:505  _owner == _issuer ? 0 : ERC20Token.balanceOf (_owner) */
+    tag_47:
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":445:505  return _owner == _issuer ? 0 : ERC20Token.balanceOf (_owner) */
+      swap1
+      pop
+        /* "D:\LykkeNuget\EthereumApiCore\src\ContractBuilder\contracts\token\externalToken.sol":367:511  function balanceOf (address _owner) constant returns (uint256 balance) {... */
+    tag_43:
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":290:664  function transfer (address _to, uint256 _value) returns (bool success) {... */
+    tag_26:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":347:359  bool success */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":396:402  _value */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":372:380  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":372:393  accounts [msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":382:392  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":372:393  accounts [msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":372:402  accounts [msg.sender] < _value */
+      lt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":368:416  if (accounts [msg.sender] < _value) return false */
+      iszero
+      tag_49
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":411:416  false */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":404:416  return false */
+      swap1
+      pop
+      jump(tag_48)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":368:416  if (accounts [msg.sender] < _value) return false */
+    tag_49:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":436:437  0 */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":427:433  _value */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":427:437  _value > 0 */
+      gt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":427:458  _value > 0 && msg.sender != _to */
+      dup1
+      iszero
+      tag_50
+      jumpi
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":455:458  _to */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":441:458  msg.sender != _to */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":441:451  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":441:458  msg.sender != _to */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+      iszero
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":427:458  _value > 0 && msg.sender != _to */
+    tag_50:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":423:641  if (_value > 0 && msg.sender != _to) {... */
+      iszero
+      tag_51
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":493:532  safeSub (accounts [msg.sender], _value) */
+      tag_52
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":502:510  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":502:523  accounts [msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":512:522  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":502:523  accounts [msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":525:531  _value */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":493:500  safeSub */
+      tag_33
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":493:532  safeSub (accounts [msg.sender], _value) */
+      jump	// in
+    tag_52:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":469:477  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":469:490  accounts [msg.sender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":479:489  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":469:490  accounts [msg.sender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":469:532  accounts [msg.sender] = safeSub (accounts [msg.sender], _value) */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":558:590  safeAdd (accounts [_to], _value) */
+      tag_53
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":567:575  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":567:581  accounts [_to] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":577:580  _to */
+      dup6
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":567:581  accounts [_to] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":583:589  _value */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":558:565  safeAdd */
+      tag_42
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":558:590  safeAdd (accounts [_to], _value) */
+      jump	// in
+    tag_53:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":541:549  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":541:555  accounts [_to] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":551:554  _to */
+      dup6
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":541:555  accounts [_to] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":541:590  accounts [_to] = safeAdd (accounts [_to], _value) */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":621:624  _to */
+      dup3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":599:633  Transfer (msg.sender, _to, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":609:619  msg.sender */
+      caller
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":599:633  Transfer (msg.sender, _to, _value) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":626:632  _value */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":599:633  Transfer (msg.sender, _to, _value) */
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":423:641  if (_value > 0 && msg.sender != _to) {... */
+    tag_51:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":654:658  true */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":647:658  return true */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":290:664  function transfer (address _to, uint256 _value) returns (bool success) {... */
+    tag_48:
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1412:1555  function allowance (address _owner, address _spender) constant... */
+    tag_29:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1487:1504  uint256 remaining */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1520:1530  allowances */
+      0x1
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1520:1539  allowances [_owner] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1532:1538  _owner */
+      dup5
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1520:1539  allowances [_owner] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1520:1549  allowances [_owner][_spender] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1540:1548  _spender */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1520:1549  allowances [_owner][_spender] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1513:1549  return allowances [_owner][_spender] */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":1412:1555  function allowance (address _owner, address _spender) constant... */
+    tag_54:
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":305:432  function safeSub (uint256 x, uint256 y)... */
+    tag_33:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":376:385  uint256 z */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":401:402  y */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":397:398  x */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":397:402  x < y */
+      lt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":393:409  if (x < y) throw */
+      iszero
+      tag_56
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":404:409  throw */
+      revert(0x0, 0x0)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":393:409  if (x < y) throw */
+    tag_56:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":426:427  y */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":422:423  x */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":422:427  x - y */
+      sub
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":415:427  return x - y */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":305:432  function safeSub (uint256 x, uint256 y)... */
+    tag_55:
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":160:301  function safeAdd (uint256 x, uint256 y)... */
+    tag_42:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":231:240  uint256 z */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":270:271  y */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":89:155  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF */
+      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":256:271  MAX_UINT256 - y */
+      sub
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":252:253  x */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":252:271  x > MAX_UINT256 - y */
+      gt
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":248:278  if (x > MAX_UINT256 - y) throw */
+      iszero
+      tag_58
+      jumpi
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":273:278  throw */
+      revert(0x0, 0x0)
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":248:278  if (x > MAX_UINT256 - y) throw */
+    tag_58:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":295:296  y */
+      dup2
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":291:292  x */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":291:296  x + y */
+      add
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":284:296  return x + y */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/safeMath.sol":160:301  function safeAdd (uint256 x, uint256 y)... */
+    tag_57:
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":176:284  function balanceOf (address _owner) constant returns (uint256 balance) {... */
+    tag_46:
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":230:245  uint256 balance */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":261:269  accounts */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":261:278  accounts [_owner] */
+      0x0
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":271:277  _owner */
+      dup4
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":261:278  accounts [_owner] */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      sha3
+      sload
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":254:278  return accounts [_owner] */
+      swap1
+      pop
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/token/erc20Token.sol":176:284  function balanceOf (address _owner) constant returns (uint256 balance) {... */
+    tag_59:
+      swap2
+      swap1
+      pop
+      jump	// out
+}

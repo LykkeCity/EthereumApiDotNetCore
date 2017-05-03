@@ -16,14 +16,14 @@ using Core.Repositories;
 namespace EthereumApi.Controllers
 {
     //ForAdminOnly
-    [Route("api/asset")]
+    [Route("api/coinAdapter")]
     [Produces("application/json")]
-    public class AssetController : Controller
+    public class СoinAdapterController : Controller
     {
         private readonly AssetContractService _assetContractService;
         private readonly ILog _logger;
 
-        public AssetController(AssetContractService assetContractService, ILog logger)
+        public СoinAdapterController(AssetContractService assetContractService, ILog logger)
         {
             _assetContractService = assetContractService;
             _logger = logger;
@@ -32,7 +32,7 @@ namespace EthereumApi.Controllers
         [Route("create")]
         [HttpPost]
         [Produces(typeof(TransactionResponse))]
-        public async Task<IActionResult> CreateTransferContract([FromBody]CreateAssetModel model)
+        public async Task<IActionResult> CreateCoinAdapter([FromBody]CreateAssetModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -41,20 +41,16 @@ namespace EthereumApi.Controllers
 
             ICoin asset = new Coin()
             {
+                ExternalTokenAddress = model.ExternalTokenAddress,
+                ContainsEth = model.ContainsEth,
                 Blockchain = model.Blockchain,
                 BlockchainDepositEnabled = true,
-                Id = "1",
+                Id = Guid.NewGuid().ToString(),
                 Multiplier = model.Multiplier,
                 Name = model.Name,
             };
 
-            INewEthereumContract ethereumContract = new EthereumContract()
-            {
-                Abi = model.Abi,
-                ByteCode = model.Bytecode
-            };
-
-            string contractAddress = await _assetContractService.CreateCoinContract(asset, ethereumContract);
+            string contractAddress = await _assetContractService.CreateCoinContract(asset);
 
             return Ok(new RegisterResponse
             {

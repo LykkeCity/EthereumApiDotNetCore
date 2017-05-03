@@ -1,15 +1,10 @@
 PragmaDirective
    Source: "pragma solidity ^0.4.9;"
 ContractDefinition "TransferBaseContract"
-   Source: "contract TransferBaseContract {\r\n    address _owner;  \r\n    address _userAddress;\r\n    address _coinAdapterAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }\r\n}"
+   Source: "contract TransferBaseContract {\r\n    address _owner;  \r\n    address _coinAdapterAddress;\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function TransferBaseContract(address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }\r\n}"
   VariableDeclaration "_owner"
      Type: address
      Source: "address _owner"
-    ElementaryTypeName address
-       Source: "address"
-  VariableDeclaration "_userAddress"
-     Type: address
-     Source: "address _userAddress"
     ElementaryTypeName address
        Source: "address"
   VariableDeclaration "_coinAdapterAddress"
@@ -40,14 +35,9 @@ ContractDefinition "TransferBaseContract"
         PlaceholderStatement
            Source: "_"
   FunctionDefinition "TransferBaseContract" - public
-     Source: "function TransferBaseContract(address userAddress, address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
+     Source: "function TransferBaseContract(address coinAdapterAddress) {        \r\n        _owner = msg.sender;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
     ParameterList
-       Source: "(address userAddress, address coinAdapterAddress)"
-      VariableDeclaration "userAddress"
-         Type: address
-         Source: "address userAddress"
-        ElementaryTypeName address
-           Source: "address"
+       Source: "(address coinAdapterAddress)"
       VariableDeclaration "coinAdapterAddress"
          Type: address
          Source: "address coinAdapterAddress"
@@ -56,7 +46,7 @@ ContractDefinition "TransferBaseContract"
     ParameterList
        Source: ""
     Block
-       Source: "{        \r\n        _owner = msg.sender;\r\n        _userAddress = userAddress;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
+       Source: "{        \r\n        _owner = msg.sender;\r\n        _coinAdapterAddress = coinAdapterAddress;\r\n    }"
       ExpressionStatement
          Source: "_owner = msg.sender"
         Assignment using operator =
@@ -71,17 +61,6 @@ ContractDefinition "TransferBaseContract"
             Identifier msg
                Type: msg
                Source: "msg"
-      ExpressionStatement
-         Source: "_userAddress = userAddress"
-        Assignment using operator =
-           Type: address
-           Source: "_userAddress = userAddress"
-          Identifier _userAddress
-             Type: address
-             Source: "_userAddress"
-          Identifier userAddress
-             Type: address
-             Source: "userAddress"
       ExpressionStatement
          Source: "_coinAdapterAddress = coinAdapterAddress"
         Assignment using operator =

@@ -5,7 +5,7 @@ ImportDirective "./coin.sol"
 ImportDirective "./transferBaseContract.sol"
    Source: "import \"./transferBaseContract.sol\";"
 ContractDefinition "EthTransferContract"
-   Source: "contract EthTransferContract is TransferBaseContract {\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function EthTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }\r\n\r\n    function() payable {\r\n    }\r\n\r\n    function cashin() onlyowner {\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(_userAddress, this.balance);\r\n    }\r\n}"
+   Source: "contract EthTransferContract is TransferBaseContract {\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n\r\n    function EthTransferContract(address coinAdapterAddress) TransferBaseContract(coinAdapterAddress) {        \r\n    }\r\n\r\n    function() payable {\r\n    }\r\n\r\n    function cashin() onlyowner {\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(this, this.balance);\r\n    }\r\n}"
   InheritanceSpecifier
      Source: "TransferBaseContract"
     UserDefinedTypeName "TransferBaseContract"
@@ -33,14 +33,9 @@ ContractDefinition "EthTransferContract"
         PlaceholderStatement
            Source: "_"
   FunctionDefinition "EthTransferContract" - public
-     Source: "function EthTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        \r\n    }"
+     Source: "function EthTransferContract(address coinAdapterAddress) TransferBaseContract(coinAdapterAddress) {        \r\n    }"
     ParameterList
-       Source: "(address userAddress, address coinAdapterAddress)"
-      VariableDeclaration "userAddress"
-         Type: address
-         Source: "address userAddress"
-        ElementaryTypeName address
-           Source: "address"
+       Source: "(address coinAdapterAddress)"
       VariableDeclaration "coinAdapterAddress"
          Type: address
          Source: "address coinAdapterAddress"
@@ -49,13 +44,10 @@ ContractDefinition "EthTransferContract"
     ParameterList
        Source: ""
     ModifierInvocation "TransferBaseContract"
-       Source: "TransferBaseContract(userAddress, coinAdapterAddress)"
+       Source: "TransferBaseContract(coinAdapterAddress)"
       Identifier TransferBaseContract
          Type: type(contract TransferBaseContract)
          Source: "TransferBaseContract"
-      Identifier userAddress
-         Type: address
-         Source: "userAddress"
       Identifier coinAdapterAddress
          Type: address
          Source: "coinAdapterAddress"
@@ -70,7 +62,7 @@ ContractDefinition "EthTransferContract"
     Block
        Source: "{\r\n    }"
   FunctionDefinition "cashin" - public
-     Source: "function cashin() onlyowner {\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(_userAddress, this.balance);\r\n    }"
+     Source: "function cashin() onlyowner {\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(this, this.balance);\r\n    }"
     ParameterList
        Source: "()"
     ParameterList
@@ -81,7 +73,7 @@ ContractDefinition "EthTransferContract"
          Type: modifier ()
          Source: "onlyowner"
     Block
-       Source: "{\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(_userAddress, this.balance);\r\n    }"
+       Source: "{\r\n        if (this.balance <= 0) {\r\n            throw;\r\n        }\r\n\r\n        var coin_contract = Coin(_coinAdapterAddress);\r\n        coin_contract.cashin.value(this.balance)(this, this.balance);\r\n    }"
       IfStatement
          Source: "if (this.balance <= 0) {\r\n            throw;\r\n        }"
         BinaryOperation using operator <=
@@ -115,10 +107,10 @@ ContractDefinition "EthTransferContract"
              Type: address
              Source: "_coinAdapterAddress"
       ExpressionStatement
-         Source: "coin_contract.cashin.value(this.balance)(_userAddress, this.balance)"
+         Source: "coin_contract.cashin.value(this.balance)(this, this.balance)"
         FunctionCall
            Type: tuple()
-           Source: "coin_contract.cashin.value(this.balance)(_userAddress, this.balance)"
+           Source: "coin_contract.cashin.value(this.balance)(this, this.balance)"
           FunctionCall
              Type: function (address,uint256) payable external
              Source: "coin_contract.cashin.value(this.balance)"
@@ -137,9 +129,9 @@ ContractDefinition "EthTransferContract"
               Identifier this
                  Type: contract EthTransferContract
                  Source: "this"
-          Identifier _userAddress
-             Type: address
-             Source: "_userAddress"
+          Identifier this
+             Type: contract EthTransferContract
+             Source: "this"
           MemberAccess to member balance
              Type: uint256
              Source: "this.balance"

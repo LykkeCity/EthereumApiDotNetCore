@@ -15,6 +15,8 @@ namespace Services
 {
     public interface IContractService
     {
+        Task<IEnumerable<string>> GetContractsAddresses(IEnumerable<string> transactionHashes);
+        Task<string> CreateContractWithoutBlockchainAcceptance(string abi, string bytecode, params object[] constructorParams);
         Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams);
         Task<HexBigInteger> GetFilterEventForUserContractPayment();
         Task<HexBigInteger> CreateFilterEventForUserContractPayment();
@@ -40,8 +42,6 @@ namespace Services
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
-            //Nethereum.RPC.Eth.EthGasPrice gasPrice = web3.Eth.GasPrice;
-            // unlock account for 120 seconds
             await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
 
             // deploy contract
@@ -63,10 +63,56 @@ namespace Services
             }
 
             return receipt.ContractAddress;
-
         }
 
-        public async Task<HexBigInteger> GetFilterEventForUserContractPayment()
+
+        /// <returns>transaction hash</returns>
+        public async Task<string> CreateContractWithoutBlockchainAcceptance(string abi, string bytecode, params object[] constructorParams)
+        {
+            var web3 = new Web3(_settings.EthereumUrl);
+
+            var unlockResult = await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
+
+            // deploy contract
+            var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(2000000), constructorParams);
+
+            return transactionHash;
+        }
+
+        public async Task<IEnumerable<string>> GetContractsAddresses(IEnumerable<string> transactionHashes)
+        {
+            if (transactionHashes == null || transactionHashes.Count() == 0)
+            {
+                return new List<string>();
+            }
+
+            List<string> addresses = new List<string>(transactionHashes.Count());
+            var web3 = new Web3(_settings.EthereumUrl);
+            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
+            foreach (var tr in transactionHashes)
+            {
+                TransactionReceipt receipt;
+                while ((receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(tr)) == null)
+                {
+                    await Task.Delay(100);
+                }
+
+                // check if contract byte code is deployed
+                var code = await web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
+
+                if (string.IsNullOrWhiteSpace(code) || code == "0x")
+                {
+                    throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
+                }
+
+                addresses.Add(receipt.ContractAddress);
+            }
+
+            return addresses;
+        }
+
+
+public async Task<HexBigInteger> GetFilterEventForUserContractPayment()
         {
             var setting = await _appSettings.GetSettingAsync(Constants.EthereumFilterSettingKey);
             if (!string.IsNullOrWhiteSpace(setting))

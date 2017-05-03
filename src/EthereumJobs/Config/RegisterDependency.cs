@@ -41,6 +41,8 @@ namespace EthereumJobs.Config
 
             collection.AddSingleton<MonitoringTransferContracts>();
             collection.AddSingleton<MonitoringTransferTransactions>();
+            collection.AddSingleton<TransferContractPoolJob>();
+            collection.AddSingleton<TransferContractUserAssignmentJob>();
 
             #endregion
 

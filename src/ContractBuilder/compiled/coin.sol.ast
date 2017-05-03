@@ -1,7 +1,7 @@
 PragmaDirective
    Source: "pragma solidity ^0.4.9;"
 ContractDefinition "Coin"
-   Source: "contract Coin {\r\n\r\n    address _owner;\r\n    address _exchangeContractAddress;\r\n    uint _lastPing;\r\n    mapping (address => uint) public coinBalanceMultisig;\r\n\r\n    event CoinCashIn(address caller, uint amount);\r\n    event CoinCashOut(address caller, address from, uint amount, address to);\r\n    event CoinTransfer(address caller, address from, address to, uint amount);\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _; }\r\n\r\n    function Coin(address exchangeContractAddress) {\r\n        _owner = msg.sender;\r\n        _exchangeContractAddress = exchangeContractAddress;\r\n    }   \r\n\r\n    function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {\r\n        _exchangeContractAddress = newContractAddress;\r\n    }\r\n\r\n    // transfer coins (called only from exchange contract)\r\n    function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {\r\n        if (!_checkClientSign(from, hash, client_a_sig)) {\r\n            throw;\r\n        }\r\n        if (coinBalanceMultisig[from] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[from] -= amount;\r\n        coinBalanceMultisig[to] += amount;\r\n\r\n        CoinTransfer(msg.sender, from, to, amount);\r\n    }\r\n\r\n    // virtual method (if not implemented, then throws)\r\n    function cashin(address receiver, uint amount) onlyowner payable { throw; }\r\n\r\n    // virtual method (if not implemented, then throws)\r\n    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }\r\n\r\n    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {\r\n        bytes32 r;\r\n        bytes32 s;\r\n        uint8 v;\r\n\r\n        assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return client_addr == ecrecover(hash, v, r, s);\r\n    }\r\n\r\n    function ping() {\r\n        _lastPing = now;\r\n    }\r\n}"
+   Source: "contract Coin {\r\n\r\n    address _owner;\r\n    address _exchangeContractAddress;\r\n    uint _lastPing;\r\n    mapping (address => uint) public coinBalanceMultisig;\r\n    mapping (address => address) public transferContractUser;\r\n\r\n    event CoinCashIn(address caller, uint amount);\r\n    event CoinCashOut(address caller, address from, uint amount, address to);\r\n    event CoinTransfer(address caller, address from, address to, uint amount);\r\n\r\n    modifier onlyowner { if (msg.sender == _owner) _; }\r\n    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _; }\r\n\r\n    function Coin(address exchangeContractAddress) {\r\n        _owner = msg.sender;\r\n        _exchangeContractAddress = exchangeContractAddress;\r\n    }   \r\n\r\n    function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {\r\n        _exchangeContractAddress = newContractAddress;\r\n    }\r\n\r\n    // transfer coins (called only from exchange contract)\r\n    function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {\r\n        if (!_checkClientSign(from, hash, client_a_sig)) {\r\n            throw;\r\n        }\r\n        if (coinBalanceMultisig[from] < amount) {\r\n            throw;\r\n        }\r\n\r\n        coinBalanceMultisig[from] -= amount;\r\n        coinBalanceMultisig[to] += amount;\r\n\r\n        CoinTransfer(msg.sender, from, to, amount);\r\n    }\r\n\r\n    // virtual method (if not implemented, then throws)\r\n    function cashin(address receiver, uint amount) onlyowner payable { throw; }\r\n\r\n    // virtual method (if not implemented, then throws)\r\n    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }\r\n\r\n    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {\r\n        bytes32 r;\r\n        bytes32 s;\r\n        uint8 v;\r\n\r\n        assembly {\r\n            r := mload(add(sig, 32))\r\n            s := mload(add(sig, 64))\r\n            v := mload(add(sig, 65))\r\n        }\r\n\r\n        return client_addr == ecrecover(hash, v, r, s);\r\n    }\r\n\r\n    function balanceOf(address owner) constant returns(uint) {\r\n         var balance = coinBalanceMultisig[owner];\r\n\r\n         return balance;\r\n    }\r\n\r\n    function getTransferAddressUser(address transferAddress) constant returns(address){\r\n         var userAddress = transferContractUser[transferAddress];\r\n\r\n         return userAddress;\r\n    }\r\n\r\n    function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{\r\n         var oldUserAddress = transferContractUser[transferAddress];\r\n         \r\n         if (oldUserAddress == address(0)) {\r\n             throw;\r\n         }\r\n\r\n         transferContractUser[transferAddress] = userAddress;\r\n    }\r\n\r\n    function ping() {\r\n        _lastPing = now;\r\n    }\r\n}"
   VariableDeclaration "_owner"
      Type: address
      Source: "address _owner"
@@ -26,6 +26,15 @@ ContractDefinition "Coin"
          Source: "address"
       ElementaryTypeName uint
          Source: "uint"
+  VariableDeclaration "transferContractUser"
+     Type: mapping(address => address)
+     Source: "mapping (address => address) public transferContractUser"
+    Mapping
+       Source: "mapping (address => address)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName address
+         Source: "address"
   EventDefinition "CoinCashIn"
      Source: "event CoinCashIn(address caller, uint amount);"
     ParameterList
@@ -512,6 +521,155 @@ ContractDefinition "Coin"
             Identifier s
                Type: bytes32
                Source: "s"
+  FunctionDefinition "balanceOf" - public - const
+     Source: "function balanceOf(address owner) constant returns(uint) {\r\n         var balance = coinBalanceMultisig[owner];\r\n\r\n         return balance;\r\n    }"
+    ParameterList
+       Source: "(address owner)"
+      VariableDeclaration "owner"
+         Type: address
+         Source: "address owner"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: "(uint)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint"
+        ElementaryTypeName uint
+           Source: "uint"
+    Block
+       Source: "{\r\n         var balance = coinBalanceMultisig[owner];\r\n\r\n         return balance;\r\n    }"
+      VariableDeclarationStatement
+         Source: "var balance = coinBalanceMultisig[owner]"
+        VariableDeclaration "balance"
+           Type: uint256
+           Source: "var balance"
+        IndexAccess
+           Type: uint256
+           Source: "coinBalanceMultisig[owner]"
+          Identifier coinBalanceMultisig
+             Type: mapping(address => uint256)
+             Source: "coinBalanceMultisig"
+          Identifier owner
+             Type: address
+             Source: "owner"
+      Return
+         Source: "return balance"
+        Identifier balance
+           Type: uint256
+           Source: "balance"
+  FunctionDefinition "getTransferAddressUser" - public - const
+     Source: "function getTransferAddressUser(address transferAddress) constant returns(address){\r\n         var userAddress = transferContractUser[transferAddress];\r\n\r\n         return userAddress;\r\n    }"
+    ParameterList
+       Source: "(address transferAddress)"
+      VariableDeclaration "transferAddress"
+         Type: address
+         Source: "address transferAddress"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: "(address)"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+    Block
+       Source: "{\r\n         var userAddress = transferContractUser[transferAddress];\r\n\r\n         return userAddress;\r\n    }"
+      VariableDeclarationStatement
+         Source: "var userAddress = transferContractUser[transferAddress]"
+        VariableDeclaration "userAddress"
+           Type: address
+           Source: "var userAddress"
+        IndexAccess
+           Type: address
+           Source: "transferContractUser[transferAddress]"
+          Identifier transferContractUser
+             Type: mapping(address => address)
+             Source: "transferContractUser"
+          Identifier transferAddress
+             Type: address
+             Source: "transferAddress"
+      Return
+         Source: "return userAddress"
+        Identifier userAddress
+           Type: address
+           Source: "userAddress"
+  FunctionDefinition "setTransferAddressUser" - public
+     Source: "function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{\r\n         var oldUserAddress = transferContractUser[transferAddress];\r\n         \r\n         if (oldUserAddress == address(0)) {\r\n             throw;\r\n         }\r\n\r\n         transferContractUser[transferAddress] = userAddress;\r\n    }"
+    ParameterList
+       Source: "(address userAddress, address transferAddress)"
+      VariableDeclaration "userAddress"
+         Type: address
+         Source: "address userAddress"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "transferAddress"
+         Type: address
+         Source: "address transferAddress"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    ModifierInvocation "onlyowner"
+       Source: "onlyowner"
+      Identifier onlyowner
+         Type: modifier ()
+         Source: "onlyowner"
+    Block
+       Source: "{\r\n         var oldUserAddress = transferContractUser[transferAddress];\r\n         \r\n         if (oldUserAddress == address(0)) {\r\n             throw;\r\n         }\r\n\r\n         transferContractUser[transferAddress] = userAddress;\r\n    }"
+      VariableDeclarationStatement
+         Source: "var oldUserAddress = transferContractUser[transferAddress]"
+        VariableDeclaration "oldUserAddress"
+           Type: address
+           Source: "var oldUserAddress"
+        IndexAccess
+           Type: address
+           Source: "transferContractUser[transferAddress]"
+          Identifier transferContractUser
+             Type: mapping(address => address)
+             Source: "transferContractUser"
+          Identifier transferAddress
+             Type: address
+             Source: "transferAddress"
+      IfStatement
+         Source: "if (oldUserAddress == address(0)) {\r\n             throw;\r\n         }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "oldUserAddress == address(0)"
+          Identifier oldUserAddress
+             Type: address
+             Source: "oldUserAddress"
+          FunctionCall
+             Type: address
+             Source: "address(0)"
+            ElementaryTypeNameExpression address
+               Type: type(address)
+               Source: "address"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\r\n             throw;\r\n         }"
+          Throw
+             Source: "throw"
+      ExpressionStatement
+         Source: "transferContractUser[transferAddress] = userAddress"
+        Assignment using operator =
+           Type: address
+           Source: "transferContractUser[transferAddress] = userAddress"
+          IndexAccess
+             Type: address
+             Source: "transferContractUser[transferAddress]"
+            Identifier transferContractUser
+               Type: mapping(address => address)
+               Source: "transferContractUser"
+            Identifier transferAddress
+               Type: address
+               Source: "transferAddress"
+          Identifier userAddress
+             Type: address
+             Source: "userAddress"
   FunctionDefinition "ping" - public
      Source: "function ping() {\r\n        _lastPing = now;\r\n    }"
     ParameterList

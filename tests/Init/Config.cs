@@ -101,7 +101,7 @@ namespace Tests
             public Dictionary<string, TestContract> CoinContracts { get; set; }
         }
 
-        public class TestContract : EthereumContract
+        public class TestContract : Core.Settings.EthereumContract
         {
             public int Multiplier { get; set; }
             public bool Payable { get; set; }

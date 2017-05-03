@@ -1,110 +1,81 @@
-﻿using System;
+﻿using AzureStorage.Queue;
+using Core;
+using Core.Exceptions;
+using Core.Notifiers;
+using Core.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
-using Core.Settings;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json;
-using Services.Coins;
-using AzureStorage.Queue;
-using Common.Log;
-using System.Numerics;
 
 namespace Services
 {
-    public class TransferContractTransaction
+    public interface ITransferContractQueueService
     {
-        public string ContractAddress { get; set; }
-
-        public string UserAddress { get; set; }
-        public string CoinAdapterAddress { get; set; }
-
-        //System.Numerics.BigInteger
-        public string Amount { get; set; }
-        public DateTime CreateDt { get; set; }
+        Task<ITransferContract> GetContract();
+        Task PushContract(ITransferContract transferContract);
+        Task<int> Count();
     }
 
-    public interface ITransferContractTransactionService
+    public class TransferContractQueueService : ITransferContractQueueService
     {
-        Task PutContractTransferTransaction(TransferContractTransaction tr);
-        Task<bool> CompleteTransfer();
-    }
-
-    public class TransferContractTransactionService : ITransferContractTransactionService
-    {
-        private readonly IEthereumQueueOutService _queueOutService;
-        private readonly IEthereumTransactionService _ethereumTransactionService;
-        private readonly ILog _logger;
-        private readonly IBaseSettings _baseSettings;
         private readonly IQueueExt _queue;
         private readonly ITransferContractRepository _transferContractRepository;
-        private TransferContractService _transferContractService;
-        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
+        private readonly ISlackNotifier _slackNotifier;
+        private readonly ICoinRepository _coinRepository;
+        private readonly IQueueFactory _queueFactory;
 
-        public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
-            IEthereumQueueOutService queueOutService,
-            IEthereumTransactionService ethereumTransactionService,
-            ILog logger,
-            ICoinContractService coinContractService,
-            IBaseSettings baseSettings,
-            ITransferContractRepository transferContractRepository,
-            TransferContractService transferContractService,
-            IUserTransferWalletRepository userTransferWalletRepository)
+        public TransferContractQueueService(IQueueExt queue,
+            ITransferContractRepository transferContractRepository, ISlackNotifier slackNotifier,
+            ICoinRepository coinRepository)
         {
-            _logger = logger;
-            _baseSettings = baseSettings;
-            _queue = queueFactory(Constants.ContractTransferQueue);
             _transferContractRepository = transferContractRepository;
-            _transferContractService = transferContractService;
-            _userTransferWalletRepository = userTransferWalletRepository;
+            _slackNotifier = slackNotifier;
+            _queue = queue;
+            _coinRepository = coinRepository;
         }
 
-        public async Task PutContractTransferTransaction(TransferContractTransaction tr)
+        public async Task<ITransferContract> GetContract()
         {
-            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(tr));
+            string contractSerialized = await GetContractRaw();
+            ITransferContract contract = Newtonsoft.Json.JsonConvert.DeserializeObject<ITransferContract>(contractSerialized);
+
+            return contract;
         }
 
-        public async Task<bool> CompleteTransfer()
+        public async Task<string> GetContractRaw()
         {
-            var item = await _queue.GetRawMessageAsync();
+            //TODO: think about locking code below
+            var message = await _queue.GetRawMessageAsync();
+            if (message == null)
+                NotifyAboutError();
 
-            if (item == null)
-                return false;
+            await _queue.FinishRawMessageAsync(message);
 
-            var contractTransferTr = JsonConvert.DeserializeObject<TransferContractTransaction>(item.AsString);
+            var contract = message.AsString;
 
-            await TransferToCoinContract(item, contractTransferTr);
+            if (string.IsNullOrWhiteSpace(contract))
+                NotifyAboutError();
 
-            await _queue.FinishRawMessageAsync(item);
-            return true;
+            return contract;
         }
 
-        private async Task TransferToCoinContract(CloudQueueMessage item, TransferContractTransaction contractTransferTr)
+        public async Task PushContract(ITransferContract transferContract)
         {
-            try
-            {
-                var amount = BigInteger.Parse(contractTransferTr.Amount);
-                var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
+            string transferContractSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(transferContract);
 
-                var tr = await _transferContractService.RecievePaymentFromTransferContract(Guid.Parse(item.Id), contractEntity.ContractAddress,
-                    contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress, amount, contractEntity.ContainsEth);
-                await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-                {
-                    LastBalance = "",
-                    TransferContractAddress = contractTransferTr.ContractAddress,
-                    UpdateDate = DateTime.UtcNow,
-                    UserAddress = contractTransferTr.UserAddress
-                });
-                await _logger.WriteInfoAsync("ContractTransferTransactionService", "TransferToCoinContract", "",
-                    $"Transfered {contractTransferTr.Amount} Eth from transfer contract to \"{_baseSettings.EthCoin}\" by transaction \"{tr}\". Receiver = {contractEntity.CoinAdapterAddress}");
-            }
-            catch (Exception e)
-            {
-                await _logger.WriteErrorAsync("TransferContractTransactionService", "TransferToCoinContract",
-                            $"{contractTransferTr.ContractAddress} - {contractTransferTr.CoinAdapterAddress} - {contractTransferTr.Amount}", e);
-            }
+            await _queue.PutRawMessageAsync(transferContractSerialized);
+        }
+
+        public async Task<int> Count()
+        {
+            return await _queue.Count() ?? 0;
+        }
+
+        public void NotifyAboutError()
+        {
+            _slackNotifier.ErrorAsync("Ethereum integration! User contract pool is empty!");
+            throw new BackendException(BackendExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
         }
     }
 }

@@ -1,1 +1,1 @@
-[{"constant":false,"inputs":[],"name":"cashin","outputs":[],"payable":false,"type":"function"},{"inputs":[{"name":"userAddress","type":"address"},{"name":"coinAdapterAddress","type":"address"},{"name":"externalTokenAddress","type":"address"}],"payable":false,"type":"constructor"}]
+[{"constant":false,"inputs":[],"name":"cashin","outputs":[],"payable":false,"type":"function"},{"inputs":[{"name":"coinAdapterAddress","type":"address"},{"name":"externalTokenAddress","type":"address"}],"payable":false,"type":"constructor"}]

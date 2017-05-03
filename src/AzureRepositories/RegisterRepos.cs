@@ -38,6 +38,10 @@ namespace AzureRepositories
                 new AzureTableStorage<AzureIndex>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>())));
 
+            services.AddSingleton<IExternalTokenRepository>(provider => new ExternalTokenRepository(
+                new AzureTableStorage<ExternalTokenEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.ExternalTokenTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<IUserPaymentRepository>(provider => new UserPaymentRepository());
 
             services.AddSingleton<IUserTransferWalletRepository>(provider => new UserTransferWalletRepository(
@@ -71,14 +75,19 @@ namespace AzureRepositories
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings)
         {
+            services.AddTransient<IQueueFactory, QueueFactory>();
             services.AddTransient<Func<string, IQueueExt>>(provider =>
             {
                 return (x =>
                 {
                     switch (x)
                     {
+                        case Constants.TransferContractUserAssignmentQueueName:
+                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.EthereumContractQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
+                        case Constants.SlackNotifierQueue:
+                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.EthereumOutQueue:
                             return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);
                         case Constants.EmailNotifierQueue:

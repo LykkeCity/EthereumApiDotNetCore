@@ -30,10 +30,12 @@ namespace Core.Settings
         EthereumContract MainExchangeContract { get; set; }
         EthereumContract TokenTransferContract { get; set; }
         EthereumContract EthTransferContract { get; set; }
-
+        EthereumContract ExternalTokenContract { get; set; }
+        EthereumContract TokenAdapterContract { get; set; }
+        EthereumContract EthAdapterContract { get; set; }
         Dictionary<string, EthereumContract> CoinContracts { get; set; }
-
         string ERC20ABI { get; set; }
+        string CoinAbi { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -43,6 +45,8 @@ namespace Core.Settings
         public EthereumContract MainExchangeContract { get; set; }
         public EthereumContract TokenTransferContract { get; set; }
         public EthereumContract EthTransferContract { get; set; }
+        public EthereumContract TokenAdapterContract { get; set; }
+        public EthereumContract EthAdapterContract { get; set; }
         public Dictionary<string, EthereumContract> CoinContracts { get; set; } = new Dictionary<string, EthereumContract>();
 
         public string EthereumPrivateAccount { get; set; }
@@ -70,6 +74,10 @@ namespace Core.Settings
         public int Level3TransactionConfirmation { get; set; } = 100;
         public string EthereumContractBlobName { get; set; }
         public string ERC20ABI { get; set; }
+
+        public string CoinAbi { get; set; }
+
+        public EthereumContract ExternalTokenContract { get; set; }
     }
 
     public class EthereumContract

@@ -6,7 +6,7 @@ contract EthTransferContract is TransferBaseContract {
 
     modifier onlyowner { if (msg.sender == _owner) _; }
 
-    function EthTransferContract(address userAddress, address coinAdapterAddress) TransferBaseContract(userAddress, coinAdapterAddress) {        
+    function EthTransferContract(address coinAdapterAddress) TransferBaseContract(coinAdapterAddress) {        
     }
 
     function() payable {
@@ -18,6 +18,6 @@ contract EthTransferContract is TransferBaseContract {
         }
 
         var coin_contract = Coin(_coinAdapterAddress);
-        coin_contract.cashin.value(this.balance)(_userAddress, this.balance);
+        coin_contract.cashin.value(this.balance)(this, this.balance);
     }
 }
