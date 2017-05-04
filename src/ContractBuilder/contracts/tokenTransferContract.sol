@@ -1,7 +1,7 @@
 pragma solidity ^0.4.9;
 import "./coin.sol";
 import "./transferBaseContract.sol";
-import "./erc20Contract.sol";
+import "./token/erc20Contract.sol";
 
 contract TokenTransferContract is TransferBaseContract{
 
@@ -24,7 +24,9 @@ contract TokenTransferContract is TransferBaseContract{
 
         var coin_contract = Coin(_coinAdapterAddress);
 
-        erc20Token.transferFrom(this, _coinAdapterAddress, tokenBalance);
+        if (!erc20Token.transfer(_coinAdapterAddress, tokenBalance)){
+            throw;
+        }
         coin_contract.cashin(this, tokenBalance);
     }
 }

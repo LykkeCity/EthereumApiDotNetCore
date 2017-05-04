@@ -8,7 +8,6 @@ namespace EthereumApi.Models
 {
     public class CreateTransitionContractModel
     {
-        public string ExternalTokenAddress { get; set; }
 
         [Required]
         public string CoinAdapterAddress { get; set; }
@@ -16,7 +15,5 @@ namespace EthereumApi.Models
         [Required]
         public string UserAddress { get; set; }
 
-        [Required]
-        public bool IsAdapterWithEthereum{ get; set; }
     }
 }

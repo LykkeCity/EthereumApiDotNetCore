@@ -1123,22 +1123,23 @@ sub_0: assembly {
       pop
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2762:2763  0 */
       0x0
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress == address(0) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress != address(0) */
       0xffffffffffffffffffffffffffffffffffffffff
       and
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2750  oldUserAddress */
       dup2
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress == address(0) */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2736:2764  oldUserAddress != address(0) */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       eq
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress == address(0)) {... */
+      iszero
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress != address(0)) {... */
       iszero
       tag_52
       jumpi
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2782:2787  throw */
       revert(0x0, 0x0)
-        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress == address(0)) {... */
+        /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2732:2800  if (oldUserAddress != address(0)) {... */
     tag_52:
         /* "D:/LykkeNuget/EthereumApiCore/src/ContractBuilder/contracts/coin.sol":2853:2864  userAddress */
       dup3

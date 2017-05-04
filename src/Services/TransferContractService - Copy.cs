@@ -53,21 +53,20 @@ namespace Services
 
             string externalTokenAddress = coin.ExternalTokenAddress;
             bool containsEth = coin.ContainsEth;
-            string abi;
-            string byteCode;
+            string transactionHash;
 
             if (containsEth)
             {
-                abi = _settings.EthTransferContract.Abi;
-                byteCode = _settings.EthTransferContract.ByteCode;
+                transactionHash = 
+                    await _contractService.CreateContractWithoutBlockchainAcceptance(_settings.EthTransferContract.Abi,
+                    _settings.EthTransferContract.ByteCode, coinAdapterAddress);
             }
             else
             {
-                abi = _settings.TokenTransferContract.Abi;
-                byteCode = _settings.TokenTransferContract.ByteCode;
+                transactionHash =
+                    await _contractService.CreateContractWithoutBlockchainAcceptance(_settings.TokenTransferContract.Abi,
+                    _settings.TokenTransferContract.ByteCode, coinAdapterAddress, externalTokenAddress);
             }
-
-            string transactionHash = await _contractService.CreateContractWithoutBlockchainAcceptance(abi, byteCode, coinAdapterAddress);
 
             return transactionHash;
         }
@@ -90,12 +89,12 @@ namespace Services
             await _transferContractRepository.SaveAsync(transferContract);
             await _transferContractUserAssignmentQueueService.PushContract(new TransferContractUserAssignment()
             {
-                TransferContractAddress = transferContract.UserAddress,
+                TransferContractAddress = transferContract.ContractAddress,
                 UserAddress = userAddress,
                 CoinAdapterAddress = coin.AdapterAddress
             });
 
-            return userAddress;
+            return transferContract.ContractAddress;
         }
 
         public async Task<string> SetUserAddressForTransferContract(string userAddress, string transferContractAddress)
@@ -173,7 +172,7 @@ namespace Services
             if (!containsEth)
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-                new HexBigInteger(Constants.GasForCoinTransaction));
+                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0));
             }
             else
             {

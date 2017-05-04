@@ -51,8 +51,8 @@ namespace EthereumJobs
             #region NewJobs
 
             //Services.GetService<MonitoringTransferContracts>().Start();
-            //Services.GetService<MonitoringTransferTransactions>().Start();
-            Services.GetService<TransferContractPoolJob>().Start();
+            Services.GetService<MonitoringTransferTransactions>().Start();
+            //Services.GetService<TransferContractPoolJob>().Start();
             //Services.GetService<TransferContractUserAssignmentJob>().Start();
 
             #endregion

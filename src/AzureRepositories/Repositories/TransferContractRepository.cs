@@ -95,7 +95,7 @@ namespace AzureRepositories.Repositories
             var entity = TransferContractEntity.Create(transferContract);
 
             await _table.InsertOrReplaceAsync(entity);
-            if (string.IsNullOrEmpty(entity.UserAddress))
+            if (!string.IsNullOrEmpty(entity.UserAddress))
             {
                 var index = new AzureIndex(_indexPartition,
                 GenerateUserAdapterRowKey(entity.UserAddress, entity.CoinAdapterAddress), entity);

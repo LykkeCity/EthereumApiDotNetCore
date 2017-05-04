@@ -84,15 +84,14 @@ namespace AzureRepositories.Repositories
             return coin;
         }
 
-        public async Task ProcessAllAsync(Func<ICoin, Task> processAction)
+        public async Task ProcessAllAsync(Func<IEnumerable<ICoin>, Task> processAction)
         {
-            await _table.GetDataByChunksAsync(CoinEntity.Key, async (items) =>
+            Func<IEnumerable<CoinEntity>, Task> function = async (items) =>
             {
-                foreach (var item in items)
-                {
-                    await processAction(item);
-                }
-            });
+                await processAction(items);
+            };
+
+            await _table.GetDataByChunksAsync(function);
         }
     }
 }

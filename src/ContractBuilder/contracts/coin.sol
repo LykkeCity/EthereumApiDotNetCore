@@ -73,7 +73,7 @@ contract Coin {
     function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
          var oldUserAddress = transferContractUser[transferAddress];
          
-         if (oldUserAddress == address(0)) {
+         if (oldUserAddress != address(0)) {
              throw;
          }
 

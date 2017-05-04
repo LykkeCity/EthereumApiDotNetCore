@@ -33,6 +33,12 @@ namespace ContractBuilder
                 .AddJsonFile("appsettings.json");
             var configuration = configurationBuilder.Build();
 
+            var settings = GetCurrentSettings();
+            var service = new ErcInterfaceService(settings);
+            service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
+                "0x07d85f51bdb7f5a2692bd8f17f8421d1b682b28a", new System.Numerics.BigInteger(512)).Wait();
+
+
             while (!exit)
             {
                 Console.WriteLine("Choose number: ");

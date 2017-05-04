@@ -32,7 +32,7 @@ namespace Core.Repositories
 
     public interface ICoinRepository
     {
-        Task ProcessAllAsync(Func<ICoin, Task> processAction);
+        Task ProcessAllAsync(Func<IEnumerable<ICoin>, Task> processAction);
         Task<ICoin> GetCoin(string id);
         Task InsertOrReplace(ICoin coin);
         Task<ICoin> GetCoinByAddress(string coinAddress);

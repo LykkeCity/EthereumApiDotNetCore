@@ -38,7 +38,7 @@ namespace Services
         public async Task<ITransferContract> GetContract()
         {
             string contractSerialized = await GetContractRaw();
-            ITransferContract contract = Newtonsoft.Json.JsonConvert.DeserializeObject<ITransferContract>(contractSerialized);
+            ITransferContract contract = Newtonsoft.Json.JsonConvert.DeserializeObject<TransferContract>(contractSerialized);
 
             return contract;
         }

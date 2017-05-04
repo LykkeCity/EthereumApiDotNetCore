@@ -19,16 +19,19 @@ namespace EthereumJobs.Job
         private readonly ILog _logger;
         private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
         private readonly IBaseSettings _settings;
+        private readonly ICoinRepository _coinRepository;
 
         public TransferContractUserAssignmentJob(IBaseSettings settings,
             ILog logger,
-            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService
+            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
+            ICoinRepository coinRepository
             ) :
             base("MonitoringTransferContracts", TimerPeriodSeconds * 1000, logger)
         {
             _settings = settings;
             _logger = logger;
             _transferContractUserAssignmentQueueService = transferContractUserAssignmentQueueService;
+            _coinRepository = coinRepository;
         }
 
         public override async Task Execute()
@@ -41,16 +44,30 @@ namespace EthereumJobs.Job
 
                     var web3 = new Web3(_settings.EthereumUrl);
 
-                    await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                        _settings.EthereumMainAccountPassword, 120);
+                    ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
+                    if (coinAdapter == null)
+                    {
+                        continue;
+                    }
 
-                    string coinAbi = _settings.CoinAbi;
+                    string coinAbi;
+                    if (coinAdapter.ContainsEth)
+                    {
+                        coinAbi = _settings.EthAdapterContract.Abi;
+                    }
+                    else
+                    {
+                        coinAbi = _settings.TokenAdapterContract.Abi;
+                    }
+
+                    await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
+                       _settings.EthereumMainAccountPassword, 120);
 
                     var contract = web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
                     var function = contract.GetFunction("setTransferAddressUser");
                     //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
                     string transaction =
-                        await function.SendTransactionAsync(_settings.EthereumMainAccount, 
+                        await function.SendTransactionAsync(_settings.EthereumMainAccount,
                         assignment.UserAddress, assignment.TransferContractAddress);
                 }
             }

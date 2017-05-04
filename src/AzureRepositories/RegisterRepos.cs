@@ -69,7 +69,7 @@ namespace AzureRepositories
             services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
                 new AzureTableStorage<CoinEntity>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable
                     ,provider.GetService<ILog>())
-                , new AzureTableStorage<AzureIndex>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable
+                , new AzureTableStorage<AzureIndex>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTableInedex
                    , provider.GetService<ILog>())) ));
         }
 

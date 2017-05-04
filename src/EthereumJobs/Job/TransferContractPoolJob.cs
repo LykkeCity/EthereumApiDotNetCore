@@ -7,6 +7,7 @@ using Common.Log;
 using Core.Settings;
 using System.Numerics;
 using System;
+using System.Collections.Generic;
 
 namespace EthereumJobs.Job
 {
@@ -34,9 +35,12 @@ namespace EthereumJobs.Job
 
         public override async Task Execute()
         {
-            await _coinRepository.ProcessAllAsync(async (item) =>
+            await _coinRepository.ProcessAllAsync(async (items) =>
             {
-                await _transferContractPoolService.Execute(item);
+                foreach (var item in items)
+                {
+                    await _transferContractPoolService.Execute(item);
+                }
             });
         }
     }
