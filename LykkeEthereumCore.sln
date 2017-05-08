@@ -14,9 +14,6 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "JobRunner", "src\JobRunner\JobRunner.xproj", "{292E5EBA-B062-471D-A1A4-55CF23A17BF2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runners", "Runners", "{45765D82-186C-4CA6-A7B0-8B60052EFFCF}"
-	ProjectSection(SolutionItems) = preProject
-		src\Services\TransferContractService.cs = src\Services\TransferContractService.cs
-	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "EthereumApi", "src\EthereumApi\EthereumApi.xproj", "{5C1CC96C-A555-471F-9C49-AE35F568EBB5}"
 EndProject
@@ -35,6 +32,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		ToDo.txt = ToDo.txt
 	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SigningServiceApiCaller", "src\SigningServiceApiCaller\SigningServiceApiCaller.xproj", "{24D89393-3AA8-48F2-9BF4-DBE862220FBF}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "TestRunner", "src\TestRunner\TestRunner.xproj", "{F6A39A57-2559-41F4-8212-6AB257ADB45A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +79,14 @@ Global
 		{FD46800C-585E-411B-A9BE-0260BEE07EF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD46800C-585E-411B-A9BE-0260BEE07EF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD46800C-585E-411B-A9BE-0260BEE07EF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,5 +98,7 @@ Global
 		{292E5EBA-B062-471D-A1A4-55CF23A17BF2} = {45765D82-186C-4CA6-A7B0-8B60052EFFCF}
 		{8A91856A-2D0F-4A68-9FA7-065C18684948} = {45765D82-186C-4CA6-A7B0-8B60052EFFCF}
 		{FD46800C-585E-411B-A9BE-0260BEE07EF5} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 	EndGlobalSection
 EndGlobal

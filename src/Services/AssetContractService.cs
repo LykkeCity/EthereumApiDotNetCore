@@ -11,48 +11,56 @@ namespace Services
     {
         private readonly ICoinRepository _coinRepository;
         private readonly IContractService _contractService;
-        //private readonly IEthereumContractRepository _ethereumContractRepository;
+        private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IBaseSettings _settings;
 
         public AssetContractService(IBaseSettings settings,
             IContractService contractService,
             ICoinRepository coinRepository,
-            IEthereumContractRepository ethereumContractRepository)
+            IEthereumContractRepository ethereumContractRepository,
+            IErcInterfaceService ercInterfaceService)
         {
             _settings = settings;
             _contractService = contractService;
             _coinRepository = coinRepository;
-            //_ethereumContractRepository = ethereumContractRepository;
+            _ercInterfaceService = ercInterfaceService;
         }
 
         public async Task<string> CreateCoinContract(ICoin coin)
         {
+            if (coin == null)
+            {
+                throw new ArgumentException("Coin should not be null", "coin");
+            }
+
             string abi;
             string byteCode;
+            string[] constructorParametes;
 
             if (coin.ContainsEth)
             {
                 abi = _settings.EthAdapterContract.Abi;
                 byteCode = _settings.EthAdapterContract.ByteCode;
+                constructorParametes = new string[] { _settings.MainExchangeContract.Address };
             }
             else
             {
+                if (string.IsNullOrEmpty(coin.ExternalTokenAddress))
+                {
+                    throw new Exception("coin.ExternalTokenAddress should not be empty");
+                }
+
+                //TODO: check that external exists
                 abi = _settings.TokenAdapterContract.Abi;
                 byteCode = _settings.TokenAdapterContract.ByteCode;
+                constructorParametes = new string[] { _settings.MainExchangeContract.Address, coin.ExternalTokenAddress };
             }
 
             string coinAdapterAddress =
                 await _contractService.CreateContract(abi,
-                byteCode, _settings.MainExchangeContract.Address);
+                byteCode, constructorParametes);
             coin.AdapterAddress = coinAdapterAddress;
             await _coinRepository.InsertOrReplace(coin);
-
-            //await _ethereumContractRepository.SaveAsync(new Core.Repositories.EthereumContract()
-            //{
-            //    Abi = coinContract.Abi,
-            //    ByteCode = coinContract.ByteCode,
-            //    ContractAddress = coinAdapterAddress
-            //});
 
             return coinAdapterAddress;
         }

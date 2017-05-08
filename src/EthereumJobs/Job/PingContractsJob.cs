@@ -8,10 +8,10 @@ namespace EthereumJobs.Job
 {
 	public class PingContractsJob : TimerPeriod
 	{
-		private readonly ICoinContractService _coinContractService;
+		private readonly IExchangeContractService _coinContractService;
 		private const int TimerPeriodSeconds = 60 * 60 * 24;
 
-		public PingContractsJob(ICoinContractService coinContractService, ILog log) : base("PingContractsJob", TimerPeriodSeconds * 1000, log)
+		public PingContractsJob(IExchangeContractService coinContractService, ILog log) : base("PingContractsJob", TimerPeriodSeconds * 1000, log)
 		{
 			_coinContractService = coinContractService;
 		}

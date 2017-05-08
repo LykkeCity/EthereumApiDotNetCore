@@ -26,7 +26,7 @@ namespace Tests
         {
             try
             {
-                var json = File.ReadAllText(@"..\settings\generalsettings.json");
+                var json = File.ReadAllText(@"..\tests\generalsettings.json");
                 if (string.IsNullOrWhiteSpace(json))
                 {
 
@@ -46,7 +46,7 @@ namespace Tests
         {
             try
             {
-                var json = File.ReadAllText(@"..\settings\testsettings.json");
+                var json = File.ReadAllText(@"..\tests\generalsettings.json");
                 if (string.IsNullOrWhiteSpace(json))
                 {
 
@@ -66,7 +66,7 @@ namespace Tests
         [OneTimeSetUp]
         public async Task Initialize()
         {
-            Constants.StoragePrefix = "tests";
+            //Constants.StoragePrefix = "tests";
 
             IServiceCollection collection = new ServiceCollection();
             var settings = ReadSettings();
@@ -82,15 +82,15 @@ namespace Tests
 
 
             var coinRepo = Services.GetService<ICoinRepository>();
-            foreach (var item in settings.CoinContracts)
-                await coinRepo.InsertOrReplace(new Coin
-                {
-                    AdapterAddress = item.Value.Address,
-                    Id = item.Key,
-                    Multiplier = testSetting.CoinContracts[item.Key].Multiplier,
-                    BlockchainDepositEnabled = testSetting.CoinContracts[item.Key].Payable,
-                    Blockchain = "ethereum"
-                });
+            //foreach (var item in settings.CoinContracts)
+            //    await coinRepo.InsertOrReplace(new Coin
+            //    {
+            //        AdapterAddress = item.Value.Address,
+            //        Id = item.Key,
+            //        Multiplier = testSetting.CoinContracts[item.Key].Multiplier,
+            //        BlockchainDepositEnabled = testSetting.CoinContracts[item.Key].Payable,
+            //        Blockchain = "ethereum"
+            //    });
 
 
             //Assert.DoesNotThrowAsync(() => Services.GetService<IContractService>().GetCurrentBlock(), "Please, run ethereum node (geth.exe)");

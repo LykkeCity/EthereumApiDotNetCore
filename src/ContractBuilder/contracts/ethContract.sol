@@ -26,9 +26,9 @@ contract EthCoin is Coin(0) {
             throw;
         }
 
-        coinBalanceMultisig[client] -= amount;
-
         if (!to.send(amount)) throw;
+
+        coinBalanceMultisig[client] -= amount;
 
         CoinCashOut(msg.sender, client, amount, to);
     }

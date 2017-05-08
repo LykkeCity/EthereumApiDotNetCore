@@ -82,18 +82,15 @@ namespace Services
 
                     foreach (var address in contractAddresses)
                     {
-                        var task = transferContractQueueService.PushContract(new TransferContract()
+                        await transferContractQueueService.PushContract(new TransferContract()
                         {
                             CoinAdapterAddress = coin.AdapterAddress,
                             ContainsEth = coin.ContainsEth,
                             ContractAddress = address,
                             ExternalTokenAddress = coin.ExternalTokenAddress,
                         });
-
-                        contractPushTasks.Add(task);
                     }
 
-                    Task.WaitAll(contractPushTasks.ToArray());
                     currentCount += _settings.ContractsPerRequest;
                 }
             }

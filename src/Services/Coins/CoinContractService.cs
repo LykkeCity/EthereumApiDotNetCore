@@ -17,7 +17,7 @@ using AzureStorage.Queue;
 
 namespace Services.Coins
 {
-    public interface ICoinContractService
+    public interface IExchangeContractService
     {
         Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB,
             string signAHex, string signBHex);
@@ -30,6 +30,8 @@ namespace Services.Coins
 
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
+        Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
+
         Task<BigInteger> GetBalance(string coin, string clientAddr);
 
         Task PingMainExchangeContract();
@@ -39,7 +41,7 @@ namespace Services.Coins
         Task RetrieveEventLogs(bool recreateFilters);
     }
 
-    public class CoinContractService : ICoinContractService
+    public class ExchangeContractService : IExchangeContractService
     {
         private readonly IBaseSettings _settings;
         private readonly ICoinTransactionService _cointTransactionService;
@@ -47,14 +49,12 @@ namespace Services.Coins
         private readonly ICoinContractFilterRepository _coinContractFilterRepository;
         private readonly ICoinRepository _coinRepository;
         private readonly IQueueExt _coinEventQueue;
-        private readonly IEthereumContractRepository _ethereumContractRepository;
 
-        public CoinContractService(IBaseSettings settings,
+        public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository)
         {
-            _ethereumContractRepository = ethereumContractRepository;
             _settings = settings;
             _cointTransactionService = cointTransactionService;
             _contractService = contractService;
@@ -87,42 +87,56 @@ namespace Services.Coins
             return tr;
         }
 
-        public async Task<string> CashIn(Guid id, string coin, string receiver, decimal amount)
+        public async Task<string> CashIn(Guid id, string coinAddress, string receiver, decimal amount)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
+            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
 
-            var coinAFromDb = await _coinRepository.GetCoin(coin);
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
 
-            var contract = web3.Eth.GetContract(_settings.CoinContracts[coin].Abi, coinAFromDb.AdapterAddress);
+            if (coinAFromDb == null)
+            {
+                throw new Exception($"Coin with address {coinAddress} deos not exist");
+            }
+
+            Contract contract;
+            if (coinAFromDb.ContainsEth)
+            {
+                contract = web3.Eth.GetContract(_settings.EthAdapterContract.Abi, coinAFromDb.AdapterAddress);
+            }
+            else
+            {
+                contract = web3.Eth.GetContract(_settings.TokenAdapterContract.Abi, coinAFromDb.AdapterAddress);
+            }
+
             var convertedAmountA = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
 
             var convertedId = EthUtils.GuidToBigInteger(id);
 
             var cashin = contract.GetFunction("cashin");
             string tr;
-            if (coinAFromDb.BlockchainDepositEnabled)
+            if (coinAFromDb.ContainsEth)
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
-                            new HexBigInteger(convertedAmountA), convertedId, receiver, 0, new byte[0]);
+                            new HexBigInteger(convertedAmountA), receiver, convertedAmountA);
             }
             else
             {
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
-                            new HexBigInteger(0), convertedId, receiver, convertedAmountA, new byte[0]);
+                            new HexBigInteger(0), receiver, convertedAmountA);
             }
             await _cointTransactionService.PutTransactionToQueue(tr);
             return tr;
         }
 
-        public async Task<string> CashOut(Guid id, string coin, string clientAddr, string toAddr, decimal amount, string sign)
+        public async Task<string> CashOut(Guid id, string coinAddress, string clientAddr, string toAddr, decimal amount, string sign)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
             await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 
-            var coinAFromDb = await _coinRepository.GetCoin(coin);
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
             var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
 
             var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
@@ -177,15 +191,30 @@ namespace Services.Coins
             return tr;
         }
 
-        public async Task<BigInteger> GetBalance(string coin, string clientAddr)
+        public async Task<BigInteger> GetBalance(string adapterAddress, string clientAddr)
         {
             var web3 = new Web3(_settings.EthereumUrl);
-            var coinAFromDb = await _coinRepository.GetCoin(coin);
-            var ethereumContract = await _ethereumContractRepository.GetAsync(coinAFromDb.AdapterAddress);
-            var contract = web3.Eth.GetContract(ethereumContract.Abi, coinAFromDb.AdapterAddress);//_settings.CoinContracts[coin].Abi, coinAFromDb.AdapterAddress);
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
 
-            var cashin = contract.GetFunction("coinBalanceMultisig");
-            return await cashin.CallAsync<BigInteger>(clientAddr);
+            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
+
+            var contract = web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
+
+            var balance = contract.GetFunction("balanceOf");
+            return await balance.CallAsync<BigInteger>(clientAddr);
+        }
+
+        public async Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress)
+        {
+            var web3 = new Web3(_settings.EthereumUrl);
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
+
+            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
+
+            var contract = web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
+
+            var balance = contract.GetFunction("getTransferAddressUser");
+            return await balance.CallAsync<string>(transferContractAddress);
         }
 
         public async Task PingMainExchangeContract()

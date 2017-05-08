@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using Services;
 using Nethereum.Web3;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Core.Signing.Crypto;
+using System.Text;
 
 namespace ContractBuilder
 {
@@ -34,9 +36,13 @@ namespace ContractBuilder
             var configuration = configurationBuilder.Build();
 
             var settings = GetCurrentSettings();
+
+            //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
+            //var stringKey = Encoding.Unicode.GetString(key);
+
             var service = new ErcInterfaceService(settings);
             service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
-                "0x07d85f51bdb7f5a2692bd8f17f8421d1b682b28a", new System.Numerics.BigInteger(512)).Wait();
+                "0x18d15916165fdf904e1c29e2954565ef219208d6", new System.Numerics.BigInteger(1024)).Wait();
 
 
             while (!exit)
@@ -235,7 +241,7 @@ namespace ContractBuilder
 
         static string GetFilePath(string fileName)
         {
-            return Path.Combine("compiled", fileName);
+            return Path.Combine("contracts", "bin", fileName);
         }
 
         static string GetFileContent(string fileName)

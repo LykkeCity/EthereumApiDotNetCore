@@ -16,7 +16,7 @@ namespace Services
             services.AddTransient<IEmailNotifierService, EmailNotifierService>();
             //services.AddTransient<IContractTransferTransactionService, ContractTransferTransactionService>();
             services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
-            services.AddTransient<ICoinContractService, CoinContractService>();
+            services.AddTransient<IExchangeContractService, ExchangeContractService>();
             services.AddTransient<ICoinTransactionService, CoinTransactionService>();
             services.AddTransient<IManualEventsService, ManualEventsService>();
 

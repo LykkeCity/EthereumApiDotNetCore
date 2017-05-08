@@ -13,10 +13,10 @@ namespace EthereumApi.Controllers
     [Produces("application/json")]
     public class ExchangeController : Controller
     {
-        private readonly ICoinContractService _coinContractService;
+        private readonly IExchangeContractService _coinContractService;
         private readonly ILog _logger;
 
-        public ExchangeController(ICoinContractService coinContractService, ILog logger)
+        public ExchangeController(IExchangeContractService coinContractService, ILog logger)
         {
             _coinContractService = coinContractService;
             _logger = logger;

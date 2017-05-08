@@ -47,7 +47,7 @@ namespace Services
             IEthereumQueueOutService queueOutService,
             IEthereumTransactionService ethereumTransactionService,
             ILog logger,
-            ICoinContractService coinContractService,
+            IExchangeContractService coinContractService,
             IBaseSettings baseSettings,
             ITransferContractRepository transferContractRepository,
             TransferContractService transferContractService,

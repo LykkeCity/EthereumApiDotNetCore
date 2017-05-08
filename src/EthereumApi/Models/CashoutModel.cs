@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-	public class CashoutModel : BaseCoinRequestModel
-	{
-		[Required]
-		public string Coin { get; set; }
+    public class CashoutModel : BaseCoinRequestModel
+    {
+        [Required]
+        public string Coin { get; set; }
 
-		[Required]
-		public string Client { get; set; }
+        [Required]
+        public string Client { get; set; }
 
-		[Required]
-		public string To { get; set; }
+        [Required]
+        public string To { get; set; }
 
-		[Required]
-		public decimal Amount { get; set; }
+        [Required]
+        public decimal Amount { get; set; }
 
-		[Required]
-		public string Sign { get; set; }
-	}
+        [Required]
+        public string Sign { get; set; }
+    }
 }

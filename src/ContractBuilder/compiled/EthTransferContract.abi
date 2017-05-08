@@ -1,1 +1,0 @@
-[{"constant":false,"inputs":[],"name":"cashin","outputs":[],"payable":false,"type":"function"},{"inputs":[{"name":"coinAdapterAddress","type":"address"}],"payable":false,"type":"constructor"},{"payable":true,"type":"fallback"}]

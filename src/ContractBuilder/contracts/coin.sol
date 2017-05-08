@@ -28,6 +28,7 @@ contract Coin {
         if (!_checkClientSign(from, hash, client_a_sig)) {
             throw;
         }
+        
         if (coinBalanceMultisig[from] < amount) {
             throw;
         }
