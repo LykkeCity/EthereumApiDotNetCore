@@ -18,6 +18,8 @@ contract EthTransferContract is TransferBaseContract {
         }
 
         var coin_contract = Coin(_coinAdapterAddress);
-        coin_contract.cashin.value(this.balance)(this, this.balance);
+        if (!coin_contract.cashin.value(this.balance)(this, this.balance)){
+            throw;
+        }
     }
 }

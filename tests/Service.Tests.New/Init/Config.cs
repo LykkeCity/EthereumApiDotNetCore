@@ -25,7 +25,7 @@ namespace Tests
         {
             try
             {
-                var json = File.ReadAllText(@"..\tests\generalsettings.json");
+                var json = File.ReadAllText(@"..\..\..\generalsettings.json");
                 if (string.IsNullOrWhiteSpace(json))
                 {
 
@@ -45,7 +45,7 @@ namespace Tests
         {
             try
             {
-                var json = File.ReadAllText(@"..\tests\generalsettings.json");
+                var json = File.ReadAllText(@"..\..\..\generalsettings.json");
                 if (string.IsNullOrWhiteSpace(json))
                 {
 

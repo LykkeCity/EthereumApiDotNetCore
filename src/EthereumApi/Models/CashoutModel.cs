@@ -18,7 +18,7 @@ namespace EthereumApi.Models
         public string To { get; set; }
 
         [Required]
-        public decimal Amount { get; set; }
+        public string Amount { get; set; }
 
         [Required]
         public string Sign { get; set; }

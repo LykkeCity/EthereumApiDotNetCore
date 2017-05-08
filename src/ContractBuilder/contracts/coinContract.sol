@@ -10,18 +10,16 @@ contract ColorCoin is Coin(0){
         _externalTokenAddress = externalTokenAddress;
     }
 
-    function cashin(address receiver, uint amount) onlyowner payable {
-        if (msg.value > 0) throw; 
+    function cashin(address receiver, uint amount) ownerOrTransferContract payable returns(bool){
+        if (msg.value > 0) return false; 
         
         var userAddress = transferContractUser[receiver];
-
-        if (userAddress == address(0)) {
-            throw;
-        }
 
         coinBalanceMultisig[userAddress] += amount;
 
         CoinCashIn(userAddress, amount);
+        
+        return true;
     }
 
     // cashout coins (called only from exchange contract)

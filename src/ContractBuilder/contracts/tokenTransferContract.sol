@@ -24,10 +24,13 @@ contract TokenTransferContract is TransferBaseContract{
 
         var coin_contract = Coin(_coinAdapterAddress);
 
-        if (!erc20Token.transfer(_coinAdapterAddress, tokenBalance)){
+        if (!erc20Token.transfer(_coinAdapterAddress, tokenBalance)) {
             throw;
         }
         
-        coin_contract.cashin(this, tokenBalance);
+        if (!coin_contract.cashin(this, tokenBalance)) {
+            throw;
+        }
+        
     }
 }

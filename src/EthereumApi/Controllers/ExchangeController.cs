@@ -6,6 +6,7 @@ using EthereumApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services.Coins;
 using Common.Log;
+using System.Numerics;
 
 namespace EthereumApi.Controllers
 {
@@ -50,7 +51,8 @@ namespace EthereumApi.Controllers
 
             await Log("Cashout", "Begin Process", model);
 
-            var transaction = await _coinContractService.CashOut(model.Id, model.Coin, model.Client, model.To, model.Amount, model.Sign);
+            var amount = BigInteger.Parse(model.Amount);
+            var transaction = await _coinContractService.CashOut(model.Id, model.Coin, model.Client, model.To, amount, model.Sign);
 
             await Log("Cashout", "End Process", model, transaction);
 
@@ -67,7 +69,9 @@ namespace EthereumApi.Controllers
 
             await Log("Cashin", "Begin Process", model);
 
-            var transaction = await _coinContractService.CashIn(model.Id, model.Coin, model.Receiver, model.Amount);
+            var amount = BigInteger.Parse(model.Amount);
+
+            var transaction = await _coinContractService.CashIn(model.Id, model.Coin, model.Receiver, amount);
 
             await Log("Cashin", "End Process", model, transaction);
 

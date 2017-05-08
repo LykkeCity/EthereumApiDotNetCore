@@ -12,6 +12,7 @@ contract Coin {
     event CoinTransfer(address caller, address from, address to, uint amount);
 
     modifier onlyowner { if (msg.sender == _owner) _; }
+    modifier ownerOrTransferContract { if (msg.sender == _owner || transferContractUser[msg.sender] != address(0)) _; }
     modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _; }
 
     function Coin(address exchangeContractAddress) {
@@ -40,7 +41,7 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(address receiver, uint amount) onlyowner payable { throw; }
+    function cashin(address receiver, uint amount) ownerOrTransferContract payable returns(bool) { return false; }
 
     // virtual method (if not implemented, then throws)
     function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }

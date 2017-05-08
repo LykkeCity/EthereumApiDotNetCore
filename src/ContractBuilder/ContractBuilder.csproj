@@ -21,6 +21,54 @@
     <None Update="appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
+    <None Update="contracts\bin\ERC20Interface.abi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ERC20Interface.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ERC20Interface.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ERC20Token.abi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ERC20Token.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ERC20Token.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ExternalToken.abi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ExternalToken.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\ExternalToken.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\SafeMath.abi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\SafeMath.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="contracts\bin\SafeMath.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +82,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
   </ItemGroup>
 
 </Project>

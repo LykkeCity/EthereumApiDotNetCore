@@ -26,6 +26,8 @@ namespace Tests
         [TestInitialize]
         public async Task Up()
         {
+            var config = new Config();
+            await config.Initialize();
             //Config.Services.GetService<IUserContractRepository>().DeleteTable();
             Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
             Config.Services.GetService<ICoinTransactionRepository>().DeleteTable();

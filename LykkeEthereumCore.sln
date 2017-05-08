@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningServiceApiCaller", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "src\TestRunner\TestRunner.csproj", "{F6A39A57-2559-41F4-8212-6AB257ADB45A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Tests.New", "tests\Service.Tests.New\Service.Tests.New.csproj", "{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Tests", "tests\Service.Tests.New\Service.Tests.csproj", "{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

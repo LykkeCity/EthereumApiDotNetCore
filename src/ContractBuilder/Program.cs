@@ -40,11 +40,11 @@ namespace ContractBuilder
 
             //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
             //var stringKey = Encoding.Unicode.GetString(key);
-
+            GetAllContractInJson();
             var service = new ErcInterfaceService(settings);
             service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
-                "0x8d90f8805416403763dd0e58dd3c9b7c427ca4ae", new System.Numerics.BigInteger(1025)).Wait();
-            GetAllContractInJson();
+                "0x13415ca1cd099a837ef264873c03bf4b8e8e1f39", new System.Numerics.BigInteger(999)).Wait();
+            
 
             while (!exit)
             {

@@ -22,9 +22,9 @@ namespace Services.Coins
         Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB,
             string signAHex, string signBHex);
 
-        Task<string> CashIn(Guid id, string coin, string receiver, decimal amount);
+        Task<string> CashIn(Guid id, string coin, string receiver, BigInteger amount);
 
-        Task<string> CashOut(Guid id, string coin, string clientAddr, string toAddr, decimal amount, string sign);
+        Task<string> CashOut(Guid id, string coin, string clientAddr, string toAddr, BigInteger amount, string sign);
 
         Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign);
 
@@ -39,6 +39,8 @@ namespace Services.Coins
         Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate);
 
         Task RetrieveEventLogs(bool recreateFilters);
+        Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance);
+        Task<bool> CheckSign(string clientAddress, byte[] hash, byte[] sign);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -87,7 +89,7 @@ namespace Services.Coins
             return tr;
         }
 
-        public async Task<string> CashIn(Guid id, string coinAddress, string receiver, decimal amount)
+        public async Task<string> CashIn(Guid id, string coinAddress, string receiver, BigInteger amount)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
@@ -110,11 +112,13 @@ namespace Services.Coins
                 contract = web3.Eth.GetContract(_settings.TokenAdapterContract.Abi, coinAFromDb.AdapterAddress);
             }
 
-            var convertedAmountA = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
+            var convertedAmountA = amount;
 
             var convertedId = EthUtils.GuidToBigInteger(id);
 
             var cashin = contract.GetFunction("cashin");
+            var res = await cashin.CallAsync<bool>(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
+                            new HexBigInteger(0), receiver, convertedAmountA);
             string tr;
             if (coinAFromDb.ContainsEth)
             {
@@ -130,20 +134,20 @@ namespace Services.Coins
             return tr;
         }
 
-        public async Task<string> CashOut(Guid id, string coinAddress, string clientAddr, string toAddr, decimal amount, string sign)
+        public async Task<string> CashOut(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
+            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
 
             var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
-            var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
+            var convertedAmount = amount;
 
             var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("cashout");
 
             var convertedId = EthUtils.GuidToBigInteger(id);
-
+            // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
             var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
@@ -309,6 +313,30 @@ namespace Services.Coins
                 From = from,
                 To = to
             }));
+        }
+
+        public async Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance)
+        {
+            var web3 = new Web3(_settings.EthereumUrl);
+
+            string abi = "[{\"constant\":false,\"inputs\":[{\"name\":\"client_addr\",\"type\":\"address\"},{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"sig\",\"type\":\"bytes\"}],\"name\":\"checkClientSign\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"coinContract\",\"type\":\"address\"},{\"name\":\"newMainContract\",\"type\":\"address\"}],\"name\":\"changeMainContractInCoin\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"client\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"getHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"ping\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"transactions\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"client_a\",\"type\":\"address\"},{\"name\":\"client_b\",\"type\":\"address\"},{\"name\":\"coinAddress_a\",\"type\":\"address\"},{\"name\":\"coinAddress_b\",\"type\":\"address\"},{\"name\":\"amount_a\",\"type\":\"uint256\"},{\"name\":\"amount_b\",\"type\":\"uint256\"},{\"name\":\"client_a_sign\",\"type\":\"bytes\"},{\"name\":\"client_b_sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"swap\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"client\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"client_sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"cashout\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"type\":\"constructor\"}]";
+            var contract = web3.Eth.GetContract(abi, "0x7ede1e07cc39ef400472c1af7d1f58c064bc23dc");
+
+            var getHash = contract.GetFunction("getHash");
+            byte[] hash = await getHash.CallAsync<byte[]>(EthUtils.GuidToBigInteger(guid), adapterAddress, clientAddress1, clientAddress2, currentBalance);
+            return hash;
+        }
+
+        public async Task<bool> CheckSign(string clientAddress, byte[] hash, byte[] sign)
+        {
+            var web3 = new Web3(_settings.EthereumUrl);
+
+            string abi = "[{\"constant\":false,\"inputs\":[{\"name\":\"client_addr\",\"type\":\"address\"},{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"sig\",\"type\":\"bytes\"}],\"name\":\"checkClientSign\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"coinContract\",\"type\":\"address\"},{\"name\":\"newMainContract\",\"type\":\"address\"}],\"name\":\"changeMainContractInCoin\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"client\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"getHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"ping\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"transactions\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"client_a\",\"type\":\"address\"},{\"name\":\"client_b\",\"type\":\"address\"},{\"name\":\"coinAddress_a\",\"type\":\"address\"},{\"name\":\"coinAddress_b\",\"type\":\"address\"},{\"name\":\"amount_a\",\"type\":\"uint256\"},{\"name\":\"amount_b\",\"type\":\"uint256\"},{\"name\":\"client_a_sign\",\"type\":\"bytes\"},{\"name\":\"client_b_sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"swap\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"coinAddress\",\"type\":\"address\"},{\"name\":\"client\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"client_sign\",\"type\":\"bytes\"},{\"name\":\"params\",\"type\":\"bytes\"}],\"name\":\"cashout\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"type\":\"constructor\"}]";
+            var contract = web3.Eth.GetContract(abi, "0x7ede1e07cc39ef400472c1af7d1f58c064bc23dc");
+
+            var checkClientSign = contract.GetFunction("checkClientSign");
+            bool result = await checkClientSign.CallAsync<bool>(clientAddress, hash, sign);
+            return result;
         }
     }
 }
