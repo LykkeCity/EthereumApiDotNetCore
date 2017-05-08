@@ -10,6 +10,7 @@ using Nethereum.Web3;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Core.Signing.Crypto;
 using System.Text;
+using System.Linq;
 
 namespace ContractBuilder
 {
@@ -42,8 +43,8 @@ namespace ContractBuilder
 
             var service = new ErcInterfaceService(settings);
             service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
-                "0x18d15916165fdf904e1c29e2954565ef219208d6", new System.Numerics.BigInteger(1024)).Wait();
-
+                "0x8d90f8805416403763dd0e58dd3c9b7c427ca4ae", new System.Numerics.BigInteger(1025)).Wait();
+            GetAllContractInJson();
 
             while (!exit)
             {
@@ -80,6 +81,40 @@ namespace ContractBuilder
 
                 Console.WriteLine("Done!");
             }
+        }
+
+        private class EthereumContractExtended
+        {
+            public string EthereumContractName { get; set; }
+            public EthereumContract Contract { get; set; }
+        }
+
+        private static void GetAllContractInJson()
+        {
+            string runningDir = Directory.GetCurrentDirectory();
+            var jsonWithAllCompiledContracts = Path.Combine(runningDir, "contracts", "contractSettings.json");
+            File.Delete(jsonWithAllCompiledContracts);
+            var dirPath = Path.Combine(runningDir, "contracts", "bin");
+            var allContracts = Directory.EnumerateFiles(dirPath, @"*.abi");
+            var ethereumContracts = new List<EthereumContractExtended>();
+            foreach (var contract in allContracts)
+            {
+                FileInfo fi = new FileInfo(contract);
+                string contentAbi = File.ReadAllText(contract);
+                string byteCode = File.ReadAllText(contract.Replace(".abi", ".bin"));
+                ethereumContracts.Add(new EthereumContractExtended()
+                {
+                    EthereumContractName = fi.Name,
+                    Contract = new EthereumContract()
+                    {
+                        Abi = contentAbi,
+                        ByteCode = byteCode,
+                    }
+                });
+            }
+
+            var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(ethereumContracts, Formatting.Indented);
+            File.AppendAllText(jsonWithAllCompiledContracts, serialized);
         }
 
         private static async Task DeployTokenTransferContract()

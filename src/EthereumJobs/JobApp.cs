@@ -50,8 +50,8 @@ namespace EthereumJobs
 
             #region NewJobs
             //Services.GetService<MonitoringCoinTransactionJob>().Start();
-            Services.GetService<MonitoringTransferContracts>().Start();
-            //Services.GetService<MonitoringTransferTransactions>().Start();
+            //Services.GetService<MonitoringTransferContracts>().Start();
+            Services.GetService<MonitoringTransferTransactions>().Start();
             //Services.GetService<TransferContractPoolJob>().Start();
             //Services.GetService<TransferContractUserAssignmentJob>().Start();
 

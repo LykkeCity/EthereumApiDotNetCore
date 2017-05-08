@@ -13,7 +13,7 @@ namespace EthereumJobs.Job
     public class MonitoringTransferContracts : TimerPeriod
     {
 
-        private const int TimerPeriodSeconds = 60 * 30;
+        private const int TimerPeriodSeconds = 60 * 3;
         private const int AlertNotChangedBalanceCount = 3;
 
         private readonly ILog _logger;
