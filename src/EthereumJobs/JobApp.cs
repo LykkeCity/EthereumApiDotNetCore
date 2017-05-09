@@ -5,6 +5,7 @@ using EthereumJobs.Actions;
 using EthereumJobs.Job;
 using Microsoft.Extensions.DependencyInjection;
 using EthereumJobs.Config;
+using Microsoft.Extensions.Configuration;
 
 namespace EthereumJobs
 {
@@ -12,8 +13,9 @@ namespace EthereumJobs
     {
         public IServiceProvider Services { get; set; }
 
-        public async void Run(IBaseSettings settings)
+        public async void Run(IConfigurationRoot configuration)
         {
+            var settings = GetSettings(configuration);
             IServiceCollection collection = new ServiceCollection();
             collection.InitJobDependencies(settings);
 
@@ -49,13 +51,26 @@ namespace EthereumJobs
             #endregion
 
             #region NewJobs
-            //Services.GetService<MonitoringCoinTransactionJob>().Start();
-            //Services.GetService<MonitoringTransferContracts>().Start();
+            Services.GetService<MonitoringCoinTransactionJob>().Start();
+            Services.GetService<MonitoringTransferContracts>().Start();
             Services.GetService<MonitoringTransferTransactions>().Start();
-            //Services.GetService<TransferContractPoolJob>().Start();
-            //Services.GetService<TransferContractUserAssignmentJob>().Start();
+            Services.GetService<TransferContractPoolJob>().Start();
+            Services.GetService<TransferContractUserAssignmentJob>().Start();
 
             #endregion
+        }
+
+        static IBaseSettings GetSettings(IConfigurationRoot configuration)
+        {
+            var connectionString = configuration.GetConnectionString("ConnectionString");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new Exception("Please, provide connection string");
+            }
+
+            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connectionString);
+
+            return settings.EthereumCore;
         }
     }
 }

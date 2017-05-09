@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-	public class TransferModel : BaseCoinRequestModel
-	{
-		[Required]
-		public string Coin { get; set; }
+    public class TransferModel : BaseCoinRequestModel
+    {
+        [Required]
+        public string Coin { get; set; }
 
-		[Required]
-		public string From { get; set; }
+        [Required]
+        public string From { get; set; }
 
-		[Required]
-		public string To { get; set; }
+        [Required]
+        public string To { get; set; }
 
-		[Required]
-		public decimal Amount { get; set; }
+        [Required]
+        public string Amount { get; set; }
 
-		[Required]
-		public string Sign { get; set; }
-	}
+        [Required]
+        public string Sign { get; set; }
+    }
 }

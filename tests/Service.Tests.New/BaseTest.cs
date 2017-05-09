@@ -16,8 +16,8 @@ namespace Tests
         public static string EthCoin = "Eth";
 
 
-        public const string ClientA = "0x9b6700a94c69c328473b6d517e2d121ee4ebe374";
-        public const string PrivateKeyA = "7c7b1a1fcbab709113e8b3db6957e137d164fd4366fe30251ce4915f6675d73f";
+        public const string ClientA = "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28";
+        public const string PrivateKeyA = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
 
         public const string ClientB = "0xb4d302df4f799a66702f8aa59543109f00573929";
         public const string PrivateKeyB = "e35e0dcaec4f5f2990cb9581d4531452b3eea9b7531bf6bf40eda95756799014";

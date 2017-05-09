@@ -23,23 +23,23 @@ namespace EthereumApi.Controllers
             _logger = logger;
         }
 
-        [Route("swap")]
-        [HttpPost]
-        [Produces(typeof(TransactionResponse))]
-        public async Task<IActionResult> Swap([FromBody]SwapModel model)
-        {
-            if (!ModelState.IsValid)
-                throw new BackendException(BackendExceptionType.MissingRequiredParams);
+        //[Route("swap")]
+        //[HttpPost]
+        //[Produces(typeof(TransactionResponse))]
+        //public async Task<IActionResult> Swap([FromBody]SwapModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //        throw new BackendException(BackendExceptionType.MissingRequiredParams);
 
-            await Log("Swap", "Begin Process", model);
+        //    await Log("Swap", "Begin Process", model);
 
-            var transaction = await _coinContractService.Swap(model.Id, model.ClientA, model.ClientB, model.CoinA, model.CoinB,
-                model.AmountA, model.AmountB, model.SignA, model.SignB);
+        //    var transaction = await _coinContractService.Swap(model.Id, model.ClientA, model.ClientB, model.CoinA, model.CoinB,
+        //        model.AmountA, model.AmountB, model.SignA, model.SignB);
 
-            await Log("Swap", "End Process", model, transaction);
+        //    await Log("Swap", "End Process", model, transaction);
 
-            return Ok(new TransactionResponse { TransactionHash = transaction });
-        }
+        //    return Ok(new TransactionResponse { TransactionHash = transaction });
+        //}
 
         [Route("cashout")]
         [HttpPost]
@@ -59,24 +59,24 @@ namespace EthereumApi.Controllers
             return Ok(new TransactionResponse { TransactionHash = transaction });
         }
 
-        [Route("cashin")]
-        [HttpPost]
-        [Produces(typeof(TransactionResponse))]
-        public async Task<IActionResult> Cashin([FromBody]CashInModel model)
-        {
-            if (!ModelState.IsValid)
-                throw new BackendException(BackendExceptionType.MissingRequiredParams);
+        //[Route("cashin")]
+        //[HttpPost]
+        //[Produces(typeof(TransactionResponse))]
+        //public async Task<IActionResult> Cashin([FromBody]CashInModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //        throw new BackendException(BackendExceptionType.MissingRequiredParams);
 
-            await Log("Cashin", "Begin Process", model);
+        //    await Log("Cashin", "Begin Process", model);
 
-            var amount = BigInteger.Parse(model.Amount);
+        //    var amount = BigInteger.Parse(model.Amount);
 
-            var transaction = await _coinContractService.CashIn(model.Id, model.Coin, model.Receiver, amount);
+        //    var transaction = await _coinContractService.CashIn(model.Id, model.Coin, model.Receiver, amount);
 
-            await Log("Cashin", "End Process", model, transaction);
+        //    await Log("Cashin", "End Process", model, transaction);
 
-            return Ok(new TransactionResponse { TransactionHash = transaction });
-        }
+        //    return Ok(new TransactionResponse { TransactionHash = transaction });
+        //}
 
         [Route("transfer")]
         [HttpPost]
@@ -88,7 +88,8 @@ namespace EthereumApi.Controllers
 
             await Log("Transfer", "Begin Process", model);
 
-            var transaction = await _coinContractService.Transfer(model.Id, model.Coin, model.From, model.To, model.Amount, model.Sign);
+            BigInteger amount =  BigInteger.Parse(model.Amount);
+            var transaction = await _coinContractService.Transfer(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
 
             await Log("Transfer", "End Process", model, transaction);
 

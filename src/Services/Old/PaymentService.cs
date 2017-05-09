@@ -7,6 +7,7 @@ using Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Common.Log;
+using Nethereum.Util;
 
 namespace Services
 {

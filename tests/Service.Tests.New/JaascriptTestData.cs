@@ -6,8 +6,10 @@ using Core.Utils;
 using NBitcoin.Crypto;
 using Nethereum.ABI.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nethereum.Core.Signing.Crypto;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util;
+using Nethereum.Signer;
+using Org.BouncyCastle.Math;
 
 namespace Tests
 {
@@ -52,11 +54,11 @@ namespace Tests
 
         private byte[] Sign(byte[] hash, string privateKey)
         {
-            var key = new ECKey(privateKey.HexToByteArray(), true);
+            var key = new EthECKey(privateKey.HexToByteArray(), true);
             var signature = key.SignAndCalculateV(hash);
-
-            var r = signature.R.ToByteArrayUnsigned().ToHex();
-            var s = signature.S.ToByteArrayUnsigned().ToHex();
+            //ToByteArrayUnsigned
+            var r = signature.R.ToHex();
+            var s = signature.S.ToHex();
             var v = new[] { signature.V }.ToHex();
 
             var arr = (r + s + v).HexToByteArray();

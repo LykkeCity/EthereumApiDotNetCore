@@ -1,7 +1,11 @@
 ﻿using Core.Notifiers;
 using Core.Settings;
+using LkeServices.Signature;
 using Microsoft.Extensions.DependencyInjection;
+using Nethereum.Web3;
 using Services.Coins;
+using SigningServiceApiCaller;
+using System;
 
 namespace Services
 {
@@ -32,8 +36,22 @@ namespace Services
 
             services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
             services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            
+            services.AddTransient<ILykkeSigningAPI>((provider) =>
+            {
+                var lykkeSigningAPI = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl, UriKind.Absolute));
+
+                return lykkeSigningAPI;
+            });
             services.AddTransient<ISlackNotifier, SlackNotifier>();
+
+            services.AddTransient<Web3>((provider) =>
+            {
+                var web3 = new Web3(provider.GetService<IBaseSettings>().EthereumUrl);
+                web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(provider.GetService<ILykkeSigningAPI>(), web3);
+
+                return web3;
+            });
+
         }
     }
 }

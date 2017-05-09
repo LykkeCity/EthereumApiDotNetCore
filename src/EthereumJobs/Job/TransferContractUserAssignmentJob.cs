@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Core.Repositories;
-using Core.Timers;
 using Nethereum.Web3;
 using Services;
 using Common.Log;
 using Core.Settings;
 using System.Numerics;
 using System;
+using Common;
 
 namespace EthereumJobs.Job
 {
@@ -38,37 +38,8 @@ namespace EthereumJobs.Job
         {
             try
             {
-                while (await _transferContractUserAssignmentQueueService.Count() != 0 && Working)
+                while (await _transferContractUserAssignmentQueueService.CompleteTransfer() && Working)
                 {
-                    var assignment = await _transferContractUserAssignmentQueueService.GetContract();
-
-                    var web3 = new Web3(_settings.EthereumUrl);
-
-                    ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
-                    if (coinAdapter == null)
-                    {
-                        continue;
-                    }
-
-                    string coinAbi;
-                    if (coinAdapter.ContainsEth)
-                    {
-                        coinAbi = _settings.EthAdapterContract.Abi;
-                    }
-                    else
-                    {
-                        coinAbi = _settings.TokenAdapterContract.Abi;
-                    }
-
-                    await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                       _settings.EthereumMainAccountPassword, 120);
-
-                    var contract = web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
-                    var function = contract.GetFunction("setTransferAddressUser");
-                    //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
-                    string transaction =
-                        await function.SendTransactionAsync(_settings.EthereumMainAccount,
-                        assignment.UserAddress, assignment.TransferContractAddress);
                 }
             }
             catch (Exception ex)

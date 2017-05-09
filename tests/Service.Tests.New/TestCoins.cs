@@ -14,7 +14,6 @@ using Nethereum.ABI.Util;
 using Services;
 using Services.Coins;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Core.Signing.Crypto;
 using Nethereum.Web3;
 using Core.Utils;
 using Nethereum.Hex.HexTypes;
@@ -22,6 +21,8 @@ using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
 using Services.Coins.Models;
 using AzureStorage.Queue;
+using Nethereum.Util;
+using Nethereum.Signer;
 
 namespace Tests
 {
@@ -58,9 +59,9 @@ namespace Tests
         [TestMethod]
         public async Task TestCashoutTokens()
         {
-            var clientPrivateKey = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
+            var clientPrivateKey = PrivateKeyA;
             var coinAddress = "0xa99cf50b984eb174abfca64f61551d72a64e2482";
-            var clientAddress = "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28";
+            var clientAddress = ClientA;
             var clientTransferAddress = "0x13415ca1cd099a837ef264873c03bf4b8e8e1f39";
             var externalTokenAddress = "0xbefc091843a4c958ec929c3b90622fb6c3fce3e9";
             var coinRepository = Config.Services.GetService<ICoinRepository>();
@@ -316,11 +317,11 @@ namespace Tests
 
         private byte[] Sign(byte[] hash, string privateKey)
         {
-            var key = new ECKey(privateKey.HexToByteArray(), true);
+            var key = new EthECKey(privateKey.HexToByteArray(), true);
             var signature = key.SignAndCalculateV(hash);
-
-            var r = signature.R.ToByteArrayUnsigned().ToHex();
-            var s = signature.S.ToByteArrayUnsigned().ToHex();
+            //ToByteArrayUnsigned
+            var r = signature.R.ToHex();
+            var s = signature.S.ToHex();
             var v = new[] { signature.V }.ToHex();
 
             var arr = (r + s + v).HexToByteArray();

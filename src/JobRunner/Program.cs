@@ -7,6 +7,7 @@ using Core.Settings;
 using EthereumJobs;
 using Microsoft.Extensions.DependencyInjection;
 using EthereumJobs.Config;
+using Microsoft.Extensions.Configuration;
 
 namespace JobRunner
 {
@@ -17,32 +18,17 @@ namespace JobRunner
             Console.Clear();
             Console.Title = "Ethereum Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
 
-            var settings = GetSettings();
-            if (settings == null)
-            {
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey();
-                return;
-            }
-
             try
             {
-                CheckSettings(settings);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey();
-                return;
-            }
+                var location = Path.Combine("..", "..", System.Reflection.Assembly.GetEntryAssembly().Location);
+                var builder = new ConfigurationBuilder()
+                    .SetBasePath(location)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables();
+                var configuration = builder.Build();
 
-            Console.WriteLine("Settings checked!");
-
-            try
-            {
                 var app = new JobApp();
-                app.Run(settings);
+                app.Run(configuration);
             }
             catch (Exception e)
             {

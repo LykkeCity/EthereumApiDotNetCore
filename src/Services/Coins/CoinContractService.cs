@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Services.Coins.Models;
 using Services.Coins.Models.Events;
 using AzureStorage.Queue;
+using Nethereum.Contracts;
 
 namespace Services.Coins
 {
@@ -26,7 +27,7 @@ namespace Services.Coins
 
         Task<string> CashOut(Guid id, string coin, string clientAddr, string toAddr, BigInteger amount, string sign);
 
-        Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign);
+        Task<string> Transfer(Guid id, string coin, string from, string to, BigInteger amount, string sign);
 
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
@@ -156,14 +157,13 @@ namespace Services.Coins
 
         }
 
-        public async Task<string> Transfer(Guid id, string coin, string from, string to, decimal amount, string sign)
+        public async Task<string> Transfer(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign)
         {
             var web3 = new Web3(_settings.EthereumUrl);
 
             await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, new HexBigInteger(120));
 
-            var coinAFromDb = await _coinRepository.GetCoin(coin);
-            var convertedAmount = amount.ToBlockchainAmount(coinAFromDb.Multiplier);
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
 
             var contract = web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("transfer");
@@ -171,7 +171,7 @@ namespace Services.Coins
             var convertedId = EthUtils.GuidToBigInteger(id);
             var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-                    convertedId, coinAFromDb.AdapterAddress, from, to, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+                    convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await _cointTransactionService.PutTransactionToQueue(tr);
             return tr;
         }

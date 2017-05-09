@@ -7,55 +7,55 @@ using Common.Log;
 
 namespace Services
 {
-	public interface IEthereumQueueOutService
-	{
-		Task FirePaymentEvent(string userContract, decimal amount, string trHash);
-	}
+    public interface IEthereumQueueOutService
+    {
+        Task FirePaymentEvent(string userContract, decimal amount, string trHash);
+    }
 
-	public class EthereumQueueOutService : IEthereumQueueOutService
-	{
-		private readonly IQueueExt _queue;
-		private readonly ILog _logger;
-		
-		public EthereumQueueOutService(Func<string, IQueueExt> queueFactory, ILog logger)
-		{
-			_queue = queueFactory(Constants.EthereumOutQueue);
-			_logger = logger;
-		}
+    public class EthereumQueueOutService : IEthereumQueueOutService
+    {
+        private readonly IQueueExt _queue;
+        private readonly ILog _logger;
 
-		/// <summary>
-		/// Sends event for ethereum payment to azure queue
-		/// </summary>
-		/// <param name="userContract"></param>
-		/// <param name="amount"></param>
-		/// <returns></returns>
-		public async Task FirePaymentEvent(string userContract, decimal amount, string trHash)
-		{
-			try
-			{
-				var model = new EthereumCashInModel
-				{
-					Amount = amount,
-					Contract = userContract,
-					TransactionHash = trHash
-				};
+        public EthereumQueueOutService(Func<string, IQueueExt> queueFactory, ILog logger)
+        {
+            _queue = queueFactory(Constants.EthereumOutQueue);
+            _logger = logger;
+        }
 
-				var json = JsonConvert.SerializeObject(model);
+        /// <summary>
+        /// Sends event for ethereum payment to azure queue
+        /// </summary>
+        /// <param name="userContract"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public async Task FirePaymentEvent(string userContract, decimal amount, string trHash)
+        {
+            try
+            {
+                var model = new EthereumCashInModel
+                {
+                    Amount = amount,
+                    Contract = userContract,
+                    TransactionHash = trHash
+                };
 
-				await _queue.PutRawMessageAsync(json);
-			}
-			catch (Exception e)
-			{
-				await _logger.WriteErrorAsync("ApiCallService", "FirePaymentEvent", $"Contract : {userContract}, amount: {amount}", e);
-			}
-		}
-	}
+                var json = JsonConvert.SerializeObject(model);
 
-	public class EthereumCashInModel
-	{
-		public string Type => "EthereumCashIn";
-		public decimal Amount { get; set; }
-		public string Contract { get; set; }
-		public string TransactionHash { get; set; }
-	}
+                await _queue.PutRawMessageAsync(json);
+            }
+            catch (Exception e)
+            {
+                await _logger.WriteErrorAsync("ApiCallService", "FirePaymentEvent", $"Contract : {userContract}, amount: {amount}", e);
+            }
+        }
+    }
+
+    public class EthereumCashInModel
+    {
+        public string Type => "EthereumCashIn";
+        public decimal Amount { get; set; }
+        public string Contract { get; set; }
+        public string TransactionHash { get; set; }
+    }
 }

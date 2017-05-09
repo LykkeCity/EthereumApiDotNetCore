@@ -11,6 +11,7 @@ namespace Core.Settings
         string EthereumMainAccount { get; set; }
         string EthereumMainAccountPassword { get; set; }
 
+        string SignatureProviderUrl { get; set; }
         string EthereumUrl { get; set; }
         string EthCoin { get; set; }
 
@@ -59,6 +60,7 @@ namespace Core.Settings
         /// Ethereum geth URL
         /// </summary>
         public string EthereumUrl { get; set; }
+        public string SignatureProviderUrl { get; set; }
 
         public string EthCoin { get; set; } = "Eth";
 

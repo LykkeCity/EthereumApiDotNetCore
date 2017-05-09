@@ -1,5 +1,6 @@
 ﻿using Core.Settings;
 using Nethereum.ABI;
+using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using System;
@@ -35,16 +36,17 @@ namespace Services
     public class ErcInterfaceService : IErcInterfaceService
     {
         private readonly IBaseSettings _settings;
+        private readonly Web3 _web3;
 
-        public ErcInterfaceService(IBaseSettings settings)
+        public ErcInterfaceService(IBaseSettings settings, Web3 web3)
         {
+            _web3 = web3;
             _settings = settings;
         }
 
         public async Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress)
         {
-            Web3 web3 = new Web3(_settings.EthereumUrl);
-            Contract contract = web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
+            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
             Function function = contract.GetFunction("balanceOf");
 
             BigInteger result = await function.CallAsync<BigInteger>(transferContractAddress);
@@ -56,12 +58,8 @@ namespace Services
         public async Task<bool> TransferFrom(string externalTokenAddress, string fromAddress, 
             string toAddress, BigInteger amount)
         {
-              Web3 web3 = new Web3(_settings.EthereumUrl);
-            Contract contract = web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
+            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
             Function function = contract.GetFunction("transferFrom");
-
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                       _settings.EthereumMainAccountPassword, 60);
 
             bool success = await function.CallAsync<bool>(fromAddress, toAddress, amount);
 

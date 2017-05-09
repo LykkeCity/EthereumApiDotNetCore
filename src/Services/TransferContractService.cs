@@ -2,6 +2,7 @@
 using Core.Repositories;
 using Core.Settings;
 using Core.Utils;
+using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using System;
@@ -31,14 +32,18 @@ namespace Services
         private readonly ITransferContractRepository _transferContractRepository;
         private readonly ITransferContractQueueServiceFactory _transferContractQueueServiceFactory;
         private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
+        private readonly Web3 _web3;
 
         public TransferContractService(IContractService contractService,
-            ITransferContractRepository transferContractRepository, 
-            ICoinRepository coinRepository, 
+            ITransferContractRepository transferContractRepository,
+            ICoinRepository coinRepository,
             IBaseSettings settings,
             ITransferContractQueueServiceFactory transferContractQueueServiceFactory,
-            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService)
+            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
+            Web3 web3
+            )
         {
+            _web3 = web3;
             _coinRepository = coinRepository;
             _contractService = contractService;
             _transferContractRepository = transferContractRepository;
@@ -57,7 +62,7 @@ namespace Services
 
             if (containsEth)
             {
-                transactionHash = 
+                transactionHash =
                     await _contractService.CreateContractWithoutBlockchainAcceptance(_settings.EthTransferContract.Abi,
                     _settings.EthTransferContract.ByteCode, coinAdapterAddress);
             }
@@ -113,14 +118,12 @@ namespace Services
                 throw new Exception($"Coin with address {transferContract.CoinAdapterAddress} does not exist");
             }
 
-            var web3 = new Web3(_settings.EthereumUrl);
-
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
+            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
                 _settings.EthereumMainAccountPassword, 120);
 
             string coinAbi = _settings.CoinAbi;
 
-            var contract = web3.Eth.GetContract(coinAbi, transferContract.CoinAdapterAddress);
+            var contract = _web3.Eth.GetContract(coinAbi, transferContract.CoinAdapterAddress);
             var function = contract.GetFunction("setTransferAddressUser");
             //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
             string transaction =
@@ -142,9 +145,7 @@ namespace Services
         public async Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,
             string coinAdapterAddress, string userAddress, BigInteger amount, bool containsEth)
         {
-            var web3 = new Web3(_settings.EthereumUrl);
-
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
+            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
                 _settings.EthereumMainAccountPassword, 120);
 
             ICoin coinDb = await _coinRepository.GetCoinByAddress(coinAdapterAddress);
@@ -156,11 +157,11 @@ namespace Services
 
             if (containsEth)
             {
-                contract = web3.Eth.GetContract(_settings.EthTransferContract.Abi, transferContractAddress);
+                contract = _web3.Eth.GetContract(_settings.EthTransferContract.Abi, transferContractAddress);
             }
             else
             {
-                contract = web3.Eth.GetContract(_settings.TokenTransferContract.Abi, transferContractAddress);
+                contract = _web3.Eth.GetContract(_settings.TokenTransferContract.Abi, transferContractAddress);
             }
 
             var cashin = contract.GetFunction("cashin");
@@ -169,16 +170,8 @@ namespace Services
             string tr;
 
             //function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params)
-            if (!containsEth)
-            {
-                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0));
-            }
-            else
-            {
-                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-               new HexBigInteger(Constants.GasForEthCashin), new HexBigInteger(0));
-            }
+            tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
+            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0));
 
             return tr;
         }

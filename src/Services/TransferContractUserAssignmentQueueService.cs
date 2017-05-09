@@ -3,6 +3,8 @@ using Core;
 using Core.Exceptions;
 using Core.Notifiers;
 using Core.Repositories;
+using Core.Settings;
+using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +28,9 @@ namespace Services
 
     public interface ITransferContractUserAssignmentQueueService
     {
-        Task<TransferContractUserAssignment> GetContract();
         Task PushContract(TransferContractUserAssignment assignment);
         Task<int> Count();
+        Task<bool> CompleteTransfer();
     }
 
     public class TransferContractUserAssignmentQueueService : ITransferContractUserAssignmentQueueService
@@ -38,15 +40,19 @@ namespace Services
         private readonly ISlackNotifier _slackNotifier;
         private readonly ICoinRepository _coinRepository;
         private readonly IQueueFactory _queueFactory;
+        private readonly IBaseSettings _settings;
+        private readonly Web3 _web3;
 
         public TransferContractUserAssignmentQueueService(Func<string, IQueueExt> queueFactory,
             ITransferContractRepository transferContractRepository, ISlackNotifier slackNotifier,
-            ICoinRepository coinRepository)
+            ICoinRepository coinRepository, IBaseSettings settings, Web3 web3)
         {
+            _web3 = web3;
             _transferContractRepository = transferContractRepository;
             _slackNotifier = slackNotifier;
             _queue = queueFactory(Constants.TransferContractUserAssignmentQueueName);
             _coinRepository = coinRepository;
+            _settings = settings;
         }
 
         public async Task<TransferContractUserAssignment> GetContract()
@@ -90,6 +96,54 @@ namespace Services
         {
             _slackNotifier.ErrorAsync("Ethereum integration! User contract pool is empty!");
             throw new BackendException(BackendExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
+        }
+
+        public async Task<bool> CompleteTransfer()
+        {
+            var message = await _queue.GetRawMessageAsync();
+            if (message == null)
+                return false;
+
+            var contract = message.AsString;
+
+            if (string.IsNullOrWhiteSpace(contract))
+                return false;
+
+            TransferContractUserAssignment assignment =
+                Newtonsoft.Json.JsonConvert.DeserializeObject<TransferContractUserAssignment>(contract);
+
+            var web3 = new Web3(_settings.EthereumUrl);
+
+            ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
+            if (coinAdapter == null)
+            {
+                await _queue.FinishRawMessageAsync(message);
+                //log error
+                return true;
+            }
+
+            string coinAbi;
+            if (coinAdapter.ContainsEth)
+            {
+                coinAbi = _settings.EthAdapterContract.Abi;
+            }
+            else
+            {
+                coinAbi = _settings.TokenAdapterContract.Abi;
+            }
+
+            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
+               _settings.EthereumMainAccountPassword, 120);
+
+            var ethereumContract = _web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
+            var function = ethereumContract.GetFunction("setTransferAddressUser");
+            //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
+            string transaction =
+                await function.SendTransactionAsync(_settings.EthereumMainAccount,
+                assignment.UserAddress, assignment.TransferContractAddress);
+
+            await _queue.FinishRawMessageAsync(message);
+            return true;
         }
     }
 }

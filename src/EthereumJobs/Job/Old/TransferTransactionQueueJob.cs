@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Timers;
 using Services;
 using Common.Log;
+using Common;
 
 namespace EthereumJobs.Job
 {

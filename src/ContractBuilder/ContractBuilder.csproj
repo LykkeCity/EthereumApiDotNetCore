@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>ContractBuilder</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ContractBuilder</PackageId>
@@ -84,5 +84,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties generalsettings_3template_1json__JSONSchema="http://json.schemastore.org/contribute" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -11,68 +11,80 @@ using Common.Log;
 
 namespace EthereumApi
 {
-	public class Startup
-	{
-		public Startup(IHostingEnvironment env)
-		{
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(env.ContentRootPath)
-				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+    public class Startup
+    {
+        public const string DefaultConnectionString = "UseDevelopmentStorage=true";
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
 
-			builder.AddEnvironmentVariables();
-			Configuration = builder.Build();
-		}
+        public IConfigurationRoot Configuration { get; }
 
-		public IConfigurationRoot Configuration { get; }
+        // This method gets called by the runtime. Use this method to add services to the container
+        public IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            var settings = GetSettings(Configuration);
+            services.AddSingleton<IBaseSettings>(settings);
+            var provider = services.BuildServiceProvider();
 
-		// This method gets called by the runtime. Use this method to add services to the container
-		public IServiceProvider ConfigureServices(IServiceCollection services)
-		{
-			var provider = services.BuildServiceProvider();
-			var settings = provider.GetService<IBaseSettings>();
+            services.AddSingleton(settings);
 
-			services.AddSingleton(settings);
+            services.RegisterAzureLogs(settings, "Api");
+            services.RegisterAzureStorages(settings);
+            services.RegisterAzureQueues(settings);
 
-			services.RegisterAzureLogs(settings, "Api");
-			services.RegisterAzureStorages(settings);
-			services.RegisterAzureQueues(settings);
+            services.RegisterServices();
 
-			services.RegisterServices();
+            provider = services.BuildServiceProvider();
 
-			provider = services.BuildServiceProvider();
+            var builder = services.AddMvc();
 
-			var builder = services.AddMvc();
+            builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(provider.GetService<ILog>())); });
 
-			builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(provider.GetService<ILog>())); });
+            services.AddSwaggerGen(c =>
+            {
+                c.SingleApiVersion(new Swashbuckle.Swagger.Model.Info
+                {
+                    Version = "v1",
+                    Title = "Ethereum.Api"
+                });
+            });
 
-			services.AddSwaggerGen(c =>
-			{
-				c.SingleApiVersion(new Swashbuckle.Swagger.Model.Info
-				{
-					Version = "v1",
-					Title = "Ethereum.Api"
-				});
-			});
+            return services.BuildServiceProvider();
+        }
 
-			return services.BuildServiceProvider();
-		}
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            app.UseStatusCodePagesWithReExecute("/home/error");
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-		{
-			app.UseStatusCodePagesWithReExecute("/home/error");
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
 
-			app.UseMvc(routes =>
-			{
-				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
-			});
+            app.UseSwagger();
+            app.UseSwaggerUi();
+        }
 
-			app.UseSwagger();
-			app.UseSwaggerUi();
-		}
-	}
+        static BaseSettings GetSettings(IConfigurationRoot configuration)
+        {
+            var connectionString = configuration.GetConnectionString("ConnectionString");
+            if (string.IsNullOrWhiteSpace(connectionString))
+                connectionString = DefaultConnectionString;
+
+            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connectionString);
+
+            return settings.EthereumCore;
+        }
+    }
 }

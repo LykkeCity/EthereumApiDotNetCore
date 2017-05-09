@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Core.Repositories;
-using Core.Timers;
 using Nethereum.Web3;
 using Services;
 using Common.Log;
 using Core.Settings;
 using System.Numerics;
 using System;
+using Common;
 
 namespace EthereumJobs.Job
 {
