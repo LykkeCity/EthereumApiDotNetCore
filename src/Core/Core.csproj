@@ -19,7 +19,7 @@
     <PackageReference Include="Nethereum.Web3" Version="2.0.0-rc1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
     <PackageReference Include="Lykke.Common" Version="1.1.69" />
     <PackageReference Include="Lykke.AzureStorage" Version="1.2.21" />

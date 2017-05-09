@@ -27,10 +27,10 @@ namespace Services
     }
      */
 
-    //TODO: compile ERC20 contract
     public interface IErcInterfaceService
     {
         Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress);
+        Task<bool> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
     }
 
     public class ErcInterfaceService : IErcInterfaceService

@@ -42,8 +42,6 @@ namespace Services
 
         public async Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams)
         {
-            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
-
             // deploy contract
             var transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(2000000), constructorParams);
 
@@ -69,8 +67,6 @@ namespace Services
         /// <returns>transaction hash</returns>
         public async Task<string> CreateContractWithoutBlockchainAcceptance(string abi, string bytecode, params object[] constructorParams)
         {
-            var unlockResult = await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
-
             // deploy contract
             var transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(2000000), constructorParams);
 
@@ -85,7 +81,6 @@ namespace Services
             }
 
             List<string> addresses = new List<string>(transactionHashes.Count());
-            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount, _settings.EthereumMainAccountPassword, 120);
             foreach (var tr in transactionHashes)
             {
                 TransactionReceipt receipt;
@@ -109,7 +104,7 @@ namespace Services
         }
 
 
-public async Task<HexBigInteger> GetFilterEventForUserContractPayment()
+        public async Task<HexBigInteger> GetFilterEventForUserContractPayment()
         {
             var setting = await _appSettings.GetSettingAsync(Constants.EthereumFilterSettingKey);
             if (!string.IsNullOrWhiteSpace(setting))

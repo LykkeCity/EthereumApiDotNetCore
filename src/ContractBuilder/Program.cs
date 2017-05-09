@@ -10,6 +10,8 @@ using Nethereum.Web3;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.Text;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using AzureRepositories;
 
 namespace ContractBuilder
 {
@@ -25,6 +27,7 @@ namespace ContractBuilder
     }
     public class Program
     {
+        public static IServiceProvider ServiceProvider { get; set; }
 
         public static void Main(string[] args)
         {
@@ -37,10 +40,18 @@ namespace ContractBuilder
 
             var settings = GetCurrentSettings();
 
+            IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            collection.AddSingleton<IBaseSettings>(settings);
+
+            RegisterReposExt.RegisterAzureLogs(collection, settings, "");
+            RegisterReposExt.RegisterAzureQueues(collection, settings);
+            RegisterReposExt.RegisterAzureStorages(collection, settings);
+            RegisterDependency.RegisterServices(collection);
             //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
             //var stringKey = Encoding.Unicode.GetString(key);
             GetAllContractInJson();
-            //var service = new ErcInterfaceService(settings);
+            ServiceProvider = collection.BuildServiceProvider();
+            //var service = ServiceProvider.GetService<IErcInterfaceService>();
             //service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
             //    "0x13415ca1cd099a837ef264873c03bf4b8e8e1f39", new System.Numerics.BigInteger(999)).Wait();
             
@@ -155,7 +166,7 @@ namespace ContractBuilder
                 var abi = GetFileContent($"{transferName}.abi");
                 var bytecode = GetFileContent($"{transferName}.bin");
 
-                string contractAddress = await new ContractService(settings, null, new Web3(settings.EthereumUrl)).CreateContract(abi, bytecode, clientAddress);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, clientAddress);
                 settings.TokenTransferContract = new EthereumContract
                 {
                     Address = contractAddress,
@@ -181,7 +192,7 @@ namespace ContractBuilder
             {
                 var settings = GetCurrentSettings();
 
-                string contractAddress = await new ContractService(settings, null, new Web3(settings.EthereumUrl)).CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
 
                 settings.MainContract.Address = contractAddress;
 
@@ -218,7 +229,7 @@ namespace ContractBuilder
                 var abi = GetFileContent(path + ".abi");
                 var bytecode = GetFileContent(path + ".bin");
                 var settings = GetCurrentSettings();
-                string contractAddress = await new ContractService(settings, null, new Web3(settings.EthereumUrl)).CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
                 if (settings.CoinContracts == null)
                     settings.CoinContracts = new Dictionary<string, EthereumContract>();
 
@@ -245,7 +256,7 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("MainExchange.abi");
                 var bytecode = GetFileContent("MainExchange.bin");
-                string contractAddress = await new ContractService(settings, null, new Web3(settings.EthereumUrl)).CreateContract(abi, bytecode);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
 
                 settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
@@ -263,9 +274,16 @@ namespace ContractBuilder
 
         static BaseSettings GetCurrentSettings()
         {
-            var json = File.ReadAllText(GetSettingsPath());
-            var settings = JsonConvert.DeserializeObject<BaseSettings>(json);
-            return settings;
+            FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(location)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            var configuration = builder.Build();
+            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(configuration.GetConnectionString("ConnectionString"));
+
+            return settings.EthereumCore;
         }
 
         static void SaveSettings(BaseSettings settings)

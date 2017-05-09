@@ -20,7 +20,8 @@ namespace JobRunner
 
             try
             {
-                var location = Path.Combine("..", "..", System.Reflection.Assembly.GetEntryAssembly().Location);
+                FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+                var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
                 var builder = new ConfigurationBuilder()
                     .SetBasePath(location)
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
