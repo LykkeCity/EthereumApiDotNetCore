@@ -31,7 +31,7 @@ namespace EthereumApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [Produces(typeof(ExternalTokenModel))]
         public async Task<IActionResult> CreateTransferContract([FromBody]CreateExternalTokenModel model)
         {
             if (!ModelState.IsValid)

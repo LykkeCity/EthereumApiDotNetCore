@@ -30,7 +30,7 @@ namespace Services
     public interface IErcInterfaceService
     {
         Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress);
-        Task<bool> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
+        Task<string> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
     }
 
     public class ErcInterfaceService : IErcInterfaceService
@@ -71,21 +71,17 @@ namespace Services
 
 
         //Use function below to transfer from main
-        public async Task<bool> Transfer(string externalTokenAddress, string fromAddress,
+        public async Task<string> Transfer(string externalTokenAddress, string fromAddress,
             string toAddress, BigInteger amount)
         {
-            Web3 web3 = new Web3(_settings.EthereumUrl);
-            Contract contract = web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
+            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
             Function function = contract.GetFunction("transfer");
-
-            await web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                       _settings.EthereumMainAccountPassword, 60);
-
-            bool success = await function.CallAsync<bool>(toAddress, amount);
+        
+            //bool success = await function.CallAsync<bool>(toAddress, amount);
 
             string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount);
 
-            return success;
+            return trHash;
         }
     }
 }

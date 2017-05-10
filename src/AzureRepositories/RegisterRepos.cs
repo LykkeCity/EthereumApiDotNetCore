@@ -42,6 +42,10 @@ namespace AzureRepositories
                 new AzureTableStorage<ExternalTokenEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.ExternalTokenTable,
                     provider.GetService<ILog>())));
 
+            services.AddSingleton<IUserPaymentHistoryRepository>(provider => new UserPaymentHistoryRepository(
+                new AzureTableStorage<UserPaymentHistoryEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserPaymentHistoryTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<IUserPaymentRepository>(provider => new UserPaymentRepository());
 
             services.AddSingleton<IUserTransferWalletRepository>(provider => new UserTransferWalletRepository(

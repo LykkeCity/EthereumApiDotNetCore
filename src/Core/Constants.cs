@@ -7,6 +7,7 @@
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
 
+        public const string UserPaymentHistoryTable = "UserPaymentHistory";
         public const string TransferContractUserAssignmentQueueName = "transfer-contract-user-assignment";
         public const string SlackNotifierQueue = "slack-notifications";
         public const string EthereumContractQueue = "ethereum-contract-queue";

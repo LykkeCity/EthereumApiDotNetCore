@@ -12,6 +12,7 @@ using Nethereum.RPC.Eth.TransactionManagers;
 using Nethereum.Util;
 using Nethereum.Signer;
 using SigningServiceApiCaller.Models;
+using Core;
 
 namespace LkeServices.Signature
 {
@@ -35,6 +36,7 @@ namespace LkeServices.Signature
             if (nonce == null)
             {
                 nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
+
                 if (nonce.Value <= _nonceCount)
                 {
                     _nonceCount = _nonceCount + 1;
@@ -53,7 +55,7 @@ namespace LkeServices.Signature
             var nonce = await GetNonceAsync(transaction);
             var value = transaction.Value?.Value ?? 0;
             var gasPrice = transaction.GasPrice?.Value ?? DefaultGasPrice;
-            var gasValue = transaction.Gas?.Value ?? Nethereum.Signer.Transaction.DEFAULT_GAS_LIMIT;
+            var gasValue = transaction.Gas?.Value ?? Constants.GasForCoinTransaction;
 
             var tr = new Nethereum.Signer.Transaction(transaction.To, value, nonce, gasPrice, gasValue, transaction.Data);
             var hex = tr.GetRLPEncoded().ToHex();

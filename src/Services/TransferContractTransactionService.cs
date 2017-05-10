@@ -88,8 +88,8 @@ namespace Services
                 var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
 
-                var tr = await _transferContractService.RecievePaymentFromTransferContract(Guid.Parse(item.Id), contractEntity.ContractAddress,
-                    contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress, amount, contractEntity.ContainsEth);
+                var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress,
+                    contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress);
                 await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                 {
                     LastBalance = "",

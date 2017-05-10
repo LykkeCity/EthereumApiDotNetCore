@@ -112,8 +112,6 @@ namespace Services
             TransferContractUserAssignment assignment =
                 Newtonsoft.Json.JsonConvert.DeserializeObject<TransferContractUserAssignment>(contract);
 
-            var web3 = new Web3(_settings.EthereumUrl);
-
             ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
             if (coinAdapter == null)
             {
@@ -131,9 +129,6 @@ namespace Services
             {
                 coinAbi = _settings.TokenAdapterContract.Abi;
             }
-
-            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-               _settings.EthereumMainAccountPassword, 120);
 
             var ethereumContract = _web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
             var function = ethereumContract.GetFunction("setTransferAddressUser");

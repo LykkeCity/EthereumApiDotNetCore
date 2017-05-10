@@ -50,8 +50,7 @@ namespace Services
 
         public async Task<TransactionReceipt> GetTransactionReceipt(string transaction)
         {
-            var web3 = new Web3(_settings.EthereumUrl);
-            return await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);
+            return await _client.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);
         }
 
     }

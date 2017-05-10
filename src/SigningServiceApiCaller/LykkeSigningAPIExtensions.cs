@@ -203,6 +203,32 @@ namespace SigningServiceApiCaller
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='signRequest'>
+            /// </param>
+            public static HashSignResponse ApiEthereumSignHashPost(this ILykkeSigningAPI operations, EthereumHashSignRequest signRequest = default(EthereumHashSignRequest))
+            {
+                return operations.ApiEthereumSignHashPostAsync(signRequest).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='signRequest'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<HashSignResponse> ApiEthereumSignHashPostAsync(this ILykkeSigningAPI operations, EthereumHashSignRequest signRequest = default(EthereumHashSignRequest), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiEthereumSignHashPostWithHttpMessagesAsync(signRequest, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             public static IsAliveResponse ApiIsAliveGet(this ILykkeSigningAPI operations)
             {
                 return operations.ApiIsAliveGetAsync().GetAwaiter().GetResult();

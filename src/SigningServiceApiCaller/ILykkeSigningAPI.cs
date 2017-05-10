@@ -106,6 +106,16 @@ namespace SigningServiceApiCaller
         /// </param>
         Task<HttpOperationResponse<TransactionSignResponse>> ApiEthereumSignPostWithHttpMessagesAsync(EthereumTransactionSignRequest signRequest = default(EthereumTransactionSignRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='signRequest'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<HashSignResponse>> ApiEthereumSignHashPostWithHttpMessagesAsync(EthereumHashSignRequest signRequest = default(EthereumHashSignRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
         /// </param>

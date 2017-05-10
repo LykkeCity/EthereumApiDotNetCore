@@ -17,38 +17,16 @@ namespace EthereumJobs.Job
         private const int AlertNotChangedBalanceCount = 3;
 
         private readonly ILog _logger;
-        private readonly IPaymentService _paymentService;
-        private readonly IEmailNotifierService _emailNotifierService;
-        private readonly ITransferContractRepository _transferContractsRepository;
-        private readonly IBaseSettings _settings;
-        private readonly IErcInterfaceService _ercInterfaceService;
-        private readonly IUserPaymentRepository _userPaymentRepository;
-        private readonly TransferContractService _transferContractService;
-        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
 
         public MonitoringTransferTransactions(IBaseSettings settings,
-            IErcInterfaceService ercInterfaceService,
-            ITransferContractRepository transferContractsRepository,
             ILog logger,
-            IPaymentService paymentService,
-            IEmailNotifierService emailNotifierService,
-            IUserPaymentRepository userPaymentRepository,
-            TransferContractService transferContractService,
-            IUserTransferWalletRepository userTransferWalletRepository,
             ITransferContractTransactionService transferContractTransactionService
             ) :
             base("MonitoringTransferTransactions", TimerPeriodSeconds * 1000, logger)
         {
-            _ercInterfaceService = ercInterfaceService;
-            _settings = settings;
-            _transferContractsRepository = transferContractsRepository;
+
             _logger = logger;
-            _paymentService = paymentService;
-            _emailNotifierService = emailNotifierService;
-            _userPaymentRepository = userPaymentRepository;
-            _transferContractService = transferContractService;
-            _userTransferWalletRepository = userTransferWalletRepository;
             _transferContractTransactionService = transferContractTransactionService;
         }
 

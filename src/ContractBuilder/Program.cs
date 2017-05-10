@@ -12,6 +12,8 @@ using System.Text;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using AzureRepositories;
+using SigningServiceApiCaller;
+using SigningServiceApiCaller.Models;
 
 namespace ContractBuilder
 {
@@ -51,9 +53,16 @@ namespace ContractBuilder
             //var stringKey = Encoding.Unicode.GetString(key);
             GetAllContractInJson();
             ServiceProvider = collection.BuildServiceProvider();
-            //var service = ServiceProvider.GetService<IErcInterfaceService>();
-            //service.Transfer("0xbefc091843a4c958ec929c3b90622fb6c3fce3e9", settings.EthereumMainAccount,
-            //    "0x13415ca1cd099a837ef264873c03bf4b8e8e1f39", new System.Numerics.BigInteger(999)).Wait();
+
+            //var lykkeSigningAPI = ServiceProvider.GetService<ILykkeSigningAPI>();
+            //lykkeSigningAPI.ApiEthereumAddkeyPost(new AddKeyRequest()
+            //{
+            //    Key = "",
+            //});
+
+            var service = ServiceProvider.GetService<IErcInterfaceService>();
+            service.Transfer("0x595fa134f62b01f0e8d4f96bc9fc310b9183342c", settings.EthereumMainAccount,
+                "0x8a25803d018330be477c6219bbd34a680ce21b28", new System.Numerics.BigInteger(6373)).Wait();
             
 
             while (!exit)

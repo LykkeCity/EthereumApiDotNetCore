@@ -20,8 +20,8 @@ namespace Services
 
         Task<ITransferContract> GetTransferContract(string userAddress, string coinAdapterAddress);
 
-        Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,
-            string coinAdapterAddress, string userAddress, BigInteger amount, bool containsEth);
+        Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
+            string coinAdapterAddress, string userAddress);
     }
 
     public class TransferContractService : ITransferContractService
@@ -118,9 +118,6 @@ namespace Services
                 throw new Exception($"Coin with address {transferContract.CoinAdapterAddress} does not exist");
             }
 
-            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                _settings.EthereumMainAccountPassword, 120);
-
             string coinAbi = _settings.CoinAbi;
 
             var contract = _web3.Eth.GetContract(coinAbi, transferContract.CoinAdapterAddress);
@@ -142,12 +139,9 @@ namespace Services
             return contract;
         }
 
-        public async Task<string> RecievePaymentFromTransferContract(Guid id, string transferContractAddress,
-            string coinAdapterAddress, string userAddress, BigInteger amount, bool containsEth)
+        public async Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
+            string coinAdapterAddress, string userAddress)
         {
-            await _web3.Personal.UnlockAccount.SendRequestAsync(_settings.EthereumMainAccount,
-                _settings.EthereumMainAccountPassword, 120);
-
             ICoin coinDb = await _coinRepository.GetCoinByAddress(coinAdapterAddress);
 
             if (!coinDb.BlockchainDepositEnabled)
@@ -155,7 +149,7 @@ namespace Services
 
             Contract contract;
 
-            if (containsEth)
+            if (coinDb.ContainsEth)
             {
                 contract = _web3.Eth.GetContract(_settings.EthTransferContract.Abi, transferContractAddress);
             }
@@ -165,8 +159,6 @@ namespace Services
             }
 
             var cashin = contract.GetFunction("cashin");
-            var blockchainAmount = amount;
-            var convertedId = EthUtils.GuidToBigInteger(id);
             string tr;
 
             //function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params)

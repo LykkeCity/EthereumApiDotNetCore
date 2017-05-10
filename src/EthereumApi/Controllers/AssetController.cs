@@ -31,7 +31,7 @@ namespace EthereumApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [Produces(typeof(RegisterResponse))]
         public async Task<IActionResult> CreateCoinAdapter([FromBody]CreateAssetModel model)
         {
             if (!ModelState.IsValid)

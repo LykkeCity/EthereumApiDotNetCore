@@ -25,15 +25,15 @@ namespace Tests
         {
             try
             {
-                var json = File.ReadAllText(@"..\..\..\generalsettings.json");
-                if (string.IsNullOrWhiteSpace(json))
+                var url = File.ReadAllText(@"..\..\..\configurationUrl.url");
+                if (string.IsNullOrWhiteSpace(url))
                 {
 
                     return null;
                 }
-                BaseSettings settings = GeneralSettingsReader.ReadSettingsFromData<BaseSettings>(json);
+                SettingsWrapper settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(url);
 
-                return settings;
+                return settings.EthereumCore;
             }
             catch (Exception e)
             {
@@ -41,25 +41,25 @@ namespace Tests
             }
         }
 
-        private TestSettings ReadTestSettings()
-        {
-            try
-            {
-                var json = File.ReadAllText(@"..\..\..\generalsettings.json");
-                if (string.IsNullOrWhiteSpace(json))
-                {
+        //private TestSettings ReadTestSettings()
+        //{
+        //    try
+        //    {
+        //        var json = File.ReadAllText(@"..\..\..\generalsettings.json");
+        //        if (string.IsNullOrWhiteSpace(json))
+        //        {
 
-                    return null;
-                }
-                TestSettings settings = GeneralSettingsReader.ReadSettingsFromData<TestSettings>(json);
+        //            return null;
+        //        }
+        //        TestSettings settings = GeneralSettingsReader.ReadSettingsFromData<TestSettings>(json);
 
-                return settings;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
+        //        return settings;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public async Task Initialize()
         {
@@ -68,29 +68,12 @@ namespace Tests
             IServiceCollection collection = new ServiceCollection();
             var settings = ReadSettings();
 
-            var testSetting = ReadTestSettings();
-
+            //var testSetting = ReadTestSettings();
             Assert.IsNotNull(settings, "Please, provide generalsettings.json file");
-            Assert.IsNotNull(testSetting, "Please, provide testsettings.json file");
 
             collection.InitJobDependencies(settings);
 
             Services = collection.BuildServiceProvider();
-
-
-            var coinRepo = Services.GetService<ICoinRepository>();
-            //foreach (var item in settings.CoinContracts)
-            //    await coinRepo.InsertOrReplace(new Coin
-            //    {
-            //        AdapterAddress = item.Value.Address,
-            //        Id = item.Key,
-            //        Multiplier = testSetting.CoinContracts[item.Key].Multiplier,
-            //        BlockchainDepositEnabled = testSetting.CoinContracts[item.Key].Payable,
-            //        Blockchain = "ethereum"
-            //    });
-
-
-            //Assert.DoesNotThrowAsync(() => Services.GetService<IContractService>().GetCurrentBlock(), "Please, run ethereum node (geth.exe)");
         }
 
         public class TestSettings

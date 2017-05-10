@@ -56,43 +56,47 @@ namespace EthereumJobs.Job
         {
             await _transferContractsRepository.ProcessAllAsync(async (item) =>
             {
-                //it is a transfer wallet
-                IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
-                if (wallet == null ||
-                    string.IsNullOrEmpty(wallet.LastBalance) ||
-                    wallet.LastBalance == "0")
+                //Check that transfer contract assigned to user
+                if (!string.IsNullOrEmpty(item.UserAddress))
                 {
-                    BigInteger balance;
-
-                    if (!item.ContainsEth)
+                    //it is a transfer wallet
+                    IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
+                    if (wallet == null ||
+                        string.IsNullOrEmpty(wallet.LastBalance) ||
+                        wallet.LastBalance == "0")
                     {
-                        balance =
-                        await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, item.ExternalTokenAddress);
-                    }
-                    else
-                    {
-                        balance = await _paymentService.GetTransferContractBalanceInWei(item.ContractAddress);
-                    }
+                        BigInteger balance;
 
-                    if (balance > 0)
-                    {
-
-                        await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+                        if (!item.ContainsEth)
                         {
-                            LastBalance = balance.ToString(),
-                            TransferContractAddress = item.ContractAddress,
-                            UserAddress = item.UserAddress,
-                            UpdateDate = DateTime.UtcNow
-                        });
-
-                        await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
+                            balance =
+                            await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, item.ExternalTokenAddress);
+                        }
+                        else
                         {
-                            Amount = balance.ToString(),
-                            UserAddress = item.UserAddress,
-                            CoinAdapterAddress = item.CoinAdapterAddress,
-                            ContractAddress = item.ContractAddress,
-                            CreateDt = DateTime.UtcNow
-                        });
+                            balance = await _paymentService.GetTransferContractBalanceInWei(item.ContractAddress);
+                        }
+
+                        if (balance > 0)
+                        {
+
+                            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+                            {
+                                LastBalance = balance.ToString(),
+                                TransferContractAddress = item.ContractAddress,
+                                UserAddress = item.UserAddress,
+                                UpdateDate = DateTime.UtcNow
+                            });
+
+                            await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
+                            {
+                                Amount = balance.ToString(),
+                                UserAddress = item.UserAddress,
+                                CoinAdapterAddress = item.CoinAdapterAddress,
+                                ContractAddress = item.ContractAddress,
+                                CreateDt = DateTime.UtcNow
+                            });
+                        }
                     }
                 }
             });
