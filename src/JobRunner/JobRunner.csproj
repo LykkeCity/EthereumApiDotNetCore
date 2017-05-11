@@ -35,6 +35,7 @@
     </None>
     <None Update="appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="docker-compose.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
