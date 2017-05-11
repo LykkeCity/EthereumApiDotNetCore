@@ -22,6 +22,10 @@ namespace Services
 
         Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
             string coinAdapterAddress, string userAddress);
+
+        Task<BigInteger> GetBalance(string coinAddress, string clientAddress);
+
+        Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
     }
 
     public class TransferContractService : ITransferContractService
@@ -168,6 +172,18 @@ namespace Services
             return tr;
         }
 
+        public async Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress)
+        {
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
+
+            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
+
+            var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
+
+            var balance = contract.GetFunction("getTransferAddressUser");
+            return await balance.CallAsync<string>(transferContractAddress);
+        }
+
         private async Task<string> Create(string userAddress, string coinAdapterAddress, ICoin coin)
         {
             string externalTokenAddress = coin.ExternalTokenAddress;
@@ -210,6 +226,16 @@ namespace Services
             }
 
             return coin;
+        }
+
+        public async Task<BigInteger> GetBalance(string adapterAddress, string clientAddress)
+        {
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
+            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
+            var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
+            var balance = contract.GetFunction("balanceOf");
+
+            return await balance.CallAsync<BigInteger>(clientAddress);
         }
     }
 }

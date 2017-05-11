@@ -34,24 +34,22 @@ namespace Services
 
     public class TransferContractTransactionService : ITransferContractTransactionService
     {
-        private readonly IEthereumQueueOutService _queueOutService;
-        private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly ILog _logger;
         private readonly IBaseSettings _baseSettings;
         private readonly IQueueExt _queue;
         private readonly ITransferContractRepository _transferContractRepository;
         private TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
+        private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
 
         public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
-            IEthereumQueueOutService queueOutService,
-            IEthereumTransactionService ethereumTransactionService,
             ILog logger,
             IExchangeContractService coinContractService,
             IBaseSettings baseSettings,
             ITransferContractRepository transferContractRepository,
             TransferContractService transferContractService,
-            IUserTransferWalletRepository userTransferWalletRepository)
+            IUserTransferWalletRepository userTransferWalletRepository,
+            IUserPaymentHistoryRepository userPaymentHistoryRepository)
         {
             _logger = logger;
             _baseSettings = baseSettings;
@@ -59,6 +57,7 @@ namespace Services
             _transferContractRepository = transferContractRepository;
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;
+            _userPaymentHistoryRepository = userPaymentHistoryRepository;
         }
 
         public async Task PutContractTransferTransaction(TransferContractTransaction tr)
@@ -87,9 +86,19 @@ namespace Services
             {
                 var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
-
+                var balance = await _transferContractService.GetBalance(contractTransferTr.CoinAdapterAddress, contractTransferTr.UserAddress);
                 var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress,
                     contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress);
+
+                await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory() {
+                    Amount = balance.ToString(),
+                    ContractAddress = contractEntity.ContractAddress,
+                    AdapterAddress = contractEntity.CoinAdapterAddress,
+                    CreatedDate = DateTime.UtcNow,
+                    Note= $"Cashin from transfer contract {contractEntity.ContractAddress}",
+                    TransactionHash= tr,
+                    UserAddress = contractTransferTr.UserAddress
+                });
                 await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                 {
                     LastBalance = "",

@@ -23,10 +23,13 @@ namespace AzureRepositories.Repositories
             get { return this.RowKey; }
             set { this.RowKey = value; }
         }
+
+        public string Note { get; set; }
         public string UserAddress { get; set; }
         public string ContractAddress { get; set; }
         public string Amount { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string AdapterAddress { get; set; }
 
 
         public static UserPaymentHistoryEntity Create(IUserPaymentHistory userPayment)
@@ -39,6 +42,8 @@ namespace AzureRepositories.Repositories
                 CreatedDate = userPayment.CreatedDate,
                 UserAddress = userPayment.UserAddress,
                 ContractAddress = userPayment.ContractAddress,
+                Note = userPayment.Note,
+                AdapterAddress = userPayment.AdapterAddress
             };
         }
     }

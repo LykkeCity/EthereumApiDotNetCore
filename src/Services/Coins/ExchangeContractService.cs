@@ -33,10 +33,6 @@ namespace Services.Coins
 
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
-        Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
-
-        Task<BigInteger> GetBalance(string coin, string clientAddr);
-
         Task PingMainExchangeContract();
 
         Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate);
@@ -199,30 +195,6 @@ namespace Services.Coins
             var tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
                         new HexBigInteger(0), convertedId, coinDb.AdapterAddress, receiver, blockchainAmount, Constants.GasForCoinTransaction, new byte[0]);
             return tr;
-        }
-
-        public async Task<BigInteger> GetBalance(string adapterAddress, string clientAddr)
-        {
-            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
-
-            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
-
-            var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
-
-            var balance = contract.GetFunction("balanceOf");
-            return await balance.CallAsync<BigInteger>(clientAddr);
-        }
-
-        public async Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress)
-        {
-            var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
-
-            string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
-
-            var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
-
-            var balance = contract.GetFunction("getTransferAddressUser");
-            return await balance.CallAsync<string>(transferContractAddress);
         }
 
         public async Task PingMainExchangeContract()

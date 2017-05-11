@@ -29,32 +29,32 @@ namespace Tests
     [TestClass]
     public class TestCoins : BaseTest
     {
-        [TestMethod]
-        public async Task TestCashin()
-        {
-            var coinService = Config.Services.GetService<IExchangeContractService>();
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
+        //[TestMethod]
+        //public async Task TestCashin()
+        //{
+        //    var coinService = Config.Services.GetService<IExchangeContractService>();
+        //    var coinRepository = Config.Services.GetService<ICoinRepository>();
+        //    var colorCoin = await coinRepository.GetCoin(ColorCoin);
 
-            var cointTransactionService = Config.Services.GetService<ICoinTransactionService>();
-            var transactionService = Config.Services.GetService<IEthereumTransactionService>();
-            var currentBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
+        //    var cointTransactionService = Config.Services.GetService<ICoinTransactionService>();
+        //    var transactionService = Config.Services.GetService<IEthereumTransactionService>();
+        //    var currentBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
-            BigInteger amount = new BigInteger(100);
+        //    BigInteger amount = new BigInteger(100);
 
-            var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount);
+        //    var result = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount);
 
-            while (await transactionService.GetTransactionReceipt(result) == null)
-                await Task.Delay(100);
+        //    while (await transactionService.GetTransactionReceipt(result) == null)
+        //        await Task.Delay(100);
 
 
 
-            Assert.IsTrue(await cointTransactionService.ProcessTransaction());
+        //    Assert.IsTrue(await cointTransactionService.ProcessTransaction());
 
-            var newBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
+        //    var newBalance = await coinService.GetBalance(colorCoin.Id, ClientA);
 
-            Assert.AreEqual(currentBalance + amount, newBalance);
-        }
+        //    Assert.AreEqual(currentBalance + amount, newBalance);
+        //}
 
         [TestMethod]
         public async Task TestCashinTokenFlow()
@@ -82,9 +82,9 @@ namespace Tests
             while (await transactionService.GetTransactionReceipt(transferCashinHash) == null)
                 await Task.Delay(100);
 
-            var transferUser = await exchangeService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
+            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
         }
@@ -102,11 +102,12 @@ namespace Tests
             var transactionService = Config.Services.GetService<IEthereumTransactionService>();
             var ercService = Config.Services.GetService<IErcInterfaceService>();
             var settings = Config.Services.GetService<IBaseSettings>();
+            var transferContractService = Config.Services.GetService<ITransferContractService>();
             var toAddress = settings.EthereumMainAccount;
 
-            var transferUser = await exchangeService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
+            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
 
@@ -129,7 +130,7 @@ namespace Tests
 
             Assert.IsTrue(await transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
 
-            var newBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, toAddress);
+            var newBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, toAddress);
 
             Assert.IsTrue(currentBalance <= newBalance);
         }
@@ -147,11 +148,12 @@ namespace Tests
             var exchangeService = Config.Services.GetService<IExchangeContractService>();
             var transactionService = Config.Services.GetService<IEthereumTransactionService>();
             var ercService = Config.Services.GetService<IErcInterfaceService>();
+            var transferContractService = Config.Services.GetService<ITransferContractService>();
 
             //await exchangeService.CashIn(Guid.NewGuid(), coinAddress, clientTransferAddress, 1025);
-            var transferUser = await exchangeService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await exchangeService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
+            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
 
@@ -238,68 +240,68 @@ namespace Tests
         //}
 
 
-        [TestMethod]
-        public async Task TestCoinSwap()
-        {
-            var coinRepository = Config.Services.GetService<ICoinRepository>();
-            var colorCoin = await coinRepository.GetCoin(ColorCoin);
-            var ethCoin = await coinRepository.GetCoin(EthCoin);
+        //[TestMethod]
+        //public async Task TestCoinSwap()
+        //{
+        //    var coinRepository = Config.Services.GetService<ICoinRepository>();
+        //    var colorCoin = await coinRepository.GetCoin(ColorCoin);
+        //    var ethCoin = await coinRepository.GetCoin(EthCoin);
 
-            var coinService = Config.Services.GetService<IExchangeContractService>();
-            var transactionService = Config.Services.GetService<IEthereumTransactionService>();
+        //    var coinService = Config.Services.GetService<IExchangeContractService>();
+        //    var transactionService = Config.Services.GetService<IEthereumTransactionService>();
 
-            var currentBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
-            var currentBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
+        //    var currentBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+        //    var currentBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
-            BigInteger amount_a = new BigInteger(100);
-            BigInteger amount_b = new BigInteger(100);
+        //    BigInteger amount_a = new BigInteger(100);
+        //    BigInteger amount_b = new BigInteger(100);
 
-            var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount_a);
-            var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Id, ClientB, amount_b);
+        //    var cashin_a = await coinService.CashIn(Guid.NewGuid(), colorCoin.Id, ClientA, amount_a);
+        //    var cashin_b = await coinService.CashIn(Guid.NewGuid(), ethCoin.Id, ClientB, amount_b);
 
-            while (await transactionService.GetTransactionReceipt(cashin_a) == null)
-                await Task.Delay(100);
+        //    while (await transactionService.GetTransactionReceipt(cashin_a) == null)
+        //        await Task.Delay(100);
 
-            while (await transactionService.GetTransactionReceipt(cashin_b) == null)
-                await Task.Delay(100);
+        //    while (await transactionService.GetTransactionReceipt(cashin_b) == null)
+        //        await Task.Delay(100);
 
-            var midBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
-            var midBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
+        //    var midBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+        //    var midBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
-            Assert.AreEqual(currentBalance_a + amount_a, midBalance_a);
-            Assert.AreEqual(currentBalance_b + amount_b, midBalance_b);
+        //    Assert.AreEqual(currentBalance_a + amount_a, midBalance_a);
+        //    Assert.AreEqual(currentBalance_b + amount_b, midBalance_b);
 
-            var swap_amount_a = 50m;
-            var swap_amount_b = 0.01m;
+        //    var swap_amount_a = 50m;
+        //    var swap_amount_b = 0.01m;
 
-            var guid = Guid.NewGuid();
+        //    var guid = Guid.NewGuid();
 
-            var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-                            ClientA.HexToByteArray().ToHex() +
-                            ClientB.HexToByteArray().ToHex() +
-                            colorCoin.AdapterAddress.HexToByteArray().ToHex() +
-                            ethCoin.AdapterAddress.HexToByteArray().ToHex() +
-                            EthUtils.BigIntToArrayWithPadding(swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
-                            EthUtils.BigIntToArrayWithPadding(swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
+        //    var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
+        //                    ClientA.HexToByteArray().ToHex() +
+        //                    ClientB.HexToByteArray().ToHex() +
+        //                    colorCoin.AdapterAddress.HexToByteArray().ToHex() +
+        //                    ethCoin.AdapterAddress.HexToByteArray().ToHex() +
+        //                    EthUtils.BigIntToArrayWithPadding(swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier)).ToHex() +
+        //                    EthUtils.BigIntToArrayWithPadding(swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier)).ToHex();
 
-            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+        //    var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
 
-            var sign_a = Sign(hash, PrivateKeyA).ToHex();
-            var sign_b = Sign(hash, PrivateKeyB).ToHex();
+        //    var sign_a = Sign(hash, PrivateKeyA).ToHex();
+        //    var sign_b = Sign(hash, PrivateKeyB).ToHex();
 
-            var swap = await coinService.Swap(guid, ClientA, ClientB, colorCoin.Id, ethCoin.Id, swap_amount_a, swap_amount_b, sign_a, sign_b);
+        //    var swap = await coinService.Swap(guid, ClientA, ClientB, colorCoin.Id, ethCoin.Id, swap_amount_a, swap_amount_b, sign_a, sign_b);
 
-            while (await transactionService.GetTransactionReceipt(swap) == null)
-                await Task.Delay(100);
+        //    while (await transactionService.GetTransactionReceipt(swap) == null)
+        //        await Task.Delay(100);
 
-            Assert.IsTrue(await transactionService.IsTransactionExecuted(swap, Constants.GasForCoinTransaction));
+        //    Assert.IsTrue(await transactionService.IsTransactionExecuted(swap, Constants.GasForCoinTransaction));
 
-            var newBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
-            var newBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
+        //    var newBalance_a = await coinService.GetBalance(colorCoin.Id, ClientA);
+        //    var newBalance_b = await coinService.GetBalance(ethCoin.Id, ClientB);
 
-            Assert.AreEqual(midBalance_a - swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier), newBalance_a);
-            Assert.AreEqual(midBalance_b - swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier), newBalance_b);
-        }
+        //    Assert.AreEqual(midBalance_a - swap_amount_a.ToBlockchainAmount(colorCoin.Multiplier), newBalance_a);
+        //    Assert.AreEqual(midBalance_b - swap_amount_b.ToBlockchainAmount(ethCoin.Multiplier), newBalance_b);
+        //}
 
 
         //[TestMethod]
