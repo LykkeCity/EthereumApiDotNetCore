@@ -2,6 +2,6 @@ version: '2'
 
 services:
   apirunner:
-    image: lykkex/ethereumapidotnetcore
+    image: lykkex/ethereumapidotnetcore:${tag}
     environment:
      - ConnectionStrings__ConnectionString=${SettingsConnString}

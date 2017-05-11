@@ -14,30 +14,16 @@ namespace ApiRunner
     {
         public static void Main(string[] args)
         {
-            var arguments = args.Select(t => t.Split('=')).ToDictionary(spl => spl[0].Trim('-'), spl => spl[1]);
-
-            if (!arguments.ContainsKey("port"))
-            {
-                Console.WriteLine("Please, specify command line parameters:");
-                Console.WriteLine("-port=<port> # port for web server");
-                Console.ReadLine();
-                return;
-            }
-
-            Console.Clear();
             Console.Title = "Ethereum Self-hosted API - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
-
-            var url = $"http://*:{arguments["port"]}";
 
             var host = new WebHostBuilder()
                .UseKestrel()
-               .UseUrls(url)
                .UseContentRoot(Directory.GetCurrentDirectory())
                .UseIISIntegration()
                .UseStartup<Startup>()
                .Build();
 
-            Console.WriteLine($"Web Server is running - {url}");
+            Console.WriteLine($"Web Server is running ");
             Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
 
             host.Run();
