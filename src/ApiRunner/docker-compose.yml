@@ -2,7 +2,7 @@ version: '1'
 
 services:
   apirunner:
-    image: lykkex/lykkeEthereumCoreApi
+    image: lykkex/lykke-service-ethereumapi
     ports:
      - "6566:6000"
     environment:

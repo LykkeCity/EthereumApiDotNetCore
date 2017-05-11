@@ -2,6 +2,6 @@ version: '1'
 
 services:
   apirunner:
-    image: lykkeEthereumCoreJob
+    image: lykkex/ethereumapidotnetcore
     environment:
      - ConnectionStrings__Azure=UseDevelopmentStorage=true
