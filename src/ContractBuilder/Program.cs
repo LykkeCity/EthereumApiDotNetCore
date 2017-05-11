@@ -37,7 +37,7 @@ namespace ContractBuilder
 
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json").AddEnvironmentVariables();
             var configuration = configurationBuilder.Build();
 
             var settings = GetCurrentSettings();

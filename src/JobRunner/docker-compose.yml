@@ -1,7 +1,7 @@
-version: '1'
+version: '2'
 
 services:
   apirunner:
     image: lykkex/ethereumapidotnetcore
     environment:
-     - ConnectionStrings__Azure=UseDevelopmentStorage=true
+     - ConnectionStrings__ConnectionString=${SettingsConnString}
