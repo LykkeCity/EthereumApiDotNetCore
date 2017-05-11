@@ -1,0 +1,7 @@
+version: '1'
+
+services:
+  apirunner:
+    image: lykkeEthereumCoreJob
+    environment:
+     - ConnectionStrings__Azure=UseDevelopmentStorage=true

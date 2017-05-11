@@ -1,0 +1,9 @@
+version: '1'
+
+services:
+  apirunner:
+    image: lykkex/lykkeEthereumCoreApi
+    ports:
+     - "6566:6000"
+    environment:
+     - ConnectionStrings__Azure=UseDevelopmentStorage=true
