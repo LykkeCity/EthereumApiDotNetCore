@@ -23,7 +23,8 @@ namespace Services
         Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
             string coinAdapterAddress, string userAddress);
 
-        Task<BigInteger> GetBalance(string coinAddress, string clientAddress);
+        Task<BigInteger> GetBalanceOnAdapter(string coinAddress, string clientAddress);
+        Task<BigInteger> GetBalance(string transferContractAddress, string clientAddress);
 
         Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
     }
@@ -37,6 +38,8 @@ namespace Services
         private readonly ITransferContractQueueServiceFactory _transferContractQueueServiceFactory;
         private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
         private readonly Web3 _web3;
+        private readonly IPaymentService _paymentService;
+        private readonly IErcInterfaceService _ercInterfaceService;
 
         public TransferContractService(IContractService contractService,
             ITransferContractRepository transferContractRepository,
@@ -44,9 +47,12 @@ namespace Services
             IBaseSettings settings,
             ITransferContractQueueServiceFactory transferContractQueueServiceFactory,
             ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
-            Web3 web3
+            IPaymentService paymentService,
+            Web3 web3,
+            IErcInterfaceService ercInterfaceService
             )
         {
+            _paymentService = paymentService;
             _web3 = web3;
             _coinRepository = coinRepository;
             _contractService = contractService;
@@ -54,6 +60,7 @@ namespace Services
             _settings = settings;
             _transferContractQueueServiceFactory = transferContractQueueServiceFactory;
             _transferContractUserAssignmentQueueService = transferContractUserAssignmentQueueService;
+            _ercInterfaceService = ercInterfaceService;
         }
 
         public async Task<string> CreateTransferContractTrHashWithoutUser(string coinAdapterAddress)
@@ -228,7 +235,7 @@ namespace Services
             return coin;
         }
 
-        public async Task<BigInteger> GetBalance(string adapterAddress, string clientAddress)
+        public async Task<BigInteger> GetBalanceOnAdapter(string adapterAddress, string clientAddress)
         {
             var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
             string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
@@ -236,6 +243,23 @@ namespace Services
             var balance = contract.GetFunction("balanceOf");
 
             return await balance.CallAsync<BigInteger>(clientAddress);
+        }
+
+        public async Task<BigInteger> GetBalance(string transferContractAddress, string clientAddress)
+        {
+            var transferContract = await _transferContractRepository.GetAsync(transferContractAddress);
+
+            BigInteger balance;
+            if (!transferContract.ContainsEth)
+            {
+                balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(transferContract.ContractAddress, transferContract.ExternalTokenAddress);
+            }
+            else
+            {
+                balance = await _paymentService.GetTransferContractBalanceInWei(transferContract.ContractAddress);
+            }
+
+            return balance;
         }
     }
 }

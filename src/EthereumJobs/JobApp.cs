@@ -6,6 +6,11 @@ using EthereumJobs.Job;
 using Microsoft.Extensions.DependencyInjection;
 using EthereumJobs.Config;
 using Microsoft.Extensions.Configuration;
+using Lykke.JobTriggers.Triggers;
+using System.Reflection;
+using System.Threading;
+using System.Runtime.Loader;
+using Lykke.JobTriggers.Extenstions;
 
 namespace EthereumJobs
 {
@@ -19,10 +24,15 @@ namespace EthereumJobs
             IServiceCollection collection = new ServiceCollection();
             collection.InitJobDependencies(settings);
 
-            Services = collection.BuildServiceProvider();
+            collection.AddTriggers(pool =>
+            {
+                // default connection must be initialized
+                pool.AddDefaultConnection(settings.Db.DataConnString);
+                //// you can add additional connection strings and then specify it in QueueTriggerAttribute 
+                //pool.AddConnection("custom", additionalConnectionString);
+            });
 
-            // start monitoring
-            Services.GetService<MonitoringJob>().Start();
+            Services = collection.BuildServiceProvider();
 
             // restore contract payment events after service shutdown
             await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
@@ -50,14 +60,22 @@ namespace EthereumJobs
 
             #endregion
 
-            #region NewJobs
-            Services.GetService<MonitoringCoinTransactionJob>().Start();
-            Services.GetService<MonitoringTransferContracts>().Start();
-            Services.GetService<MonitoringTransferTransactions>().Start();
-            Services.GetService<TransferContractPoolJob>().Start();
-            Services.GetService<TransferContractUserAssignmentJob>().Start();
+            var triggerHost = new TriggerHost(Services);
 
-            #endregion
+            triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);
+
+            var end = new ManualResetEvent(false);
+
+            AssemblyLoadContext.Default.Unloading += ctx =>
+            {
+                Console.WriteLine("SIGTERM recieved");
+                triggerHost.Cancel();
+
+                end.WaitOne();
+            };
+
+            triggerHost.Start().Wait();
+            end.Set();
         }
 
         static IBaseSettings GetSettings(IConfigurationRoot configuration)

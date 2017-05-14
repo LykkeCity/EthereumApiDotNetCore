@@ -4,6 +4,8 @@ using Services;
 using AzureRepositories;
 using EthereumJobs.Actions;
 using EthereumJobs.Job;
+using Lykke.JobTriggers.Abstractions;
+using AzureRepositories.Notifiers;
 
 namespace EthereumJobs.Config
 {
@@ -18,24 +20,16 @@ namespace EthereumJobs.Config
             collection.RegisterAzureQueues(settings);
 
             collection.RegisterServices();
-
+            collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             RegisterJobs(collection);
         }
 
         private static void RegisterJobs(IServiceCollection collection)
         {
-            //collection.AddTransient<CatchOldUserContractEvents>();
             collection.AddTransient<ProcessManualEvents>();
-
-            //collection.AddSingleton<CheckContractQueueCountJob>();
-            //collection.AddSingleton<CheckPaymentsToUserContractsJob>();
-            //collection.AddSingleton<RefreshContractQueueJob>();
             collection.AddSingleton<MonitoringJob>();
             collection.AddSingleton<TransferTransactionQueueJob>();
-            //collection.AddSingleton<MonitoringContractBalance>(); 
-            collection.AddSingleton<ListenCoinContactsEvents>();
             collection.AddSingleton<MonitoringCoinTransactionJob>();
-            collection.AddSingleton<MonitoringTransferContracts>();
 
             #region NewJobs
 

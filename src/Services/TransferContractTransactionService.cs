@@ -11,10 +11,11 @@ using Services.Coins;
 using AzureStorage.Queue;
 using Common.Log;
 using System.Numerics;
+using Core.Utils;
 
 namespace Services
 {
-    public class TransferContractTransaction
+    public class TransferContractTransaction : QueueMessageBase
     {
         public string ContractAddress { get; set; }
 
@@ -24,12 +25,13 @@ namespace Services
         //System.Numerics.BigInteger
         public string Amount { get; set; }
         public DateTime CreateDt { get; set; }
+
     }
 
     public interface ITransferContractTransactionService
     {
         Task PutContractTransferTransaction(TransferContractTransaction tr);
-        Task<bool> CompleteTransfer();
+        Task TransferToCoinContract(TransferContractTransaction contractTransferTr);
     }
 
     public class TransferContractTransactionService : ITransferContractTransactionService
@@ -41,6 +43,8 @@ namespace Services
         private TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
+        private readonly ICoinTransactionService _cointTransactionService;
+        private readonly ICoinTransactionRepository _coinTransactionRepository;
 
         public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
             ILog logger,
@@ -49,7 +53,9 @@ namespace Services
             ITransferContractRepository transferContractRepository,
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
-            IUserPaymentHistoryRepository userPaymentHistoryRepository)
+            IUserPaymentHistoryRepository userPaymentHistoryRepository,
+            ICoinTransactionService cointTransactionService,
+            ICoinTransactionRepository coinTransactionRepository)
         {
             _logger = logger;
             _baseSettings = baseSettings;
@@ -58,6 +64,8 @@ namespace Services
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;
             _userPaymentHistoryRepository = userPaymentHistoryRepository;
+            _cointTransactionService = cointTransactionService;
+            _coinTransactionRepository = coinTransactionRepository;
         }
 
         public async Task PutContractTransferTransaction(TransferContractTransaction tr)
@@ -65,40 +73,32 @@ namespace Services
             await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(tr));
         }
 
-        public async Task<bool> CompleteTransfer()
-        {
-            var item = await _queue.GetRawMessageAsync();
-
-            if (item == null)
-                return false;
-
-            var contractTransferTr = JsonConvert.DeserializeObject<TransferContractTransaction>(item.AsString);
-
-            await TransferToCoinContract(item, contractTransferTr);
-
-            await _queue.FinishRawMessageAsync(item);
-            return true;
-        }
-
-        private async Task TransferToCoinContract(CloudQueueMessage item, TransferContractTransaction contractTransferTr)
+        public async Task TransferToCoinContract(TransferContractTransaction contractTransferTr)
         {
             try
             {
                 var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
-                var balance = await _transferContractService.GetBalance(contractTransferTr.CoinAdapterAddress, contractTransferTr.UserAddress);
+                var balance = await _transferContractService.GetBalance(contractTransferTr.ContractAddress, contractTransferTr.UserAddress);
                 var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress,
                     contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress);
 
-                await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory() {
+                await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
+                {
                     Amount = balance.ToString(),
                     ContractAddress = contractEntity.ContractAddress,
                     AdapterAddress = contractEntity.CoinAdapterAddress,
                     CreatedDate = DateTime.UtcNow,
-                    Note= $"Cashin from transfer contract {contractEntity.ContractAddress}",
-                    TransactionHash= tr,
+                    Note = $"Cashin from transfer contract {contractEntity.ContractAddress}",
+                    TransactionHash = tr,
                     UserAddress = contractTransferTr.UserAddress
                 });
+                await _coinTransactionRepository.AddAsync(new CoinTransaction()
+                {
+                    TransactionHash = tr
+                });
+                await _cointTransactionService.PutTransactionToQueue(tr);
+
                 await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                 {
                     LastBalance = "",
@@ -113,6 +113,7 @@ namespace Services
             {
                 await _logger.WriteErrorAsync("TransferContractTransactionService", "TransferToCoinContract",
                             $"{contractTransferTr.ContractAddress} - {contractTransferTr.CoinAdapterAddress} - {contractTransferTr.Amount}", e);
+                throw;
             }
         }
     }

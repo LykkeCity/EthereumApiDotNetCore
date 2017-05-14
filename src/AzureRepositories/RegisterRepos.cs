@@ -29,13 +29,13 @@ namespace AzureRepositories
 
         public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings)
         {
-            var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.SharedConnString);
+            var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.DataConnString);
                 services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
 
             services.AddSingleton<ITransferContractRepository>(provider => new TransferContractRepository(
-                new AzureTableStorage<TransferContractEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.TransferContractTable,
+                new AzureTableStorage<TransferContractEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>()),
-                new AzureTableStorage<AzureIndex>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.TransferContractTable,
+                new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>())));
 
             services.AddSingleton<IExternalTokenRepository>(provider => new ExternalTokenRepository(
@@ -49,7 +49,7 @@ namespace AzureRepositories
             services.AddSingleton<IUserPaymentRepository>(provider => new UserPaymentRepository());
 
             services.AddSingleton<IUserTransferWalletRepository>(provider => new UserTransferWalletRepository(
-               new AzureTableStorage<UserTransferWalletEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.UserTransferWalletTable,
+               new AzureTableStorage<UserTransferWalletEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserTransferWalletTable,
                    provider.GetService<ILog>())
                    ));
 
@@ -71,9 +71,9 @@ namespace AzureRepositories
                     provider.GetService<ILog>())));
 
             services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
-                new AzureTableStorage<CoinEntity>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTable
+                new AzureTableStorage<CoinEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinTable
                     ,provider.GetService<ILog>())
-                , new AzureTableStorage<AzureIndex>(settings.Db.DictsConnString, Constants.StoragePrefix + Constants.CoinTableInedex
+                , new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinTableInedex
                    , provider.GetService<ILog>())) ));
         }
 
@@ -87,7 +87,7 @@ namespace AzureRepositories
                     switch (x)
                     {
                         case Constants.TransferContractUserAssignmentQueueName:
-                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.EthereumContractQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.SlackNotifierQueue:

@@ -33,7 +33,7 @@ namespace EthereumApi
         {
             var settings = GetSettings(Configuration);
             services.AddSingleton<IBaseSettings>(settings);
-            var provider = services.BuildServiceProvider();
+            var provider = Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(services);
 
             services.AddSingleton(settings);
 

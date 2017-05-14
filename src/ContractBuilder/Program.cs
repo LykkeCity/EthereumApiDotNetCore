@@ -61,8 +61,8 @@ namespace ContractBuilder
             //});
 
             var service = ServiceProvider.GetService<IErcInterfaceService>();
-            service.Transfer("0x595fa134f62b01f0e8d4f96bc9fc310b9183342c", settings.EthereumMainAccount,
-                "0x8a25803d018330be477c6219bbd34a680ce21b28", new System.Numerics.BigInteger(6373)).Wait();
+            service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
+                "0xfcd6ef45a385f7b027302ad484e1ceedea5a85dc", new System.Numerics.BigInteger(1234)).Wait();
             
 
             while (!exit)

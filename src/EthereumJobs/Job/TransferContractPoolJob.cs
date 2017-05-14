@@ -8,15 +8,12 @@ using System.Numerics;
 using System;
 using System.Collections.Generic;
 using Common;
+using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace EthereumJobs.Job
 {
-    public class TransferContractPoolJob : TimerPeriod
+    public class TransferContractPoolJob
     {
-        //10 minutes
-        private const int TimerPeriodSeconds = 60 * 10;
-        private const int AlertNotChangedBalanceCount = 3;
-
         private readonly ILog _logger;
         private readonly ICoinRepository _coinRepository;
         private readonly TransferContractPoolService _transferContractPoolService;
@@ -25,15 +22,15 @@ namespace EthereumJobs.Job
             ILog logger,
             ICoinRepository coinRepository,
             TransferContractPoolService transferContractPoolService
-            ) :
-            base("MonitoringTransferContracts", TimerPeriodSeconds * 1000, logger)
+            )
         {
             _logger = logger;
             _coinRepository = coinRepository;
             _transferContractPoolService = transferContractPoolService;
         }
 
-        public override async Task Execute()
+        [TimerTrigger("0.00:02:00")]
+        public async Task Execute()
         {
             await _coinRepository.ProcessAllAsync(async (items) =>
             {

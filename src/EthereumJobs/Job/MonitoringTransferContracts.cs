@@ -7,15 +7,12 @@ using Core.Settings;
 using System.Numerics;
 using System;
 using Common;
+using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace EthereumJobs.Job
 {
-    public class MonitoringTransferContracts : TimerPeriod
+    public class MonitoringTransferContracts
     {
-
-        private const int TimerPeriodSeconds = 60 * 3;
-        private const int AlertNotChangedBalanceCount = 3;
-
         private readonly ILog _logger;
         private readonly IPaymentService _paymentService;
         private readonly IEmailNotifierService _emailNotifierService;
@@ -37,8 +34,7 @@ namespace EthereumJobs.Job
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
             ITransferContractTransactionService transferContractTransactionService
-            ) :
-            base("MonitoringTransferContracts", TimerPeriodSeconds * 1000, logger)
+            )
         {
             _ercInterfaceService = ercInterfaceService;
             _settings = settings;
@@ -52,52 +48,50 @@ namespace EthereumJobs.Job
             _transferContractTransactionService = transferContractTransactionService;
         }
 
-        public override async Task Execute()
+        [TimerTrigger("0.00:05:00")]
+        public async Task Execute()
         {
             await _transferContractsRepository.ProcessAllAsync(async (item) =>
             {
-                //Check that transfer contract assigned to user
-                if (!string.IsNullOrEmpty(item.UserAddress))
+                try
                 {
-                    //it is a transfer wallet
-                    IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
-                    if (wallet == null ||
-                        string.IsNullOrEmpty(wallet.LastBalance) ||
-                        wallet.LastBalance == "0")
+                    //Check that transfer contract assigned to user
+                    if (!string.IsNullOrEmpty(item.UserAddress) && !string.IsNullOrEmpty(item.AssignmentHash))
                     {
-                        BigInteger balance;
-
-                        if (!item.ContainsEth)
+                        //it is a transfer wallet
+                        IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
+                        if (wallet == null ||
+                            string.IsNullOrEmpty(wallet.LastBalance) ||
+                            wallet.LastBalance == "0")
                         {
-                            balance =
-                            await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, item.ExternalTokenAddress);
-                        }
-                        else
-                        {
-                            balance = await _paymentService.GetTransferContractBalanceInWei(item.ContractAddress);
-                        }
+                            BigInteger balance = await _transferContractService.GetBalance(item.ContractAddress, item.UserAddress);
 
-                        if (balance > 0)
-                        {
-
-                            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+                            if (balance > 0)
                             {
-                                LastBalance = balance.ToString(),
-                                TransferContractAddress = item.ContractAddress,
-                                UserAddress = item.UserAddress,
-                                UpdateDate = DateTime.UtcNow
-                            });
 
-                            await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
-                            {
-                                Amount = balance.ToString(),
-                                UserAddress = item.UserAddress,
-                                CoinAdapterAddress = item.CoinAdapterAddress,
-                                ContractAddress = item.ContractAddress,
-                                CreateDt = DateTime.UtcNow
-                            });
+                                await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+                                {
+                                    LastBalance = balance.ToString(),
+                                    TransferContractAddress = item.ContractAddress,
+                                    UserAddress = item.UserAddress,
+                                    UpdateDate = DateTime.UtcNow
+                                });
+
+                                await _transferContractTransactionService.PutContractTransferTransaction(new TransferContractTransaction()
+                                {
+                                    Amount = balance.ToString(),
+                                    UserAddress = item.UserAddress,
+                                    CoinAdapterAddress = item.CoinAdapterAddress,
+                                    ContractAddress = item.ContractAddress,
+                                    CreateDt = DateTime.UtcNow
+                                });
+                            }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    await _logger.WriteErrorAsync("MonitoringTransferContracts", "Execute", "",e, DateTime.UtcNow);
                 }
             });
         }

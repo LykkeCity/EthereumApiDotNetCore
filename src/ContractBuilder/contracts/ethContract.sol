@@ -8,9 +8,6 @@ contract EthCoin is Coin(0) {
     function cashin(address receiver, uint amount) ownerOrTransferContract payable returns(bool){
         var userAddress = transferContractUser[receiver];
 
-        if (userAddress == address(0)) {
-            return false;
-        } 
         coinBalanceMultisig[userAddress] += msg.value;
 
         CoinCashIn(receiver, msg.value);

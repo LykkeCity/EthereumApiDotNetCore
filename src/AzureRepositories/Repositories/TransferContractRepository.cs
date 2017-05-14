@@ -31,6 +31,8 @@ namespace AzureRepositories.Repositories
 
         public bool ContainsEth { get; set; }
 
+        public string AssignmentHash { get; set; }
+
         public static TransferContractEntity Create(ITransferContract transferContract)
         {
             return new TransferContractEntity
@@ -41,6 +43,7 @@ namespace AzureRepositories.Repositories
                 UserAddress = transferContract.UserAddress,
                 ContractAddress = transferContract.ContractAddress,
                 ExternalTokenAddress = transferContract.ExternalTokenAddress,
+                AssignmentHash = transferContract.AssignmentHash
             };
         }
     }

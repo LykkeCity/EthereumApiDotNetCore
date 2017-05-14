@@ -7,40 +7,53 @@ using Core.Settings;
 using System.Numerics;
 using System;
 using Common;
+using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.JobTriggers.Triggers.Bindings;
+using Core;
 
 namespace EthereumJobs.Job
 {
-    public class MonitoringTransferTransactions : TimerPeriod
+    public class MonitoringTransferTransactions
     {
-
-        private const int TimerPeriodSeconds = 60;
-        private const int AlertNotChangedBalanceCount = 3;
-
         private readonly ILog _logger;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
+        private readonly IBaseSettings _settings;
 
         public MonitoringTransferTransactions(IBaseSettings settings,
             ILog logger,
             ITransferContractTransactionService transferContractTransactionService
-            ) :
-            base("MonitoringTransferTransactions", TimerPeriodSeconds * 1000, logger)
+            )
         {
-
+            _settings = settings;
             _logger = logger;
             _transferContractTransactionService = transferContractTransactionService;
         }
 
-        public override async Task Execute()
+        [QueueTrigger(Constants.ContractTransferQueue, 100, true)]
+        public async Task Execute(TransferContractTransaction transaction, QueueTriggeringContext context)
         {
             try
             {
-                while (await _transferContractTransactionService.CompleteTransfer() && Working)
-                {
-                }
+                await _transferContractTransactionService.TransferToCoinContract(transaction);
             }
             catch (Exception ex)
             {
-                await _logger.WriteErrorAsync("EthereumJob", "MonitoringTransferTransactions", "", ex);
+                if (ex.Message != transaction.LastError)
+                    await _logger.WriteWarningAsync("MonitoringCoinTransactionJob", "Execute", $"ContractAddress: [{transaction.ContractAddress}]", "");
+
+                transaction.LastError = ex.Message;
+
+                if (transaction.DequeueCount >= _settings.MaxDequeueCount)
+                {
+                    context.MoveMessageToPoison();
+                }
+                else
+                {
+                    transaction.DequeueCount++;
+                    context.MoveMessageToEnd(transaction.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                }
+                await _logger.WriteErrorAsync("MonitoringTransferTransactions", "Execute", "", ex);
             }
         }
     }

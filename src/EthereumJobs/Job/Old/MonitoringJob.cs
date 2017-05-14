@@ -3,33 +3,37 @@ using System.Threading.Tasks;
 using Core.Repositories;
 using Common.Log;
 using Common;
+using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace EthereumJobs.Job
 {
-    public class MonitoringJob : TimerPeriod
+    public class MonitoringJob
     {
-        private const int TimerPeriodSeconds = 30;
-
         private readonly IMonitoringRepository _repository;
+        private readonly ILog _logger;
 
         public MonitoringJob(IMonitoringRepository repository, ILog logger)
-            : this("MonitoringJob", TimerPeriodSeconds * 1000, logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
-        private MonitoringJob(string componentName, int periodMs, ILog log) : base(componentName, periodMs, log)
+        [TimerTrigger("0.00:00:30")]
+        public async Task Execute()
         {
-        }
-
-        public override async Task Execute()
-        {
-            await _repository.SaveAsync(new Monitoring
+            try
             {
-                DateTime = DateTime.UtcNow,
-                ServiceName = "EthereumJobService",
-                Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion
-            });
+                await _repository.SaveAsync(new Monitoring
+                {
+                    DateTime = DateTime.UtcNow,
+                    ServiceName = "EthereumJobService",
+                    Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion
+                });
+            }
+            catch (Exception e)
+            {
+                await _logger.WriteErrorAsync("MonitoringJob", "Execute", "", e ,DateTime.UtcNow);
+            }
         }
     }
 }

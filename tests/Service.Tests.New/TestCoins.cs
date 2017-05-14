@@ -83,8 +83,8 @@ namespace Tests
                 await Task.Delay(100);
 
             var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var currentBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
         }
@@ -106,8 +106,8 @@ namespace Tests
             var toAddress = settings.EthereumMainAccount;
 
             var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var currentBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
 
@@ -130,7 +130,7 @@ namespace Tests
 
             Assert.IsTrue(await transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
 
-            var newBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, toAddress);
+            var newBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
 
             Assert.IsTrue(currentBalance <= newBalance);
         }
@@ -152,8 +152,8 @@ namespace Tests
 
             //await exchangeService.CashIn(Guid.NewGuid(), coinAddress, clientTransferAddress, 1025);
             var transferUser = await transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, clientTransferAddress);
-            var currentBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, transferUser);
-            var midBalance = await transferContractService.GetBalance(colorCoin.AdapterAddress, clientAddress);
+            var currentBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, transferUser);
+            var midBalance = await transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, clientAddress);
 
             Assert.AreEqual(currentBalance, midBalance);
 

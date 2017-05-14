@@ -7,15 +7,13 @@ using Core.Settings;
 using System.Numerics;
 using System;
 using Common;
+using Lykke.JobTriggers.Triggers.Attributes;
+using Core;
+using Lykke.JobTriggers.Triggers.Bindings;
 
 namespace EthereumJobs.Job
 {
-    public class TransferContractUserAssignmentJob : TimerPeriod
-    {
-        //10 minutes
-        private const int TimerPeriodSeconds = 60;
-        private const int AlertNotChangedBalanceCount = 3;
-
+    public class TransferContractUserAssignmentJob { 
         private readonly ILog _logger;
         private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
         private readonly IBaseSettings _settings;
@@ -25,8 +23,7 @@ namespace EthereumJobs.Job
             ILog logger,
             ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
             ICoinRepository coinRepository
-            ) :
-            base("MonitoringTransferContracts", TimerPeriodSeconds * 1000, logger)
+            )
         {
             _settings = settings;
             _logger = logger;
@@ -34,17 +31,31 @@ namespace EthereumJobs.Job
             _coinRepository = coinRepository;
         }
 
-        public override async Task Execute()
+        [QueueTrigger(Constants.TransferContractUserAssignmentQueueName, 100, true)]
+        public async Task Execute(TransferContractUserAssignment transaction, QueueTriggeringContext context)
         {
             try
             {
-                while (await _transferContractUserAssignmentQueueService.CompleteTransfer() && Working)
-                {
-                }
+                await _transferContractUserAssignmentQueueService.CompleteTransfer(transaction);
             }
             catch (Exception ex)
             {
-                await _logger.WriteErrorAsync("EthereumJob", "TransferContractUserAssignmentJob", "", ex);
+                if (ex.Message != transaction.LastError)
+                    await _logger.WriteWarningAsync("MonitoringCoinTransactionJob", "Execute", $"TransferContractAddress: [{transaction.TransferContractAddress}]", "");
+
+                transaction.LastError = ex.Message;
+
+                if (transaction.DequeueCount >= _settings.MaxDequeueCount)
+                {
+                    context.MoveMessageToPoison();
+                }
+                else
+                {
+                    transaction.DequeueCount++;
+                    context.MoveMessageToEnd(transaction.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                }
+                await _logger.WriteErrorAsync("MonitoringCoinTransactionJob", "Execute", "", ex);
             }
         }
     }

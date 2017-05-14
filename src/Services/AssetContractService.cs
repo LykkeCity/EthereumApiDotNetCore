@@ -1,5 +1,6 @@
 ﻿using Core.Repositories;
 using Core.Settings;
+using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +14,19 @@ namespace Services
         private readonly IContractService _contractService;
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IBaseSettings _settings;
+        private readonly Web3 _web3;
 
         public AssetContractService(IBaseSettings settings,
             IContractService contractService,
             ICoinRepository coinRepository,
             IEthereumContractRepository ethereumContractRepository,
-            IErcInterfaceService ercInterfaceService)
+            IErcInterfaceService ercInterfaceService, Web3 web3)
         {
             _settings = settings;
             _contractService = contractService;
             _coinRepository = coinRepository;
             _ercInterfaceService = ercInterfaceService;
+            _web3 = web3;
         }
 
         public async Task<string> CreateCoinContract(ICoin coin)
@@ -63,6 +66,19 @@ namespace Services
             await _coinRepository.InsertOrReplace(coin);
 
             return coinAdapterAddress;
+        }
+
+        public async Task<string> PingAdapterContract(string adapterAddress)
+        {
+            string abi = _settings.CoinAbi;
+
+            var contract = _web3.Eth.GetContract(abi, adapterAddress);
+            var function = contract.GetFunction("ping");
+            
+            string transactionHash =
+                await function.SendTransactionAsync(_settings.EthereumMainAccount);
+
+            return transactionHash;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Core.Notifiers;
+﻿using AzureRepositories.Notifiers;
+using Core.Notifiers;
 using Core.Settings;
 using LkeServices.Signature;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,14 +17,11 @@ namespace Services
             services.AddTransient<IContractService, ContractService>();
             services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<IEthereumQueueOutService, EthereumQueueOutService>();
-            //services.AddTransient<IContractQueueService, TransferContractQueueService>();
             services.AddTransient<IEmailNotifierService, EmailNotifierService>();
-            //services.AddTransient<IContractTransferTransactionService, ContractTransferTransactionService>();
             services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
             services.AddTransient<IExchangeContractService, ExchangeContractService>();
             services.AddTransient<ICoinTransactionService, CoinTransactionService>();
             services.AddTransient<IManualEventsService, ManualEventsService>();
-
             services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
             services.AddTransient<AssetContractService>();
             services.AddTransient<TransferContractService>();
@@ -33,18 +31,19 @@ namespace Services
             services.AddTransient<ITransferContractQueueServiceFactory, TransferContractQueueServiceFactory>();
             services.AddTransient<ITransferContractService, TransferContractService>();
             services.AddTransient<TransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-
             services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
             services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            services.AddTransient<ILykkeSigningAPI>((provider) =>
+            services.AddTransient<ISlackNotifier, SlackNotifier>();
+
+            //Uses HttpClient Inside
+            services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
                 var lykkeSigningAPI = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl, UriKind.Absolute));
 
                 return lykkeSigningAPI;
             });
-            services.AddTransient<ISlackNotifier, SlackNotifier>();
 
-            services.AddTransient<Web3>((provider) =>
+            services.AddSingleton<Web3>((provider) =>
             {
                 var web3 = new Web3(provider.GetService<IBaseSettings>().EthereumUrl);
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(provider.GetService<ILykkeSigningAPI>(), web3);

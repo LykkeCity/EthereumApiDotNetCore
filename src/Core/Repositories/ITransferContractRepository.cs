@@ -12,15 +12,17 @@ namespace Core.Repositories
         string CoinAdapterAddress { get; set; }
         string ExternalTokenAddress { get; set; }
         bool ContainsEth { get; set; }
+        string AssignmentHash { get; set; }
     }
 
     public class TransferContract : ITransferContract
     {
-       public string ContractAddress { get; set; }
-       public string UserAddress { get; set; }
-       public string CoinAdapterAddress { get; set; }
-       public string ExternalTokenAddress { get; set; }
-       public bool ContainsEth { get; set; }
+        public string ContractAddress { get; set; }
+        public string UserAddress { get; set; }
+        public string CoinAdapterAddress { get; set; }
+        public string ExternalTokenAddress { get; set; }
+        public bool ContainsEth { get; set; }
+        public string AssignmentHash { get; set; }
     }
 
     public interface ITransferContractRepository

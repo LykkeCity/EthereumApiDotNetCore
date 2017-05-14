@@ -61,7 +61,7 @@ namespace Services.Coins
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI)
+            ILykkeSigningAPI lykkeSigningAPI,)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;

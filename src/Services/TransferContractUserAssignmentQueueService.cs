@@ -4,6 +4,7 @@ using Core.Exceptions;
 using Core.Notifiers;
 using Core.Repositories;
 using Core.Settings;
+using Core.Utils;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -13,24 +14,19 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-    [DataContract]
-    public class TransferContractUserAssignment
+    public class TransferContractUserAssignment : QueueMessageBase
     {
-        [DataMember]
         public string UserAddress { get; set; }
 
-        [DataMember]
         public string TransferContractAddress { get; set; }
 
-        [DataMember]
         public string CoinAdapterAddress { get; set; }
     }
 
     public interface ITransferContractUserAssignmentQueueService
     {
         Task PushContract(TransferContractUserAssignment assignment);
-        Task<int> Count();
-        Task<bool> CompleteTransfer();
+        Task CompleteTransfer(TransferContractUserAssignment assignment);
     }
 
     public class TransferContractUserAssignmentQueueService : ITransferContractUserAssignmentQueueService
@@ -55,31 +51,6 @@ namespace Services
             _settings = settings;
         }
 
-        public async Task<TransferContractUserAssignment> GetContract()
-        {
-            string contractSerialized = await GetContractRaw();
-            TransferContractUserAssignment contract =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<TransferContractUserAssignment>(contractSerialized);
-
-            return contract;
-        }
-
-        public async Task<string> GetContractRaw()
-        {
-            var message = await _queue.GetRawMessageAsync();
-            if (message == null)
-                NotifyAboutError();
-
-            await _queue.FinishRawMessageAsync(message);
-
-            var contract = message.AsString;
-
-            if (string.IsNullOrWhiteSpace(contract))
-                NotifyAboutError();
-
-            return contract;
-        }
-
         public async Task PushContract(TransferContractUserAssignment transferContract)
         {
             string transferContractSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(transferContract);
@@ -98,26 +69,12 @@ namespace Services
             throw new BackendException(BackendExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
         }
 
-        public async Task<bool> CompleteTransfer()
+        public async Task CompleteTransfer(TransferContractUserAssignment assignment)
         {
-            var message = await _queue.GetRawMessageAsync();
-            if (message == null)
-                return false;
-
-            var contract = message.AsString;
-
-            if (string.IsNullOrWhiteSpace(contract))
-                return false;
-
-            TransferContractUserAssignment assignment =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<TransferContractUserAssignment>(contract);
-
             ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
             if (coinAdapter == null)
             {
-                await _queue.FinishRawMessageAsync(message);
-                //log error
-                return true;
+                throw new Exception("assignment.CoinAdapterAddress is empty");
             }
 
             string coinAbi;
@@ -133,12 +90,13 @@ namespace Services
             var ethereumContract = _web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
             var function = ethereumContract.GetFunction("setTransferAddressUser");
             //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
-            string transaction =
+            string transactionHash =
                 await function.SendTransactionAsync(_settings.EthereumMainAccount,
                 assignment.UserAddress, assignment.TransferContractAddress);
+            var transferContract = await _transferContractRepository.GetAsync(assignment.TransferContractAddress);
+            transferContract.AssignmentHash = transactionHash;
 
-            await _queue.FinishRawMessageAsync(message);
-            return true;
+            await _transferContractRepository.SaveAsync(transferContract);
         }
     }
 }

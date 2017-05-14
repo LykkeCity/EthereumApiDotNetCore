@@ -37,6 +37,8 @@ namespace Core.Settings
         Dictionary<string, EthereumContract> CoinContracts { get; set; }
         string ERC20ABI { get; set; }
         string CoinAbi { get; set; }
+        int MaxDequeueCount { get; set; }
+        int MaxQueueDelay { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -80,6 +82,8 @@ namespace Core.Settings
         public string CoinAbi { get; set; }
 
         public EthereumContract ExternalTokenContract { get; set; }
+        public int MaxDequeueCount { get; set; } = 1000;
+        public int MaxQueueDelay { get; set; } = 5000;
     }
 
     public class EthereumContract

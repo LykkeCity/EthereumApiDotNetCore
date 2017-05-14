@@ -11,11 +11,9 @@ using AzureStorage.Queue;
 
 namespace Services.Coins
 {
-
-
     public interface ICoinTransactionService
     {
-        Task<bool> ProcessTransaction();
+        Task<bool> ProcessTransaction(CoinTransactionMessage transaction);
         Task PutTransactionToQueue(string transactionHash);
     }
     public class CoinTransactionService : ICoinTransactionService
@@ -45,18 +43,18 @@ namespace Services.Coins
         }
 
 
-        public async Task<bool> ProcessTransaction()
+        public async Task<bool> ProcessTransaction(CoinTransactionMessage transaction)
         {
-            var msg = await _coinTransationMonitoringQueue.GetRawMessageAsync();
-            if (msg == null)
-                return false;
-            var transaction = JsonConvert.DeserializeObject<CoinTransactionMessage>(msg.AsString);
-
             var receipt = await _transactionService.GetTransactionReceipt(transaction.TransactionHash);
             if (receipt == null)
                 return false;
 
-            ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash);
+            ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash) 
+                ?? new CoinTransaction()
+                    {
+                        ConfirmationLevel = 0,
+                        TransactionHash = transaction.TransactionHash
+                    };
             bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash, Constants.GasForCoinTransaction);
 
             var confimations = await _contractService.GetCurrentBlock() - receipt.BlockNumber;
@@ -76,8 +74,8 @@ namespace Services.Coins
                     await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
                             $"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
             }
+
             await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
-            await _coinTransationMonitoringQueue.FinishRawMessageAsync(msg);
             return true;
         }
 
@@ -92,8 +90,8 @@ namespace Services.Coins
                     ConfirmationLevel = coinTransaction.ConfirmationLevel,
                     Error = coinTransaction.Error
                 }));
-                await
-                _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
+
+                await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
                     $"Put coin transaction {coinTransaction.TransactionHash} to finished queue with confimation level {coinTransaction.ConfirmationLevel}. Error = {coinTransaction.Error}");
             }
         }
