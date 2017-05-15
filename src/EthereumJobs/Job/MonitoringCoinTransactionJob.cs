@@ -24,7 +24,7 @@ namespace EthereumJobs.Job
             _coinTransactionService = coinTransactionService;
         }
 
-        [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
+        [QueueTrigger(Constants.TransactionMonitoringQueue, 500, true)]
         public async Task Execute(CoinTransactionMessage transaction, QueueTriggeringContext context)
         {
             try

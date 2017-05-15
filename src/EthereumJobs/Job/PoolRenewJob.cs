@@ -28,13 +28,9 @@ namespace EthereumJobs.Job
         }
 
         [TimerTrigger("1.00:00:00")]
-        public async Task RenewPool()
+        public async Task Execute()
         {
-            await RenewTransferContracts();
-        }
-
-        private async Task RenewTransferContracts()
-        {
+            await _logger.WriteInfoAsync("PoolRenewJob", "Execute", "", "PoolRenewJob has been started ", DateTime.UtcNow);
             await _coinRepository.ProcessAllAsync(async (coins) =>
             {
                 foreach (var coin in coins)
@@ -48,15 +44,17 @@ namespace EthereumJobs.Job
 
                         for (int i = 0; i < count; i++)
                         {
-                            var cobtract = await transferContractQueueService.GetContract();
-                            if (cobtract == null)
+                            var contract = await transferContractQueueService.GetContract();
+                            if (contract == null)
                                 return;
-                            await transferContractQueueService.PushContract(cobtract);
+                            await transferContractQueueService.PushContract(contract);
                         }
+
+                        await _logger.WriteInfoAsync("PoolRenewJob", "Execute", "", $"PoolRenewJob has been finished for {count} contracts in {coinPoolQueueName} ", DateTime.UtcNow);
                     }
                     catch (Exception e)
                     {
-                        await _logger.WriteErrorAsync("PoolRenewJob", "RenewTransferContracts", "", e);
+                        await _logger.WriteErrorAsync("PoolRenewJob", "Execute", "", e);
                     }
                 }
             });

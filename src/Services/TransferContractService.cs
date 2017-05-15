@@ -20,8 +20,7 @@ namespace Services
 
         Task<ITransferContract> GetTransferContract(string userAddress, string coinAdapterAddress);
 
-        Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
-            string coinAdapterAddress, string userAddress);
+        Task<string> RecievePaymentFromTransferContract(string transferContractAddress, string coinAdapterAddress);
 
         Task<BigInteger> GetBalanceOnAdapter(string coinAddress, string clientAddress);
         Task<BigInteger> GetBalance(string transferContractAddress, string clientAddress);
@@ -151,7 +150,7 @@ namespace Services
         }
 
         public async Task<string> RecievePaymentFromTransferContract(string transferContractAddress,
-            string coinAdapterAddress, string userAddress)
+            string coinAdapterAddress)
         {
             ICoin coinDb = await _coinRepository.GetCoinByAddress(coinAdapterAddress);
 

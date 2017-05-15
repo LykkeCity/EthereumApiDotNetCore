@@ -45,7 +45,7 @@ namespace EthereumJobs.Job
 
                 transaction.LastError = ex.Message;
 
-                if (transaction.DequeueCount >= _settings.MaxDequeueCount)
+                if (transaction.DequeueCount >= 4)
                 {
                     context.MoveMessageToPoison();
                 }

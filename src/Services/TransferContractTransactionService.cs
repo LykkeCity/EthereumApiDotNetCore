@@ -80,8 +80,7 @@ namespace Services
                 var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
                 var balance = await _transferContractService.GetBalance(contractTransferTr.ContractAddress, contractTransferTr.UserAddress);
-                var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress,
-                    contractEntity.CoinAdapterAddress, contractTransferTr.UserAddress);
+                var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
 
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {

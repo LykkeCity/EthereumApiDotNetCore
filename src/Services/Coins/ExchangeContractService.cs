@@ -61,7 +61,7 @@ namespace Services.Coins
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI,)
+            ILykkeSigningAPI lykkeSigningAPI)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -204,7 +204,7 @@ namespace Services.Coins
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var ping = contract.GetFunction("ping");
-            await ping.SendTransactionAsync(_settings.EthereumMainAccount);
+            string transactionHash = await ping.SendTransactionAsync(_settings.EthereumMainAccount);
         }
 
         public async Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate)

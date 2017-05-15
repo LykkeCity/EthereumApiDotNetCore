@@ -43,7 +43,7 @@
     "Level2TransactionConfirmation": "${EthereumCoreLevel2TransactionConfirmation}",
     "Level3TransactionConfirmation": "${EthereumCoreLevel3TransactionConfirmation}",
     "ERC20ABI": "${EthereumCoreERC20ABI}",
-    "CoinAbi": "",
+    "CoinAbi": "${EthereumCoreCoinAbi}",
     "ExternalTokenContract": {
       "Abi": "${EthereumCoreExternalTokenContractAbi}",
       "ByteCode": "${EthereumCoreExternalTokenContractByteCode}"

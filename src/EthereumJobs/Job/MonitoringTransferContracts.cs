@@ -48,7 +48,7 @@ namespace EthereumJobs.Job
             _transferContractTransactionService = transferContractTransactionService;
         }
 
-        [TimerTrigger("0.00:05:00")]
+        [TimerTrigger("0.00:04:00")]
         public async Task Execute()
         {
             await _transferContractsRepository.ProcessAllAsync(async (item) =>
@@ -65,6 +65,10 @@ namespace EthereumJobs.Job
                             wallet.LastBalance == "0")
                         {
                             BigInteger balance = await _transferContractService.GetBalance(item.ContractAddress, item.UserAddress);
+                            string currency = item.ContainsEth ? "Wei" : "Tokens";
+                            await _logger.WriteInfoAsync("MonitoringTransferContracts", "Execute","",$"Balance on transfer address - {item.ContractAddress}" +
+                                $" for adapter contract {item.CoinAdapterAddress} is {balance} ({currency})" +
+                                $" transfer belongs to user {item.UserAddress}", DateTime.UtcNow);
 
                             if (balance > 0)
                             {

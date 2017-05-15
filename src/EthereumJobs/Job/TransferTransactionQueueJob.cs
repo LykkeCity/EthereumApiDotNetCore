@@ -12,6 +12,7 @@ using Core.Settings;
 
 namespace EthereumJobs.Job
 {
+    //Cashin
     public class TransferTransactionQueueJob
     {
         private readonly ITransferContractTransactionService _contractTransferTransactionService;

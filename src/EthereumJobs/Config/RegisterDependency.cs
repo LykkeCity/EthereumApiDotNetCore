@@ -28,15 +28,17 @@ namespace EthereumJobs.Config
         {
             collection.AddTransient<ProcessManualEvents>();
             collection.AddSingleton<MonitoringJob>();
-            collection.AddSingleton<TransferTransactionQueueJob>();
-            collection.AddSingleton<MonitoringCoinTransactionJob>();
 
             #region NewJobs
 
+            collection.AddSingleton<MonitoringCoinTransactionJob>();
             collection.AddSingleton<MonitoringTransferContracts>();
             collection.AddSingleton<MonitoringTransferTransactions>();
             collection.AddSingleton<TransferContractPoolJob>();
             collection.AddSingleton<TransferContractUserAssignmentJob>();
+            collection.AddSingleton<PoolRenewJob>();
+            collection.AddSingleton<PingContractsJob>();
+            collection.AddSingleton<TransferTransactionQueueJob>();
 
             #endregion
 
