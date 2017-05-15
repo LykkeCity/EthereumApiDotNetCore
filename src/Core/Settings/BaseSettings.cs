@@ -39,6 +39,7 @@ namespace Core.Settings
         string CoinAbi { get; set; }
         int MaxDequeueCount { get; set; }
         int MaxQueueDelay { get; set; }
+        int BroadcastMonitoringPeriodSeconds { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -84,6 +85,7 @@ namespace Core.Settings
         public EthereumContract ExternalTokenContract { get; set; }
         public int MaxDequeueCount { get; set; } = 1000;
         public int MaxQueueDelay { get; set; } = 5000;
+        public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;
     }
 
     public class EthereumContract

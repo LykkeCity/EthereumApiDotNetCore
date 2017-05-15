@@ -4,6 +4,7 @@ using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services
@@ -15,18 +16,27 @@ namespace Services
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IBaseSettings _settings;
         private readonly Web3 _web3;
+        private readonly ITransferContractService _transferContractService;
 
         public AssetContractService(IBaseSettings settings,
             IContractService contractService,
             ICoinRepository coinRepository,
             IEthereumContractRepository ethereumContractRepository,
-            IErcInterfaceService ercInterfaceService, Web3 web3)
+            IErcInterfaceService ercInterfaceService, 
+            Web3 web3, 
+            ITransferContractService transferContractService)
         {
+            _transferContractService = transferContractService;
             _settings = settings;
             _contractService = contractService;
             _coinRepository = coinRepository;
             _ercInterfaceService = ercInterfaceService;
             _web3 = web3;
+        }
+
+        public Task<IEnumerable<ICoin>> GetAll()
+        {
+            return _coinRepository.GetAll();
         }
 
         public async Task<string> CreateCoinContract(ICoin coin)
@@ -79,6 +89,13 @@ namespace Services
                 await function.SendTransactionAsync(_settings.EthereumMainAccount);
 
             return transactionHash;
+        }
+
+        public async Task<BigInteger> GetBalance(string coinAdapterAddress, string userAddress)
+        {
+            BigInteger balance = await _transferContractService.GetBalanceOnAdapter(coinAdapterAddress, userAddress);
+
+            return balance;
         }
     }
 }

@@ -8,5 +8,6 @@ namespace Core.Utils
     {
         public int DequeueCount { get; set; }
         public string LastError { get; set; }
+        public DateTime PutDateTime { get; set; }
     }
 }

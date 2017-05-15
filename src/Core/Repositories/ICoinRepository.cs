@@ -36,5 +36,6 @@ namespace Core.Repositories
         Task<ICoin> GetCoin(string id);
         Task InsertOrReplace(ICoin coin);
         Task<ICoin> GetCoinByAddress(string coinAddress);
+        Task<IEnumerable<ICoin>> GetAll();
     }
 }

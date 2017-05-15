@@ -60,12 +60,12 @@ namespace ContractBuilder
             //    Key = "",
             //});
 
-            //var service = ServiceProvider.GetService<IErcInterfaceService>();
-            //service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
-            //    "0xfcd6ef45a385f7b027302ad484e1ceedea5a85dc", new System.Numerics.BigInteger(1234)).Wait();
-            var paymentService = ServiceProvider.GetService<IPaymentService>();
-            string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
-                "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
+            var service = ServiceProvider.GetService<IErcInterfaceService>();
+            service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
+                "0xfcd6ef45a385f7b027302ad484e1ceedea5a85dc", new System.Numerics.BigInteger(1234)).Wait();
+            //var paymentService = ServiceProvider.GetService<IPaymentService>();
+            //string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
+            //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
 
             while (!exit)
             {

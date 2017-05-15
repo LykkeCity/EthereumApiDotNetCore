@@ -13,7 +13,7 @@ namespace Services.Coins
 {
     public interface ICoinTransactionService
     {
-        Task<bool> ProcessTransaction(CoinTransactionMessage transaction);
+        Task<ICoinTransaction> ProcessTransaction(CoinTransactionMessage transaction);
         Task PutTransactionToQueue(string transactionHash);
     }
     public class CoinTransactionService : ICoinTransactionService
@@ -43,11 +43,11 @@ namespace Services.Coins
         }
 
 
-        public async Task<bool> ProcessTransaction(CoinTransactionMessage transaction)
+        public async Task<ICoinTransaction> ProcessTransaction(CoinTransactionMessage transaction)
         {
             var receipt = await _transactionService.GetTransactionReceipt(transaction.TransactionHash);
             if (receipt == null)
-                return false;
+                return null;
 
             ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash) 
                 ?? new CoinTransaction()
@@ -66,35 +66,27 @@ namespace Services.Coins
             };
 
             await _coinTransactionRepository.InsertOrReplaceAsync(coinTransaction);
+            //await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
 
-            if (!error && coinTransaction.ConfirmationLevel != Level3Confirm)
-            {
-                await PutTransactionToQueue(coinTransaction.TransactionHash);
-                if (coinTransaction.ConfirmationLevel != coinDbTransaction?.ConfirmationLevel)
-                    await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
-                            $"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
-            }
-
-            await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
-            return true;
+            return coinTransaction;
         }
 
-        private async Task FireTransactionCompleteEvent(CoinTransaction coinTransaction, ICoinTransaction coinDbTransaction)
-        {
-            if (coinTransaction.ConfirmationLevel != (coinDbTransaction?.ConfirmationLevel ?? 0) ||
-                coinTransaction.Error != coinDbTransaction?.Error)
-            {
-                await _coinTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionCompleteEvent
-                {
-                    TransactionHash = coinTransaction.TransactionHash,
-                    ConfirmationLevel = coinTransaction.ConfirmationLevel,
-                    Error = coinTransaction.Error
-                }));
+        //private async Task FireTransactionCompleteEvent(CoinTransaction coinTransaction, ICoinTransaction coinDbTransaction)
+        //{
+        //    if (coinTransaction.ConfirmationLevel != (coinDbTransaction?.ConfirmationLevel ?? 0) ||
+        //        coinTransaction.Error != coinDbTransaction?.Error)
+        //    {
+        //        await _coinTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionCompleteEvent
+        //        {
+        //            TransactionHash = coinTransaction.TransactionHash,
+        //            ConfirmationLevel = coinTransaction.ConfirmationLevel,
+        //            Error = coinTransaction.Error
+        //        }));
 
-                await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
-                    $"Put coin transaction {coinTransaction.TransactionHash} to finished queue with confimation level {coinTransaction.ConfirmationLevel}. Error = {coinTransaction.Error}");
-            }
-        }
+        //        await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
+        //            $"Put coin transaction {coinTransaction.TransactionHash} to finished queue with confimation level {coinTransaction.ConfirmationLevel}. Error = {coinTransaction.Error}");
+        //    }
+        //}
 
         private int GetTransactionConfirmationLevel(BigInteger confimations)
         {
@@ -109,7 +101,7 @@ namespace Services.Coins
 
         public Task PutTransactionToQueue(string transactionHash)
         {
-            return PutTransactionToQueue(new CoinTransactionMessage { TransactionHash = transactionHash });
+            return PutTransactionToQueue(new CoinTransactionMessage { TransactionHash = transactionHash, PutDateTime = DateTime.UtcNow });
         }
 
         public async Task PutTransactionToQueue(CoinTransactionMessage transaction)

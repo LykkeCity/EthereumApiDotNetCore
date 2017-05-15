@@ -12,6 +12,7 @@ using Services.Coins;
 using Common.Log;
 using EthereumApiSelfHosted.Models;
 using Core.Repositories;
+using System.Numerics;
 
 namespace EthereumApi.Controllers
 {
@@ -27,6 +28,29 @@ namespace EthereumApi.Controllers
         {
             _assetContractService = assetContractService;
             _logger = logger;
+        }
+
+        [HttpGet]
+        [Produces(typeof(ListResult<CoinResult>))]
+        public async Task<IActionResult> GetAllAdapters()
+        {
+            IEnumerable<ICoin> all = await _assetContractService.GetAll();
+            IEnumerable<CoinResult> result = all.Select(x => new CoinResult()
+            {
+                AdapterAddress = x.AdapterAddress,
+                Blockchain = x.Blockchain,
+                BlockchainDepositEnabled = x.BlockchainDepositEnabled,
+                ContainsEth = x.ContainsEth,
+                ExternalTokenAddress = x.ExternalTokenAddress,
+                Id = x.Id,
+                Multiplier = x.Multiplier,
+                Name = x.Name
+            });
+
+            return Ok(new ListResult<CoinResult>()
+            {
+                Data = result
+            });
         }
 
         [Route("create")]
@@ -55,6 +79,24 @@ namespace EthereumApi.Controllers
             return Ok(new RegisterResponse
             {
                 Contract = contractAddress
+            });
+        }
+
+        [Route("balance/{coinAdapterAddress}/{userAddress}")]
+        [HttpGet]
+        [Produces(typeof(BalanceModel))]
+        public async Task<IActionResult> CreateCoinAdapter([FromRoute]string coinAdapterAddress, [FromRoute]string userAddress)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            BigInteger amount = await _assetContractService.GetBalance(coinAdapterAddress, userAddress);
+
+            return Ok(new BalanceModel
+            {
+                Amount = amount.ToString()
             });
         }
     }

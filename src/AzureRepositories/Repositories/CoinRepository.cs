@@ -93,5 +93,12 @@ namespace AzureRepositories.Repositories
 
             await _table.GetDataByChunksAsync(function);
         }
+
+        public async Task<IEnumerable<ICoin>> GetAll()
+        {
+            var all = await _table.GetDataAsync(CoinEntity.Key);
+
+            return all;
+        }
     }
 }
