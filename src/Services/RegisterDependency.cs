@@ -21,7 +21,7 @@ namespace Services
             services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
             services.AddTransient<IExchangeContractService, ExchangeContractService>();
             services.AddTransient<ICoinTransactionService, CoinTransactionService>();
-            services.AddTransient<IManualEventsService, ManualEventsService>();
+            //services.AddTransient<IManualEventsService, ManualEventsService>();
             services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
             services.AddTransient<AssetContractService>();
             services.AddTransient<TransferContractService>();

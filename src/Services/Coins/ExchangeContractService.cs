@@ -54,14 +54,15 @@ namespace Services.Coins
         private readonly ICoinContractFilterRepository _coinContractFilterRepository;
         private readonly ICoinRepository _coinRepository;
         private readonly IQueueExt _coinEventQueue;
-        private Web3 _web3;
+        private readonly Web3 _web3;
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
+        private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI)
+            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -71,6 +72,7 @@ namespace Services.Coins
             _coinContractFilterRepository = coinContractFilterRepository;
             _coinRepository = coinRepository;
             _coinEventQueue = queueFactory(Constants.CoinEventQueue);
+            _userPaymentHistoryRepository = userPaymentHistory;
         }
 
         public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
@@ -159,6 +161,8 @@ namespace Services.Coins
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await _cointTransactionService.PutTransactionToQueue(tr);
+            await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, tr, "CashOut");
+
             return tr;
 
         }
@@ -179,6 +183,8 @@ namespace Services.Coins
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await _cointTransactionService.PutTransactionToQueue(tr);
+            await SaveUserHistory(coinAddress, amount.ToString(), from, to, tr, "Transfer");
+
             return tr;
         }
 
@@ -313,7 +319,19 @@ namespace Services.Coins
             return response.SignedHash;
         }
 
-
+        private async Task SaveUserHistory(string adapterAddress, string amount, string userAddress, string toAddress, string trHash, string note)
+        {
+            await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
+            {
+                AdapterAddress = adapterAddress,
+                Amount = amount,
+                ToAddress = toAddress,
+                CreatedDate = DateTime.UtcNow,
+                Note = note,
+                TransactionHash = trHash,
+                UserAddress = userAddress
+            });
+        }
         //public async Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance)
         //{
         //    var web3 = new Web3(_settings.EthereumUrl);

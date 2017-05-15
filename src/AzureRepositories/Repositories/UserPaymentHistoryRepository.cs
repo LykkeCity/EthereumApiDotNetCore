@@ -26,7 +26,7 @@ namespace AzureRepositories.Repositories
 
         public string Note { get; set; }
         public string UserAddress { get; set; }
-        public string ContractAddress { get; set; }
+        public string ToAddress { get; set; }
         public string Amount { get; set; }
         public DateTime CreatedDate { get; set; }
         public string AdapterAddress { get; set; }
@@ -41,7 +41,7 @@ namespace AzureRepositories.Repositories
                 TransactionHash = userPayment.TransactionHash,
                 CreatedDate = userPayment.CreatedDate,
                 UserAddress = userPayment.UserAddress,
-                ContractAddress = userPayment.ContractAddress,
+                ToAddress = userPayment.ToAddress,
                 Note = userPayment.Note,
                 AdapterAddress = userPayment.AdapterAddress
             };

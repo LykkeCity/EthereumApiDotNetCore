@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Services;
 using AzureRepositories;
-using EthereumJobs.Actions;
 using EthereumJobs.Job;
 using Lykke.JobTriggers.Abstractions;
 using AzureRepositories.Notifiers;
@@ -26,7 +25,6 @@ namespace EthereumJobs.Config
 
         private static void RegisterJobs(IServiceCollection collection)
         {
-            collection.AddTransient<ProcessManualEvents>();
             collection.AddSingleton<MonitoringJob>();
 
             #region NewJobs

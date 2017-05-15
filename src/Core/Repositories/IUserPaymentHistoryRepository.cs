@@ -10,7 +10,7 @@ namespace Core.Repositories
         string AdapterAddress { get; set; }
         string TransactionHash { get; set; }
         string UserAddress { get; set; }
-        string ContractAddress { get; set; }
+        string ToAddress { get; set; }
         string Amount { get; set; }
         DateTime CreatedDate { get; set; }
         string Note { get; set; }
@@ -19,7 +19,7 @@ namespace Core.Repositories
     public class UserPaymentHistory : IUserPaymentHistory
     {
         public string TransactionHash { get; set; }
-        public string ContractAddress { get; set; }
+        public string ToAddress { get; set; }
         public string UserAddress { get; set; }
         public string Amount { get; set; }
         public DateTime CreatedDate { get; set; }

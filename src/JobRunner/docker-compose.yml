@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  apirunner:
+  jobrunner:
     image: lykkex/ethereumapidotnetcore:${tag}
     environment:
      - ConnectionStrings__ConnectionString=${SettingsConnString}

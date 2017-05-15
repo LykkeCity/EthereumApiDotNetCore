@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core.Settings;
-using EthereumJobs.Actions;
 using EthereumJobs.Job;
 using Microsoft.Extensions.DependencyInjection;
 using EthereumJobs.Config;
@@ -35,31 +34,16 @@ namespace EthereumJobs
             Services = collection.BuildServiceProvider();
 
             // restore contract payment events after service shutdown
-            await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
+            //await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
             //await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
 
-            Console.WriteLine($"----------- All data checked and restored, job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
+            Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
             RunJobs();
         }
 
         public void RunJobs()
         {
-            //Services.GetService<CheckContractQueueCountJob>().Start();
-            //Services.GetService<CheckPaymentsToUserContractsJob>().Start();
-            //Services.GetService<RefreshContractQueueJob>().Start();
-            // Services.GetService<MonitoringContractBalance>().Start();
-
-            #region OldJobs
-            //uncomment
-            //Services.GetService<TransferTransactionQueueJob>().Start();
-            //Services.GetService<TransferTransactionQueueJob>().Start();
-            //Services.GetService<ListenCoinContactsEvents>().Start();
-            //Services.GetService<MonitoringCoinTransactionJob>().Start();
-            //Services.GetService<PingContractsJob>().Start();
-
-            #endregion
-
             var triggerHost = new TriggerHost(Services);
 
             triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);

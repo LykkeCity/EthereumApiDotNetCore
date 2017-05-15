@@ -85,7 +85,7 @@ namespace Services
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {
                     Amount = balance.ToString(),
-                    ContractAddress = contractEntity.ContractAddress,
+                    ToAddress = contractEntity.ContractAddress,
                     AdapterAddress = contractEntity.CoinAdapterAddress,
                     CreatedDate = DateTime.UtcNow,
                     Note = $"Cashin from transfer contract {contractEntity.ContractAddress}",
