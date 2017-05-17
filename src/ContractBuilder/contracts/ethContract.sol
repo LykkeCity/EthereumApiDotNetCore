@@ -15,12 +15,7 @@ contract EthCoin is Coin(0) {
         return true;
     }
 
-    function cashout(address client, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract {
-
-        if (!_checkClientSign(client, hash, client_sig)) {
-            throw;                    
-        }
-
+    function cashout(address client, address to, uint amount) onlyFromExchangeContract {
         if (coinBalanceMultisig[client] < amount) {
             throw;
         }

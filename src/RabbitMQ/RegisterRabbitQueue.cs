@@ -2,6 +2,7 @@
 using Common.Log;
 using Core.Settings;
 using Lykke.RabbitMqBroker.Publisher;
+using Lykke.RabbitMqBroker.Subscriber;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System;
@@ -13,10 +14,17 @@ namespace RabbitMQ
         public static void RegisterRabbitQueue(this IServiceCollection services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
         {
             string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
-            var rabbitMqSettings = new RabbitMqPublisherSettings
+            RabbitMqPublisherSettings rabbitMqSettings = new RabbitMqPublisherSettings
             {
                 ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
                 ExchangeName = exchangeName
+            };
+            RabbitMqSubscriberSettings rabbitMqSubscriberSettings = new RabbitMqSubscriberSettings
+            {
+                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
+                ExchangeName = exchangeName,
+                IsDurable = true,
+                QueueName = settings.RabbitMq.RoutingKey
             };
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqSettings)
@@ -24,6 +32,13 @@ namespace RabbitMQ
                 .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey))
                 .SetLogger(logger)
                 .Start();
+
+            //RabbitMqSubscriber<string> subscriber =
+            //  new RabbitMqSubscriber<string>(rabbitMqSubscriberSettings)
+            //    .SetMessageDeserializer(new BytesDeserializer())
+            //    .SetMessageReadStrategy(new MessageReadWithTemporaryQueueStrategy(settings.RabbitMq.RoutingKey))
+            //    .SetLogger(logger)
+            //    .Start();
 
             services.AddSingleton<IMessageProducer<string>>(publisher);
             services.AddSingleton<IRabbitQueuePublisher, RabbitQueuePublisher>();

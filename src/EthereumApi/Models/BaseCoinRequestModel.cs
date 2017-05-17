@@ -10,8 +10,5 @@ namespace EthereumApi.Models
     {
         [Required]
         public Guid Id { get; set; }
-
-        [Required]
-        public Guid RequestId { get; set; }
     }
 }

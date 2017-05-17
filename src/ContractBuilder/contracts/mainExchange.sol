@@ -3,6 +3,11 @@ import "./coin.sol";
 
 contract MainExchange {
 
+    //private fields
+    address _owner;
+    uint _lastPing;
+    mapping (uint => bool) public transactions;
+
     function MainExchange() {
         _owner = msg.sender;
     }
@@ -27,10 +32,10 @@ contract MainExchange {
         }
 
         // trasfer amount_a in coin_a from client_a to client_b
-        _transferCoins(coinAddress_a, client_a, client_b, amount_a, hash, client_a_sign, params);
+        _transferCoins(coinAddress_a, client_a, client_b, amount_a);
 
         // trasfer amount_b in coin_b from client_b to client_a
-        _transferCoins(coinAddress_b, client_b, client_a, amount_b, hash, client_b_sign, params);
+        _transferCoins(coinAddress_b, client_b, client_a, amount_b);
 
         transactions[id] = true;
 
@@ -49,7 +54,7 @@ contract MainExchange {
         }
 
         var coin_contract = Coin(coinAddress);
-        coin_contract.cashout(client, to, amount, hash, client_sign, params);
+        coin_contract.cashout(client, to, amount);
 
         transactions[id] = true;
     }
@@ -57,12 +62,39 @@ contract MainExchange {
     function transfer(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params) onlyowner {
         if (transactions[id])
             throw;
+
         bytes32 hash = sha3(id, coinAddress, from, to, amount);
+
         if (!_checkClientSign(from, hash, sign)) {
-            throw;                    
+            throw;
         }
-        _transferCoins(coinAddress, from, to, amount, hash, sign, params);
+
+        _transferCoins(coinAddress, from, to, amount);
+        transactions[id] = true; 
+    }
+
+    function transferWithChange(uint id, address coinAddress, address fromAddress, address toAddress, uint amount, uint change, bytes fromSign, bytes toSign, bytes params) onlyowner {
+        if (transactions[id])
+            throw;
         
+        if (amount <= change) {
+            throw;
+        }
+
+        bytes32 hashFrom = sha3(id, coinAddress, fromAddress, toAddress, amount);
+        bytes32 hashTo = sha3(id, coinAddress, toAddress, fromAddress, change);
+
+        if (!_checkClientSign(fromAddress, hashFrom, fromSign)) {
+            throw;
+        }
+
+        if (!_checkClientSign(toAddress, hashTo, toSign)) {
+            throw;
+        }
+
+        uint amountMinusChange = amount - change;
+
+        _transferCoins(coinAddress, fromAddress, toAddress, amountMinusChange);
         transactions[id] = true; 
     }
 
@@ -72,9 +104,9 @@ contract MainExchange {
         coin_contract.changeExchangeContract(newMainContract);
     }
 
-    function _transferCoins(address contractAddress, address from, address to, uint amount, bytes32 hash, bytes sig, bytes params) private {
+    function _transferCoins(address contractAddress, address from, address to, uint amount) private {
         var coin_contract = Coin(contractAddress);
-        coin_contract.transferMultisig(from, to, amount, hash, sig, params);
+        coin_contract.transferMultisig(from, to, amount);
     }
 
     function _checkClientSign(address client_addr, bytes32 hash, bytes sig) private returns(bool) {
@@ -91,32 +123,7 @@ contract MainExchange {
         return client_addr == ecrecover(hash, v, r, s);
     }
 
-    function ping() {
+    function ping() onlyowner {
         _lastPing = now;
     }
-
-    //To do: remove in release
-    //function getHash(uint id, address coinAddress, address client, address to, uint amount) public returns(bytes32) {
-    //   return sha3(id, coinAddress, client, to, amount);
-    //}
-
-    //function checkClientSign(address client_addr, bytes32 hash, bytes sig) public returns(bool) {
-    //    bytes32 r;
-    //    bytes32 s;
-    //    uint8 v;
-
-    //  assembly {
-    //        r := mload(add(sig, 32))
-    //        s := mload(add(sig, 64))
-    //        v := mload(add(sig, 65))
-    //    }
-
-    //    return client_addr == ecrecover(hash, v, r, s);
-    //}
-
-    //private fields
-
-    address _owner;
-    uint _lastPing;
-    mapping (uint => bool) public transactions;
 }

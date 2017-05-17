@@ -8,6 +8,7 @@ using System.Numerics;
 using System;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
+using Core;
 
 namespace EthereumJobs.Job
 {
@@ -23,6 +24,7 @@ namespace EthereumJobs.Job
         private readonly TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
+        private readonly IEthereumTransactionService _ethereumTransactionService;
 
         public MonitoringTransferContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -33,9 +35,11 @@ namespace EthereumJobs.Job
             IUserPaymentRepository userPaymentRepository,
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
-            ITransferContractTransactionService transferContractTransactionService
+            ITransferContractTransactionService transferContractTransactionService,
+            IEthereumTransactionService ethereumTransactionService
             )
         {
+            _ethereumTransactionService = ethereumTransactionService;
             _ercInterfaceService = ercInterfaceService;
             _settings = settings;
             _transferContractsRepository = transferContractsRepository;
@@ -58,6 +62,11 @@ namespace EthereumJobs.Job
                     //Check that transfer contract assigned to user
                     if (!string.IsNullOrEmpty(item.UserAddress) && !string.IsNullOrEmpty(item.AssignmentHash))
                     {
+                        var assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
+                        if (!assignmentCompleted)
+                        {
+                            throw new Exception($"User assignment wasa not completed for {item.UserAddress} (trHash:{item.AssignmentHash})");
+                        }
                         //it is a transfer wallet
                         IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
                         if (wallet == null ||
@@ -65,14 +74,9 @@ namespace EthereumJobs.Job
                             wallet.LastBalance == "0")
                         {
                             BigInteger balance = await _transferContractService.GetBalance(item.ContractAddress, item.UserAddress);
-                            string currency = item.ContainsEth ? "Wei" : "Tokens";
-                            await _logger.WriteInfoAsync("MonitoringTransferContracts", "Execute","",$"Balance on transfer address - {item.ContractAddress}" +
-                                $" for adapter contract {item.CoinAdapterAddress} is {balance} ({currency})" +
-                                $" transfer belongs to user {item.UserAddress}", DateTime.UtcNow);
 
                             if (balance > 0)
                             {
-
                                 await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                                 {
                                     LastBalance = balance.ToString(),
@@ -89,6 +93,11 @@ namespace EthereumJobs.Job
                                     ContractAddress = item.ContractAddress,
                                     CreateDt = DateTime.UtcNow
                                 });
+
+                                string currency = item.ContainsEth ? "Wei" : "Tokens";
+                                await _logger.WriteInfoAsync("MonitoringTransferContracts", "Execute", "", $"Balance on transfer address - {item.ContractAddress}" +
+                                    $" for adapter contract {item.CoinAdapterAddress} is {balance} ({currency})" +
+                                    $" transfer belongs to user {item.UserAddress}", DateTime.UtcNow);
                             }
                         }
                     }
