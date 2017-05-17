@@ -40,6 +40,7 @@ namespace Core.Settings
         int MaxDequeueCount { get; set; }
         int MaxQueueDelay { get; set; }
         int BroadcastMonitoringPeriodSeconds { get; set; }
+        RabbitMq RabbitMq { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -86,6 +87,7 @@ namespace Core.Settings
         public int MaxDequeueCount { get; set; } = 1000;
         public int MaxQueueDelay { get; set; } = 5000;
         public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;
+        public RabbitMq RabbitMq { get; set; }
     }
 
     public class EthereumContract
@@ -93,6 +95,17 @@ namespace Core.Settings
         public string Address { get; set; }
         public string Abi { get; set; }
         public string ByteCode { get; set; }
+    }
+
+    public class RabbitMq
+    {
+        public string Host { get; set; }
+        public string ExternalHost { get; set; }
+        public int    Port { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string ExchangeEthereumCore { get; set; }
+        public string RoutingKey { get; set; }
     }
 
     public class DbSettings

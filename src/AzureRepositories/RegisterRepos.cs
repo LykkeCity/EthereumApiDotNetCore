@@ -38,6 +38,10 @@ namespace AzureRepositories
                 new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>())));
 
+            services.AddSingleton<ICoinEventRepository>(provider => new CoinEventRepository(
+                new AzureTableStorage<CoinEventEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinEventEntityTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<IExternalTokenRepository>(provider => new ExternalTokenRepository(
                 new AzureTableStorage<ExternalTokenEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.ExternalTokenTable,
                     provider.GetService<ILog>())));

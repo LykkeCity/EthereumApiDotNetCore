@@ -45,6 +45,7 @@ namespace Services
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
         private readonly ICoinTransactionService _cointTransactionService;
         private readonly ICoinTransactionRepository _coinTransactionRepository;
+        private readonly ICoinEventService _coinEventService;
 
         public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
             ILog logger,
@@ -55,7 +56,8 @@ namespace Services
             IUserTransferWalletRepository userTransferWalletRepository,
             IUserPaymentHistoryRepository userPaymentHistoryRepository,
             ICoinTransactionService cointTransactionService,
-            ICoinTransactionRepository coinTransactionRepository)
+            ICoinTransactionRepository coinTransactionRepository,
+            ICoinEventService coinEventService)
         {
             _logger = logger;
             _baseSettings = baseSettings;
@@ -66,6 +68,7 @@ namespace Services
             _userPaymentHistoryRepository = userPaymentHistoryRepository;
             _cointTransactionService = cointTransactionService;
             _coinTransactionRepository = coinTransactionRepository;
+            _coinEventService = coinEventService;
         }
 
         public async Task PutContractTransferTransaction(TransferContractTransaction tr)
@@ -77,11 +80,21 @@ namespace Services
         {
             try
             {
-                var amount = BigInteger.Parse(contractTransferTr.Amount);
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
                 var balance = await _transferContractService.GetBalance(contractTransferTr.ContractAddress, contractTransferTr.UserAddress);
-                var tr = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
 
+                if (balance == 0)
+                {
+                    await UpdateUserTransferWallet(contractTransferTr);
+                    await _logger.WriteInfoAsync("TransferContractTransactionService", "TransferToCoinContract", "", 
+                        $"Can't cashin: there is no funds on the transfer contract {contractTransferTr.ContractAddress}", DateTime.UtcNow);
+
+                    return;
+                }
+
+                var transactionHash = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
+                await _coinEventService.PublishEvent(new CoinEvent(transactionHash, contractTransferTr.ContractAddress, contractTransferTr.UserAddress,
+                                                        balance.ToString(), CoinEventType.CashinStarted, contractEntity.CoinAdapterAddress));
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {
                     Amount = balance.ToString(),
@@ -89,24 +102,13 @@ namespace Services
                     AdapterAddress = contractEntity.CoinAdapterAddress,
                     CreatedDate = DateTime.UtcNow,
                     Note = $"Cashin from transfer contract {contractEntity.ContractAddress}",
-                    TransactionHash = tr,
+                    TransactionHash = transactionHash,
                     UserAddress = contractTransferTr.UserAddress
                 });
-                await _coinTransactionRepository.AddAsync(new CoinTransaction()
-                {
-                    TransactionHash = tr
-                });
-                await _cointTransactionService.PutTransactionToQueue(tr);
 
-                await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-                {
-                    LastBalance = "",
-                    TransferContractAddress = contractTransferTr.ContractAddress,
-                    UpdateDate = DateTime.UtcNow,
-                    UserAddress = contractTransferTr.UserAddress
-                });
+                await UpdateUserTransferWallet(contractTransferTr);
                 await _logger.WriteInfoAsync("ContractTransferTransactionService", "TransferToCoinContract", "",
-                    $"Transfered {contractTransferTr.Amount} Eth from transfer contract to \"{_baseSettings.EthCoin}\" by transaction \"{tr}\". Receiver = {contractEntity.CoinAdapterAddress}");
+                    $"Transfered {balance} from transfer contract to \"{contractTransferTr.CoinAdapterAddress}\" by transaction \"{transactionHash}\". Receiver = {contractEntity.UserAddress}");
             }
             catch (Exception e)
             {
@@ -114,6 +116,17 @@ namespace Services
                             $"{contractTransferTr.ContractAddress} - {contractTransferTr.CoinAdapterAddress} - {contractTransferTr.Amount}", e);
                 throw;
             }
+        }
+
+        private async Task UpdateUserTransferWallet(TransferContractTransaction contractTransferTr)
+        {
+            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+            {
+                LastBalance = "",
+                TransferContractAddress = contractTransferTr.ContractAddress,
+                UpdateDate = DateTime.UtcNow,
+                UserAddress = contractTransferTr.UserAddress
+            });
         }
     }
 }

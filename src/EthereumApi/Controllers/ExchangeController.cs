@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Coins;
 using Common.Log;
 using System.Numerics;
+using System;
 
 namespace EthereumApi.Controllers
 {
@@ -14,12 +15,12 @@ namespace EthereumApi.Controllers
     [Produces("application/json")]
     public class ExchangeController : Controller
     {
-        private readonly IExchangeContractService _coinContractService;
+        private readonly IExchangeContractService _exchangeContractService;
         private readonly ILog _logger;
 
-        public ExchangeController(IExchangeContractService coinContractService, ILog logger)
+        public ExchangeController(IExchangeContractService exchangeContractService, ILog logger)
         {
-            _coinContractService = coinContractService;
+            _exchangeContractService = exchangeContractService;
             _logger = logger;
         }
 
@@ -47,16 +48,34 @@ namespace EthereumApi.Controllers
         public async Task<IActionResult> Cashout([FromBody]CashoutModel model)
         {
             if (!ModelState.IsValid)
-                throw new BackendException(BackendExceptionType.MissingRequiredParams);
+            {
+                return BadRequest(ModelState);
+            }
 
             await Log("Cashout", "Begin Process", model);
 
             var amount = BigInteger.Parse(model.Amount);
-            var transaction = await _coinContractService.CashOut(model.Id, model.Coin, model.Client, model.To, amount, model.Sign);
+            var transaction = await _exchangeContractService.CashOut(model.Id, model.Coin, model.Client, model.To, amount, model.Sign);
 
             await Log("Cashout", "End Process", model, transaction);
 
             return Ok(new TransactionResponse { TransactionHash = transaction });
+        }
+
+        [Route("checkId/{guid}")]
+        [HttpGet]
+        [Produces(typeof(CheckIdResponse))]
+        public async Task<IActionResult> CheckId([FromRoute]Guid guid)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool notInList = await _exchangeContractService.CheckId(guid);
+
+
+            return Ok(new CheckIdResponse { IsOk = notInList });
         }
 
         //[Route("cashin")]
@@ -84,12 +103,14 @@ namespace EthereumApi.Controllers
         public async Task<IActionResult> Transfer([FromBody] TransferModel model)
         {
             if (!ModelState.IsValid)
-                throw new BackendException(BackendExceptionType.MissingRequiredParams);
+            {
+                return BadRequest(ModelState);
+            }
 
             await Log("Transfer", "Begin Process", model);
 
-            BigInteger amount =  BigInteger.Parse(model.Amount);
-            var transaction = await _coinContractService.Transfer(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
+            BigInteger amount = BigInteger.Parse(model.Amount);
+            var transaction = await _exchangeContractService.Transfer(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
 
             await Log("Transfer", "End Process", model, transaction);
 

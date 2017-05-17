@@ -10,6 +10,7 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Core.Settings;
 using Core.Notifiers;
 using Core.Repositories;
+using Services;
 
 namespace EthereumJobs.Job
 {
@@ -19,13 +20,16 @@ namespace EthereumJobs.Job
         private readonly ICoinTransactionService _coinTransactionService;
         private readonly IBaseSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
+        private readonly ICoinEventService _coinEventService;
 
-        public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService, IBaseSettings settings, ISlackNotifier slackNotifier)
+        public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService, 
+            IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService)
         {
             _settings = settings;
             _log = log;
             _coinTransactionService = coinTransactionService;
             _slackNotifier = slackNotifier;
+            _coinEventService = coinEventService;
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
@@ -35,11 +39,6 @@ namespace EthereumJobs.Job
             try
             {
                 coinTransaction = await _coinTransactionService.ProcessTransaction(transaction);
-                if (coinTransaction == null)
-                {
-                    //TODO:Fire transaction failed
-                    return;
-                }
             }
             catch (Exception ex)
             {
@@ -58,25 +57,54 @@ namespace EthereumJobs.Job
                     context.MoveMessageToEnd(transaction.ToJson());
                     context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
                 }
-                await _log.WriteErrorAsync("EthereumJob", "MonitoringCoinTransactionJob", "", ex);
+
+                await _log.WriteErrorAsync("MonitoringCoinTransactionJob", "Execute", "", ex);
+                return;
             }
-            if (coinTransaction.ConfirmationLevel != 3 && DateTime.UtcNow - transaction.PutDateTime > TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds))
+
+            if ((coinTransaction == null || (coinTransaction.Error || coinTransaction.ConfirmationLevel == 0)) && 
+                DateTime.UtcNow - transaction.PutDateTime > TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds))
             {
                 context.MoveMessageToPoison(transaction.ToJson());
-                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations");
+                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations. Reason - timeout");
+                await SendCompletedCoinEvent(transaction.TransactionHash, false);
             }
             else
             {
-                //IF coinTransaction.ConfirmationLevel == 3 send event to external services via rabbit
-                if (!coinTransaction.Error && coinTransaction.ConfirmationLevel != 3)
+                if (coinTransaction != null && coinTransaction.ConfirmationLevel != 0)
                 {
+                    await SendCompletedCoinEvent(transaction.TransactionHash, true);
+                    await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
+                               $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                }
+                else
+                { 
                     context.MoveMessageToEnd(transaction.ToJson());
                     context.SetCountQueueBasedDelay(10000, 100);
-                        await _log.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
-                                $"Put coin transaction {coinTransaction.TransactionHash} to monitoring queue with confimation level {coinTransaction.ConfirmationLevel}");
+                        await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
+                                $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                 }
                 
             }
+        }
+
+        private async Task SendCompletedCoinEvent(string transactionHash, bool success)
+        {
+            var coinEvent = await _coinEventService.GetCoinEvent(transactionHash);
+            coinEvent.Success = success;
+
+            switch (coinEvent.CoinEventType)
+            {
+                case CoinEventType.CashinStarted:
+                case CoinEventType.CashoutStarted:
+                case CoinEventType.TransferStarted:
+                    //Say that Event Is completed
+                    coinEvent.CoinEventType++;
+                    break;
+                default: break;
+            }
+
+            await _coinEventService.PublishEvent(coinEvent, false);
         }
     }
 }

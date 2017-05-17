@@ -47,6 +47,18 @@
     "ExternalTokenContract": {
       "Abi": "${EthereumCoreExternalTokenContractAbi}",
       "ByteCode": "${EthereumCoreExternalTokenContractByteCode}"
-    }
+    },
+    "RabbitMq": {
+      "Host": "${EthereumCoreRabbitMqHost}",
+      "ExternalHost": "${EthereumCoreRabbitMqExternalHost}",
+      "Port": 5672,
+      "Username": "${EthereumCoreRabbitMqUsername}",
+      "Password": "${EthereumCoreRabbitMqPassword}",
+      "ExchangeEthereumCore": "${EthereumCoreRabbitMqExchangeEthereumCore}",
+      "RoutingKey": "${EthereumCoreRabbitMqRoutingKey}"
+    },
+    "MaxDequeueCount":  1000,
+    "MaxQueueDelay": 5000,
+    "BroadcastMonitoringPeriodSeconds": 600
   }
 }

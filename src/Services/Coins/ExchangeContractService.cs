@@ -41,6 +41,8 @@ namespace Services.Coins
 
         Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount);
 
+        Task<bool> CheckId(Guid guid);
+
         //Test sha3 and sign check on blockchain
         //Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance);
         //Task<bool> CheckSign(string clientAddress, byte[] hash, byte[] sign);
@@ -57,12 +59,13 @@ namespace Services.Coins
         private readonly Web3 _web3;
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
+        private readonly ICoinEventService _coinEventService;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory)
+            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory,  ICoinEventService coinEventService)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -73,6 +76,7 @@ namespace Services.Coins
             _coinRepository = coinRepository;
             _coinEventQueue = queueFactory(Constants.CoinEventQueue);
             _userPaymentHistoryRepository = userPaymentHistory;
+            _coinEventService = coinEventService;
         }
 
         public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
@@ -147,7 +151,6 @@ namespace Services.Coins
         public async Task<string> CashOut(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
         {
             var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
-            var convertedAmount = amount;
             if (string.IsNullOrEmpty(sign))
             {
                 sign = await GetSign(id, coinAddress, clientAddr, toAddr, amount);
@@ -157,13 +160,15 @@ namespace Services.Coins
 
             var convertedId = EthUtils.GuidToBigInteger(id);
             // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
-            var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-                        convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, convertedAmount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
-            await _cointTransactionService.PutTransactionToQueue(tr);
-            await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, tr, "CashOut");
+                        convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+            await _cointTransactionService.PutTransactionToQueue(transactionHash);
+            await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
+            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, clientAddr, toAddr,
+                amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
 
-            return tr;
+            return transactionHash;
 
         }
 
@@ -179,13 +184,15 @@ namespace Services.Coins
             var cashout = contract.GetFunction("transfer");
 
             var convertedId = EthUtils.GuidToBigInteger(id);
-            var tr = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
-            await _cointTransactionService.PutTransactionToQueue(tr);
-            await SaveUserHistory(coinAddress, amount.ToString(), from, to, tr, "Transfer");
+            await _cointTransactionService.PutTransactionToQueue(transactionHash);
+            await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
+            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
+                amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
 
-            return tr;
+            return transactionHash;
         }
 
         public async Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount)
@@ -278,21 +285,14 @@ namespace Services.Coins
             }
         }
 
-        private async Task FireCoinContractEvent(string coinAddress, string eventName, string caller, string from, string to, BigInteger amount)
+        public async Task<bool> CheckId(Guid guid)
         {
-            var coin = await _coinRepository.GetCoinByAddress(coinAddress);
-            decimal convertedAmount = amount.FromBlockchainAmount(coin.Multiplier);
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var bigIntRepresentation = EthUtils.GuidToBigInteger(guid);
+            var ping = contract.GetFunction("transactions");
+            bool isInList = await ping.CallAsync<bool>(bigIntRepresentation);
 
-            await _coinEventQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinContractPublicEvent
-            {
-                CoinName = coin.Id,
-                EventName = eventName,
-                Address = coin.AdapterAddress,
-                Amount = convertedAmount,
-                Caller = caller,
-                From = from,
-                To = to
-            }));
+            return isInList;
         }
 
         public async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
@@ -332,6 +332,24 @@ namespace Services.Coins
                 UserAddress = userAddress
             });
         }
+
+        private async Task FireCoinContractEvent(string coinAddress, string eventName, string caller, string from, string to, BigInteger amount)
+        {
+            var coin = await _coinRepository.GetCoinByAddress(coinAddress);
+            decimal convertedAmount = amount.FromBlockchainAmount(coin.Multiplier);
+
+            await _coinEventQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinContractPublicEvent
+            {
+                CoinName = coin.Id,
+                EventName = eventName,
+                Address = coin.AdapterAddress,
+                Amount = convertedAmount,
+                Caller = caller,
+                From = from,
+                To = to
+            }));
+        }
+
         //public async Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance)
         //{
         //    var web3 = new Web3(_settings.EthereumUrl);

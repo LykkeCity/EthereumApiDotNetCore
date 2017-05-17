@@ -34,6 +34,8 @@ namespace Services
             services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
             services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
             services.AddTransient<ISlackNotifier, SlackNotifier>();
+            services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
+            services.AddTransient<ICoinEventService, CoinEventService>();
 
             //Uses HttpClient Inside
             services.AddSingleton<ILykkeSigningAPI>((provider) =>

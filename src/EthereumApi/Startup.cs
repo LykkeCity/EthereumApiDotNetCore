@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Services;
 using Common.Log;
+using RabbitMQ;
 
 namespace EthereumApi
 {
@@ -33,17 +34,17 @@ namespace EthereumApi
         {
             var settings = GetSettings(Configuration);
             services.AddSingleton<IBaseSettings>(settings);
-            var provider = Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(services);
+            IServiceProvider provider;
 
             services.AddSingleton(settings);
 
             services.RegisterAzureLogs(settings, "Api");
             services.RegisterAzureStorages(settings);
             services.RegisterAzureQueues(settings);
-
             services.RegisterServices();
 
             provider = services.BuildServiceProvider();
+            services.RegisterRabbitQueue(settings, provider.GetService<ILog>());
 
             var builder = services.AddMvc();
 

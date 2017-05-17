@@ -5,6 +5,8 @@ using AzureRepositories;
 using EthereumJobs.Job;
 using Lykke.JobTriggers.Abstractions;
 using AzureRepositories.Notifiers;
+using Common.Log;
+using RabbitMQ;
 
 namespace EthereumJobs.Config
 {
@@ -19,6 +21,9 @@ namespace EthereumJobs.Config
             collection.RegisterAzureQueues(settings);
 
             collection.RegisterServices();
+            var provider = collection.BuildServiceProvider();
+
+            collection.RegisterRabbitQueue(settings, provider.GetService<ILog>());
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             RegisterJobs(collection);
         }

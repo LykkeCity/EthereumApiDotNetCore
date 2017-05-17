@@ -7,7 +7,6 @@
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
 
-        public const string UserPaymentHistoryTable = "UserPaymentHistory";
         public const string TransferContractUserAssignmentQueueName = "transfer-contract-user-assignment";
         public const string SlackNotifierQueue = "slack-notifications";
         public const string EthereumContractQueue = "ethereum-contract-queue";
@@ -70,5 +69,7 @@
         public const string EthereumContractsBlob = "EthereumContracts";
         public const string UserTransferWalletTable = "UserTransferWallet";
         public const string ExternalTokenTable = "ExternalToken";
+        public const string CoinEventEntityTable = "CoinEventEntity";
+        public const string UserPaymentHistoryTable = "UserPaymentHistory";
     }
 }
