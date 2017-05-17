@@ -23,11 +23,7 @@ contract ColorCoin is Coin(0){
     }
 
     // cashout coins (called only from exchange contract)
-    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { 
-        if (!_checkClientSign(from, hash, client_sig)) {
-            throw;                    
-        }
-
+    function cashout(address from, address to, uint amount) onlyFromExchangeContract { 
         if (coinBalanceMultisig[from] < amount) {
             throw;
         }

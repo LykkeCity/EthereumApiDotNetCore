@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace EthereumApi.Models
         public string To { get; set; }
 
         [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
         public string Amount { get; set; }
 
         [Required]

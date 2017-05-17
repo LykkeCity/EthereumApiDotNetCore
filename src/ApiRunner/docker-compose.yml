@@ -5,5 +5,5 @@ services:
     image: lykkex/lykke-service-ethereumapi:${tag}
     ports:
      - "${Port}:5000"
-     environment:
+    environment:
      - ConnectionStrings__ConnectionString=${SettingsConnString}

@@ -78,25 +78,6 @@ namespace EthereumApi.Controllers
             return Ok(new CheckIdResponse { IsOk = notInList });
         }
 
-        //[Route("cashin")]
-        //[HttpPost]
-        //[Produces(typeof(TransactionResponse))]
-        //public async Task<IActionResult> Cashin([FromBody]CashInModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        throw new BackendException(BackendExceptionType.MissingRequiredParams);
-
-        //    await Log("Cashin", "Begin Process", model);
-
-        //    var amount = BigInteger.Parse(model.Amount);
-
-        //    var transaction = await _coinContractService.CashIn(model.Id, model.Coin, model.Receiver, amount);
-
-        //    await Log("Cashin", "End Process", model, transaction);
-
-        //    return Ok(new TransactionResponse { TransactionHash = transaction });
-        //}
-
         [Route("transfer")]
         [HttpPost]
         [Produces(typeof(TransactionResponse))]
@@ -113,6 +94,27 @@ namespace EthereumApi.Controllers
             var transaction = await _exchangeContractService.Transfer(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
 
             await Log("Transfer", "End Process", model, transaction);
+
+            return Ok(new TransactionResponse { TransactionHash = transaction });
+        }
+
+        [Route("transferWithChange")]
+        [HttpPost]
+        [Produces(typeof(TransactionResponse))]
+        public async Task<IActionResult> TransferWithChange([FromBody] TransferWithChangeModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await Log("TransferWithChange", "Begin Process", model);
+
+            BigInteger amount = BigInteger.Parse(model.Amount);
+            BigInteger change = BigInteger.Parse(model.Change);
+            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.Coin, model.From, model.To, amount, model.SignFrom, change, model.SignTo);
+
+            await Log("TransferWithChange", "End Process", model, transaction);
 
             return Ok(new TransactionResponse { TransactionHash = transaction });
         }

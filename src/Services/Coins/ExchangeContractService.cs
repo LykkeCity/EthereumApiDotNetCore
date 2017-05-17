@@ -31,6 +31,9 @@ namespace Services.Coins
 
         Task<string> Transfer(Guid id, string coin, string from, string to, BigInteger amount, string sign);
 
+        Task<string> TransferWithChange(Guid id, string coinAddress, string from, string to, BigInteger amount,
+            string signFrom, BigInteger change, string signTo);
+
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
         Task PingMainExchangeContract();
@@ -163,7 +166,6 @@ namespace Services.Coins
             var transactionHash = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
-            await _cointTransactionService.PutTransactionToQueue(transactionHash);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
             await _coinEventService.PublishEvent(new CoinEvent(transactionHash, clientAddr, toAddr,
                 amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
@@ -181,16 +183,49 @@ namespace Services.Coins
             }
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
-            var cashout = contract.GetFunction("transfer");
+            var transferFunction = contract.GetFunction("transfer");
 
             var convertedId = EthUtils.GuidToBigInteger(id);
-            var transactionHash = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
-            await _cointTransactionService.PutTransactionToQueue(transactionHash);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
             await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
-                amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
+                amount.ToString(), CoinEventType.TransferStarted, coinAddress));
+
+            return transactionHash;
+        }
+
+        public async Task<string> TransferWithChange(Guid id, string coinAddress, string from, string to, BigInteger amount, 
+            string signFrom, BigInteger change, string signTo)
+        {
+            if (amount <= change)
+            {
+                throw new Exception("Amount can't be less or equal to change");
+            }
+
+            var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
+            if (string.IsNullOrEmpty(signFrom))
+            {
+                signFrom = await GetSign(id, coinAddress, from, to, amount);
+            }
+            if (string.IsNullOrEmpty(signTo))
+            {
+                signTo = await GetSign(id, coinAddress, to, from, change);
+            }
+
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var transferFunction = contract.GetFunction("transferWithChange");
+            var convertedId = EthUtils.GuidToBigInteger(id);
+            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
+                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                    convertedId, coinAFromDb.AdapterAddress, from, to, amount, change, 
+                    signFrom.HexToByteArray().FixByteOrder(), signTo.HexToByteArray().FixByteOrder(), new byte[0]);
+            var difference = (amount - change);
+
+            await SaveUserHistory(coinAddress, difference.ToString(), from, to, transactionHash, "TransferWithChange");
+            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
+                difference.ToString(), CoinEventType.TransferStarted, coinAddress));
 
             return transactionHash;
         }
@@ -313,7 +348,7 @@ namespace Services.Coins
 
             if (response == null || string.IsNullOrEmpty(response.SignedHash))
             {
-                throw new Exception("Current from addrss is unknown for sign service and sign was not provided");
+                throw new Exception("Current from address is unknown for sign service and sign was not provided");
             }
 
             return response.SignedHash;

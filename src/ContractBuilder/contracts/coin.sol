@@ -3,7 +3,6 @@ contract Coin {
 
     address _owner;
     address _exchangeContractAddress;
-    uint _lastPing;
     mapping (address => uint) public coinBalanceMultisig;
     mapping (address => address) public transferContractUser;
 
@@ -13,7 +12,7 @@ contract Coin {
 
     modifier onlyowner { if (msg.sender == _owner) _; }
     modifier ownerOrTransferContract { if (msg.sender == _owner || transferContractUser[msg.sender] != address(0)) _; }
-    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress || (now - _lastPing) > 30 days) _; }
+    modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress) _; }
 
     function Coin(address exchangeContractAddress) {
         _owner = msg.sender;
@@ -25,11 +24,7 @@ contract Coin {
     }
 
     // transfer coins (called only from exchange contract)
-    function transferMultisig(address from, address to, uint amount, bytes32 hash, bytes client_a_sig, bytes params) onlyFromExchangeContract {
-        if (!_checkClientSign(from, hash, client_a_sig)) {
-            throw;
-        }
-        
+    function transferMultisig(address from, address to, uint amount) onlyFromExchangeContract {       
         if (coinBalanceMultisig[from] < amount) {
             throw;
         }
@@ -44,21 +39,7 @@ contract Coin {
     function cashin(address receiver, uint amount) ownerOrTransferContract payable returns(bool) { return false; }
 
     // virtual method (if not implemented, then throws)
-    function cashout(address from, address to, uint amount, bytes32 hash, bytes client_sig, bytes params) onlyFromExchangeContract { throw; }
-
-    function _checkClientSign(address client_addr, bytes32 hash, bytes sig) returns(bool) {
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-
-        assembly {
-            r := mload(add(sig, 32))
-            s := mload(add(sig, 64))
-            v := mload(add(sig, 65))
-        }
-
-        return client_addr == ecrecover(hash, v, r, s);
-    }
+    function cashout(address from, address to, uint amount) onlyFromExchangeContract { throw; }
 
     function balanceOf(address owner) constant returns(uint) {
          var balance = coinBalanceMultisig[owner];
@@ -80,9 +61,5 @@ contract Coin {
          }
 
          transferContractUser[transferAddress] = userAddress;
-    }
-
-    function ping() {
-        _lastPing = now;
     }
 }

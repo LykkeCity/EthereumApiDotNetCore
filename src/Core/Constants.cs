@@ -2,6 +2,7 @@
 {
     public class Constants
     {
+        public const string BigIntTemplate =  "^[1-9][0-9]*$";
         /// <summary>
         /// Used to change table and queue names in testing enviroment
         /// </summary>
