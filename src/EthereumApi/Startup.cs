@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Services;
 using Common.Log;
 using RabbitMQ;
+using EthereumApi.Middleware;
 
 namespace EthereumApi
 {
@@ -28,13 +29,13 @@ namespace EthereumApi
         }
 
         public IConfigurationRoot Configuration { get; }
+        public IServiceProvider ServiceProvider { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var settings = GetSettings(Configuration);
             services.AddSingleton<IBaseSettings>(settings);
-            IServiceProvider provider;
 
             services.AddSingleton(settings);
 
@@ -43,12 +44,12 @@ namespace EthereumApi
             services.RegisterAzureQueues(settings);
             services.RegisterServices();
 
-            provider = services.BuildServiceProvider();
-            services.RegisterRabbitQueue(settings, provider.GetService<ILog>());
+            ServiceProvider = services.BuildServiceProvider();
+            services.RegisterRabbitQueue(settings, ServiceProvider.GetService<ILog>());
 
             var builder = services.AddMvc();
 
-            builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(provider.GetService<ILog>())); });
+            builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(ServiceProvider.GetService<ILog>())); });
 
             services.AddSwaggerGen(c =>
             {
@@ -65,8 +66,15 @@ namespace EthereumApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseStatusCodePagesWithReExecute("/home/error");
+            app.UseCors((policyBuilder) =>
+            {
+                policyBuilder.AllowAnyHeader();
+                policyBuilder.AllowAnyOrigin();
+            });
 
+            app.RegisterExceptionHandler(ServiceProvider.GetService<ILog>());
+
+            app.UseStatusCodePagesWithReExecute("/home/error");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

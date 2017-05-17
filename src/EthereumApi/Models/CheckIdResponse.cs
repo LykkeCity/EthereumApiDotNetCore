@@ -14,6 +14,6 @@ namespace EthereumApi.Models
         public bool IsOk{ get; set; }
 
         [DataMember]
-        public string ProposedId { get; set; }
+        public Guid ProposedId { get; set; }
     }
 }

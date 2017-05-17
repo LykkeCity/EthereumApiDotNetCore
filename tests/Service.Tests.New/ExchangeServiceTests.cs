@@ -235,6 +235,44 @@ namespace Tests
             var guid = Guid.NewGuid();
             var result = await _exchangeService.CheckId(guid);
 
+            Assert.IsTrue(result.IsFree);
+        }
+
+        [TestMethod]
+        public async Task TestCheckSign_IsCorrect()
+        {
+            var guid = Guid.NewGuid();
+            var amount = 50;
+            EthUtils.GuidToBigInteger(guid);
+            var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
+                            _ethereumAdapterAddress.HexToByteArray().ToHex() +
+                            ClientA.HexToByteArray().ToHex() +
+                            ClientA.HexToByteArray().ToHex() +
+                            EthUtils.BigIntToArrayWithPadding(new BigInteger(amount)).ToHex();
+
+            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+            var sign = Sign(hash, PrivateKeyA).ToHex();
+            var result = await _exchangeService.CheckSign(guid, _ethereumAdapterAddress, ClientA, ClientA, new BigInteger(amount), sign);
+
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task TestCheckSign_IsWrong()
+        {
+            var guid = Guid.NewGuid();
+            var amount = 50;
+            EthUtils.GuidToBigInteger(guid);
+            var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
+                            _ethereumAdapterAddress.HexToByteArray().ToHex() +
+                            ClientA.HexToByteArray().ToHex() +
+                            ClientA.HexToByteArray().ToHex() +
+                            EthUtils.BigIntToArrayWithPadding(new BigInteger(amount)).ToHex();
+
+            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+            var sign = Sign(hash, PrivateKeyA).ToHex();
+            var result = await _exchangeService.CheckSign(guid, _ethereumAdapterAddress, ClientA, ClientA, new BigInteger(amount - 1), sign);
+
             Assert.IsFalse(result);
         }
 
