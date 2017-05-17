@@ -72,10 +72,13 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool notInList = await _exchangeContractService.CheckId(guid);
+            var result = await _exchangeContractService.CheckId(guid);
 
-
-            return Ok(new CheckIdResponse { IsOk = notInList });
+            return Ok(new CheckIdResponse
+            {
+                IsOk = result.IsFree,
+                ProposedId = result.ProposedId,
+            });
         }
 
         [Route("transfer")]
@@ -96,6 +99,26 @@ namespace EthereumApi.Controllers
             await Log("Transfer", "End Process", model, transaction);
 
             return Ok(new TransactionResponse { TransactionHash = transaction });
+        }
+
+        [Route("checkSign")]
+        [HttpPost]
+        [Produces(typeof(CheckSignResponse))]
+        public async Task<IActionResult> CheckSign([FromBody] CheckSignModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await Log("TransferWithChange", "Begin Process", model);
+
+            BigInteger amount = BigInteger.Parse(model.Amount);
+            var result = await _exchangeContractService.CheckSign(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
+
+            await Log("TransferWithChange", "End Process", model, result.ToString());
+
+            return Ok(new CheckSignResponse { SignIsCorrect = result });
         }
 
         [Route("transferWithChange")]

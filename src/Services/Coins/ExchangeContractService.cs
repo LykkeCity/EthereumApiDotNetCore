@@ -17,6 +17,8 @@ using AzureStorage.Queue;
 using Nethereum.Contracts;
 using Nethereum.Util;
 using SigningServiceApiCaller;
+using Core.Common;
+using SigningServiceApiCaller.Models;
 
 namespace Services.Coins
 {
@@ -44,8 +46,9 @@ namespace Services.Coins
 
         Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount);
 
-        Task<bool> CheckId(Guid guid);
+        Task<IdCheckResult> CheckId(Guid guidToCheck);
 
+        Task<bool> CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
         //Test sha3 and sign check on blockchain
         //Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance);
         //Task<bool> CheckSign(string clientAddress, byte[] hash, byte[] sign);
@@ -68,7 +71,7 @@ namespace Services.Coins
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory,  ICoinEventService coinEventService)
+            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory, ICoinEventService coinEventService)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -196,7 +199,7 @@ namespace Services.Coins
             return transactionHash;
         }
 
-        public async Task<string> TransferWithChange(Guid id, string coinAddress, string from, string to, BigInteger amount, 
+        public async Task<string> TransferWithChange(Guid id, string coinAddress, string from, string to, BigInteger amount,
             string signFrom, BigInteger change, string signTo)
         {
             if (amount <= change)
@@ -219,7 +222,7 @@ namespace Services.Coins
             var convertedId = EthUtils.GuidToBigInteger(id);
             var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
-                    convertedId, coinAFromDb.AdapterAddress, from, to, amount, change, 
+                    convertedId, coinAFromDb.AdapterAddress, from, to, amount, change,
                     signFrom.HexToByteArray().FixByteOrder(), signTo.HexToByteArray().FixByteOrder(), new byte[0]);
             var difference = (amount - change);
 
@@ -320,14 +323,40 @@ namespace Services.Coins
             }
         }
 
-        public async Task<bool> CheckId(Guid guid)
+        public async Task<IdCheckResult> CheckId(Guid guidToCheck)
         {
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
-            var bigIntRepresentation = EthUtils.GuidToBigInteger(guid);
-            var ping = contract.GetFunction("transactions");
-            bool isInList = await ping.CallAsync<bool>(bigIntRepresentation);
 
-            return isInList;
+            var transactionsCheck = contract.GetFunction("transactions");
+            bool isInList = true;
+            Guid useNext = guidToCheck;
+            while (isInList)
+            {
+                var bigIntRepresentation = EthUtils.GuidToBigInteger(useNext);
+                isInList = await transactionsCheck.CallAsync<bool>(bigIntRepresentation);
+                if (isInList)
+                {
+                    useNext = Guid.NewGuid();
+                }
+            }
+
+            return new IdCheckResult()
+            {
+                IsFree = useNext == guidToCheck,
+                ProposedId = useNext
+            };
+        }
+
+        public async Task<bool> CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
+        {
+            if (string.IsNullOrEmpty(sign))
+            {
+                return false;
+            }
+
+            string externalSign = await GetSign(id, coinAddress, clientAddr, toAddr, amount);
+
+            return sign == externalSign;
         }
 
         public async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
@@ -339,14 +368,21 @@ namespace Services.Coins
                             EthUtils.BigIntToArrayWithPadding(amount).ToHex();
 
             var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
-            //var sign = Sign(hash, clientPrivateKey).ToHex();
-            var response = await _lykkeSigningAPI.ApiEthereumSignHashPostAsync(new SigningServiceApiCaller.Models.EthereumHashSignRequest()
+            HashSignResponse response;
+            try
             {
-                FromProperty = clientAddr,
-                Hash = hash.ToHex()
-            });
+                response = await _lykkeSigningAPI.ApiEthereumSignHashPostAsync(new SigningServiceApiCaller.Models.EthereumHashSignRequest()
+                {
+                    FromProperty = clientAddr,
+                    Hash = hash.ToHex()
+                });
 
-            if (response == null || string.IsNullOrEmpty(response.SignedHash))
+                if (response == null || string.IsNullOrEmpty(response.SignedHash))
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception e)
             {
                 throw new Exception("Current from address is unknown for sign service and sign was not provided");
             }

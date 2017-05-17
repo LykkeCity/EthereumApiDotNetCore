@@ -28,8 +28,15 @@ namespace Services
 
         public async Task PublishEvent(ICoinEvent coinEvent)
         {
-            string coinEventSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(coinEvent);
+            var @event = GetCoinEvent(coinEvent);
+            string coinEventSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(@event);
             await _rabbitPublisher.PublshEvent(coinEventSerialized);
+        }
+
+        private static CoinEvent GetCoinEvent(ICoinEvent coinEvent)
+        {
+            return new CoinEvent(coinEvent.TransactionHash, coinEvent.FromAddress, coinEvent.ToAddress, 
+                coinEvent.Amount, coinEvent.CoinEventType, coinEvent.ContractAddress, coinEvent.Success, coinEvent.Additional);
         }
     }
 }

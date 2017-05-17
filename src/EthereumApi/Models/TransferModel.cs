@@ -51,4 +51,23 @@ namespace EthereumApi.Models
         [Required]
         public string SignTo { get; set; }
     }
+
+    public class CheckSignModel : BaseCoinRequestModel
+    {
+        [Required]
+        public string Coin { get; set; }
+
+        [Required]
+        public string From { get; set; }
+
+        [Required]
+        public string To { get; set; }
+
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string Amount { get; set; }
+
+        [Required]
+        public string Sign { get; set; }
+    }
 }
