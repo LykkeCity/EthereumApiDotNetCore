@@ -33,9 +33,14 @@ namespace Tests
     {
         public static string _ethereumAdapterAddress = "";
         public static string _clientEthereumTransferAddress = "";
-        public static string _tokenAdapterAddress = "0x27b1ad3f1ae08eec8205bcbe91166b6387d67c4f";
-        public static string _clientTokenTransferAddress = "0x967ddcf62c2ecec1c4d231c7498c287b857846e7";
-        public static string _externalTokenAddress = "0x79e34063d05324e0bffc19901963d9ae5b101fba";
+
+        //BCAPTokenAddress -         0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0
+        //BCAPTokenAdapter-	   0x1e8e8ccbd9a7a8d82875054aa8342159d96356a9
+        //BCAPTransferAddress -      0x7ff01d3225726eb3dd3356fc57e71e5ec0aab042
+
+        public static string _tokenAdapterAddress = "0x1e8e8ccbd9a7a8d82875054aa8342159d96356a9";//"0x27b1ad3f1ae08eec8205bcbe91166b6387d67c4f";
+        public static string _clientTokenTransferAddress = "0x7ff01d3225726eb3dd3356fc57e71e5ec0aab042";//"0x967ddcf62c2ecec1c4d231c7498c287b857846e7";
+        public static string _externalTokenAddress = "0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0";//"0x79e34063d05324e0bffc19901963d9ae5b101fba";
         public static string _ethereumCoinOwnerB = "0xd513BeA430322c488600Af6eE094aB32238C7169";
         private IBaseSettings _settings;
         private ICoinRepository _coinRepository;
@@ -511,7 +516,7 @@ namespace Tests
             var transferHash = await _ercService.Transfer(externalTokenAddress, _settings.EthereumMainAccount, transferAddress, amount);
             while (await _transactionService.GetTransactionReceipt(transferHash) == null)
                 await Task.Delay(100);
-
+            var result = await _ercService.GetBalanceForExternalTokenAsync(transferAddress, externalTokenAddress);
             //cashin to adapter
             var transferCashinHash = await _transferContractService.RecievePaymentFromTransferContract(transferAddress, coinAdapterAddress);
             while (await _transactionService.GetTransactionReceipt(transferCashinHash) == null)
