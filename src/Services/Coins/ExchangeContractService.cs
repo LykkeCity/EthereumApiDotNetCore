@@ -19,6 +19,8 @@ using Nethereum.Util;
 using SigningServiceApiCaller;
 using Core.Common;
 using SigningServiceApiCaller.Models;
+using Core.Exceptions;
+using Nethereum.Signer;
 
 namespace Services.Coins
 {
@@ -204,7 +206,7 @@ namespace Services.Coins
         {
             if (amount <= change)
             {
-                throw new Exception("Amount can't be less or equal to change");
+                throw new ClientSideException(ExceptionType.MissingRequiredParams, "Amount can't be less or equal than change");
             }
 
             var coinAFromDb = await _coinRepository.GetCoinByAddress(coinAddress);
@@ -237,7 +239,9 @@ namespace Services.Coins
         {
             var coinDb = await _coinRepository.GetCoin(coin);
             if (!coinDb.BlockchainDepositEnabled)
-                throw new Exception("Coin must be payable");
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, "Coin must be payable");
+            }
             var contract = _web3.Eth.GetContract(_settings.TokenTransferContract.Abi, _settings.TokenTransferContract.Address);
             var cashin = contract.GetFunction("cashin");
 
@@ -353,21 +357,18 @@ namespace Services.Coins
             {
                 return false;
             }
+            var fixedSign = sign.EnsureHexPrefix();
+            var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
 
-            string externalSign = await GetSign(id, coinAddress, clientAddr, toAddr, amount);
+            var ecdaSignature = ExtractEcdsaSignature(sign);
+            string sender = EthECKey.RecoverFromSignature(ecdaSignature, hash).GetPublicAddress();
 
-            return sign == externalSign;
+            return clientAddr == sender;
         }
 
         public async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
         {
-            var strForHash = EthUtils.GuidToByteArray(id).ToHex() +
-                            coinAddress.HexToByteArray().ToHex() +
-                            clientAddr.HexToByteArray().ToHex() +
-                            toAddr.HexToByteArray().ToHex() +
-                            EthUtils.BigIntToArrayWithPadding(amount).ToHex();
-
-            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+            byte[] hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
             HashSignResponse response;
             try
             {
@@ -384,10 +385,23 @@ namespace Services.Coins
             }
             catch (Exception e)
             {
-                throw new Exception("Current from address is unknown for sign service and sign was not provided");
+                throw new ClientSideException(ExceptionType.WrongSign, "Current from address is unknown for sign service and sign was not provided");
             }
 
             return response.SignedHash;
+        }
+
+        private static byte[] GetHash(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
+        {
+            var strForHash = EthUtils.GuidToByteArray(id).ToHex() +
+                                        coinAddress.HexToByteArray().ToHex() +
+                                        clientAddr.HexToByteArray().ToHex() +
+                                        toAddr.HexToByteArray().ToHex() +
+                                        EthUtils.BigIntToArrayWithPadding(amount).ToHex();
+
+            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
+
+            return hash;
         }
 
         private async Task SaveUserHistory(string adapterAddress, string amount, string userAddress, string toAddress, string trHash, string note)
@@ -419,6 +433,24 @@ namespace Services.Coins
                 From = from,
                 To = to
             }));
+        }
+
+        private static EthECDSASignature ExtractEcdsaSignature(string signature)
+        {
+            var signatureArray = signature.HexToByteArray();
+
+            var v = signatureArray[64];
+
+            if ((v == 0) || (v == 1))
+                v = (byte)(v + 27);
+
+            var r = new byte[32];
+            Array.Copy(signatureArray, r, 32);
+            var s = new byte[32];
+            Array.Copy(signatureArray, 32, s, 0, 32);
+
+            var ecdaSignature = EthECDSASignatureFactory.FromComponents(r, s, v);
+            return ecdaSignature;
         }
 
         //public async Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance)

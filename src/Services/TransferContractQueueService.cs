@@ -74,8 +74,8 @@ namespace Services
 
         public void NotifyAboutError()
         {
-            _slackNotifier.ErrorAsync("Ethereum integration! User contract pool is empty!");
-            throw new BackendException(BackendExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
+            _slackNotifier.ErrorAsync("Ethereum Core Service! User contract pool is empty!");
+            throw new ClientSideException(ExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
         }
     }
 }

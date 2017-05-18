@@ -63,18 +63,12 @@ namespace Services
             return await _queue.Count() ?? 0;
         }
 
-        public void NotifyAboutError()
-        {
-            _slackNotifier.ErrorAsync("Ethereum integration! User contract pool is empty!");
-            throw new BackendException(BackendExceptionType.ContractPoolEmpty, "Transfer contract pool is empty!");
-        }
-
         public async Task CompleteTransfer(TransferContractUserAssignment assignment)
         {
             ICoin coinAdapter = await _coinRepository.GetCoinByAddress(assignment.CoinAdapterAddress);
             if (coinAdapter == null)
             {
-                throw new Exception("assignment.CoinAdapterAddress is empty");
+                throw new Exception($"CoinAdapterAddress {assignment.CoinAdapterAddress} does not exis");
             }
 
             string coinAbi;

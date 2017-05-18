@@ -73,7 +73,7 @@ namespace EthereumJobs.Job
                             string.IsNullOrEmpty(wallet.LastBalance) ||
                             wallet.LastBalance == "0")
                         {
-                            BigInteger balance = await _transferContractService.GetBalance(item.ContractAddress, item.UserAddress);
+                            BigInteger balance = await _transferContractService.GetBalance(item.ContractAddress);
 
                             if (balance > 0)
                             {

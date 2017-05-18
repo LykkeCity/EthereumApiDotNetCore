@@ -44,7 +44,9 @@ namespace EthereumApi.Controllers
 
         [Route("cashout")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> Cashout([FromBody]CashoutModel model)
         {
             if (!ModelState.IsValid)
@@ -64,7 +66,7 @@ namespace EthereumApi.Controllers
 
         [Route("checkId/{guid}")]
         [HttpGet]
-        [Produces(typeof(CheckIdResponse))]
+        [ProducesResponseType(typeof(CheckIdResponse), 200)]
         public async Task<IActionResult> CheckId([FromRoute]Guid guid)
         {
             if (!ModelState.IsValid)
@@ -83,7 +85,9 @@ namespace EthereumApi.Controllers
 
         [Route("transfer")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> Transfer([FromBody] TransferModel model)
         {
             if (!ModelState.IsValid)
@@ -104,6 +108,8 @@ namespace EthereumApi.Controllers
         [Route("checkSign")]
         [HttpPost]
         [Produces(typeof(CheckSignResponse))]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CheckSign([FromBody] CheckSignModel model)
         {
             if (!ModelState.IsValid)
@@ -123,7 +129,9 @@ namespace EthereumApi.Controllers
 
         [Route("transferWithChange")]
         [HttpPost]
-        [Produces(typeof(TransactionResponse))]
+        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferWithChange([FromBody] TransferWithChangeModel model)
         {
             if (!ModelState.IsValid)

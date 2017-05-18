@@ -245,14 +245,15 @@ namespace Tests
             var amount = 50;
             EthUtils.GuidToBigInteger(guid);
             var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-                            _ethereumAdapterAddress.HexToByteArray().ToHex() +
+                            _tokenAdapterAddress.HexToByteArray().ToHex() +
                             ClientA.HexToByteArray().ToHex() +
                             ClientA.HexToByteArray().ToHex() +
                             EthUtils.BigIntToArrayWithPadding(new BigInteger(amount)).ToHex();
 
             var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
             var sign = Sign(hash, PrivateKeyA).ToHex();
-            var result = await _exchangeService.CheckSign(guid, _ethereumAdapterAddress, ClientA, ClientA, new BigInteger(amount), sign);
+            //var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, ClientA, ClientA, new BigInteger(amount));
+            var result = await _exchangeService.CheckSign(guid, _tokenAdapterAddress, ClientA, ClientA, new BigInteger(amount), sign);
 
             Assert.IsTrue(result);
         }
@@ -494,7 +495,7 @@ namespace Tests
         private byte[] Sign(byte[] hash, string privateKey)
         {
             var key = new EthECKey(privateKey.HexToByteArray(), true);
-            var signature = key.SignAndCalculateV(hash);
+            EthECDSASignature signature = key.SignAndCalculateV(hash);
             //ToByteArrayUnsigned
             var r = signature.R.ToHex();
             var s = signature.S.ToHex();

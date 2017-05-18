@@ -31,7 +31,7 @@ namespace EthereumApi.Controllers
         }
 
         [HttpGet]
-        [Produces(typeof(ListResult<CoinResult>))]
+        [ProducesResponseType(typeof(RegisterResponse), 200)]
         public async Task<IActionResult> GetAllAdapters()
         {
             IEnumerable<ICoin> all = await _assetContractService.GetAll();
@@ -55,7 +55,7 @@ namespace EthereumApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        [Produces(typeof(RegisterResponse))]
+        [ProducesResponseType(typeof(RegisterResponse), 200)]
         public async Task<IActionResult> CreateCoinAdapter([FromBody]CreateAssetModel model)
         {
             if (!ModelState.IsValid)
@@ -84,7 +84,9 @@ namespace EthereumApi.Controllers
 
         [Route("balance/{coinAdapterAddress}/{userAddress}")]
         [HttpGet]
-        [Produces(typeof(BalanceModel))]
+        [ProducesResponseType(typeof(BalanceModel), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CreateCoinAdapter([FromRoute]string coinAdapterAddress, [FromRoute]string userAddress)
         {
             if (!ModelState.IsValid)

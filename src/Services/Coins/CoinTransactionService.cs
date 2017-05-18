@@ -66,27 +66,9 @@ namespace Services.Coins
             };
 
             await _coinTransactionRepository.InsertOrReplaceAsync(coinTransaction);
-            //await FireTransactionCompleteEvent(coinTransaction, coinDbTransaction);
 
             return coinTransaction;
         }
-
-        //private async Task FireTransactionCompleteEvent(CoinTransaction coinTransaction, ICoinTransaction coinDbTransaction)
-        //{
-        //    if (coinTransaction.ConfirmationLevel != (coinDbTransaction?.ConfirmationLevel ?? 0) ||
-        //        coinTransaction.Error != coinDbTransaction?.Error)
-        //    {
-        //        await _coinTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionCompleteEvent
-        //        {
-        //            TransactionHash = coinTransaction.TransactionHash,
-        //            ConfirmationLevel = coinTransaction.ConfirmationLevel,
-        //            Error = coinTransaction.Error
-        //        }));
-
-        //        await _logger.WriteInfoAsync("CoinTransactionService", "ProcessTransaction", "",
-        //            $"Put coin transaction {coinTransaction.TransactionHash} to finished queue with confimation level {coinTransaction.ConfirmationLevel}. Error = {coinTransaction.Error}");
-        //    }
-        //}
 
         private int GetTransactionConfirmationLevel(BigInteger confimations)
         {

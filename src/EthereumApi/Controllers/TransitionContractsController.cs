@@ -30,7 +30,9 @@ namespace EthereumApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        [Produces(typeof(RegisterResponse))]
+        [ProducesResponseType(typeof(RegisterResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CreateTransferContract([FromBody]CreateTransitionContractModel model)
         {
             if (!ModelState.IsValid)
@@ -49,7 +51,9 @@ namespace EthereumApi.Controllers
 
         [Route("contractAddress/{userAddress}/{coinAdapterAddress}")]
         [HttpGet]
-        [Produces(typeof(RegisterResponse))]
+        [ProducesResponseType(typeof(RegisterResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> GetAddress(string userAddress, string coinAdapterAddress)
         {
             if (!ModelState.IsValid)

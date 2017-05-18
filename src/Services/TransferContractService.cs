@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Settings;
 using Core.Utils;
@@ -23,7 +24,7 @@ namespace Services
         Task<string> RecievePaymentFromTransferContract(string transferContractAddress, string coinAdapterAddress);
 
         Task<BigInteger> GetBalanceOnAdapter(string coinAddress, string clientAddress);
-        Task<BigInteger> GetBalance(string transferContractAddress, string clientAddress);
+        Task<BigInteger> GetBalance(string transferContractAddress);
 
         Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
     }
@@ -92,7 +93,7 @@ namespace Services
 
             if (contract != null)
             {
-                throw new Exception($"Transfer account for {userAddress} - {coinAdapterAddress} already exists");
+                throw new ClientSideException(ExceptionType.EntityAlreadyExists, $"Transfer account for {userAddress} - {coinAdapterAddress} already exists");
             }
 
             ICoin coin = await GetCoinWithCheck(coinAdapterAddress);
@@ -118,14 +119,14 @@ namespace Services
 
             if (transferContract == null)
             {
-                throw new Exception($"Transfer contract with address {transferContractAddress} does not exist");
+                throw new ClientSideException(ExceptionType.WrongParams, $"Transfer contract with address {transferContractAddress} does not exist");
             }
 
             ICoin coin = await _coinRepository.GetCoinByAddress(transferContract.CoinAdapterAddress);
 
             if (coin == null)
             {
-                throw new Exception($"Coin with address {transferContract.CoinAdapterAddress} does not exist");
+                throw new ClientSideException(ExceptionType.WrongParams, $"Coin with address {transferContract.CoinAdapterAddress} does not exist");
             }
 
             string coinAbi = _settings.CoinAbi;
@@ -228,7 +229,7 @@ namespace Services
 
             if (coin == null)
             {
-                throw new Exception($"Coin with address {coinAdapterAddress} does not exist");
+                throw new ClientSideException(ExceptionType.WrongParams, $"Coin with address {coinAdapterAddress} does not exist");
             }
 
             return coin;
@@ -237,6 +238,11 @@ namespace Services
         public async Task<BigInteger> GetBalanceOnAdapter(string adapterAddress, string clientAddress)
         {
             var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
+            if (coinAFromDb == null)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, $"Coin adapter with {adapterAddress} address does not exist");
+            }
+
             string abi = coinAFromDb.ContainsEth ? _settings.EthAdapterContract.Abi : _settings.TokenAdapterContract.Abi;
             var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
             var balance = contract.GetFunction("balanceOf");
@@ -244,9 +250,14 @@ namespace Services
             return await balance.CallAsync<BigInteger>(clientAddress);
         }
 
-        public async Task<BigInteger> GetBalance(string transferContractAddress, string clientAddress)
+        public async Task<BigInteger> GetBalance(string transferContractAddress)
         {
             var transferContract = await _transferContractRepository.GetAsync(transferContractAddress);
+
+            if (transferContract == null)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, $"Transfer contract with {transferContractAddress} address does not exist");
+            }
 
             BigInteger balance;
             if (!transferContract.ContainsEth)
