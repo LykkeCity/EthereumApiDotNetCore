@@ -7,68 +7,65 @@ using Common.Log;
 
 namespace EthereumApi
 {
-	public class GlobalExceptionFilter : IExceptionFilter, IDisposable
-	{
-		private readonly ILog _logger;
+    public class GlobalExceptionFilter : IExceptionFilter, IDisposable
+    {
+        private readonly ILog _logger;
 
-		public GlobalExceptionFilter(ILog logger)
-		{
-			_logger = logger;
-		}
+        public GlobalExceptionFilter(ILog logger)
+        {
+            _logger = logger;
+        }
 
-		public void OnException(ExceptionContext context)
-		{
-			var controller = context.RouteData.Values["controller"];
-			var action = context.RouteData.Values["action"];
+        public void OnException(ExceptionContext context)
+        {
+            var controller = context.RouteData.Values["controller"];
+            var action = context.RouteData.Values["action"];
 
-			ApiException ex;
+            int httpCode = 500;
+            ApiException ex;
 
-			var exception = context.Exception as BackendException;
-			if (exception != null)
-			{
-				ex = new ApiException
-				{
-					Error = new ApiError
-					{
-						Code = exception.Type,
-						Message = exception.Message
-					}
-				};
-			}
-			else
-			{
-				_logger.WriteErrorAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception);
-				ex = new ApiException
-				{
-					Error = new ApiError
-					{
-						Code = BackendExceptionType.None,
-						Message = "Internal server error. Try again."
-					}
-				};
-			}
+            ExceptionType type = ExceptionType.None;
+            string message = "Internal server error. Try again.";
+            ClientSideException clientSideException = context.Exception as ClientSideException;
+            if (clientSideException != null)
+            {
+                type = clientSideException.ExceptionType;
+                httpCode = 400;
+                message = clientSideException.Message;
+            }
 
-			context.Result = new ObjectResult(ex)
-			{
-				StatusCode = 500,
-				DeclaredType = typeof(ApiException)
-			};
-		}
+            _logger.WriteErrorAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception);
 
-		public void Dispose()
-		{
-			
-		}
-	}
+            ex = new ApiException
+            {
+                Error = new ApiError
+                {
+                    Code = type,
+                    Message = message
+                }
+            };
 
-	public class ApiException
-	{
-		public ApiError Error { get; set; }
-	}
+            context.Result = new ObjectResult(ex)
+            {
+                StatusCode = httpCode,
+                DeclaredType = typeof(ApiException)
+            };
+        }
 
-	public class ApiError
-	{
-		public BackendExceptionType Code { get; set; }
-		public string Message { get; set; }
-	}
+        public void Dispose()
+        {
+
+        }
+    }
+
+    public class ApiException
+    {
+        public ApiError Error { get; set; }
+    }
+
+    public class ApiError
+    {
+        public ExceptionType Code { get; set; }
+        public string Message { get; set; }
+    }
 }

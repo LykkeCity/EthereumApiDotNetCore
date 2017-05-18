@@ -17,10 +17,8 @@ namespace Services
 
         Task<decimal> GetUserContractBalance(string address);
 
-        //Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
         Task<BigInteger> GetTransferContractBalanceInWei(string transferContractAddress);
 
-        //Task<bool> ProcessPaymentEvent(UserPaymentEvent log);
         Task<string> SendEthereum(string fromAddress, string toAddress, BigInteger amont);
     }
 
@@ -29,8 +27,6 @@ namespace Services
         private readonly IBaseSettings _settings;
         private readonly ILog _logger;
         private readonly Web3 _web3;
-
-        //private readonly IContractTransferTransactionService _contractTransferTransactionService;
 
         public PaymentService(IBaseSettings settings, ILog logger, Web3 web3)
         {
@@ -67,35 +63,5 @@ namespace Services
 
             return transactionHash;
         }
-
-        //public async Task<bool> ProcessPaymentEvent(UserPaymentEvent log)
-        //{
-        //    try
-        //    {
-        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Start proces: event from {log.Address} for {log.Amount} WEI.");
-
-        //        var transaction = await TransferFromUserContract(log.Address, log.Amount);
-
-        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Finish process: Event from {log.Address} for {log.Amount} WEI. Transaction: {transaction}");
-
-        //        await _contractTransferTransactionService.PutContractTransferTransaction(new ContractTransferTransaction
-        //        {
-        //            TransactionHash = transaction,
-        //            Contract = log.Address,
-        //            Amount = UnitConversion.Convert.FromWei(log.Amount),
-        //            CreateDt = DateTime.UtcNow
-        //        });
-
-        //        await _logger.WriteInfoAsync("EthereumJob", "ProcessPaymentEvent", "", $"Message sended to queue: Event from {log.Address}. Transaction: {transaction}");
-
-        //        return true;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _logger.WriteErrorAsync("EthereumJob", "ProcessPaymentEvent", "Failed to process item", e);
-        //    }
-
-        //    return false;
-        //}
     }
 }

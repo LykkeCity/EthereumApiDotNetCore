@@ -81,7 +81,7 @@ namespace Services
             try
             {
                 var contractEntity = await _transferContractRepository.GetAsync(contractTransferTr.ContractAddress);
-                var balance = await _transferContractService.GetBalance(contractTransferTr.ContractAddress, contractTransferTr.UserAddress);
+                var balance = await _transferContractService.GetBalance(contractTransferTr.ContractAddress);
 
                 if (balance == 0)
                 {

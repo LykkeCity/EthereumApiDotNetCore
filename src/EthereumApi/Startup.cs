@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Services;
 using Common.Log;
 using RabbitMQ;
-using EthereumApi.Middleware;
 
 namespace EthereumApi
 {
@@ -71,8 +70,6 @@ namespace EthereumApi
                 policyBuilder.AllowAnyHeader();
                 policyBuilder.AllowAnyOrigin();
             });
-
-            app.RegisterExceptionHandler(ServiceProvider.GetService<ILog>());
 
             app.UseStatusCodePagesWithReExecute("/home/error");
             app.UseMvc(routes =>

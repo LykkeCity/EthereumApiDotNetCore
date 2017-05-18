@@ -1,4 +1,5 @@
-﻿using Core.Repositories;
+﻿using Core.Exceptions;
+using Core.Repositories;
 using Core.Settings;
 using Nethereum.Web3;
 using System;
@@ -43,7 +44,7 @@ namespace Services
         {
             if (coin == null)
             {
-                throw new ArgumentException("Coin should not be null", "coin");
+                throw new ClientSideException(ExceptionType.MissingRequiredParams,"Coin should not be null");
             }
 
             string abi;
@@ -60,7 +61,7 @@ namespace Services
             {
                 if (string.IsNullOrEmpty(coin.ExternalTokenAddress))
                 {
-                    throw new Exception("coin.ExternalTokenAddress should not be empty");
+                    throw new ClientSideException(ExceptionType.MissingRequiredParams, "coin.ExternalTokenAddress should not be empty");
                 }
 
                 //TODO: check that external exists
