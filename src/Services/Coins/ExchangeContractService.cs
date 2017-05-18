@@ -357,11 +357,11 @@ namespace Services.Coins
             {
                 return false;
             }
+
             var fixedSign = sign.EnsureHexPrefix();
             var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
-
-            var ecdaSignature = ExtractEcdsaSignature(sign);
-            string sender = EthECKey.RecoverFromSignature(ecdaSignature, hash).GetPublicAddress();
+            var signer = new MessageSigner();
+            string sender = signer.EcRecover(hash, sign);
 
             return clientAddr == sender;
         }
