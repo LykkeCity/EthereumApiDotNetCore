@@ -12,7 +12,20 @@ namespace AzureRepositories.Repositories
 {
     public class CoinEventEntity : TableEntity, ICoinEvent
     {
-        public CoinEventType CoinEventType { get; set; }
+        public string CoinEventTypeStr { get; set; }
+
+        public CoinEventType CoinEventType
+        {
+            get
+            {
+                return (CoinEventType)Enum.Parse(typeof(CoinEventType), CoinEventTypeStr);
+            }
+
+            set
+            {
+                CoinEventTypeStr = value.ToString();
+            }
+        }
 
         public string TransactionHash { get { return this.RowKey; } set { this.RowKey = value; } }
 

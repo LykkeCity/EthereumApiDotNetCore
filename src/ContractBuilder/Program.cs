@@ -60,9 +60,9 @@ namespace ContractBuilder
             //    Key = "",
             //});
 
-            var service = ServiceProvider.GetService<IErcInterfaceService>();
-            service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
-                "0x967ddcf62c2ecec1c4d231c7498c287b857846e7", new System.Numerics.BigInteger(101)).Wait();
+            //var service = ServiceProvider.GetService<IErcInterfaceService>();
+            //service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
+            //    "0x967ddcf62c2ecec1c4d231c7498c287b857846e7", new System.Numerics.BigInteger(101)).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
             //string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
             //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
@@ -71,18 +71,16 @@ namespace ContractBuilder
             {
                 Console.WriteLine("Choose number: ");
                 //Console.WriteLine("1. Deploy main contract from local json file");
-                Console.WriteLine("2. Deploy main exchange contract using local json file");
+                Console.WriteLine("2. Deploy main exchange contract");
                 Console.WriteLine("3. Deploy coin contract using local json file");
-                Console.WriteLine("4. Deploy transfer using local json file");
+                Console.WriteLine("4. Deploy transfer");
+                Console.WriteLine("5. Deploy BCAP Token");
                 Console.WriteLine("0. Exit");
 
                 var input = Console.ReadLine();
 
                 switch (input)
                 {
-                    //case "1":
-                    //    DeployMainContractLocal().Wait();
-                    //    break;
                     case "2":
                         DeployMainExchangeContract().Wait();
                         break;
@@ -94,6 +92,9 @@ namespace ContractBuilder
                         break;
                     case "0":
                         exit = true;
+                        break;
+                    case "5":
+                        DeployBCAP().Wait();
                         break;
                     default:
                         Console.WriteLine("Bad input!");
@@ -271,6 +272,30 @@ namespace ContractBuilder
 
                 settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
+
+                SaveSettings(settings);
+
+                Console.WriteLine("Contract address stored in generalsettings.json file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Action failed!");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        static async Task DeployBCAP()
+        {
+            Console.WriteLine("Begin BCAP deployment process");
+            try
+            {
+                var settings = GetCurrentSettings();
+                var abi = GetFileContent("BCAPToken.abi");
+                var bytecode = GetFileContent("BCAPToken.bin");
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumMainAccount);
+
+                settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                Console.WriteLine("New BCAP Token: " + contractAddress);
 
                 SaveSettings(settings);
 
