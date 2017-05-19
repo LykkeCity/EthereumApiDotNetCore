@@ -65,6 +65,7 @@ namespace Tests
 
 
         #region TokenAdapter
+
         [TestMethod]
         public async Task TestCashinTokenFlow()
         {
@@ -93,16 +94,8 @@ namespace Tests
 
             var guid = Guid.NewGuid();
             EthUtils.GuidToBigInteger(guid);
-            var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-                            colorCoin.AdapterAddress.HexToByteArray().ToHex() +
-                            ClientA.HexToByteArray().ToHex() +
-                            toAddress.HexToByteArray().ToHex() +
-                            EthUtils.BigIntToArrayWithPadding(currentBalance).ToHex();
-
-            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
             var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, ClientA, toAddress, currentBalance);
-            byte[] signInBytes = externalSign.HexToByteArray().FixByteOrder();
-            var transferHash = await _exchangeService.Transfer(guid, colorCoin.AdapterAddress, ClientA, toAddress,
+            var transferHash = await _exchangeService.Transfer(guid, _tokenAdapterAddress, ClientA, toAddress,
                 currentBalance, externalSign);
 
             while (await _transactionService.GetTransactionReceipt(transferHash) == null)
@@ -129,17 +122,8 @@ namespace Tests
             Assert.AreEqual(transferUser, ClientA.ToLower());
 
             var guid = Guid.NewGuid();
-            EthUtils.GuidToBigInteger(guid);
-            string strForHashFrom = GetHash(guid, _tokenAdapterAddress, ClientA, toAddress, currentBalance);
-            string strForHashTo = GetHash(guid, _tokenAdapterAddress, toAddress, ClientA, change);
-
-            var hashFrom = new Sha3Keccack().CalculateHash(strForHashFrom.HexToByteArray());
-            var hashTo = new Sha3Keccack().CalculateHash(strForHashTo.HexToByteArray());
-
             var externalFromSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, ClientA, toAddress, currentBalance);
             var externalToSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, toAddress, ClientA, change);
-
-            //byte[] signInBytes = externalFromSign.HexToByteArray().FixByteOrder();
             var transferHash = await _exchangeService.TransferWithChange(guid, colorCoin.AdapterAddress, ClientA, toAddress,
                 currentBalance, externalFromSign, change, externalToSign);
 
@@ -174,21 +158,9 @@ namespace Tests
             Assert.AreEqual(ClientA.ToLower(), transferUser);
 
             var guid = Guid.NewGuid();
-            EthUtils.GuidToBigInteger(guid);
-            var strForHash = EthUtils.GuidToByteArray(guid).ToHex() +
-                            colorCoin.AdapterAddress.HexToByteArray().ToHex() +
-                            ClientA.HexToByteArray().ToHex() +
-                            ClientA.HexToByteArray().ToHex() +
-                            EthUtils.BigIntToArrayWithPadding(oldBalance).ToHex();
-
-            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
-            //var solidityHash = await exchangeService.CalculateHash(guid, colorCoin.AdapterAddress, clientAddress, clientAddress, currentBalance);
-            var sign = Sign(hash, PrivateKeyA).ToHex();
             var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, ClientA, ClientA, oldBalance);
-            byte[] signInBytes = sign.HexToByteArray().FixByteOrder();
-            //bool success = await exchangeService.CheckSign(clientAddress, hash, signInBytes);
             var cashout = await _exchangeService.CashOut(guid, colorCoin.AdapterAddress, ClientA, ClientA,
-                oldBalance, sign);
+                oldBalance, externalSign);
 
             while (await _transactionService.GetTransactionReceipt(cashout) == null)
                 await Task.Delay(100);
