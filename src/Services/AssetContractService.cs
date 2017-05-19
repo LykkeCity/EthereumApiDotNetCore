@@ -79,6 +79,20 @@ namespace Services
             return coinAdapterAddress;
         }
 
+        public async Task<ICoin> GetById(string id)
+        {
+            var coin = await _coinRepository.GetCoin(id);
+
+            return coin;
+        }
+
+        public async Task<ICoin> GetByAddress(string adapterAddress)
+        {
+            var coin = await _coinRepository.GetCoinByAddress(adapterAddress);
+
+            return coin;
+        }
+
         public async Task<string> PingAdapterContract(string adapterAddress)
         {
             string abi = _settings.CoinAbi;

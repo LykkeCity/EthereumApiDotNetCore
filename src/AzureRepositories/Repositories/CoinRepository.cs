@@ -78,7 +78,7 @@ namespace AzureRepositories.Repositories
         {
             AzureIndex index = await _addressIndex.GetDataAsync(_addressIndexName, coinAddress);
             if (index == null)
-                throw new Exception("Unknown coin address - " + coinAddress);
+                return null;
             var coin = await _table.GetDataAsync(index);
 
             return coin;

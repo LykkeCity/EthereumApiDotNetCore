@@ -31,7 +31,7 @@ namespace EthereumApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(RegisterResponse), 200)]
+        [ProducesResponseType(typeof(ListResult<CoinResult>), 200)]
         public async Task<IActionResult> GetAllAdapters()
         {
             IEnumerable<ICoin> all = await _assetContractService.GetAll();
@@ -51,6 +51,34 @@ namespace EthereumApi.Controllers
             {
                 Data = result
             });
+        }
+
+        //method was created for integration convinience
+        [HttpGet("exists/{adapterAddress}")]
+        [ProducesResponseType(typeof(ExistsModel), 200)]
+        public async Task<IActionResult> IsValidAddress(string adapterAddress)
+        {
+            var coin = await _assetContractService.GetByAddress(adapterAddress);
+            return Ok(new ExistsModel()
+            {
+                Exists = coin != null
+            });
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(CoinResult), 200)]
+        [ProducesResponseType(typeof(void), 404)]
+        public async Task<IActionResult> GetAdapter(string id)
+        {
+            return await GetCoinAdapter(id, _assetContractService.GetById);
+        }
+
+        [HttpGet("address/{adapterAddress}")]
+        [ProducesResponseType(typeof(CoinResult), 200)]
+        [ProducesResponseType(typeof(void), 404)]
+        public async Task<IActionResult> GetAdapterByAddress(string adapterAddress)
+        {
+            return await GetCoinAdapter(adapterAddress, _assetContractService.GetByAddress);
         }
 
         [Route("create")]
@@ -100,6 +128,35 @@ namespace EthereumApi.Controllers
             {
                 Amount = amount.ToString()
             });
+        }
+
+        private async Task<IActionResult> GetCoinAdapter(string argument, Func<string, Task<ICoin>> recieveFunc)
+        {
+            if (string.IsNullOrEmpty(argument))
+            {
+                return BadRequest("identifier is missing");
+            }
+
+            ICoin coinAdapter = await recieveFunc(argument);//(id);
+
+            if (coinAdapter == null)
+            {
+                return NotFound();
+            }
+
+            var result = new CoinResult()
+            {
+                AdapterAddress = coinAdapter.AdapterAddress,
+                Blockchain = coinAdapter.Blockchain,
+                BlockchainDepositEnabled = coinAdapter.BlockchainDepositEnabled,
+                ContainsEth = coinAdapter.ContainsEth,
+                ExternalTokenAddress = coinAdapter.ExternalTokenAddress,
+                Id = coinAdapter.Id,
+                Multiplier = coinAdapter.Multiplier,
+                Name = coinAdapter.Name
+            };
+
+            return Ok(result);
         }
     }
 }

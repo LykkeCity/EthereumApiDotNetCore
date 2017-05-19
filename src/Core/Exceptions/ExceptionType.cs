@@ -15,5 +15,6 @@ namespace Core.Exceptions
         WrongParams = 3,
         EntityAlreadyExists = 4,
         WrongSign = 5,
+        OperationWithIdAlreadyExists = 6,
     }
 }

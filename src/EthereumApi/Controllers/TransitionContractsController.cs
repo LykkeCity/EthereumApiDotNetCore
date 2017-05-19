@@ -53,6 +53,7 @@ namespace EthereumApi.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> GetAddress(string userAddress, string coinAdapterAddress)
         {
