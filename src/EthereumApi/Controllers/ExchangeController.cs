@@ -57,7 +57,7 @@ namespace EthereumApi.Controllers
             await Log("Cashout", "Begin Process", model);
 
             var amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.CashOut(model.Id, model.Coin, model.Client, model.To, amount, model.Sign);
+            var transaction = await _exchangeContractService.CashOut(model.Id, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount, model.Sign);
 
             await Log("Cashout", "End Process", model, transaction);
 
@@ -98,7 +98,7 @@ namespace EthereumApi.Controllers
             await Log("Transfer", "Begin Process", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.Transfer(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
+            var transaction = await _exchangeContractService.Transfer(model.Id, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount, model.Sign);
 
             await Log("Transfer", "End Process", model, transaction);
 
@@ -120,7 +120,8 @@ namespace EthereumApi.Controllers
             await Log("TransferWithChange", "Begin Process", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            var result = await _exchangeContractService.CheckSign(model.Id, model.Coin, model.From, model.To, amount, model.Sign);
+            var result = await _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
+                model.FromAddress, model.ToAddress, amount, model.Sign);
 
             await Log("TransferWithChange", "End Process", model, result.ToString());
 
@@ -143,7 +144,8 @@ namespace EthereumApi.Controllers
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             BigInteger change = BigInteger.Parse(model.Change);
-            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.Coin, model.From, model.To, amount, model.SignFrom, change, model.SignTo);
+            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, model.FromAddress, 
+                model.ToAddress, amount, model.SignFrom, change, model.SignTo);
 
             await Log("TransferWithChange", "End Process", model, transaction);
 
