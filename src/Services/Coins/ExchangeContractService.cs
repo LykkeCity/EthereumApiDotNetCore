@@ -163,6 +163,9 @@ namespace Services.Coins
             {
                 sign = await GetSign(id, coinAddress, clientAddr, toAddr, amount);
             }
+
+            await ThrowOnWrongSignature(id, coinAddress, clientAddr, toAddr, amount, sign);
+
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("cashout");
 
@@ -186,6 +189,8 @@ namespace Services.Coins
             {
                 sign = await GetSign(id, coinAddress, from, to, amount);
             }
+
+            await ThrowOnWrongSignature(id, coinAddress, from, to, amount, sign);
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transfer");
@@ -218,6 +223,9 @@ namespace Services.Coins
             {
                 signTo = await GetSign(id, coinAddress, to, from, change);
             }
+
+            await ThrowOnWrongSignature(id, coinAddress, from, to, amount, signFrom);
+            await ThrowOnWrongSignature(id, coinAddress, to, from, change, signTo);
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transferWithChange");
@@ -453,6 +461,14 @@ namespace Services.Coins
             return ecdaSignature;
         }
 
+        private async Task ThrowOnWrongSignature(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
+        {
+            var checkSign = await CheckSign(id, coinAddress, clientAddr, toAddr, amount, sign);
+            if (!checkSign)
+            {
+                throw new ClientSideException(ExceptionType.WrongSign, "");
+            }
+        }
         //public async Task<byte[]> CalculateHash(Guid guid, string adapterAddress, string clientAddress1, string clientAddress2, BigInteger currentBalance)
         //{
         //    var web3 = new Web3(_settings.EthereumUrl);
