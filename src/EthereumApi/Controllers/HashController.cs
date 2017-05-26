@@ -10,6 +10,8 @@ using System.Numerics;
 using System;
 using Services;
 using Nethereum.Hex.HexConvertors.Extensions;
+using EthereumApi.Utils;
+using Newtonsoft.Json;
 
 namespace EthereumApi.Controllers
 {
@@ -36,7 +38,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             var amount = BigInteger.Parse(model.Amount);
