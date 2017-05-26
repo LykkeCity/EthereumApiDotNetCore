@@ -15,12 +15,14 @@ namespace Tests
         public static string ColorCoin = "Lykke";
         public static string EthCoin = "Eth";
 
-
-        public const string ClientA = "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28";
-        public const string PrivateKeyA = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
-
-        public const string ClientB = "0xb4d302df4f799a66702f8aa59543109f00573929";
-        public const string PrivateKeyB = "e35e0dcaec4f5f2990cb9581d4531452b3eea9b7531bf6bf40eda95756799014";
+        protected static string _tokenAdapterAddress = "0x1e8e8ccbd9a7a8d82875054aa8342159d96356a9";//"0x27b1ad3f1ae08eec8205bcbe91166b6387d67c4f";
+        protected static string _clientTokenTransferAddress = "0x7ff01d3225726eb3dd3356fc57e71e5ec0aab042";//"0x967ddcf62c2ecec1c4d231c7498c287b857846e7";
+        protected static string _externalTokenAddress = "0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0";//"0x79e34063d05324e0bffc19901963d9ae5b101fba";
+        protected static string _ethereumCoinOwnerB = "0xd513BeA430322c488600Af6eE094aB32238C7169";
+        protected const string _clientA = "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28";
+        protected const string _privateKeyA = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
+        protected const string _clientB = "0xb4d302df4f799a66702f8aa59543109f00573929";
+        protected const string _privateKeyB = "e35e0dcaec4f5f2990cb9581d4531452b3eea9b7531bf6bf40eda95756799014";
 
 
         [TestInitialize]

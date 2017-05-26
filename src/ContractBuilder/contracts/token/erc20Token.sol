@@ -5,6 +5,9 @@ import "./safeMath.sol";
 
 contract ERC20Token is ERC20Interface, SafeMath {
 
+  mapping (address => uint256) accounts;
+  mapping (address => mapping (address => uint256)) private allowances;
+
   function ERC20Token () {
   }
 
@@ -49,7 +52,4 @@ contract ERC20Token is ERC20Interface, SafeMath {
   returns (uint256 remaining) {
     return allowances [_owner][_spender];
   }
-
-  mapping (address => uint256) accounts;
-  mapping (address => mapping (address => uint256)) private allowances;
 }

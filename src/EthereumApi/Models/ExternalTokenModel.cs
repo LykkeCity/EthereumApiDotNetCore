@@ -13,5 +13,9 @@ namespace EthereumApiSelfHosted.Models
 
         [DataMember]
         public string ContractAddress { get; set; }
+        public byte Divisibility { get; internal set; }
+        public string Version { get; internal set; }
+        public string TokenSymbol { get; internal set; }
+        public string InitialSupply { get; internal set; }
     }
 }

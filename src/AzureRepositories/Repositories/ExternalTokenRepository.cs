@@ -21,6 +21,11 @@ namespace AzureRepositories.Repositories
             set { this.RowKey = value; }
         }
 
+        public byte Divisibility { get; set; }
+        public string TokenSymbol { get; set; }
+        public string Version { get; set; }
+        public string InitialSupply { get; set; }
+
         public static string GeneratePartitionKey()
         {
             return "ExternalToken";
@@ -32,11 +37,14 @@ namespace AzureRepositories.Repositories
                 PartitionKey = GeneratePartitionKey(),
                 Id = token.Id,
                 Name = token.Name,
-                ContractAddress = token.ContractAddress
+                ContractAddress = token.ContractAddress,
+                Divisibility = token.Divisibility,
+                InitialSupply = token.InitialSupply,
+                TokenSymbol = token.TokenSymbol,
+                Version = token.Version
             };
         }
     }
-
 
     public class ExternalTokenRepository : IExternalTokenRepository
     {
@@ -45,6 +53,13 @@ namespace AzureRepositories.Repositories
         public ExternalTokenRepository(INoSQLTableStorage<ExternalTokenEntity> table)
         {
             _table = table;
+        }
+
+        public async Task<IEnumerable<IExternalToken>> GetAllAsync()
+        {
+            IEnumerable<IExternalToken> tokens = await _table.GetDataAsync(ExternalTokenEntity.GeneratePartitionKey());
+
+            return tokens;
         }
 
         public async Task<IExternalToken> GetAsync(string externalTokenAddress)
