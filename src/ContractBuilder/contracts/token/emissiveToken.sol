@@ -1,12 +1,14 @@
 pragma solidity ^0.4.9;
 import "./erc20Token.sol";
+import "./lykkeTokenBase.sol";
 
-contract ExternalToken is ERC20Token {
-
-  address private _issuer;
-
-  function ExternalToken(address issuer) {
-    _issuer = issuer;
+contract EmissiveToken is LykkeTokenBase {
+  function EmissiveToken(
+      address issuer,
+      string tokenName,
+      uint8 divisibility,
+      string tokenSymbol, 
+      string version) LykkeTokenBase(issuer, tokenName, divisibility, tokenSymbol, version){
     accounts [_issuer] = MAX_UINT256;
   }
 

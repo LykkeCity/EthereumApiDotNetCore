@@ -65,12 +65,16 @@ namespace Services.Coins
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
         private readonly ICoinEventService _coinEventService;
+        private readonly IHashCalculator _hashCalculator;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI, IUserPaymentHistoryRepository userPaymentHistory, ICoinEventService coinEventService)
+            ILykkeSigningAPI lykkeSigningAPI, 
+            IUserPaymentHistoryRepository userPaymentHistory, 
+            ICoinEventService coinEventService, 
+            IHashCalculator hashCalculator)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -82,6 +86,7 @@ namespace Services.Coins
             _coinEventQueue = queueFactory(Constants.CoinEventQueue);
             _userPaymentHistoryRepository = userPaymentHistory;
             _coinEventService = coinEventService;
+            _hashCalculator = hashCalculator;
         }
 
         public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
@@ -403,17 +408,9 @@ namespace Services.Coins
             return response.SignedHash;
         }
 
-        private static byte[] GetHash(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
+        private byte[] GetHash(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
         {
-            var strForHash = EthUtils.GuidToByteArray(id).ToHex() +
-                                        coinAddress.HexToByteArray().ToHex() +
-                                        clientAddr.HexToByteArray().ToHex() +
-                                        toAddr.HexToByteArray().ToHex() +
-                                        EthUtils.BigIntToArrayWithPadding(amount).ToHex();
-
-            var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
-
-            return hash;
+            return _hashCalculator.GetHash(id, coinAddress, clientAddr, toAddr, amount);
         }
 
         private async Task SaveUserHistory(string adapterAddress, string amount, string userAddress, string toAddress, string trHash, string note)

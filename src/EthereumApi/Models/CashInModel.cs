@@ -13,9 +13,5 @@ namespace EthereumApi.Models
 
         [Required]
         public string Receiver { get; set; }
-
-        [Required]
-        [RegularExpression("^[1-9][0-9]*$")] //big int
-        public string Amount { get; set; }
     }
 }

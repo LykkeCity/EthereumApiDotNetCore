@@ -21,7 +21,6 @@ namespace Services
             services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
             services.AddTransient<IExchangeContractService, ExchangeContractService>();
             services.AddTransient<ICoinTransactionService, CoinTransactionService>();
-            //services.AddTransient<IManualEventsService, ManualEventsService>();
             services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
             services.AddTransient<AssetContractService>();
             services.AddTransient<TransferContractService>();
@@ -36,8 +35,8 @@ namespace Services
             services.AddTransient<ISlackNotifier, SlackNotifier>();
             services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
             services.AddTransient<ICoinEventService, CoinEventService>();
-
-            //Uses HttpClient Inside
+            services.AddSingleton<IHashCalculator, HashCalculator>();
+            //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
                 var lykkeSigningAPI = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl, UriKind.Absolute));

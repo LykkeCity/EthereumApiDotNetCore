@@ -31,7 +31,8 @@ namespace Core.Settings
         EthereumContract MainExchangeContract { get; set; }
         EthereumContract TokenTransferContract { get; set; }
         EthereumContract EthTransferContract { get; set; }
-        EthereumContract ExternalTokenContract { get; set; }
+        EthereumContract EmissiveTokenContract { get; set; }
+        EthereumContract NonEmissiveTokenContract { get; set; }
         EthereumContract TokenAdapterContract { get; set; }
         EthereumContract EthAdapterContract { get; set; }
         Dictionary<string, EthereumContract> CoinContracts { get; set; }
@@ -45,6 +46,9 @@ namespace Core.Settings
 
     public class BaseSettings : IBaseSettings
     {
+
+        public EthereumContract EmissiveTokenContract { get; set; }
+        public EthereumContract NonEmissiveTokenContract { get; set; }
         public EthereumContract MainContract { get; set; }
         public EthereumContract UserContract { get; set; }
         public EthereumContract MainExchangeContract { get; set; }
@@ -82,8 +86,6 @@ namespace Core.Settings
         public string ERC20ABI { get; set; }
 
         public string CoinAbi { get; set; }
-
-        public EthereumContract ExternalTokenContract { get; set; }
         public int MaxDequeueCount { get; set; } = 1000;
         public int MaxQueueDelay { get; set; } = 5000;
         public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;

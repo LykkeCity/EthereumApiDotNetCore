@@ -14,7 +14,7 @@ using Org.BouncyCastle.Math;
 namespace Tests
 {
     [TestClass]
-    public class JaascriptTestData
+    public class JavascriptTestData
     {
         const string account_a = "0x960336a077fB32d675405bd0A6cD0cb74aaa5062";
         const string account_b = "0xb295e245eD2fdf5776c3C8a49f0403BF0242262A";
