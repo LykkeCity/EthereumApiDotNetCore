@@ -9,4 +9,9 @@ namespace EthereumApi.Models
     {
         public string HashHex { get; set; }
     }
+
+    public class HashResponseWithId : HashResponse
+    {
+        public Guid OperationId { get; set; }
+    }
 }
