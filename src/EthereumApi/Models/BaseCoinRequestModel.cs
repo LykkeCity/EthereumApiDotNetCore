@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace EthereumApi.Models
 {
-    public class BaseCoinRequestModel
+    public class BaseCoinRequestModel : BaseCoinRequestParametersModel
     {
         [Required]
         public Guid Id { get; set; }
+    }
 
+    public class BaseCoinRequestParametersModel
+    {
         [Required]
         public string CoinAdapterAddress { get; set; }
 
