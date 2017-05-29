@@ -42,11 +42,11 @@ namespace Core.Settings
         int MaxQueueDelay { get; set; }
         int BroadcastMonitoringPeriodSeconds { get; set; }
         RabbitMq RabbitMq { get; set; }
+        string MonitoringServiceUrl { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
     {
-
         public EthereumContract EmissiveTokenContract { get; set; }
         public EthereumContract NonEmissiveTokenContract { get; set; }
         public EthereumContract MainContract { get; set; }
@@ -90,6 +90,7 @@ namespace Core.Settings
         public int MaxQueueDelay { get; set; } = 5000;
         public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;
         public RabbitMq RabbitMq { get; set; }
+        public string MonitoringServiceUrl { get; set; }
     }
 
     public class EthereumContract

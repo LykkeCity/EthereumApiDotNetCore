@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.JobTriggers" Version="1.1.5" />
+    <PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.0.29" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="1.0.63" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />

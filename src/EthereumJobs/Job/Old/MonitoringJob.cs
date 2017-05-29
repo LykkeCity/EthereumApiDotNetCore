@@ -4,18 +4,23 @@ using Core.Repositories;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.MonitoringServiceApiCaller;
+using System.Reflection;
 
 namespace EthereumJobs.Job
 {
     public class MonitoringJob
     {
-        private readonly IMonitoringRepository _repository;
         private readonly ILog _logger;
+        private readonly MonitoringServiceFacade _monitoringServiceFacade;
+        private readonly Version _version;
+        private readonly string serviceName = "EthereumCore.EthereumJobs";
 
-        public MonitoringJob(IMonitoringRepository repository, ILog logger)
+        public MonitoringJob(Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade monitoringServiceFacade, ILog logger)
         {
-            _repository = repository;
+            _monitoringServiceFacade = monitoringServiceFacade;
             _logger = logger;
+            _version = Assembly.GetEntryAssembly().GetName().Version;
         }
 
         [TimerTrigger("0.00:00:30")]
@@ -23,16 +28,15 @@ namespace EthereumJobs.Job
         {
             try
             {
-                await _repository.SaveAsync(new Monitoring
+                await _monitoringServiceFacade.Ping(new Lykke.MonitoringServiceApiCaller.Models.MonitoringObjectPingModel()
                 {
-                    DateTime = DateTime.UtcNow,
-                    ServiceName = "EthereumJobService",
-                    Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion
+                    ServiceName = serviceName,
+                    Version = _version.ToString(),
                 });
             }
             catch (Exception e)
             {
-                await _logger.WriteErrorAsync("MonitoringJob", "Execute", "", e ,DateTime.UtcNow);
+                await _logger.WriteErrorAsync("MonitoringJob", "Execute", "", e, DateTime.UtcNow);
             }
         }
     }

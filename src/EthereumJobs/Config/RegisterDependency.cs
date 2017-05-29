@@ -25,6 +25,7 @@ namespace EthereumJobs.Config
 
             collection.RegisterRabbitQueue(settings, provider.GetService<ILog>());
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
+            collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.MonitoringServiceUrl));
             RegisterJobs(collection);
         }
 
