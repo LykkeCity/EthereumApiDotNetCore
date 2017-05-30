@@ -36,7 +36,14 @@ namespace EthereumJobs.Job
             {
                 foreach (var item in items)
                 {
-                    await _transferContractPoolService.Execute(item);
+                    try
+                    {
+                        await _transferContractPoolService.Execute(item);
+                    }
+                    catch (Exception e)
+                    {
+                        await _logger.WriteErrorAsync("TransferContractPoolJob", "Execute", "", e, DateTime.UtcNow);
+                    }
                 }
             });
         }
