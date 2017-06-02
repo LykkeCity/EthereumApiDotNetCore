@@ -2,6 +2,6 @@ version: '2'
 
 services:
   jobrunner:
-    image: lykkex/ethereumapidotnetcore:${tag}
+    image: lykkex/lykke-service-ethereumjob:${tag}
     environment:
      - ConnectionStrings__ConnectionString=${SettingsConnString}
