@@ -61,8 +61,8 @@ namespace ContractBuilder
             //});
 
             //var service = ServiceProvider.GetService<IErcInterfaceService>();
-            //service.Transfer("0x79e34063d05324e0bffc19901963d9ae5b101fba", settings.EthereumMainAccount,
-            //    "0x967ddcf62c2ecec1c4d231c7498c287b857846e7", new System.Numerics.BigInteger(101)).Wait();
+            //service.Transfer("0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0", settings.EthereumMainAccount,
+            //    "0x6e95184c02c39369ee9449f85aee42badc6910fd", new System.Numerics.BigInteger(101)).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
             //string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
             //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
