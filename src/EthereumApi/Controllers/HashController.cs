@@ -44,14 +44,14 @@ namespace EthereumApi.Controllers
             }
 
             var guid = Guid.NewGuid();
-            IdCheckResult idCheckResult = await _exchangeContractService.CheckId(guid);
+            //IdCheckResult idCheckResult = await _exchangeContractService.CheckId(guid);
             var amount = BigInteger.Parse(model.Amount);
-            var hash = _hashCalculator.GetHash(idCheckResult.ProposedId, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount);
+            var hash = _hashCalculator.GetHash(guid, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount);
 
             return Ok(new HashResponseWithId
             {
                 HashHex = hash.ToHex(),
-                OperationId = idCheckResult.ProposedId
+                OperationId = guid
             });
         }
 
