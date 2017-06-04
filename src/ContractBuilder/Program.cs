@@ -43,11 +43,12 @@ namespace ContractBuilder
             var settings = GetCurrentSettings();
 
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-            collection.AddSingleton<IBaseSettings>(settings);
+            collection.AddSingleton<IBaseSettings>(settings.EthereumCore);
+            collection.AddSingleton<ISlackNotificationSettings>(settings.SlackNotifications);
 
-            RegisterReposExt.RegisterAzureLogs(collection, settings, "");
-            RegisterReposExt.RegisterAzureQueues(collection, settings);
-            RegisterReposExt.RegisterAzureStorages(collection, settings);
+            RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
+            RegisterReposExt.RegisterAzureQueues(collection, settings.EthereumCore, settings.SlackNotifications);
+            RegisterReposExt.RegisterAzureStorages(collection, settings.EthereumCore, settings.SlackNotifications);
             RegisterDependency.RegisterServices(collection);
             //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
             //var stringKey = Encoding.Unicode.GetString(key);
@@ -179,14 +180,14 @@ namespace ContractBuilder
                 var bytecode = GetFileContent($"{transferName}.bin");
 
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, clientAddress);
-                settings.TokenTransferContract = new EthereumContract
+                settings.EthereumCore.TokenTransferContract = new EthereumContract
                 {
                     Address = contractAddress,
                     Abi = abi,
                     ByteCode = bytecode
                 };
                 Console.WriteLine("New contract: " + contractAddress);
-                SaveSettings(settings);
+                SaveSettings(settings.EthereumCore);
 
                 Console.WriteLine("Contract address stored in generalsettings.json file");
             }
@@ -204,13 +205,13 @@ namespace ContractBuilder
             {
                 var settings = GetCurrentSettings();
 
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(settings.MainContract.Abi, settings.MainContract.ByteCode);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(settings.EthereumCore.MainContract.Abi, settings.EthereumCore.MainContract.ByteCode);
 
-                settings.MainContract.Address = contractAddress;
+                settings.EthereumCore.MainContract.Address = contractAddress;
 
                 Console.WriteLine("New contract: " + contractAddress);
 
-                SaveSettings(settings);
+                SaveSettings(settings.EthereumCore);
 
                 Console.WriteLine("Contract address stored in generalsettings.json file");
             }
@@ -241,15 +242,15 @@ namespace ContractBuilder
                 var abi = GetFileContent(path + ".abi");
                 var bytecode = GetFileContent(path + ".bin");
                 var settings = GetCurrentSettings();
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.MainExchangeContract.Address);
-                if (settings.CoinContracts == null)
-                    settings.CoinContracts = new Dictionary<string, EthereumContract>();
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumCore.MainExchangeContract.Address);
+                if (settings.EthereumCore.CoinContracts == null)
+                    settings.EthereumCore.CoinContracts = new Dictionary<string, EthereumContract>();
 
-                settings.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
+                settings.EthereumCore.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
 
                 Console.WriteLine("New coin contract: " + contractAddress);
 
-                SaveSettings(settings);
+                SaveSettings(settings.EthereumCore);
 
                 Console.WriteLine("Contract address stored in generalsettings.json file");
             }
@@ -270,10 +271,10 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("MainExchange.bin");
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
 
-                settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                settings.EthereumCore.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
-                SaveSettings(settings);
+                SaveSettings(settings.EthereumCore);
 
                 Console.WriteLine("Contract address stored in generalsettings.json file");
             }
@@ -292,12 +293,12 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("BCAPToken.abi");
                 var bytecode = GetFileContent("BCAPToken.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumMainAccount);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumCore.EthereumMainAccount);
 
-                settings.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                settings.EthereumCore.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New BCAP Token: " + contractAddress);
 
-                SaveSettings(settings);
+                SaveSettings(settings.EthereumCore);
 
                 Console.WriteLine("Contract address stored in generalsettings.json file");
             }
@@ -308,7 +309,7 @@ namespace ContractBuilder
             }
         }
 
-        static BaseSettings GetCurrentSettings()
+        static SettingsWrapper GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -319,7 +320,7 @@ namespace ContractBuilder
             var configuration = builder.Build();
             var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(configuration.GetConnectionString("ConnectionString"));
 
-            return settings.EthereumCore;
+            return settings;
         }
 
         static void SaveSettings(BaseSettings settings)

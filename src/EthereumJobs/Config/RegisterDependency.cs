@@ -12,13 +12,13 @@ namespace EthereumJobs.Config
 {
     public static class RegisterDepencency
     {
-        public static void InitJobDependencies(this IServiceCollection collection, IBaseSettings settings)
+        public static void InitJobDependencies(this IServiceCollection collection, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
         {
             collection.AddSingleton(settings);
 
             collection.RegisterAzureLogs(settings, "Job");
-            collection.RegisterAzureStorages(settings);
-            collection.RegisterAzureQueues(settings);
+            collection.RegisterAzureStorages(settings, slackNotificationSettings);
+            collection.RegisterAzureQueues(settings, slackNotificationSettings);
 
             collection.RegisterServices();
             var provider = collection.BuildServiceProvider();

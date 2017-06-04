@@ -7,5 +7,6 @@ namespace Core.Settings
     public class SettingsWrapper
     {
         public BaseSettings EthereumCore { get; set; }
+        public SlackNotificationSettings SlackNotifications { get; set; }
     }
 }

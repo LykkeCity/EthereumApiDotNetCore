@@ -34,17 +34,17 @@ namespace EthereumApi
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var settings = GetSettings(Configuration);
-            services.AddSingleton<IBaseSettings>(settings);
+            services.AddSingleton<IBaseSettings>(settings.EthereumCore);
 
             services.AddSingleton(settings);
 
-            services.RegisterAzureLogs(settings, "Api");
-            services.RegisterAzureStorages(settings);
-            services.RegisterAzureQueues(settings);
+            services.RegisterAzureLogs(settings.EthereumCore, "Api");
+            services.RegisterAzureStorages(settings.EthereumCore, settings.SlackNotifications);
+            services.RegisterAzureQueues(settings.EthereumCore, settings.SlackNotifications);
             services.RegisterServices();
 
             ServiceProvider = services.BuildServiceProvider();
-            services.RegisterRabbitQueue(settings, ServiceProvider.GetService<ILog>());
+            services.RegisterRabbitQueue(settings.EthereumCore, ServiceProvider.GetService<ILog>());
 
             var builder = services.AddMvc();
 
@@ -83,7 +83,7 @@ namespace EthereumApi
             app.UseSwaggerUi();
         }
 
-        static BaseSettings GetSettings(IConfigurationRoot configuration)
+        static SettingsWrapper GetSettings(IConfigurationRoot configuration)
         {
             var connectionString = configuration.GetConnectionString("ConnectionString");
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -91,7 +91,7 @@ namespace EthereumApi
 
             var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connectionString);
 
-            return settings.EthereumCore;
+            return settings;
         }
     }
 }

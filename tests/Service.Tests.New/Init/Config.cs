@@ -21,7 +21,7 @@ namespace Tests
         public static IServiceProvider Services { get; set; }
         public static ILog Logger => Services.GetService<ILog>();
 
-        private IBaseSettings ReadSettings()
+        private SettingsWrapper ReadSettings()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Tests
                 }
                 SettingsWrapper settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(url);
 
-                return settings.EthereumCore;
+                return settings;
             }
             catch (Exception e)
             {
@@ -71,7 +71,7 @@ namespace Tests
             //var testSetting = ReadTestSettings();
             Assert.IsNotNull(settings, "Please, provide generalsettings.json file");
 
-            collection.InitJobDependencies(settings);
+            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
             Services = collection.BuildServiceProvider();
         }

@@ -16,7 +16,6 @@ namespace EthereumJobs.Job
     {
         private readonly ILog _logger;
         private readonly IPaymentService _paymentService;
-        private readonly IEmailNotifierService _emailNotifierService;
         private readonly ITransferContractRepository _transferContractsRepository;
         private readonly IBaseSettings _settings;
         private readonly IErcInterfaceService _ercInterfaceService;
@@ -31,7 +30,6 @@ namespace EthereumJobs.Job
             ITransferContractRepository transferContractsRepository,
             ILog logger,
             IPaymentService paymentService,
-            IEmailNotifierService emailNotifierService,
             IUserPaymentRepository userPaymentRepository,
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
@@ -45,7 +43,6 @@ namespace EthereumJobs.Job
             _transferContractsRepository = transferContractsRepository;
             _logger = logger;
             _paymentService = paymentService;
-            _emailNotifierService = emailNotifierService;
             _userPaymentRepository = userPaymentRepository;
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;

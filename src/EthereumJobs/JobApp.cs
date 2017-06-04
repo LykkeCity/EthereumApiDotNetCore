@@ -21,12 +21,12 @@ namespace EthereumJobs
         {
             var settings = GetSettings(configuration);
             IServiceCollection collection = new ServiceCollection();
-            collection.InitJobDependencies(settings);
+            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
             collection.AddTriggers(pool =>
             {
                 // default connection must be initialized
-                pool.AddDefaultConnection(settings.Db.DataConnString);
+                pool.AddDefaultConnection(settings.EthereumCore.Db.DataConnString);
                 //// you can add additional connection strings and then specify it in QueueTriggerAttribute 
                 //pool.AddConnection("custom", additionalConnectionString);
             });
@@ -62,7 +62,7 @@ namespace EthereumJobs
             end.Set();
         }
 
-        static IBaseSettings GetSettings(IConfigurationRoot configuration)
+        static SettingsWrapper GetSettings(IConfigurationRoot configuration)
         {
             var connectionString = configuration.GetConnectionString("ConnectionString");
             if (string.IsNullOrEmpty(connectionString))
@@ -72,7 +72,7 @@ namespace EthereumJobs
 
             var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connectionString);
 
-            return settings.EthereumCore;
+            return settings;
         }
     }
 }
