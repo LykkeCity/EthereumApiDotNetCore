@@ -97,7 +97,7 @@ namespace AzureRepositories
                         case Constants.SlackNotifierQueue:
                             return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.EthereumOutQueue:
-                            return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);//remove
                         case Constants.EmailNotifierQueue:
                             return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.ContractTransferQueue:

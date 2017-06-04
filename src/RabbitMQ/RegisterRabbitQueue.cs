@@ -62,7 +62,7 @@ namespace RabbitMQ
         public void Publish(RabbitMqPublisherSettings settings, IModel channel, byte[] body)
         {
             channel.BasicPublish(exchange: settings.ExchangeName,
-                      routingKey: _queue,
+                      routingKey: _queue,//remove
                       basicProperties: null,
                       body: body);
         }

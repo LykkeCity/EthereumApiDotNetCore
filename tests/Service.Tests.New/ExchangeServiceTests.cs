@@ -230,7 +230,7 @@ namespace Tests
             var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
             var sign = Sign(hash, _privateKeyA).ToHex();
             //var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, ClientA, ClientA, new BigInteger(amount));
-            var result = await _exchangeService.CheckSign(guid, _tokenAdapterAddress, _clientA, _clientA, new BigInteger(amount), sign);
+            var result = _exchangeService.CheckSign(guid, _tokenAdapterAddress, _clientA, _clientA, new BigInteger(amount), sign);
 
             Assert.IsTrue(result);
         }
@@ -249,7 +249,7 @@ namespace Tests
 
             var hash = new Sha3Keccack().CalculateHash(strForHash.HexToByteArray());
             var sign = Sign(hash, _privateKeyA).ToHex();
-            var result = await _exchangeService.CheckSign(guid, _ethereumAdapterAddress, _clientA, _clientA, new BigInteger(amount - 1), sign);
+            var result = _exchangeService.CheckSign(guid, _ethereumAdapterAddress, _clientA, _clientA, new BigInteger(amount - 1), sign);
 
             Assert.IsFalse(result);
         }
