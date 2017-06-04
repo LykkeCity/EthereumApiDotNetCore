@@ -120,7 +120,7 @@ namespace EthereumApi.Controllers
             await Log("TransferWithChange", "Begin Process", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            var result = await _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
+            var result = _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
                 model.FromAddress, model.ToAddress, amount, model.Sign);
 
             await Log("TransferWithChange", "End Process", model, result.ToString());

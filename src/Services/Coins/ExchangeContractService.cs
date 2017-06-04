@@ -50,7 +50,7 @@ namespace Services.Coins
 
         Task<IdCheckResult> CheckId(Guid guidToCheck);
 
-        Task<bool> CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
+        bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -168,7 +168,7 @@ namespace Services.Coins
                 sign = await GetSign(id, coinAddress, clientAddr, toAddr, amount);
             }
 
-            await ThrowOnWrongSignature(id, coinAddress, clientAddr, toAddr, amount, sign);
+            ThrowOnWrongSignature(id, coinAddress, clientAddr, toAddr, amount, sign);
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("cashout");
@@ -196,7 +196,7 @@ namespace Services.Coins
                 sign = await GetSign(id, coinAddress, from, to, amount);
             }
 
-            await ThrowOnWrongSignature(id, coinAddress, from, to, amount, sign);
+            ThrowOnWrongSignature(id, coinAddress, from, to, amount, sign);
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transfer");
@@ -233,8 +233,8 @@ namespace Services.Coins
                 signTo = await GetSign(id, coinAddress, to, from, change);
             }
 
-            await ThrowOnWrongSignature(id, coinAddress, from, to, amount, signFrom);
-            await ThrowOnWrongSignature(id, coinAddress, to, from, change, signTo);
+            ThrowOnWrongSignature(id, coinAddress, from, to, amount, signFrom);
+            ThrowOnWrongSignature(id, coinAddress, to, from, change, signTo);
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transferWithChange");
@@ -368,7 +368,7 @@ namespace Services.Coins
             };
         }
 
-        public async Task<bool> CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
+        public bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
         {
             if (string.IsNullOrEmpty(sign))
             {
@@ -379,8 +379,11 @@ namespace Services.Coins
             var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
             var signer = new MessageSigner();
             string sender = signer.EcRecover(hash, sign);
+            var util = new AddressUtil();//.ConvertToChecksumAddress(
+            string checksumClientAddr = util.ConvertToChecksumAddress(clientAddr);
+            string checksumSender = util.ConvertToChecksumAddress(sender);
 
-            return clientAddr == sender;
+            return checksumClientAddr == checksumSender;
         }
 
         public async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
@@ -462,9 +465,9 @@ namespace Services.Coins
             return ecdaSignature;
         }
 
-        private async Task ThrowOnWrongSignature(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
+        private void ThrowOnWrongSignature(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
         {
-            var checkSign = await CheckSign(id, coinAddress, clientAddr, toAddr, amount, sign);
+            var checkSign = CheckSign(id, coinAddress, clientAddr, toAddr, amount, sign);
             if (!checkSign)
             {
                 throw new ClientSideException(ExceptionType.WrongSign, "");
