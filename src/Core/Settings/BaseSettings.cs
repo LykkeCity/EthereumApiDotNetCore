@@ -117,10 +117,25 @@ namespace Core.Settings
         public string LogsConnString { get; set; }
 
         public string SharedTransactionConnString { get; set; }
-        public string SharedConnString { get; set; }
-
         public string DictsConnString { get; set; }
 
         public string EthereumHandlerConnString { get; set; }
     }
+
+    public interface ISlackNotificationSettings
+    {
+        AzureQueue AzureQueue { get; set; }
+    }
+
+    public class SlackNotificationSettings : ISlackNotificationSettings
+    {
+        public AzureQueue AzureQueue { get; set; }
+    }
+
+    public class AzureQueue
+    {
+        public string ConnectionString { get; set; }
+        public string QueueName { get; set; }
+    }
 }
+//0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06

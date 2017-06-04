@@ -44,8 +44,6 @@ namespace Services.Coins
 
         Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate);
 
-        Task RetrieveEventLogs(bool recreateFilters);
-
         Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount);
 
         Task<IdCheckResult> CheckId(Guid guidToCheck);
@@ -60,7 +58,6 @@ namespace Services.Coins
         private readonly IContractService _contractService;
         private readonly ICoinContractFilterRepository _coinContractFilterRepository;
         private readonly ICoinRepository _coinRepository;
-        private readonly IQueueExt _coinEventQueue;
         private readonly Web3 _web3;
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
@@ -83,7 +80,6 @@ namespace Services.Coins
             _contractService = contractService;
             _coinContractFilterRepository = coinContractFilterRepository;
             _coinRepository = coinRepository;
-            _coinEventQueue = queueFactory(Constants.CoinEventQueue);
             _userPaymentHistoryRepository = userPaymentHistory;
             _coinEventService = coinEventService;
             _hashCalculator = hashCalculator;
@@ -317,33 +313,6 @@ namespace Services.Coins
             return coinContractFilter;
         }
 
-        public async Task RetrieveEventLogs(bool recreateFilters)
-        {
-            var filters = await GetCoinContractFilters(recreateFilters);
-            foreach (var coinContractFilter in filters)
-            {
-                switch (coinContractFilter.EventName)
-                {
-                    case Constants.CashInEvent:
-                        var cashInLogs = await _contractService.GetEvents<CoinContractCashInEvent>(coinContractFilter.ContractAddress,
-                            _settings.CoinContracts[coinContractFilter.CoinName].Abi, coinContractFilter.EventName,
-                            new HexBigInteger(coinContractFilter.Filter));
-                        cashInLogs?.ForEach(async o => await FireCoinContractEvent(coinContractFilter.ContractAddress, coinContractFilter.EventName, o.Caller, null, null, o.Amount));
-                        break;
-                    case Constants.CashOutEvent:
-                        (await _contractService.GetEvents<CoinContractCashOutEvent>(coinContractFilter.ContractAddress,
-                            _settings.CoinContracts[coinContractFilter.CoinName].Abi, coinContractFilter.EventName, new HexBigInteger(coinContractFilter.Filter)))
-                        ?.ForEach(async o => await FireCoinContractEvent(coinContractFilter.ContractAddress, coinContractFilter.EventName, o.Caller, o.From, o.To, o.Amount));
-                        break;
-                    case Constants.TransferEvent:
-                        (await _contractService.GetEvents<CoinContractTransferEvent>(coinContractFilter.ContractAddress,
-                            _settings.CoinContracts[coinContractFilter.CoinName].Abi, coinContractFilter.EventName, new HexBigInteger(coinContractFilter.Filter)))
-                        ?.ForEach(async o => await FireCoinContractEvent(coinContractFilter.ContractAddress, coinContractFilter.EventName, o.Caller, o.From, o.To, o.Amount));
-                        break;
-                }
-            }
-        }
-
         public async Task<IdCheckResult> CheckId(Guid guidToCheck)
         {
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
@@ -428,23 +397,6 @@ namespace Services.Coins
                 TransactionHash = trHash,
                 UserAddress = userAddress
             });
-        }
-
-        private async Task FireCoinContractEvent(string coinAddress, string eventName, string caller, string from, string to, BigInteger amount)
-        {
-            var coin = await _coinRepository.GetCoinByAddress(coinAddress);
-            decimal convertedAmount = amount.FromBlockchainAmount(coin.Multiplier);
-
-            await _coinEventQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinContractPublicEvent
-            {
-                CoinName = coin.Id,
-                EventName = eventName,
-                Address = coin.AdapterAddress,
-                Amount = convertedAmount,
-                Caller = caller,
-                From = from,
-                To = to
-            }));
         }
 
         private static EthECDSASignature ExtractEcdsaSignature(string signature)

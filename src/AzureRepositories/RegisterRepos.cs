@@ -27,7 +27,7 @@ namespace AzureRepositories
             services.AddTransient<ILog, LogToTableAndConsole>();
         }
 
-        public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings)
+        public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
         {
             var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.DataConnString);
                 services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
@@ -58,7 +58,7 @@ namespace AzureRepositories
                    ));
 
             services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
-                new AzureTableStorage<MonitoringEntity>(settings.Db.SharedConnString, Constants.StoragePrefix + Constants.MonitoringTable,
+                new AzureTableStorage<MonitoringEntity>(slackNotificationSettings.AzureQueue.ConnectionString, Constants.StoragePrefix + Constants.MonitoringTable,
                     provider.GetService<ILog>())
                     ));
 
@@ -81,7 +81,7 @@ namespace AzureRepositories
                    , provider.GetService<ILog>())) ));
         }
 
-        public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings)
+        public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
         {
             services.AddTransient<IQueueFactory, QueueFactory>();
             services.AddTransient<Func<string, IQueueExt>>(provider =>
@@ -95,19 +95,15 @@ namespace AzureRepositories
                         case Constants.EthereumContractQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.SlackNotifierQueue:
-                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
+                            return new AzureQueueExt(slackNotificationSettings.AzureQueue.ConnectionString, Constants.StoragePrefix + slackNotificationSettings.AzureQueue.QueueName);
                         case Constants.EthereumOutQueue:
                             return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);//remove
-                        case Constants.EmailNotifierQueue:
-                            return new AzureQueueExt(settings.Db.SharedConnString, Constants.StoragePrefix + x);
                         case Constants.ContractTransferQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.TransactionMonitoringQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         case Constants.CoinTransactionQueue:
                             return new AzureQueueExt(settings.Db.EthereumHandlerConnString, Constants.StoragePrefix + x);
-                        case Constants.CoinEventQueue:
-                            return new AzureQueueExt(settings.Db.SharedTransactionConnString, Constants.StoragePrefix + x);
                         case Constants.UserContractManualQueue:
                             return new AzureQueueExt(settings.Db.DataConnString, Constants.StoragePrefix + x);
                         default:
