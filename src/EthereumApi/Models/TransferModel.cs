@@ -9,7 +9,6 @@ namespace EthereumApi.Models
 {
     public class TransferModel : BaseCoinRequestModel
     {
-        [Required]
         public string Sign { get; set; }
     }
 
@@ -22,7 +21,6 @@ namespace EthereumApi.Models
         [Required]
         public string SignFrom { get; set; }
 
-        [Required]
         public string SignTo { get; set; }
     }
 
