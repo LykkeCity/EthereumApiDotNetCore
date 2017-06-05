@@ -36,11 +36,11 @@ namespace Tests
 
             var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
 
-            queueFactory(Constants.ContractTransferQueue).ClearAsync().Wait();
-            queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
-            queueFactory(Constants.CoinTransactionQueue).ClearAsync().Wait();
-            queueFactory(Constants.TransactionMonitoringQueue).ClearAsync().Wait();
-            queueFactory(Constants.CoinEventQueue).ClearAsync().Wait();
+            //queueFactory(Constants.ContractTransferQueue).ClearAsync().Wait();
+            //queueFactory(Constants.EthereumOutQueue).ClearAsync().Wait();
+            //queueFactory(Constants.CoinTransactionQueue).ClearAsync().Wait();
+            //queueFactory(Constants.TransactionMonitoringQueue).ClearAsync().Wait();
+            //queueFactory(Constants.CoinEventQueue).ClearAsync().Wait();
 
             Console.WriteLine("Setup test");
         }

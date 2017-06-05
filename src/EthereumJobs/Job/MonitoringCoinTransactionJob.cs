@@ -21,15 +21,18 @@ namespace EthereumJobs.Job
         private readonly IBaseSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
         private readonly ICoinEventService _coinEventService;
+        private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService, 
-            IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService)
+            IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService, 
+            IPendingTransactionsRepository pendingTransactionsRepository)
         {
             _settings = settings;
             _log = log;
             _coinTransactionService = coinTransactionService;
             _slackNotifier = slackNotifier;
             _coinEventService = coinEventService;
+            _pendingTransactionsRepository = pendingTransactionsRepository;
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
@@ -104,6 +107,7 @@ namespace EthereumJobs.Job
                 default: break;
             }
 
+            await _pendingTransactionsRepository.Delete(transactionHash);
             await _coinEventService.PublishEvent(coinEvent, false);
         }
     }

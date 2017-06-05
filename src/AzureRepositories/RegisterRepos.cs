@@ -32,6 +32,12 @@ namespace AzureRepositories
             var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.DataConnString);
                 services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
 
+            services.AddSingleton<IPendingTransactionsRepository>(provider => new PendingTransactionsRepository(
+                new AzureTableStorage<PendingTransactionEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingTransactions,
+                    provider.GetService<ILog>()),
+                new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingTransactions,
+                provider.GetService<ILog>())));
+
             services.AddSingleton<ITransferContractRepository>(provider => new TransferContractRepository(
                 new AzureTableStorage<TransferContractEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>()),
@@ -56,11 +62,6 @@ namespace AzureRepositories
                new AzureTableStorage<UserTransferWalletEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserTransferWalletTable,
                    provider.GetService<ILog>())
                    ));
-
-            services.AddSingleton<IMonitoringRepository>(provider => new MonitoringRepository(
-                new AzureTableStorage<MonitoringEntity>(slackNotificationSettings.AzureQueue.ConnectionString, Constants.StoragePrefix + Constants.MonitoringTable,
-                    provider.GetService<ILog>())
-                    ));
 
             services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
                 new AzureTableStorage<AppSettingEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.AppSettingsTable,
