@@ -144,12 +144,29 @@ namespace EthereumApi.Controllers
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             BigInteger change = BigInteger.Parse(model.Change);
-            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, model.FromAddress, 
+            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, model.FromAddress,
                 model.ToAddress, amount, model.SignFrom, change, model.SignTo);
 
             await Log("TransferWithChange", "End Process", model, transaction);
 
             return Ok(new TransactionResponse { TransactionHash = transaction });
+        }
+
+        [Route("checkPendingTransaction")]
+        [HttpPost]
+        [ProducesResponseType(typeof(CheckPendingResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> CheckPendingTransactions([FromBody] CheckPendingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var isSynced = await _exchangeContractService.CheckLastTransactionCompleted(model.CoinAdapterAddress, model.UserAddress);
+
+            return Ok(new CheckPendingResponse { IsSynced = isSynced });
         }
 
         private async Task Log(string method, string status, object model, string transaction = "")

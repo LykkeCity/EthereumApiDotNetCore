@@ -29,9 +29,11 @@ namespace Services.Coins
         private readonly ILog _logger;
         private readonly IQueueExt _coinTransationMonitoringQueue;
         private readonly IQueueExt _coinTransactionQueue;
+        private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
 
         public CoinTransactionService(Func<string, IQueueExt> queueFactory, IEthereumTransactionService transactionService,
-            ICoinTransactionRepository coinTransactionRepository, IContractService contractService, IBaseSettings baseSettings, ILog logger)
+            ICoinTransactionRepository coinTransactionRepository, IContractService contractService, IBaseSettings baseSettings, ILog logger,
+            IPendingTransactionsRepository pendingTransactionsRepository)
         {
             _transactionService = transactionService;
             _coinTransactionRepository = coinTransactionRepository;
@@ -40,6 +42,7 @@ namespace Services.Coins
             _logger = logger;
             _coinTransationMonitoringQueue = queueFactory(Constants.TransactionMonitoringQueue);
             _coinTransactionQueue = queueFactory(Constants.CoinTransactionQueue);
+            _pendingTransactionsRepository = pendingTransactionsRepository;
         }
 
 

@@ -72,5 +72,6 @@
         public const string ExternalTokenTable = "ExternalToken";
         public const string CoinEventEntityTable = "CoinEventEntity";
         public const string UserPaymentHistoryTable = "UserPaymentHistory";
+        public const string PendingTransactions = "PendingTransactions";
     }
 }

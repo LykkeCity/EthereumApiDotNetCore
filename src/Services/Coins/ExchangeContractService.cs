@@ -42,13 +42,12 @@ namespace Services.Coins
 
         Task PingMainExchangeContract();
 
-        Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate);
-
         Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount);
 
         Task<IdCheckResult> CheckId(Guid guidToCheck);
 
         bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
+        Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -63,15 +62,17 @@ namespace Services.Coins
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
         private readonly ICoinEventService _coinEventService;
         private readonly IHashCalculator _hashCalculator;
+        private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
             ICoinRepository coinRepository, IEthereumContractRepository ethereumContractRepository, Web3 web3,
-            ILykkeSigningAPI lykkeSigningAPI, 
-            IUserPaymentHistoryRepository userPaymentHistory, 
-            ICoinEventService coinEventService, 
-            IHashCalculator hashCalculator)
+            ILykkeSigningAPI lykkeSigningAPI,
+            IUserPaymentHistoryRepository userPaymentHistory,
+            ICoinEventService coinEventService,
+            IHashCalculator hashCalculator,
+            IPendingTransactionsRepository pendingTransactionsRepository)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -83,6 +84,7 @@ namespace Services.Coins
             _userPaymentHistoryRepository = userPaymentHistory;
             _coinEventService = coinEventService;
             _hashCalculator = hashCalculator;
+            _pendingTransactionsRepository = pendingTransactionsRepository;
         }
 
         public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
@@ -177,9 +179,9 @@ namespace Services.Coins
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
             await _coinEventService.PublishEvent(new CoinEvent(transactionHash, clientAddr, toAddr,
                 amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
+            await CreatePendingTransaction(coinAddress, clientAddr, transactionHash);
 
             return transactionHash;
-
         }
 
         public async Task<string> Transfer(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign)
@@ -204,6 +206,7 @@ namespace Services.Coins
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
             await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
                 amount.ToString(), CoinEventType.TransferStarted, coinAddress));
+            await CreatePendingTransaction(coinAddress, from, transactionHash);
 
             return transactionHash;
         }
@@ -244,6 +247,7 @@ namespace Services.Coins
             await SaveUserHistory(coinAddress, difference.ToString(), from, to, transactionHash, "TransferWithChange");
             await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
                 difference.ToString(), CoinEventType.TransferStarted, coinAddress));
+            await CreatePendingTransaction(coinAddress, from, transactionHash);
 
             return transactionHash;
         }
@@ -273,44 +277,6 @@ namespace Services.Coins
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var ping = contract.GetFunction("ping");
             string transactionHash = await ping.SendTransactionAsync(_settings.EthereumMainAccount);
-        }
-
-        public async Task<IEnumerable<ICoinContractFilter>> GetCoinContractFilters(bool recreate)
-        {
-            var result = new List<ICoinContractFilter>();
-
-            if (recreate)
-                await _coinContractFilterRepository.Clear();
-            var savedFilters = (await _coinContractFilterRepository.GetListAsync()).GroupBy(o => o.ContractAddress).ToDictionary(o => o.Key, o => o);
-            foreach (var settingsCoinContract in _settings.CoinContracts)
-            {
-                var filtersOfContract = savedFilters.ContainsKey(settingsCoinContract.Value.Address) ? savedFilters[settingsCoinContract.Value.Address] : null;
-                result.Add(await GetOrCreateEvent(settingsCoinContract, filtersOfContract, Constants.CashInEvent));
-                result.Add(await GetOrCreateEvent(settingsCoinContract, filtersOfContract, Constants.CashOutEvent));
-                result.Add(await GetOrCreateEvent(settingsCoinContract, filtersOfContract, Constants.TransferEvent));
-            }
-            return result;
-        }
-
-        private async Task<ICoinContractFilter> GetOrCreateEvent(KeyValuePair<string, Core.Settings.EthereumContract> settingsCoinContract, IGrouping<string, ICoinContractFilter> filtersOfContract, string eventName)
-        {
-            var evnt = filtersOfContract?.FirstOrDefault(o => o.EventName == eventName);
-            if (evnt != null) return evnt;
-            return await CreateAndSaveFilter(settingsCoinContract, eventName);
-        }
-
-        private async Task<ICoinContractFilter> CreateAndSaveFilter(KeyValuePair<string, Core.Settings.EthereumContract> settingsCoinContract, string eventName)
-        {
-            var filter = await _contractService.CreateFilter(settingsCoinContract.Value.Address, settingsCoinContract.Value.Abi, eventName);
-            var coinContractFilter = new CoinContractFilter
-            {
-                EventName = eventName,
-                ContractAddress = settingsCoinContract.Value.Address,
-                Filter = filter.HexValue,
-                CoinName = settingsCoinContract.Key
-            };
-            await _coinContractFilterRepository.AddFilterAsync(coinContractFilter);
-            return coinContractFilter;
         }
 
         public async Task<IdCheckResult> CheckId(Guid guidToCheck)
@@ -355,15 +321,24 @@ namespace Services.Coins
             return checksumClientAddr == checksumSender;
         }
 
+        public async Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr)
+        {
+            IPendingTransaction pendingTransaction = await _pendingTransactionsRepository.GetAsync(coinAddress, clientAddr);
+
+            return pendingTransaction == null;
+        }
+
         public async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
         {
             byte[] hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
             HashSignResponse response;
             try
             {
+                var util = new AddressUtil();
+                string clientAddrCheckSum = util.ConvertToChecksumAddress(clientAddr);
                 response = await _lykkeSigningAPI.ApiEthereumSignHashPostAsync(new SigningServiceApiCaller.Models.EthereumHashSignRequest()
                 {
-                    FromProperty = clientAddr,
+                    FromProperty = clientAddrCheckSum,
                     Hash = hash.ToHex()
                 });
 
@@ -450,6 +425,11 @@ namespace Services.Coins
             {
                 throw new ClientSideException(ExceptionType.OperationWithIdAlreadyExists, $"operation with guid {id}");
             }
+        }
+
+        private async Task CreatePendingTransaction(string coinAddress, string clientAddr, string transactionHash)
+        {
+            await _pendingTransactionsRepository.InsertOrReplace(new PendingTransaction() { CoinAdapterAddress = coinAddress, UserAddress = clientAddr, TransactionHash = transactionHash });
         }
     }
 }
