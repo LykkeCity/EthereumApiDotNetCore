@@ -8,6 +8,7 @@ using Services.Coins;
 using Common.Log;
 using System.Numerics;
 using System;
+using Nethereum.Util;
 
 namespace EthereumApi.Controllers
 {
@@ -17,9 +18,11 @@ namespace EthereumApi.Controllers
     {
         private readonly IExchangeContractService _exchangeContractService;
         private readonly ILog _logger;
+        private AddressUtil _addressUtil;
 
         public ExchangeController(IExchangeContractService exchangeContractService, ILog logger)
         {
+            _addressUtil = new AddressUtil();
             _exchangeContractService = exchangeContractService;
             _logger = logger;
         }
@@ -57,7 +60,8 @@ namespace EthereumApi.Controllers
             await Log("Cashout", "Begin Process", model);
 
             var amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.CashOut(model.Id, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount, model.Sign);
+            var transaction = await _exchangeContractService.CashOut(model.Id, model.CoinAdapterAddress,
+                _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
             await Log("Cashout", "End Process", model, transaction);
 
@@ -98,7 +102,8 @@ namespace EthereumApi.Controllers
             await Log("Transfer", "Begin Process", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.Transfer(model.Id, model.CoinAdapterAddress, model.FromAddress, model.ToAddress, amount, model.Sign);
+            var transaction = await _exchangeContractService.Transfer(model.Id, model.CoinAdapterAddress,
+                _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
             await Log("Transfer", "End Process", model, transaction);
 
@@ -121,7 +126,7 @@ namespace EthereumApi.Controllers
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             var result = _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
-                model.FromAddress, model.ToAddress, amount, model.Sign);
+                _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
             await Log("TransferWithChange", "End Process", model, result.ToString());
 
@@ -144,8 +149,9 @@ namespace EthereumApi.Controllers
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             BigInteger change = BigInteger.Parse(model.Change);
-            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, model.FromAddress,
-                model.ToAddress, amount, model.SignFrom, change, model.SignTo);
+            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, 
+                _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress),
+                amount, model.SignFrom, change, model.SignTo);
 
             await Log("TransferWithChange", "End Process", model, transaction);
 
@@ -164,7 +170,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var isSynced = await _exchangeContractService.CheckLastTransactionCompleted(model.CoinAdapterAddress, model.UserAddress);
+            var isSynced = await _exchangeContractService.CheckLastTransactionCompleted(model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.UserAddress));
 
             return Ok(new CheckPendingResponse { IsSynced = isSynced });
         }

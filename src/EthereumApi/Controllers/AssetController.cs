@@ -13,6 +13,7 @@ using Common.Log;
 using EthereumApiSelfHosted.Models;
 using Core.Repositories;
 using System.Numerics;
+using Nethereum.Util;
 
 namespace EthereumApi.Controllers
 {
@@ -23,9 +24,11 @@ namespace EthereumApi.Controllers
     {
         private readonly AssetContractService _assetContractService;
         private readonly ILog _logger;
+        private readonly AddressUtil _addressUtil;
 
         public СoinAdapterController(AssetContractService assetContractService, ILog logger)
         {
+            _addressUtil = new AddressUtil();
             _assetContractService = assetContractService;
             _logger = logger;
         }
@@ -122,7 +125,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            BigInteger amount = await _assetContractService.GetBalance(coinAdapterAddress, userAddress);
+            BigInteger amount = await _assetContractService.GetBalance(coinAdapterAddress, _addressUtil.ConvertToChecksumAddress(userAddress));
 
             return Ok(new BalanceModel
             {

@@ -12,6 +12,7 @@ using Services.Coins;
 using Common.Log;
 using EthereumApiSelfHosted.Models;
 using Core.Repositories;
+using Nethereum.Util;
 
 namespace EthereumApi.Controllers
 {
@@ -21,9 +22,11 @@ namespace EthereumApi.Controllers
     {
         private readonly ILog _logger;
         private readonly ITransferContractService _transferContractService;
+        private readonly AddressUtil _addressUtil;
 
         public TransitionContractsController(ITransferContractService transferContractService, ILog logger)
         {
+            _addressUtil = new AddressUtil();
             _transferContractService = transferContractService;
             _logger = logger;
         }
@@ -40,7 +43,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            string contractAddress = await _transferContractService.CreateTransferContract(model.UserAddress,
+            string contractAddress = await _transferContractService.CreateTransferContract(_addressUtil.ConvertToChecksumAddress(model.UserAddress),
                 model.CoinAdapterAddress);
 
             return Ok(new RegisterResponse
@@ -62,7 +65,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            ITransferContract contract = await _transferContractService.GetTransferContract(userAddress,
+            ITransferContract contract = await _transferContractService.GetTransferContract(_addressUtil.ConvertToChecksumAddress(userAddress),
                 coinAdapterAddress);
 
             if (contract == null)
