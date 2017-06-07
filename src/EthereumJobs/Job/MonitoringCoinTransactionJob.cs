@@ -89,13 +89,20 @@ namespace EthereumJobs.Job
         private async Task RepeatOperationTillWin(string hash)
         {
             var pendingOp = await _pendingOperationService.GetOperationByHashAsync(hash);
+            if (pendingOp == null)
+            {
+                //ignore because that mean that cashin somehow failed
+                return;
+            }
+
             await _pendingOperationService.RefreshOperationByIdAsync(pendingOp.OperationId);
         }
 
         private async Task SendCompletedCoinEvent(string transactionHash, bool success)
         {
             var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
-            var coinEvent = await _coinEventService.GetCoinEventById(pendingOp.OperationId);
+            var coinEvent = pendingOp != null ? 
+                await _coinEventService.GetCoinEventById(pendingOp.OperationId) : await _coinEventService.GetCoinEvent(transactionHash);
             coinEvent.Success = success;
             coinEvent.TransactionHash = transactionHash;
 
