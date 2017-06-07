@@ -57,6 +57,11 @@ namespace AzureRepositories.Repositories
             }
 
             IPendingTransaction transaction = await _table.GetDataAsync(index);
+
+            if (transaction == null)
+            {
+                return;
+            }
             await _table.DeleteIfExistAsync(PendingTransactionEntity.GeneratePartitionKey(transaction.CoinAdapterAddress), transaction.UserAddress);
             await _table.DeleteIfExistAsync(_indexName, index.RowKey);
         }

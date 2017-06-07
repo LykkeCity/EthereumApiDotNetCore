@@ -88,13 +88,16 @@ namespace EthereumJobs.Job
 
         private async Task RepeatOperationTillWin(string hash)
         {
-            await _pendingOperationService.RefreshOperationAsync(hash);
+            var pendingOp = await _pendingOperationService.GetOperationByHashAsync(hash);
+            await _pendingOperationService.RefreshOperationByIdAsync(pendingOp.OperationId);
         }
 
         private async Task SendCompletedCoinEvent(string transactionHash, bool success)
         {
-            var coinEvent = await _coinEventService.GetCoinEvent(transactionHash);
+            var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
+            var coinEvent = await _coinEventService.GetCoinEventById(pendingOp.OperationId);
             coinEvent.Success = success;
+            coinEvent.TransactionHash = transactionHash;
 
             switch (coinEvent.CoinEventType)
             {

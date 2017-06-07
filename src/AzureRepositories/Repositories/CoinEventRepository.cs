@@ -73,10 +73,13 @@ namespace AzureRepositories.Repositories
     public class CoinEventRepository : ICoinEventRepository
     {
         private readonly INoSQLTableStorage<CoinEventEntity> _table;
+        private readonly INoSQLTableStorage<AzureIndex> _index;
+        private const string _operationIdIndex = "OperationIdIndex"; 
 
-        public CoinEventRepository(INoSQLTableStorage<CoinEventEntity> table)
+        public CoinEventRepository(INoSQLTableStorage<CoinEventEntity> table, INoSQLTableStorage<AzureIndex> index)
         {
             _table = table;
+            _index = index;
         }
 
         public async Task<ICoinEvent> GetCoinEvent(string transactionHash)
@@ -86,11 +89,26 @@ namespace AzureRepositories.Repositories
             return entity;
         }
 
+        public async Task<ICoinEvent> GetCoinEventById(string operationId)
+        {
+            var index = await _index.GetDataAsync(_operationIdIndex, operationId);
+            if (index == null)
+            {
+                return null;
+            }
+
+            var entity = await _table.GetDataAsync(index);
+
+            return entity;
+        }
+
         public async Task InsertOrReplace(ICoinEvent coinEvent)
         {
             var entity = CoinEventEntity.CreateEntity(coinEvent);
+            var index = new AzureIndex(_operationIdIndex, coinEvent.OperationId, entity);
 
             await _table.InsertOrReplaceAsync(entity);
+            await _index.InsertOrReplaceAsync(index);
         }
     }
 }

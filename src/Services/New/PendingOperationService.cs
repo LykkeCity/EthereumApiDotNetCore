@@ -30,8 +30,11 @@ namespace Services
             string signFrom, BigInteger change, string signTo);
 
         Task<IPendingOperation> GetOperationAsync(string operationId);
+        Task<IPendingOperation> GetOperationByHashAsync(string hash);
         Task RefreshOperationAsync(string hash);
         Task RefreshOperationByIdAsync(string hash);
+        Task MatchHashToOpId(string transactionHash, string operationId);
+        Task<string> CreateOperation(IPendingOperation operation);
     }
 
     public class PendingOperationService : IPendingOperationService
@@ -170,6 +173,30 @@ namespace Services
             return operation;
         }
 
+        public async Task MatchHashToOpId(string transactionHash, string operationId)
+        {
+            IOperationToHashMatch match = await _operationToHashMatchRepository.GetAsync(operationId);
+            if (match == null)
+            {
+                return;
+            }
+
+            match.TransactionHash = transactionHash;
+            await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
+        }
+
+        public async Task<IPendingOperation> GetOperationByHashAsync(string hash)
+        {
+            IOperationToHashMatch match = await _operationToHashMatchRepository.GetByHashAsync(hash);
+            if (match == null)
+            {
+                return null;
+            }
+
+            IPendingOperation operation = await _pendingOperationRepository.GetOperation(match.OperationId);
+            return operation;
+        }
+
         public async Task RefreshOperationByIdAsync(string operationId)
         {
             IOperationToHashMatch match = await _operationToHashMatchRepository.GetAsync(operationId);
@@ -258,7 +285,7 @@ namespace Services
             return _hashCalculator.GetHash(id, coinAddress, clientAddr, toAddr, amount);
         }
 
-        private async Task<string> CreateOperation(IPendingOperation operation)
+        public async Task<string> CreateOperation(IPendingOperation operation)
         {
             var op = new PendingOperation()
             {

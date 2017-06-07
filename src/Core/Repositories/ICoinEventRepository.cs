@@ -12,7 +12,7 @@ namespace Core.Repositories
     {
         string OperationId { get; }
         CoinEventType CoinEventType { get; set; }
-        string TransactionHash { get; }
+        string TransactionHash { get; set; }
         string ContractAddress { get; }
         string FromAddress { get; }
         string ToAddress { get; }
@@ -37,7 +37,7 @@ namespace Core.Repositories
     {
         public string OperationId { get; set; }
         public CoinEventType CoinEventType { get; set; }
-        public string TransactionHash { get; private set; }
+        public string TransactionHash { get; set; }
         public string ContractAddress { get; private set; }
         public string FromAddress { get; private set; }
         public string ToAddress { get; private set; }
@@ -66,5 +66,6 @@ namespace Core.Repositories
     {
         Task<ICoinEvent> GetCoinEvent(string transactonHash);
         Task InsertOrReplace(ICoinEvent coinEvent);
+        Task<ICoinEvent> GetCoinEventById(string operationId);
     }
 }

@@ -10,7 +10,9 @@ namespace Services
     public interface ICoinEventService
     {
         Task<ICoinEvent> GetCoinEvent(string transactionHash);
+        Task<ICoinEvent> GetCoinEventById(string OperationId);
         Task PublishEvent(ICoinEvent coinEvent, bool putInProcessingQueue = true);
+        Task InsertAsync(ICoinEvent coinEvent);
     }
 
     public class CoinEventService : ICoinEventService
@@ -19,8 +21,8 @@ namespace Services
         private readonly ICoinEventRepository _coinEventRepository;
         private readonly ICoinTransactionService _coinTransactionService;
 
-        public CoinEventService(ICoinEventPublisher coinEventPublisher, 
-            ICoinEventRepository coinEventRepository, 
+        public CoinEventService(ICoinEventPublisher coinEventPublisher,
+            ICoinEventRepository coinEventRepository,
             ICoinTransactionService coinTransactionService)
         {
             _coinEventPublisher = coinEventPublisher;
@@ -33,6 +35,18 @@ namespace Services
             var coinEvent = await _coinEventRepository.GetCoinEvent(transactionHash);
 
             return coinEvent;
+        }
+
+        public async Task<ICoinEvent> GetCoinEventById(string operationId)
+        {
+            var coinEvent = await _coinEventRepository.GetCoinEventById(operationId);
+
+            return coinEvent;
+        }
+
+        public async Task InsertAsync(ICoinEvent coinEvent)
+        {
+            await _coinEventRepository.InsertOrReplace(coinEvent);
         }
 
         public async Task PublishEvent(ICoinEvent coinEvent, bool putInProcessingQueue = true)
