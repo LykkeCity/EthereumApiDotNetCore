@@ -50,6 +50,13 @@ namespace ContractBuilder
             RegisterReposExt.RegisterAzureQueues(collection, settings.EthereumCore, settings.SlackNotifications);
             RegisterReposExt.RegisterAzureStorages(collection, settings.EthereumCore, settings.SlackNotifications);
             RegisterDependency.RegisterServices(collection);
+
+            //var web3 = ServiceProvider.GetService<Web3>();
+            //web3.Eth.GetBalance.SendRequestAsync("");
+            // web3.Eth.Transactions.SendTransaction.SendRequestAsync(new Nethereum.RPC.Eth.DTOs.TransactionInput()
+            //{
+            //    
+            //}).Result;
             //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
             //var stringKey = Encoding.Unicode.GetString(key);
             GetAllContractInJson();

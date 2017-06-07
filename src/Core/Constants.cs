@@ -73,5 +73,15 @@
         public const string CoinEventEntityTable = "CoinEventEntity";
         public const string UserPaymentHistoryTable = "UserPaymentHistory";
         public const string PendingTransactions = "PendingTransactions";
+        public const string PendingOperationsTable = "PendingOperation";
+        public const string OperationToHashMatchTable = "OperationToHashMatch"; 
+        public const string PendingOperationsQueue = "pending-operations";
+    }
+
+    public static class OperationTypes
+    {
+        public const string Transfer = "Transfer";
+        public const string Cashout = "Cashout";
+        public const string TransferWithChange = "TransferWithChange";
     }
 }

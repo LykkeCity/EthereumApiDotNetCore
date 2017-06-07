@@ -43,6 +43,8 @@ namespace AzureRepositories.Repositories
 
         public bool Success { get; set; }
 
+        public string OperationId { get; set; }
+
         public static string GetPartitionKey()
         {
             return "CoinEvent";
@@ -61,7 +63,8 @@ namespace AzureRepositories.Repositories
                 Success = coinEvent.Success,
                 ToAddress = coinEvent.ToAddress,
                 FromAddress = coinEvent.FromAddress,
-                EventTime = coinEvent.EventTime
+                EventTime = coinEvent.EventTime,
+                OperationId = coinEvent.OperationId
             };
         }
     }

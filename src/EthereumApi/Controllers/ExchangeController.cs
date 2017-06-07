@@ -9,6 +9,7 @@ using Common.Log;
 using System.Numerics;
 using System;
 using Nethereum.Util;
+using Services;
 
 namespace EthereumApi.Controllers
 {
@@ -19,31 +20,15 @@ namespace EthereumApi.Controllers
         private readonly IExchangeContractService _exchangeContractService;
         private readonly ILog _logger;
         private AddressUtil _addressUtil;
+        private readonly IPendingOperationService _pendingOperationService;
 
-        public ExchangeController(IExchangeContractService exchangeContractService, ILog logger)
+        public ExchangeController(IExchangeContractService exchangeContractService, ILog logger, IPendingOperationService pendingOperationService)
         {
             _addressUtil = new AddressUtil();
             _exchangeContractService = exchangeContractService;
             _logger = logger;
+            _pendingOperationService = pendingOperationService;
         }
-
-        //[Route("swap")]
-        //[HttpPost]
-        //[Produces(typeof(TransactionResponse))]
-        //public async Task<IActionResult> Swap([FromBody]SwapModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        throw new BackendException(BackendExceptionType.MissingRequiredParams);
-
-        //    await Log("Swap", "Begin Process", model);
-
-        //    var transaction = await _coinContractService.Swap(model.Id, model.ClientA, model.ClientB, model.CoinA, model.CoinB,
-        //        model.AmountA, model.AmountB, model.SignA, model.SignB);
-
-        //    await Log("Swap", "End Process", model, transaction);
-
-        //    return Ok(new TransactionResponse { TransactionHash = transaction });
-        //}
 
         [Route("cashout")]
         [HttpPost]
@@ -60,12 +45,12 @@ namespace EthereumApi.Controllers
             await Log("Cashout", "Begin Process", model);
 
             var amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.CashOut(model.Id, model.CoinAdapterAddress,
+            var operationId = await _pendingOperationService.CashOut(model.Id, model.CoinAdapterAddress,
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
-            await Log("Cashout", "End Process", model, transaction);
+            await Log("Cashout", "End Process", model, operationId);
 
-            return Ok(new TransactionResponse { TransactionHash = transaction });
+            return Ok(new OperationIdResponse { OperationId = operationId });
         }
 
         [Route("checkId/{guid}")]
@@ -102,12 +87,12 @@ namespace EthereumApi.Controllers
             await Log("Transfer", "Begin Process", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            var transaction = await _exchangeContractService.Transfer(model.Id, model.CoinAdapterAddress,
+            var operationId = await _pendingOperationService.Transfer(model.Id, model.CoinAdapterAddress,
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
-            await Log("Transfer", "End Process", model, transaction);
+            await Log("Transfer", "End Process", model, operationId);
 
-            return Ok(new TransactionResponse { TransactionHash = transaction });
+            return Ok(new OperationIdResponse { OperationId = operationId });
         }
 
         [Route("checkSign")]
@@ -149,13 +134,13 @@ namespace EthereumApi.Controllers
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             BigInteger change = BigInteger.Parse(model.Change);
-            var transaction = await _exchangeContractService.TransferWithChange(model.Id, model.CoinAdapterAddress, 
+            var operationId = await _pendingOperationService.TransferWithChange(model.Id, model.CoinAdapterAddress, 
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress),
                 amount, model.SignFrom, change, model.SignTo);
 
-            await Log("TransferWithChange", "End Process", model, transaction);
+            await Log("TransferWithChange", "End Process", model, operationId);
 
-            return Ok(new TransactionResponse { TransactionHash = transaction });
+            return Ok(new OperationIdResponse { OperationId = operationId });
         }
 
         [Route("checkPendingTransaction")]

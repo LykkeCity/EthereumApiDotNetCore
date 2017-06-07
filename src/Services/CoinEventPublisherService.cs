@@ -35,7 +35,7 @@ namespace Services
 
         private static CoinEvent GetCoinEvent(ICoinEvent coinEvent)
         {
-            return new CoinEvent(coinEvent.TransactionHash, coinEvent.FromAddress, coinEvent.ToAddress, 
+            return new CoinEvent(coinEvent.OperationId, coinEvent.TransactionHash, coinEvent.FromAddress, coinEvent.ToAddress, 
                 coinEvent.Amount, coinEvent.CoinEventType, coinEvent.ContractAddress, coinEvent.Success, coinEvent.Additional);
         }
     }

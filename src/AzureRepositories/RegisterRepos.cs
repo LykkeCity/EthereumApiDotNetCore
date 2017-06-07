@@ -44,6 +44,16 @@ namespace AzureRepositories
                 new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>())));
 
+            services.AddSingleton<IPendingOperationRepository>(provider => new PendingOperationRepository(
+                new AzureTableStorage<PendingOperationEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingOperationsTable,
+                    provider.GetService<ILog>())));
+
+            services.AddSingleton<IOperationToHashMatchRepository>(provider => new OperationToHashMatchRepository(
+                new AzureTableStorage<OperationToHashMatchEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
+                    provider.GetService<ILog>()),
+                new AzureTableStorage<HashToOperationMatchEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<ICoinEventRepository>(provider => new CoinEventRepository(
                 new AzureTableStorage<CoinEventEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinEventEntityTable,
                     provider.GetService<ILog>())));

@@ -63,6 +63,7 @@ namespace Services.Coins
         private readonly ICoinEventService _coinEventService;
         private readonly IHashCalculator _hashCalculator;
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
+        private readonly ITransferContractService _transferContractService;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
@@ -72,7 +73,8 @@ namespace Services.Coins
             IUserPaymentHistoryRepository userPaymentHistory,
             ICoinEventService coinEventService,
             IHashCalculator hashCalculator,
-            IPendingTransactionsRepository pendingTransactionsRepository)
+            IPendingTransactionsRepository pendingTransactionsRepository,
+            ITransferContractService transferContractService)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -85,6 +87,7 @@ namespace Services.Coins
             _coinEventService = coinEventService;
             _hashCalculator = hashCalculator;
             _pendingTransactionsRepository = pendingTransactionsRepository;
+            _transferContractService = transferContractService;
         }
 
         public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
@@ -177,7 +180,7 @@ namespace Services.Coins
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
-            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, clientAddr, toAddr,
+            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, clientAddr, toAddr,
                 amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, clientAddr, transactionHash);
 
@@ -204,7 +207,7 @@ namespace Services.Coins
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
-            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
+            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, from, to,
                 amount.ToString(), CoinEventType.TransferStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, from, transactionHash);
 
@@ -245,7 +248,7 @@ namespace Services.Coins
             var difference = (amount - change);
 
             await SaveUserHistory(coinAddress, difference.ToString(), from, to, transactionHash, "TransferWithChange");
-            await _coinEventService.PublishEvent(new CoinEvent(transactionHash, from, to,
+            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(),transactionHash, from, to,
                 difference.ToString(), CoinEventType.TransferStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, from, transactionHash);
 
@@ -334,11 +337,9 @@ namespace Services.Coins
             HashSignResponse response;
             try
             {
-                var util = new AddressUtil();
-                string clientAddrCheckSum = util.ConvertToChecksumAddress(clientAddr);
                 response = await _lykkeSigningAPI.ApiEthereumSignHashPostAsync(new SigningServiceApiCaller.Models.EthereumHashSignRequest()
                 {
-                    FromProperty = clientAddrCheckSum,
+                    FromProperty = clientAddr,
                     Hash = hash.ToHex()
                 });
 
@@ -431,5 +432,15 @@ namespace Services.Coins
         {
             await _pendingTransactionsRepository.InsertOrReplace(new PendingTransaction() { CoinAdapterAddress = coinAddress, UserAddress = clientAddr, TransactionHash = transactionHash });
         }
+
+        //private async Task CheckBalanceIsEnough(string coinAdapterAddress, string fromAddress, BigInteger amount)
+        //{
+        //    var currentBalance = await _transferContractService.GetBalanceOnAdapter(coinAdapterAddress, fromAddress);
+
+        //    if (currentBalance < amount)
+        //    {
+        //        throw new ClientSideException(ExceptionType.BalanceIsTooLow, $"User {fromAddress} balance on adapter {coinAdapterAddress} is ");
+        //    }
+        //}
     }
 }

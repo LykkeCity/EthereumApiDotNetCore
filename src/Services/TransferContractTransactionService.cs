@@ -93,8 +93,9 @@ namespace Services
                 }
 
                 var transactionHash = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
-                await _coinEventService.PublishEvent(new CoinEvent(transactionHash, contractTransferTr.ContractAddress, contractTransferTr.UserAddress,
-                                                        balance.ToString(), CoinEventType.CashinStarted, contractEntity.CoinAdapterAddress));
+                await _coinEventService.PublishEvent(new CoinEvent($"InternalOperation-{Guid.NewGuid().ToString()}", 
+                    transactionHash, contractTransferTr.ContractAddress, contractTransferTr.UserAddress,
+                    balance.ToString(), CoinEventType.CashinStarted, contractEntity.CoinAdapterAddress));
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {
                     Amount = balance.ToString(),

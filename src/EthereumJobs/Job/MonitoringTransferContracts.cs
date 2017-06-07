@@ -62,6 +62,7 @@ namespace EthereumJobs.Job
                         var assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
                         if (!assignmentCompleted)
                         {
+                            //_ethereumTransactionService
                             throw new Exception($"User assignment wasa not completed for {item.UserAddress} (trHash:{item.AssignmentHash})");
                         }
                         //it is a transfer wallet
