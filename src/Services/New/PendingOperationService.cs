@@ -191,8 +191,9 @@ namespace Services
             var bigIntRepresentation = EthUtils.GuidToBigInteger(id);
 
             bool isInList = await transactionsCheck.CallAsync<bool>(bigIntRepresentation);
+            var match = _operationToHashMatchRepository.GetAsync(id.ToString());
 
-            if (isInList)
+            if (isInList || match != null)
             {
                 throw new ClientSideException(ExceptionType.OperationWithIdAlreadyExists, $"operation with guid {id}");
             }
