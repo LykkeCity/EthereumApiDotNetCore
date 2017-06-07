@@ -23,15 +23,17 @@ namespace EthereumJobs.Job
         private readonly IPendingOperationService _pendingOperationService;
         private readonly IExchangeContractService _exchangeContractService;
         private readonly ICoinEventService _coinEventService;
+        private readonly ITransferContractService _transferContractService;
 
         public MonitoringOperationJob(ILog log, IBaseSettings settings,
-            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService)
+            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService, ITransferContractService transferContractService)
         {
             _exchangeContractService = exchangeContractService;
             _pendingOperationService = pendingOperationService;
             _settings = settings;
             _log = log;
             _coinEventService = coinEventService;
+            _transferContractService = transferContractService;
         }
 
         [QueueTrigger(Constants.PendingOperationsQueue, 100, true)]
@@ -45,19 +47,23 @@ namespace EthereumJobs.Job
                 BigInteger resultAmount;
                 string transactionHash = null;
                 CoinEventType? eventType = null;
+                BigInteger currentBalance = await _transferContractService.GetBalanceOnAdapter(operation.CoinAdapterAddress, operation.FromAddress);
+
                 switch (operation.OperationType)
                 {
                     case OperationTypes.Cashout:
                         eventType = CoinEventType.CashoutStarted;
                         resultAmount = amount;
-                        transactionHash = await _exchangeContractService.CashOut(guid, 
-                            operation.CoinAdapterAddress, 
+                        if (!CheckBalance(currentBalance, resultAmount)) break;
+                        transactionHash = await _exchangeContractService.CashOut(guid,
+                            operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom);
                         break;
                     case OperationTypes.Transfer:
                         eventType = CoinEventType.TransferStarted;
                         resultAmount = amount;
+                        if (!CheckBalance(currentBalance, resultAmount)) break;
                         transactionHash = await _exchangeContractService.Transfer(guid, operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom);
@@ -66,6 +72,7 @@ namespace EthereumJobs.Job
                         eventType = CoinEventType.TransferStarted;
                         BigInteger change = BigInteger.Parse(operation.Change);
                         resultAmount = amount - change;
+                        if (!CheckBalance(currentBalance, resultAmount)) break;
                         transactionHash = await _exchangeContractService.TransferWithChange(guid, operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom, change, operation.SignTo);
@@ -74,10 +81,13 @@ namespace EthereumJobs.Job
                         await _log.WriteWarningAsync("MonitoringOperationJob", "Execute", $"Can't find right operation type for {opMessage.OperationId}", "");
                         break;
                 }
+
                 if (transactionHash != null && eventType != null)
                 {
                     await _pendingOperationService.MatchHashToOpId(transactionHash, operation.OperationId);
                     await _coinEventService.PublishEvent(new CoinEvent(operation.OperationId.ToString(), transactionHash, operation.FromAddress, operation.ToAddress, resultAmount.ToString(), eventType.Value, operation.CoinAdapterAddress));
+
+                    return;
                 }
             }
             catch (Exception ex)
@@ -88,12 +98,19 @@ namespace EthereumJobs.Job
                 opMessage.LastError = ex.Message;
 
                 opMessage.DequeueCount++;
-                context.MoveMessageToEnd(opMessage.ToJson());
-                context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+
 
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "", ex);
                 return;
             }
+
+            context.MoveMessageToEnd();
+            context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+        }
+
+        private bool CheckBalance(BigInteger currentBalance, BigInteger amount)
+        {
+            return currentBalance >= amount;
         }
     }
 }
