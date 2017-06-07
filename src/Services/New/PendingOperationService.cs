@@ -31,6 +31,7 @@ namespace Services
 
         Task<IPendingOperation> GetOperationAsync(string operationId);
         Task RefreshOperationAsync(string hash);
+        Task RefreshOperationByIdAsync(string hash);
     }
 
     public class PendingOperationService : IPendingOperationService
@@ -167,6 +168,21 @@ namespace Services
 
             IPendingOperation operation = await _pendingOperationRepository.GetOperation(operationId);
             return operation;
+        }
+
+        public async Task RefreshOperationByIdAsync(string operationId)
+        {
+            IOperationToHashMatch match = await _operationToHashMatchRepository.GetAsync(operationId);
+            if (match == null)
+            {
+                return;
+            }
+
+            IPendingOperation operation = await _pendingOperationRepository.GetOperation(match.OperationId);
+            match.TransactionHash = "";
+
+            await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
+            await _queue.PutMessageAsync(new OperationHashMatchMessage() { OperationId = match.OperationId });
         }
 
         public async Task RefreshOperationAsync(string trHash)
