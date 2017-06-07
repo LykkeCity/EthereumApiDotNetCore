@@ -64,7 +64,7 @@ namespace EthereumJobs.Job
             {
                 await RepeatOperationTillWin(transaction.TransactionHash);
                 await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations. Reason - timeout");
-                await SendCompletedCoinEvent(transaction.TransactionHash, false);
+                //await SendCompletedCoinEvent(transaction.TransactionHash, false);
             }
             else
             {
