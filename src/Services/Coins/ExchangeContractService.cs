@@ -180,8 +180,8 @@ namespace Services.Coins
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
-            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, clientAddr, toAddr,
-                amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
+            //await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, clientAddr, toAddr,
+            //    amount.ToString(), CoinEventType.CashoutStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, clientAddr, transactionHash);
 
             return transactionHash;
@@ -207,8 +207,8 @@ namespace Services.Coins
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
-            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, from, to,
-                amount.ToString(), CoinEventType.TransferStarted, coinAddress));
+            //await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, from, to,
+            //    amount.ToString(), CoinEventType.TransferStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, from, transactionHash);
 
             return transactionHash;
@@ -248,8 +248,8 @@ namespace Services.Coins
             var difference = (amount - change);
 
             await SaveUserHistory(coinAddress, difference.ToString(), from, to, transactionHash, "TransferWithChange");
-            await _coinEventService.PublishEvent(new CoinEvent(id.ToString(),transactionHash, from, to,
-                difference.ToString(), CoinEventType.TransferStarted, coinAddress));
+            //await _coinEventService.PublishEvent(new CoinEvent(id.ToString(),transactionHash, from, to,
+            //    difference.ToString(), CoinEventType.TransferStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, from, transactionHash);
 
             return transactionHash;

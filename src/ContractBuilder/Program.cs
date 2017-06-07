@@ -15,6 +15,8 @@ using AzureRepositories;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
 using Services.Coins;
+using RabbitMQ;
+using Common.Log;
 
 namespace ContractBuilder
 {
@@ -50,6 +52,8 @@ namespace ContractBuilder
             RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
             RegisterReposExt.RegisterAzureQueues(collection, settings.EthereumCore, settings.SlackNotifications);
             RegisterReposExt.RegisterAzureStorages(collection, settings.EthereumCore, settings.SlackNotifications);
+            ServiceProvider = collection.BuildServiceProvider();
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.EthereumCore, ServiceProvider.GetService<ILog>());
             RegisterDependency.RegisterServices(collection);
 
             //var web3 = ServiceProvider.GetService<Web3>();
@@ -73,8 +77,21 @@ namespace ContractBuilder
             //service.Transfer("0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0", settings.EthereumMainAccount,
             //    "0x6e95184c02c39369ee9449f85aee42badc6910fd", new System.Numerics.BigInteger(101)).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
-            //string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
+            //    string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
             //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
+            //var coinEv = ServiceProvider.GetService<ICoinEventService>();
+            //var ev1 = coinEv.GetCoinEvent("0xbfb8d6a561c1a088c347efb989e19cb02c1028b34a337e001b146fd1360dc714").Result;
+            //var ev2 = coinEv.GetCoinEvent("0xa0876a676d695ab145fcf70ac0b2ae02e8b00351a5193352ffb37ad37dce6848").Result;
+            //coinEv.InsertAsync(ev1).Wait();
+            //coinEv.InsertAsync(ev2).Wait();
+            //var paymentService = ServiceProvider.GetService<ICoinTransactionService>();
+            //paymentService.PutTransactionToQueue("0xbfb8d6a561c1a088c347efb989e19cb02c1028b34a337e001b146fd1360dc714").Wait();
+            //paymentService.PutTransactionToQueue("0xa0876a676d695ab145fcf70ac0b2ae02e8b00351a5193352ffb37ad37dce6848").Wait();
+            //var pendingOperationService = ServiceProvider.GetService<IPendingOperationService>();
+            //var op = pendingOperationService.GetOperationAsync("40017691-1656-4d71-a8a6-4187200dca73").Result;
+            //pendingOperationService.CreateOperation(op).Wait();
+            //var op2 = pendingOperationService.GetOperationAsync("41e19fd5-2660-469b-9315-b768f701e742").Result;
+            //pendingOperationService.CreateOperation(op2).Wait();
 
             while (!exit)
             {
@@ -160,7 +177,7 @@ namespace ContractBuilder
                 Console.WriteLine("1 - Ethereum transfer contract");
                 Console.WriteLine("2 - Token transfer contract");
                 while (!exit)
-                { 
+                {
 
                     var input = Console.ReadLine();
                     switch (input)
@@ -174,10 +191,10 @@ namespace ContractBuilder
                             transferName = "EthTransferContract";
                             exit = true;
                             break;
-                        default: 
+                        default:
                             break;
                     }
-                 }
+                }
 
                 Console.WriteLine("Write Client Address (you have one attempt):");
                 var clientAddress = Console.ReadLine();

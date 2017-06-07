@@ -22,14 +22,16 @@ namespace EthereumJobs.Job
         private readonly IBaseSettings _settings;
         private readonly IPendingOperationService _pendingOperationService;
         private readonly IExchangeContractService _exchangeContractService;
+        private readonly ICoinEventService _coinEventService;
 
         public MonitoringOperationJob(ILog log, IBaseSettings settings,
-            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService)
+            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService)
         {
             _exchangeContractService = exchangeContractService;
             _pendingOperationService = pendingOperationService;
             _settings = settings;
             _log = log;
+            _coinEventService = coinEventService;
         }
 
         [QueueTrigger(Constants.PendingOperationsQueue, 100, true)]
@@ -40,22 +42,30 @@ namespace EthereumJobs.Job
                 var operation = await _pendingOperationService.GetOperationAsync(opMessage.OperationId);
                 var guid = Guid.Parse(operation.OperationId);
                 var amount = BigInteger.Parse(operation.Amount);
+                BigInteger resultAmount;
                 string transactionHash = null;
+                CoinEventType? eventType = null;
                 switch (operation.OperationType)
                 {
                     case OperationTypes.Cashout:
+                        eventType = CoinEventType.CashoutStarted;
+                        resultAmount = amount;
                         transactionHash = await _exchangeContractService.CashOut(guid, 
                             operation.CoinAdapterAddress, 
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom);
                         break;
                     case OperationTypes.Transfer:
+                        eventType = CoinEventType.TransferStarted;
+                        resultAmount = amount;
                         transactionHash = await _exchangeContractService.Transfer(guid, operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom);
                         break;
                     case OperationTypes.TransferWithChange:
+                        eventType = CoinEventType.TransferStarted;
                         BigInteger change = BigInteger.Parse(operation.Change);
+                        resultAmount = amount - change;
                         transactionHash = await _exchangeContractService.TransferWithChange(guid, operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom, change, operation.SignTo);
@@ -63,6 +73,11 @@ namespace EthereumJobs.Job
                     default:
                         await _log.WriteWarningAsync("MonitoringOperationJob", "Execute", $"Can't find right operation type for {opMessage.OperationId}", "");
                         break;
+                }
+                if (transactionHash != null && eventType != null)
+                {
+                    await _pendingOperationService.MatchHashToOpId(transactionHash, operation.OperationId);
+                    await _coinEventService.PublishEvent(new CoinEvent(operation.OperationId.ToString(), transactionHash, operation.FromAddress, operation.ToAddress, resultAmount.ToString(), eventType.Value, operation.CoinAdapterAddress));
                 }
             }
             catch (Exception ex)

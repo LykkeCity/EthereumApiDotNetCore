@@ -30,7 +30,7 @@ namespace AzureRepositories
         public static void RegisterAzureStorages(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
         {
             var blobStorage = new AzureStorage.Blob.AzureBlobStorage(settings.Db.DataConnString);
-                services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
+            services.AddSingleton<IEthereumContractRepository>(provider => new EthereumContractRepository(Constants.EthereumContractsBlob, blobStorage));
 
             services.AddSingleton<IPendingTransactionsRepository>(provider => new PendingTransactionsRepository(
                 new AzureTableStorage<PendingTransactionEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingTransactions,
@@ -56,7 +56,9 @@ namespace AzureRepositories
 
             services.AddSingleton<ICoinEventRepository>(provider => new CoinEventRepository(
                 new AzureTableStorage<CoinEventEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinEventEntityTable,
-                    provider.GetService<ILog>())));
+                    provider.GetService<ILog>()),
+                new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinEventEntityTable,
+                provider.GetService<ILog>())));
 
             services.AddSingleton<IExternalTokenRepository>(provider => new ExternalTokenRepository(
                 new AzureTableStorage<ExternalTokenEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.ExternalTokenTable,
@@ -87,9 +89,9 @@ namespace AzureRepositories
 
             services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
                 new AzureTableStorage<CoinEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinTable
-                    ,provider.GetService<ILog>())
+                    , provider.GetService<ILog>())
                 , new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinTableInedex
-                   , provider.GetService<ILog>())) ));
+                   , provider.GetService<ILog>()))));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
