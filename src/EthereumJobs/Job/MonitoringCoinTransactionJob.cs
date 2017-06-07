@@ -11,6 +11,7 @@ using Core.Settings;
 using Core.Notifiers;
 using Core.Repositories;
 using Services;
+using Newtonsoft.Json;
 
 namespace EthereumJobs.Job
 {
@@ -76,7 +77,7 @@ namespace EthereumJobs.Job
                 }
                 else
                 {
-                    context.MoveMessageToEnd(transaction.ToJson());
+                    context.MoveMessageToEnd();
                     context.SetCountQueueBasedDelay(10000, 100);
                     await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
                             $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");

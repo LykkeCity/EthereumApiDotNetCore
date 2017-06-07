@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AzureRepositories;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
+using Services.Coins;
 
 namespace ContractBuilder
 {
