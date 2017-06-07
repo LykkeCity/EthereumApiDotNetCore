@@ -43,7 +43,7 @@ namespace EthereumJobs.Config
             collection.AddSingleton<PoolRenewJob>();
             collection.AddSingleton<PingContractsJob>();
             collection.AddSingleton<TransferTransactionQueueJob>();
-
+            collection.AddSingleton<MonitoringOperationJob>();
             #endregion
 
         }

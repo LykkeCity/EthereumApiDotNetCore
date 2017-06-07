@@ -10,6 +10,7 @@ namespace Core.Repositories
 
     public interface ICoinEvent
     {
+        string OperationId { get; }
         CoinEventType CoinEventType { get; set; }
         string TransactionHash { get; }
         string ContractAddress { get; }
@@ -34,6 +35,7 @@ namespace Core.Repositories
 
     public class CoinEvent : ICoinEvent
     {
+        public string OperationId { get; set; }
         public CoinEventType CoinEventType { get; set; }
         public string TransactionHash { get; private set; }
         public string ContractAddress { get; private set; }
@@ -44,9 +46,10 @@ namespace Core.Repositories
         public DateTime EventTime { get; private set; }
         public bool Success { get; set; }
 
-        public CoinEvent(string transactionHash, string fromAddress, string toAddress, string amount, CoinEventType coinEventType,
+        public CoinEvent(string operationId, string transactionHash, string fromAddress, string toAddress, string amount, CoinEventType coinEventType,
             string contractAddress = "", bool success = true, string additional = "")
         {
+            OperationId = operationId;
             TransactionHash = transactionHash;
             FromAddress = fromAddress;
             ToAddress = toAddress;

@@ -35,6 +35,7 @@ namespace Services
             services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
             services.AddTransient<ICoinEventService, CoinEventService>();
             services.AddSingleton<IHashCalculator, HashCalculator>();
+            services.AddSingleton<IPendingOperationService, PendingOperationService>();
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
