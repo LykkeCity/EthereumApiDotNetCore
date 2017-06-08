@@ -17,6 +17,7 @@ using SigningServiceApiCaller.Models;
 using SigningServiceApiCaller;
 using Services.New.Models;
 using Newtonsoft.Json;
+using Common.Log;
 
 namespace Services
 {
@@ -48,10 +49,11 @@ namespace Services
         private readonly IHashCalculator _hashCalculator;
         private readonly ICoinRepository _coinRepository;
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
+        private readonly ILog _log;
 
         public PendingOperationService(IBaseSettings settings, IOperationToHashMatchRepository operationToHashMatchRepository,
             IPendingOperationRepository pendingOperationRepository, IQueueFactory queueFactory, Web3 web3, IHashCalculator hashCalculator,
-            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI)
+            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI, ILog log)
         {
             _web3 = web3;
             _settings = settings;
@@ -62,6 +64,7 @@ namespace Services
             _hashCalculator = hashCalculator;
             _coinRepository = coinRepository;
             _lykkeSigningAPI = lykkeSigningAPI;
+            _log = log;
         }
 
         public async Task<string> CashOut(Guid id, string coinAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
@@ -297,6 +300,7 @@ namespace Services
                 SignFrom = operation.SignFrom,
                 SignTo = operation.SignTo,
                 ToAddress = operation.ToAddress,
+                Change = operation.Change
             };
 
             var match = new OperationToHashMatch()
@@ -306,7 +310,6 @@ namespace Services
             };
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
-
             await _pendingOperationRepository.InsertOrReplace(op);
             await _queue.PutRawMessageAsync(JsonConvert.SerializeObject( new OperationHashMatchMessage() { OperationId = op.OperationId }));
 
@@ -335,6 +338,7 @@ namespace Services
                 throw new ClientSideException(ExceptionType.WrongSign, "Current from address is unknown for sign service and sign was not provided");
             }
 
+            await _log.WriteInfoAsync("PendingOperationService", "GetSign", "", $"ID({id})-COINADDRESS({coinAddress})-FROM({clientAddr})-TO({toAddr})-AMOUNT({amount})-HASH({response.SignedHash})" ,DateTime.UtcNow);
             return response.SignedHash;
         }
     }
