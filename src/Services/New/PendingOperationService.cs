@@ -18,6 +18,7 @@ using SigningServiceApiCaller;
 using Services.New.Models;
 using Newtonsoft.Json;
 using Common.Log;
+using Core.Notifiers;
 
 namespace Services
 {
@@ -50,11 +51,13 @@ namespace Services
         private readonly ICoinRepository _coinRepository;
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
         private readonly ILog _log;
+        private ISlackNotifier _slackNotifier;
 
         public PendingOperationService(IBaseSettings settings, IOperationToHashMatchRepository operationToHashMatchRepository,
             IPendingOperationRepository pendingOperationRepository, IQueueFactory queueFactory, Web3 web3, IHashCalculator hashCalculator,
-            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI, ILog log)
+            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI, ILog log, ISlackNotifier slackNotifier)
         {
+            _slackNotifier = slackNotifier;
             _web3 = web3;
             _settings = settings;
             _pendingOperationRepository = pendingOperationRepository;
@@ -273,14 +276,22 @@ namespace Services
                 return false;
             }
 
-            var fixedSign = sign.EnsureHexPrefix();
-            var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
-            var signer = new MessageSigner();
-            string sender = signer.EcRecover(hash, sign);
-            string checksumClientAddr = _util.ConvertToChecksumAddress(clientAddr);
-            string checksumSender = _util.ConvertToChecksumAddress(sender);
+            try
+            {
+                var fixedSign = sign.EnsureHexPrefix();
+                var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
+                var signer = new MessageSigner();
+                string sender = signer.EcRecover(hash, sign);
+                string checksumClientAddr = _util.ConvertToChecksumAddress(clientAddr);
+                string checksumSender = _util.ConvertToChecksumAddress(sender);
 
-            return checksumClientAddr == checksumSender;
+                return checksumClientAddr == checksumSender;
+            }
+            catch (Exception e)
+            {
+                _slackNotifier.ErrorAsync($"Dark Magic Happened! Sign can't be checked:  OperationId {id} - {sign} - {sign.Length}");
+                throw;
+            }
         }
 
         private byte[] GetHash(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
