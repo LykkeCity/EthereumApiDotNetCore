@@ -25,6 +25,7 @@ namespace AzureRepositories.Repositories
         public bool ContainsEth { get; set; }
 
         public string ExternalTokenAddress { get; set; }
+        public string DeployedTransactionHash { get; set; }
 
         public static CoinEntity CreateCoinEntity(ICoin coin)
         {
@@ -38,7 +39,8 @@ namespace AzureRepositories.Repositories
                 PartitionKey = Key,
                 BlockchainDepositEnabled = coin.BlockchainDepositEnabled,
                 ContainsEth = coin.ContainsEth,
-                ExternalTokenAddress = coin.ExternalTokenAddress
+                ExternalTokenAddress = coin.ExternalTokenAddress,
+                DeployedTransactionHash = coin.DeployedTransactionHash
             };
         }
     }

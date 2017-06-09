@@ -16,7 +16,7 @@ namespace Core.Repositories
         string ContractAddress { get; }
         string FromAddress { get; }
         string ToAddress { get; }
-        string Amount { get; }
+        string Amount { get; set; }
         string Additional { get; }
         DateTime EventTime { get; }
         bool Success { get; set; }
@@ -41,7 +41,7 @@ namespace Core.Repositories
         public string ContractAddress { get; private set; }
         public string FromAddress { get; private set; }
         public string ToAddress { get; private set; }
-        public string Amount { get; private set; }
+        public string Amount { get; set; }
         public string Additional { get; private set; }
         public DateTime EventTime { get; private set; }
         public bool Success { get; set; }

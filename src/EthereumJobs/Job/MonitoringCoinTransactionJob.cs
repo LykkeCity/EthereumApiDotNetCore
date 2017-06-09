@@ -12,6 +12,7 @@ using Core.Notifiers;
 using Core.Repositories;
 using Services;
 using Newtonsoft.Json;
+using Services.New;
 
 namespace EthereumJobs.Job
 {
@@ -24,11 +25,15 @@ namespace EthereumJobs.Job
         private readonly ICoinEventService _coinEventService;
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
         private readonly IPendingOperationService _pendingOperationService;
+        private readonly ITransactionEventsService _transactionEventsService;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService,
             IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService,
-            IPendingTransactionsRepository pendingTransactionsRepository, IPendingOperationService pendingOperationService)
+            IPendingTransactionsRepository pendingTransactionsRepository,
+            IPendingOperationService pendingOperationService,
+            ITransactionEventsService transactionEventsService)
         {
+            _transactionEventsService = transactionEventsService;
             _settings = settings;
             _log = log;
             _coinTransactionService = coinTransactionService;
@@ -71,9 +76,18 @@ namespace EthereumJobs.Job
             {
                 if (coinTransaction != null && coinTransaction.ConfirmationLevel != 0)
                 {
-                    await SendCompletedCoinEvent(transaction.TransactionHash, true);
-                    await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
-                               $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                    bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, true, context);
+
+                    if (sentToRabbit)
+                    {
+                        await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
+                                   $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                    }
+                    else
+                    {
+                        await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
+                            $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                    }
                 }
                 else
                 {
@@ -98,10 +112,11 @@ namespace EthereumJobs.Job
             await _pendingOperationService.RefreshOperationByIdAsync(pendingOp.OperationId);
         }
 
-        private async Task SendCompletedCoinEvent(string transactionHash, bool success)
+        //return whether we have sent to rabbit or not
+        private async Task<bool> SendCompletedCoinEvent(string transactionHash, bool success, QueueTriggeringContext context)
         {
             var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
-            var coinEvent = pendingOp != null ? 
+            var coinEvent = pendingOp != null ?
                 await _coinEventService.GetCoinEventById(pendingOp.OperationId) : await _coinEventService.GetCoinEvent(transactionHash);
             coinEvent.Success = success;
             coinEvent.TransactionHash = transactionHash;
@@ -109,6 +124,18 @@ namespace EthereumJobs.Job
             switch (coinEvent.CoinEventType)
             {
                 case CoinEventType.CashinStarted:
+                    ICashinEvent cashinEvent = await _transactionEventsService.GetCashinEvent(transactionHash);
+                    if (cashinEvent == null)
+                    {
+                        context.MoveMessageToEnd();
+                        context.SetCountQueueBasedDelay(10000, 100);
+
+                        return false;
+                    }
+
+                    coinEvent.Amount = cashinEvent.Amount;
+                    coinEvent.CoinEventType++;
+                    break;
                 case CoinEventType.CashoutStarted:
                 case CoinEventType.TransferStarted:
                     //Say that Event Is completed
@@ -119,6 +146,7 @@ namespace EthereumJobs.Job
 
             await _pendingTransactionsRepository.Delete(transactionHash);
             await _coinEventService.PublishEvent(coinEvent, false);
+            return true;
         }
     }
 }

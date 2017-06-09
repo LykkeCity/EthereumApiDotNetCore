@@ -74,7 +74,9 @@
         public const string UserPaymentHistoryTable = "UserPaymentHistory";
         public const string PendingTransactions = "PendingTransactions";
         public const string PendingOperationsTable = "PendingOperation";
-        public const string OperationToHashMatchTable = "OperationToHashMatch"; 
+        public const string OperationToHashMatchTable = "OperationToHashMatch";
+        public const string BlockSyncedTable = "BlockSynced";
+        public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
     }
 
