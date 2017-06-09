@@ -10,6 +10,7 @@ using Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using Services.New.Models;
 
 namespace Services
 {
@@ -18,6 +19,7 @@ namespace Services
         Task<IEnumerable<string>> GetContractsAddresses(IEnumerable<string> transactionHashes);
         Task<string> CreateContractWithoutBlockchainAcceptance(string abi, string bytecode, params object[] constructorParams);
         Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams);
+        Task<ContractDeploymentInfo> CreateContractWithDeploymentInfo(string abi, string bytecode, params object[] constructorParams);
         Task<HexBigInteger> GetFilterEventForUserContractPayment();
         Task<HexBigInteger> CreateFilterEventForUserContractPayment();
         Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
@@ -38,6 +40,33 @@ namespace Services
             _web3 = web3;
             _settings = settings;
             _appSettings = appSettings;
+        }
+
+        public async Task<ContractDeploymentInfo> CreateContractWithDeploymentInfo(string abi, string bytecode, params object[] constructorParams)
+        {
+            // deploy contract
+            var transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(2000000), constructorParams);
+
+            // get contract transaction
+            TransactionReceipt receipt;
+            while ((receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash)) == null)
+            {
+                await Task.Delay(100);
+            }
+
+            // check if contract byte code is deployed
+            var code = await _web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
+
+            if (string.IsNullOrWhiteSpace(code) || code == "0x")
+            {
+                throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
+            }
+
+            return new ContractDeploymentInfo()
+            {
+                ContractAddress = receipt.ContractAddress,
+                TransactionHash = transactionHash
+            };
         }
 
         public async Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams)

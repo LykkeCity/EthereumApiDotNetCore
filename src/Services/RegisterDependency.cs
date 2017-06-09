@@ -5,6 +5,7 @@ using LkeServices.Signature;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.Web3;
 using Services.Coins;
+using Services.New;
 using SigningServiceApiCaller;
 using System;
 
@@ -36,6 +37,7 @@ namespace Services
             services.AddTransient<ICoinEventService, CoinEventService>();
             services.AddSingleton<IHashCalculator, HashCalculator>();
             services.AddSingleton<IPendingOperationService, PendingOperationService>();
+            services.AddSingleton<ITransactionEventsService, TransactionEventsService>();
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {

@@ -70,13 +70,14 @@ namespace Services
                 constructorParametes = new string[] { _settings.MainExchangeContract.Address, coin.ExternalTokenAddress };
             }
 
-            string coinAdapterAddress =
-                await _contractService.CreateContract(abi,
+            var deploymentInfo =
+                await _contractService.CreateContractWithDeploymentInfo(abi,
                 byteCode, constructorParametes);
-            coin.AdapterAddress = coinAdapterAddress;
+            coin.AdapterAddress = deploymentInfo.ContractAddress;
+            coin.DeployedTransactionHash = deploymentInfo.TransactionHash;
             await _coinRepository.InsertOrReplace(coin);
 
-            return coinAdapterAddress;
+            return coin.AdapterAddress;
         }
 
         public async Task<ICoin> GetById(string id)

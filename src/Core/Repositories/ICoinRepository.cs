@@ -16,6 +16,7 @@ namespace Core.Repositories
         int Multiplier { get; }
         bool BlockchainDepositEnabled { get; }
         bool ContainsEth { get; set; }
+        string DeployedTransactionHash { get; set; }
     }
 
     public class Coin : ICoin
@@ -28,6 +29,7 @@ namespace Core.Repositories
         public string Name { get; set; }
         public string ExternalTokenAddress { get; set; }
         public bool ContainsEth { get; set; }
+        public string DeployedTransactionHash { get; set; }
     }
 
     public interface ICoinRepository
