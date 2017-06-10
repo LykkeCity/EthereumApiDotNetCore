@@ -1,14 +1,17 @@
 ﻿using AzureRepositories;
 using Common.Log;
 using Core;
+using Core.Repositories;
 using Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ;
 using Services;
+using Services.New.Models;
 using System;
 using System.IO;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace TransactionResubmit
 {
@@ -57,6 +60,7 @@ namespace TransactionResubmit
 
             Console.WriteLine($"Type 0 to exit");
             Console.WriteLine($"Type 1 to resubmit transaction");
+            Console.WriteLine($"Type 2 to repeat all operation without hash");
             var command = "";
 
             do
@@ -66,6 +70,9 @@ namespace TransactionResubmit
                 {
                     case "1":
                         TransactionResubmitTransaction();
+                        break;
+                    case "2":
+                        OperationResubmit();
                         break;
                     default:
                         break;
@@ -113,6 +120,34 @@ namespace TransactionResubmit
                     }
                     Console.WriteLine("Operation resubmitted");
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e.Message}, {e.StackTrace}");
+            }
+            Console.WriteLine();
+        }
+
+        private static void OperationResubmit()
+        {
+            try
+            {
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queuePoison = queueFactory.Build("pending-operations-poison");
+                var queue = queueFactory.Build(Constants.PendingOperationsQueue);
+                var operationToHashMatchRepository = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                operationToHashMatchRepository.ProcessAllAsync((items) =>
+                {
+                    foreach (var item in items)
+                    {
+                        if (string.IsNullOrEmpty(item.TransactionHash))
+                        {
+                            Console.WriteLine($"Resubmitting {item.OperationId}");
+                            queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = item.OperationId })).Wait();
+                        }
+                    }
+                    return Task.FromResult(0);
+                }).Wait();
             }
             catch (Exception e)
             {

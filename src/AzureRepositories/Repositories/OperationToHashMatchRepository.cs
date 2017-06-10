@@ -111,5 +111,16 @@ namespace AzureRepositories.Repositories
 
             await _table.InsertOrReplaceAsync(entity);
         }
+
+        public async Task ProcessAllAsync(Func<IEnumerable<IOperationToHashMatch>, Task> processAction)
+        {
+            Func<IEnumerable<IOperationToHashMatch>, Task> function = async (items) =>
+            {
+                await processAction(items);
+            };
+
+            await _table.GetDataByChunksAsync(function);
+        }
+
     }
 }
