@@ -41,6 +41,12 @@ namespace Services
 
     public class PendingOperationService : IPendingOperationService
     {
+        private class ReturnSignResult
+        {
+            public BigInteger Amount { get; set; }
+            public string Sign { get; set; }
+        }
+
         private readonly IBaseSettings _settings;
         private readonly IOperationToHashMatchRepository _operationToHashMatchRepository;
         private readonly IPendingOperationRepository _pendingOperationRepository;
@@ -75,12 +81,9 @@ namespace Services
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
 
-            if (string.IsNullOrEmpty(sign))
-            {
-                sign = await GetSign(id, coinAddress, fromAddress, toAddress, amount);
-            }
-
-            ThrowOnWrongSignature(id, coinAddress, fromAddress, toAddress, amount, sign);
+            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
+            sign = signResult.Sign;
+            amount = signResult.Amount;
 
             var opId = await CreateOperation(new PendingOperation()
             {
@@ -103,12 +106,9 @@ namespace Services
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
 
-            if (string.IsNullOrEmpty(sign))
-            {
-                sign = await GetSign(id, coinAddress, fromAddress, toAddress, amount);
-            }
-
-            ThrowOnWrongSignature(id, coinAddress, fromAddress, toAddress, amount, sign);
+            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
+            sign = signResult.Sign;
+            amount = signResult.Amount;
 
             var opId = await CreateOperation(new PendingOperation()
             {
@@ -137,18 +137,13 @@ namespace Services
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
 
-            if (string.IsNullOrEmpty(signFrom))
-            {
-                signFrom = await GetSign(id, coinAddress, fromAddress, toAddress, amount);
-            }
+            var signFromResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, signFrom);
+            signFrom = signFromResult.Sign;
+            amount = signFromResult.Amount;
 
-            if (string.IsNullOrEmpty(signTo))
-            {
-                signTo = await GetSign(id, coinAddress, toAddress, fromAddress, change);
-            }
-
-            ThrowOnWrongSignature(id, coinAddress, fromAddress, toAddress, amount, signFrom);
-            ThrowOnWrongSignature(id, coinAddress, toAddress, fromAddress, change, signTo);
+            var signToResult = await GetAndCheckSign(id, coinAddress, toAddress, fromAddress, change, signTo);
+            signTo = signToResult.Sign;
+            change = signToResult.Amount;
 
             var opId = await CreateOperation(new PendingOperation()
             {
@@ -260,6 +255,51 @@ namespace Services
             return coin;
         }
 
+        private async Task<ReturnSignResult> GetAndCheckSign(Guid id, string coinAddress, string fromAddress, string toAddress, BigInteger amount, string signFrom)
+        {
+            bool isRobot = string.IsNullOrEmpty(signFrom);
+            int retryCounter = 0;
+            bool isSuccess = false;
+            do
+            {
+                if (isRobot)
+                {
+                    signFrom = await GetSign(id, coinAddress, fromAddress, toAddress, amount);
+                }
+
+                try
+                {
+                    ThrowOnWrongSignature(id, coinAddress, fromAddress, toAddress, amount, signFrom);
+                    isSuccess = true;
+                }
+                catch (Exception e)
+                {
+                    await _log.WriteErrorAsync("PendingOperationService", "GetAndCheckSign", $" OperationId {id}", e, DateTime.UtcNow);
+                    if (!isRobot)
+                    {
+                        throw;
+                    }
+
+                    retryCounter++;
+                    amount++;
+                    if (retryCounter > 1)
+                    {
+                        await _slackNotifier.ErrorAsync($"Dark Magic Happened! Sign can't be checked:  OperationId {id} - {signFrom} - {signFrom.Length}");
+                        throw;
+                    }
+
+                    await _log.WriteInfoAsync("PendingOperationService", "GetAndCheckSign", $"ID:{id}, Adpater:{coinAddress}, From:{fromAddress}, To:{toAddress}, Amount:{amount}, IsRobotSignature:{isRobot}", "Retry with amount change! Amount here is more on 1 wei than original", DateTime.UtcNow);
+                }
+            } while (!isSuccess && (isRobot && retryCounter < 2));
+
+
+            return new ReturnSignResult()
+            {
+                Amount = amount,
+                Sign = signFrom,
+            };
+        }
+
         private void ThrowOnWrongSignature(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign)
         {
             var checkSign = CheckSign(id, coinAddress, clientAddr, toAddr, amount, sign);
@@ -289,7 +329,6 @@ namespace Services
             }
             catch (Exception e)
             {
-                _slackNotifier.ErrorAsync($"Dark Magic Happened! Sign can't be checked:  OperationId {id} - {sign} - {sign.Length}");
                 throw;
             }
         }
@@ -322,7 +361,7 @@ namespace Services
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
             await _pendingOperationRepository.InsertOrReplace(op);
-            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject( new OperationHashMatchMessage() { OperationId = op.OperationId }));
+            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = op.OperationId }));
 
             return op.OperationId;
         }
@@ -349,7 +388,7 @@ namespace Services
                 throw new ClientSideException(ExceptionType.WrongSign, "Current from address is unknown for sign service and sign was not provided");
             }
 
-            await _log.WriteInfoAsync("PendingOperationService", "GetSign", "", $"ID({id})-COINADDRESS({coinAddress})-FROM({clientAddr})-TO({toAddr})-AMOUNT({amount})-HASH({response.SignedHash})" ,DateTime.UtcNow);
+            await _log.WriteInfoAsync("PendingOperationService", "GetSign", "", $"ID({id})-COINADDRESS({coinAddress})-FROM({clientAddr})-TO({toAddr})-AMOUNT({amount})-HASH({response.SignedHash})", DateTime.UtcNow);
             return response.SignedHash;
         }
     }
