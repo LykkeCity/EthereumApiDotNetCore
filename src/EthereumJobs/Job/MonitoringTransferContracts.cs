@@ -57,13 +57,19 @@ namespace EthereumJobs.Job
                 try
                 {
                     //Check that transfer contract assigned to user
-                    if (!string.IsNullOrEmpty(item.UserAddress) && !string.IsNullOrEmpty(item.AssignmentHash))
+                    if (!string.IsNullOrEmpty(item.UserAddress))
                     {
+                        if (string.IsNullOrEmpty(item.AssignmentHash))
+                        {
+                            await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
+                            throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdapter:{item.CoinAdapterAddress})");
+                        }
+
                         var assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
                         if (!assignmentCompleted)
                         {
                             //_ethereumTransactionService
-                            throw new Exception($"User assignment wasa not completed for {item.UserAddress} (trHash:{item.AssignmentHash})");
+                            throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                         }
                         //it is a transfer wallet
                         IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
