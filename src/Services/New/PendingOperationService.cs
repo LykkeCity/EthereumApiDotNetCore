@@ -210,7 +210,7 @@ namespace Services
             match.TransactionHash = "";
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
-            await _queue.PutMessageAsync(new OperationHashMatchMessage() { OperationId = match.OperationId });
+            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = match.OperationId }));
         }
 
         public async Task RefreshOperationAsync(string trHash)
@@ -225,7 +225,7 @@ namespace Services
             match.TransactionHash = "";
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
-            await _queue.PutMessageAsync(new OperationHashMatchMessage() { OperationId = match.OperationId });
+            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = match.OperationId }));
         }
 
         private async Task ThrowOnExistingId(Guid id)
