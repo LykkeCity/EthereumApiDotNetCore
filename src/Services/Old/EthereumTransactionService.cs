@@ -35,16 +35,7 @@ namespace Services
             if (receipt.GasUsed.Value != new Nethereum.Hex.HexTypes.HexBigInteger(gasSended).Value)
                 return true;
 
-            var debugTransaction = new Nethereum.Geth.RPC.Debug.DebugTraceTransaction(_client.Client);
-            var logs =
-                await
-                    debugTransaction.SendRequestAsync(hash, new Nethereum.Geth.RPC.Debug.DTOs.TraceTransactionOptions());
-
-            var obj = logs.ToObject<TansactionTrace>();
-            if (obj.StructLogs?.Length > 0 && !string.IsNullOrWhiteSpace(obj.StructLogs[obj.StructLogs.Length - 1].Error))
-                return false;
-
-            return true;
+            return false;
         }
 
 

@@ -113,6 +113,36 @@ namespace Services
             return transferContract.ContractAddress;
         }
 
+        public async Task<string> GetUserAddressForTransferContract(string transferContractAddress)
+        {
+            ITransferContract transferContract = await _transferContractRepository.GetAsync(transferContractAddress);
+
+            if (transferContract == null)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, $"Transfer contract with address {transferContractAddress} does not exist");
+            }
+
+            ICoin coin = await _coinRepository.GetCoinByAddress(transferContract.CoinAdapterAddress);
+
+            if (coin == null)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, $"Coin with address {transferContract.CoinAdapterAddress} does not exist");
+            }
+
+            string coinAbi = _settings.CoinAbi;
+
+            var contract = _web3.Eth.GetContract(coinAbi, transferContract.CoinAdapterAddress);
+            var function = contract.GetFunction("transferContractUser");
+            //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
+            string userAddress =
+                await function.CallAsync<string>(transferContractAddress);
+            transferContract.UserAddress = userAddress;
+
+            await _transferContractRepository.SaveAsync(transferContract);
+
+            return userAddress;
+        }
+
         public async Task<string> SetUserAddressForTransferContract(string userAddress, string transferContractAddress)
         {
             ITransferContract transferContract = await _transferContractRepository.GetAsync(transferContractAddress);

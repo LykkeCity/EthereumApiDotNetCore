@@ -31,10 +31,8 @@ namespace EthereumJobs.Config
 
         private static void RegisterJobs(IServiceCollection collection)
         {
-
-
             #region NewJobs
-            //collection.AddSingleton<MonitoringJob>();
+            collection.AddSingleton<MonitoringJob>();
             collection.AddSingleton<MonitoringCoinTransactionJob>();
             collection.AddSingleton<MonitoringTransferContracts>();
             collection.AddSingleton<MonitoringTransferTransactions>();

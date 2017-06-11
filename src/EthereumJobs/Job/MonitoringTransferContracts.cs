@@ -9,6 +9,7 @@ using System;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Core;
+using Nethereum.Util;
 
 namespace EthereumJobs.Job
 {
@@ -24,6 +25,7 @@ namespace EthereumJobs.Job
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ITransferContractTransactionService _transferContractTransactionService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
+        private readonly AddressUtil _util;
 
         public MonitoringTransferContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -37,6 +39,7 @@ namespace EthereumJobs.Job
             IEthereumTransactionService ethereumTransactionService
             )
         {
+            _util = new AddressUtil();
             _ethereumTransactionService = ethereumTransactionService;
             _ercInterfaceService = ercInterfaceService;
             _settings = settings;
@@ -59,17 +62,20 @@ namespace EthereumJobs.Job
                     //Check that transfer contract assigned to user
                     if (!string.IsNullOrEmpty(item.UserAddress))
                     {
-                        if (string.IsNullOrEmpty(item.AssignmentHash))
+                        var userAddress = await _transferContractService.GetUserAddressForTransferContract(item.ContractAddress);
+                        if (string.IsNullOrEmpty(userAddress))
                         {
-                            await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
-                            throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdapter:{item.CoinAdapterAddress})");
-                        }
-
-                        var assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
-                        if (!assignmentCompleted)
-                        {
-                            //_ethereumTransactionService
-                            throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
+                            bool assignmentCompleted = false;
+                            if (!string.IsNullOrEmpty(item.AssignmentHash))
+                            {
+                                assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
+                            }
+                            if (!assignmentCompleted)
+                            {
+                                //    await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
+                                //    //_ethereumTransactionService
+                                throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
+                            }
                         }
                         //it is a transfer wallet
                         IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
@@ -108,7 +114,7 @@ namespace EthereumJobs.Job
                 }
                 catch (Exception e)
                 {
-                    await _logger.WriteErrorAsync("MonitoringTransferContracts", "Execute", "",e, DateTime.UtcNow);
+                    await _logger.WriteErrorAsync("MonitoringTransferContracts", "Execute", "", e, DateTime.UtcNow);
                 }
             });
         }
