@@ -80,12 +80,7 @@ namespace Services
         {
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
-
-            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
-            sign = signResult.Sign;
-            amount = signResult.Amount;
-
-            var opId = await CreateOperation(new PendingOperation()
+            var operation = new PendingOperation()
             {
                 OperationId = id.ToString(),
                 Amount = amount.ToString(),
@@ -96,7 +91,16 @@ namespace Services
                 SignTo = null,
                 ToAddress = toAddress,
                 MainExchangeId = id,
-            });
+            };
+            var opId = await CreateOperation(operation);
+
+            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
+            sign = signResult.Sign;
+            amount = signResult.Amount;
+            operation.SignFrom = sign;
+            operation.Amount = amount.ToString();
+
+            await StartProcessing(operation);
 
             return opId;
         }
@@ -105,12 +109,7 @@ namespace Services
         {
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
-
-            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
-            sign = signResult.Sign;
-            amount = signResult.Amount;
-
-            var opId = await CreateOperation(new PendingOperation()
+            var operation = new PendingOperation()
             {
                 OperationId = id.ToString(),
                 Amount = amount.ToString(),
@@ -121,7 +120,16 @@ namespace Services
                 SignTo = null,
                 ToAddress = toAddress,
                 MainExchangeId = id,
-            });
+            };
+            var opId = await CreateOperation(operation);
+
+            var signResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, sign);
+            sign = signResult.Sign;
+            amount = signResult.Amount;
+            operation.SignFrom = sign;
+            operation.Amount = amount.ToString();
+
+            await StartProcessing(operation);
 
             return opId;
         }
@@ -133,6 +141,20 @@ namespace Services
             {
                 throw new ClientSideException(ExceptionType.WrongParams, "Amount can't be less or equal than change");
             }
+            var operation = new PendingOperation()
+            {
+                OperationId = id.ToString(),
+                Change = change.ToString(),
+                Amount = amount.ToString(),
+                CoinAdapterAddress = coinAddress,
+                FromAddress = fromAddress,
+                OperationType = OperationTypes.TransferWithChange,
+                SignFrom = signFrom,
+                SignTo = signTo,
+                ToAddress = toAddress,
+                MainExchangeId = id,
+            };
+            var opId = await CreateOperation(operation);
 
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
@@ -145,19 +167,12 @@ namespace Services
             signTo = signToResult.Sign;
             change = signToResult.Amount;
 
-            var opId = await CreateOperation(new PendingOperation()
-            {
-                OperationId = id.ToString(),
-                Change = change.ToString(),
-                Amount = amount.ToString(),
-                CoinAdapterAddress = coinAddress,
-                FromAddress = fromAddress,
-                OperationType = OperationTypes.TransferWithChange,
-                SignFrom = signFrom,
-                SignTo = signTo,
-                ToAddress = toAddress,
-                MainExchangeId = id,
-            });
+            operation.SignFrom = signFrom;
+            operation.SignTo = signTo;
+            operation.Change = change.ToString();
+            operation.Amount = amount.ToString();
+
+            await StartProcessing(operation);
 
             return opId;
         }
@@ -361,9 +376,14 @@ namespace Services
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
             await _pendingOperationRepository.InsertOrReplace(op);
-            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = op.OperationId }));
 
             return op.OperationId;
+        }
+
+        private async Task StartProcessing(IPendingOperation operation)
+        {
+            await CreateOperation(operation);
+            await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = operation.OperationId }));
         }
 
         private async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
