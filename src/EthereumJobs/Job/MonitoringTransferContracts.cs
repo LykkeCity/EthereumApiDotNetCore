@@ -26,6 +26,7 @@ namespace EthereumJobs.Job
         private readonly ITransferContractTransactionService _transferContractTransactionService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly AddressUtil _util;
+        private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
 
         public MonitoringTransferContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -36,7 +37,8 @@ namespace EthereumJobs.Job
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
             ITransferContractTransactionService transferContractTransactionService,
-            IEthereumTransactionService ethereumTransactionService
+            IEthereumTransactionService ethereumTransactionService,
+            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService
             )
         {
             _util = new AddressUtil();
@@ -50,6 +52,7 @@ namespace EthereumJobs.Job
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;
             _transferContractTransactionService = transferContractTransactionService;
+            _transferContractUserAssignmentQueueService = transferContractUserAssignmentQueueService;
         }
 
         [TimerTrigger("0.00:04:00")]
@@ -63,7 +66,7 @@ namespace EthereumJobs.Job
                     if (!string.IsNullOrEmpty(item.UserAddress))
                     {
                         var userAddress = await _transferContractService.GetUserAddressForTransferContract(item.ContractAddress);
-                        if (string.IsNullOrEmpty(userAddress))
+                        if (string.IsNullOrEmpty(userAddress)|| userAddress == "0x0000000000000000000000000000000000000000")
                         {
                             bool assignmentCompleted = false;
                             if (!string.IsNullOrEmpty(item.AssignmentHash))
@@ -72,6 +75,12 @@ namespace EthereumJobs.Job
                             }
                             if (!assignmentCompleted)
                             {
+                                await _transferContractUserAssignmentQueueService.PushContract(new TransferContractUserAssignment()
+                                {
+                                    TransferContractAddress = item.ContractAddress,
+                                    UserAddress = item.UserAddress,
+                                    CoinAdapterAddress = item.CoinAdapterAddress
+                                });
                                 //    await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
                                 //    //_ethereumTransactionService
                                 throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");

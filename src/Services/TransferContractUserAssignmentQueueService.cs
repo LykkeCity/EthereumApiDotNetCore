@@ -38,6 +38,7 @@ namespace Services
         private readonly IQueueFactory _queueFactory;
         private readonly IBaseSettings _settings;
         private readonly Web3 _web3;
+        private readonly ITransferContractService _transferContractService;
 
         public TransferContractUserAssignmentQueueService(Func<string, IQueueExt> queueFactory,
             ITransferContractRepository transferContractRepository, ISlackNotifier slackNotifier,
@@ -84,6 +85,7 @@ namespace Services
             var ethereumContract = _web3.Eth.GetContract(coinAbi, assignment.CoinAdapterAddress);
             var function = ethereumContract.GetFunction("setTransferAddressUser");
             //function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
+
             string transactionHash =
                 await function.SendTransactionAsync(_settings.EthereumMainAccount,
                 assignment.UserAddress, assignment.TransferContractAddress);
