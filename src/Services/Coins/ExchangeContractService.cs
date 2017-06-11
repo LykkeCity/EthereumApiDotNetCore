@@ -40,7 +40,7 @@ namespace Services.Coins
 
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
-        Task PingMainExchangeContract();
+        Task<string> PingMainExchangeContract();
 
         Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount);
 
@@ -272,14 +272,16 @@ namespace Services.Coins
             return tr;
         }
 
-        public async Task PingMainExchangeContract()
+        public async Task<string> PingMainExchangeContract()
         {
             if (_settings.MainExchangeContract == null)
-                return;
+                return null;
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var ping = contract.GetFunction("ping");
             string transactionHash = await ping.SendTransactionAsync(_settings.EthereumMainAccount);
+
+            return transactionHash;
         }
 
         public async Task<IdCheckResult> CheckId(Guid guidToCheck)
