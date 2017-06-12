@@ -115,38 +115,50 @@ namespace EthereumJobs.Job
         //return whether we have sent to rabbit or not
         private async Task<bool> SendCompletedCoinEvent(string transactionHash, bool success, QueueTriggeringContext context)
         {
-            var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
-            var coinEvent = pendingOp != null ?
-                await _coinEventService.GetCoinEventById(pendingOp.OperationId) : await _coinEventService.GetCoinEvent(transactionHash);
-            coinEvent.Success = success;
-            coinEvent.TransactionHash = transactionHash;
-
-            switch (coinEvent.CoinEventType)
+            try
             {
-                case CoinEventType.CashinStarted:
-                    ICashinEvent cashinEvent = await _transactionEventsService.GetCashinEvent(transactionHash);
-                    if (cashinEvent == null)
-                    {
-                        context.MoveMessageToEnd();
-                        context.SetCountQueueBasedDelay(10000, 100);
+                var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
+                var coinEvent = pendingOp != null ?
+                    await _coinEventService.GetCoinEventById(pendingOp.OperationId) : await _coinEventService.GetCoinEvent(transactionHash);
+                coinEvent.Success = success;
+                coinEvent.TransactionHash = transactionHash;
 
-                        return false;
-                    }
+                switch (coinEvent.CoinEventType)
+                {
+                    case CoinEventType.CashinStarted:
+                        ICashinEvent cashinEvent = await _transactionEventsService.GetCashinEvent(transactionHash);
+                        if (cashinEvent == null)
+                        {
+                            context.MoveMessageToEnd();
+                            context.SetCountQueueBasedDelay(10000, 100);
 
-                    coinEvent.Amount = cashinEvent.Amount;
-                    coinEvent.CoinEventType++;
-                    break;
-                case CoinEventType.CashoutStarted:
-                case CoinEventType.TransferStarted:
-                    //Say that Event Is completed
-                    coinEvent.CoinEventType++;
-                    break;
-                default: break;
+                            return false;
+                        }
+
+                        coinEvent.Amount = cashinEvent.Amount;
+                        coinEvent.CoinEventType++;
+                        break;
+                    case CoinEventType.CashoutStarted:
+                    case CoinEventType.TransferStarted:
+                        //Say that Event Is completed
+                        coinEvent.CoinEventType++;
+                        break;
+                    default: break;
+                }
+
+                await _coinEventService.PublishEvent(coinEvent, false);
+                await _pendingTransactionsRepository.Delete(transactionHash);
+
+                return true;
             }
+            catch (Exception e)
+            {
+                await _log.WriteErrorAsync("MonitoringCoinTransactionJob", "SendCompletedCoinEvent", $"trHash: {transactionHash}", e, DateTime.UtcNow);
+                context.MoveMessageToEnd();
+                context.SetCountQueueBasedDelay(10000, 100);
 
-            await _pendingTransactionsRepository.Delete(transactionHash);
-            await _coinEventService.PublishEvent(coinEvent, false);
-            return true;
+                return false;
+            }
         }
     }
 }
