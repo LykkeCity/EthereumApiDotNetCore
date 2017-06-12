@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ;
 using Services;
+using Services.Coins.Models;
 using Services.New.Models;
 using System;
 using System.IO;
@@ -61,6 +62,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 0 to exit");
             Console.WriteLine($"Type 1 to resubmit transaction");
             Console.WriteLine($"Type 2 to repeat all operation without hash");
+            Console.WriteLine($"Type 3 to repeat all rabbit events");
             var command = "";
 
             do
@@ -73,6 +75,9 @@ namespace TransactionResubmit
                         break;
                     case "2":
                         OperationResubmit();
+                        break;
+                    case "3":
+                        HashResubmit();
                         break;
                     default:
                         break;
@@ -126,6 +131,26 @@ namespace TransactionResubmit
                 Console.WriteLine($"{e.Message}, {e.StackTrace}");
             }
             Console.WriteLine();
+        }
+
+
+        private static void HashResubmit()
+        {
+            var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+            var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
+            RabbitList resubmitModel;
+            using (var streamRead = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "HashForResubmit.json")))
+            using (var stream = new StreamReader(streamRead))
+            {
+                string content = stream.ReadToEnd();
+                resubmitModel = Newtonsoft.Json.JsonConvert.DeserializeObject<RabbitList>(content);
+            }
+
+            Console.WriteLine("ResubmittingStarted");
+            resubmitModel.Transactions.ForEach(tr =>
+            {
+                queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = tr.TransactionHash, PutDateTime = DateTime.UtcNow })).Wait();
+            });
         }
 
         private static void OperationResubmit()
