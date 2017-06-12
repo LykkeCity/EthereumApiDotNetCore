@@ -18,15 +18,18 @@ namespace LkeServices.Signature
 {
     public class LykkeSignedTransactionManager : ITransactionManager
     {
-        private static BigInteger DefaultGasPrice = BigInteger.Parse("20000000000");
+        private static BigInteger DefaultGasPrice = BigInteger.Parse("22000000000");
+        private static BigInteger MaxGasPrice = BigInteger.Parse("30000000000");
 
         private BigInteger _nonceCount = -1;
         private readonly ILykkeSigningAPI _signatureApi;
+        private readonly Web3 _web3;
 
         public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi)
         {
             _signatureApi = signatureApi;
             Client = web3.Client;
+            _web3 = web3;
         }
 
         public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
@@ -51,12 +54,13 @@ namespace LkeServices.Signature
         public async Task<string> SendTransactionAsync<T>(T transaction) where T : TransactionInput
         {
             var ethSendTransaction = new EthSendRawTransaction(Client);
-
+            var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
+            var currentGasPrice = currentGasPriceHex.Value;
             var nonce = await GetNonceAsync(transaction);
             var value = transaction.Value?.Value ?? 0;
-            var gasPrice = transaction.GasPrice?.Value ?? DefaultGasPrice;
+            BigInteger selectedGasPrice = (currentGasPrice > MaxGasPrice) ? DefaultGasPrice : currentGasPrice * 85 / 100;
+            var gasPrice = transaction.GasPrice?.Value ?? selectedGasPrice;
             var gasValue = transaction.Gas?.Value ?? Constants.GasForCoinTransaction;
-
             var tr = new Nethereum.Signer.Transaction(transaction.To, value, nonce, gasPrice, gasValue, transaction.Data);
             var hex = tr.GetRLPEncoded().ToHex();
 
