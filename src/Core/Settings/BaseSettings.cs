@@ -43,6 +43,7 @@ namespace Core.Settings
         int BroadcastMonitoringPeriodSeconds { get; set; }
         RabbitMq RabbitMq { get; set; }
         string MonitoringServiceUrl { get; set; }
+        int GasPricePercentage { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -91,6 +92,7 @@ namespace Core.Settings
         public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;
         public RabbitMq RabbitMq { get; set; }
         public string MonitoringServiceUrl { get; set; }
+        public int GasPricePercentage { get; set; } = 100;
     }
 
     public class EthereumContract

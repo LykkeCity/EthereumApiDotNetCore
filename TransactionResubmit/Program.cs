@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ;
 using Services;
+using Services.Coins;
 using Services.Coins.Models;
 using Services.New.Models;
 using System;
@@ -158,6 +159,7 @@ namespace TransactionResubmit
             try
             {
                 var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                IEthereumTransactionService coinTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
                 var queuePoison = queueFactory.Build("pending-operations-poison");
                 var queue = queueFactory.Build(Constants.PendingOperationsQueue);
                 var operationToHashMatchRepository = ServiceProvider.GetService<IOperationToHashMatchRepository>();
@@ -165,7 +167,7 @@ namespace TransactionResubmit
                 {
                     foreach (var item in items)
                     {
-                        if (string.IsNullOrEmpty(item.TransactionHash))
+                        if (string.IsNullOrEmpty(item.TransactionHash) || ! coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
                         {
                             Console.WriteLine($"Resubmitting {item.OperationId}");
                             queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = item.OperationId })).Wait();
