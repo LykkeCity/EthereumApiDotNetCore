@@ -287,6 +287,12 @@ namespace Services
                     ThrowOnWrongSignature(id, coinAddress, fromAddress, toAddress, amount, signFrom);
                     isSuccess = true;
                 }
+                catch (ClientSideException exc)
+                {
+                    await _log.WriteErrorAsync("PendingOperationService", "GetAndCheckSign", $" OperationId {id} - Hash {signFrom}", exc, DateTime.UtcNow);
+                    await _slackNotifier.ErrorAsync($"We recieved wrong signature! Sign can't be checked:  OperationId {id} - {signFrom} - {signFrom.Length}. Do something!");
+                    throw;
+                }
                 catch (Exception e)
                 {
                     await _log.WriteErrorAsync("PendingOperationService", "GetAndCheckSign", $" OperationId {id}", e, DateTime.UtcNow);
