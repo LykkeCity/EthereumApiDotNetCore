@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using Nethereum.Web3;
 
 namespace EthereumApi.Controllers
 {
@@ -10,9 +11,11 @@ namespace EthereumApi.Controllers
     {
         //private readonly IContractQueueService _contractQueueService;
         private readonly IContractService _contractService;
+        private readonly Web3 _web3;
 
-        public SystemController(IContractService contractService)
+        public SystemController(IContractService contractService, Web3 web3)
         {
+            _web3 = web3;
             _contractService = contractService;
         }
 
@@ -26,8 +29,8 @@ namespace EthereumApi.Controllers
 
             // check ethereum node
             var block = await _contractService.GetCurrentBlock();
-
-            return Ok(new { QueueCount = 0, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion });
+            var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
+            return Ok(new { QueueCount = 0, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion, CurrentGasPrice = currentGasPriceHex.Value });
         }
     }
 }
