@@ -13,6 +13,7 @@ using Nethereum.Util;
 using Nethereum.Signer;
 using SigningServiceApiCaller.Models;
 using Core;
+using Core.Settings;
 
 namespace LkeServices.Signature
 {
@@ -24,9 +25,11 @@ namespace LkeServices.Signature
         private BigInteger _nonceCount = -1;
         private readonly ILykkeSigningAPI _signatureApi;
         private readonly Web3 _web3;
+        private readonly IBaseSettings _baseSettings;
 
-        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi)
+        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings)
         {
+            _baseSettings = baseSettings;
             _signatureApi = signatureApi;
             Client = web3.Client;
             _web3 = web3;
@@ -58,7 +61,7 @@ namespace LkeServices.Signature
             var currentGasPrice = currentGasPriceHex.Value;
             var nonce = await GetNonceAsync(transaction);
             var value = transaction.Value?.Value ?? 0;
-            BigInteger selectedGasPrice = (currentGasPrice > MaxGasPrice) ? DefaultGasPrice : currentGasPrice * 85 / 100;
+            BigInteger selectedGasPrice = (currentGasPrice > MaxGasPrice) ? DefaultGasPrice : currentGasPrice * _baseSettings.GasPricePercentage / 100;
             var gasPrice = transaction.GasPrice?.Value ?? selectedGasPrice;
             var gasValue = transaction.Gas?.Value ?? Constants.GasForCoinTransaction;
             var tr = new Nethereum.Signer.Transaction(transaction.To, value, nonce, gasPrice, gasValue, transaction.Data);
