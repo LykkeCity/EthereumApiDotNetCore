@@ -18,7 +18,7 @@ namespace LkeServices.Signature
 {
     public class LykkeSignedTransactionManager : ITransactionManager
     {
-        private static BigInteger DefaultGasPrice = BigInteger.Parse("22000000000");
+        private static BigInteger DefaultGasPrice = BigInteger.Parse("25000000000");
         private static BigInteger MaxGasPrice = BigInteger.Parse("30000000000");
 
         private BigInteger _nonceCount = -1;
