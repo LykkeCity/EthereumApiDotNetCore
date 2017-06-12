@@ -30,7 +30,7 @@ namespace EthereumApi.Controllers
             // check ethereum node
             var block = await _contractService.GetCurrentBlock();
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
-            return Ok(new { QueueCount = 0, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion, CurrentGasPrice = currentGasPriceHex.Value });
+            return Ok(new { QueueCount = 0, BlockNumber = block.ToString(), Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion, CurrentGasPrice = currentGasPriceHex.Value.ToString() });
         }
     }
 }
