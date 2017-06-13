@@ -98,6 +98,23 @@ namespace EthereumJobs.Job
                     return;
                 }
             }
+            catch (EdjCase.JsonRpc.Client.RpcClientException exc)
+            {
+                await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "RpcException", exc);
+                opMessage.LastError = exc.Message;
+                opMessage.DequeueCount++;
+                if (opMessage.DequeueCount < 6)
+                {
+                    context.MoveMessageToEnd(opMessage.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                }
+                else
+                {
+                    context.MoveMessageToPoison(opMessage.ToJson());
+                }
+
+                return;
+            }
             catch (Exception ex)
             {
                 if (ex.Message != opMessage.LastError)
@@ -105,14 +122,15 @@ namespace EthereumJobs.Job
 
                 opMessage.LastError = ex.Message;
                 opMessage.DequeueCount++;
-
-                context.MoveMessageToPoison();
+                context.MoveMessageToPoison(opMessage.ToJson());
 
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "", ex);
+
                 return;
             }
 
-            context.MoveMessageToEnd();
+            opMessage.DequeueCount++;
+            context.MoveMessageToEnd(opMessage.ToJson());
             context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
         }
 

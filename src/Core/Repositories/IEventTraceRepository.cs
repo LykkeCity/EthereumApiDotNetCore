@@ -8,7 +8,7 @@ namespace Core.Repositories
     public interface IEventTrace
     {
         string OperationId { get; set; }
-        DateTime TraceDate { get; set; }
+        DateTime TraceDate { get; }
         string Note {get;set;}
     }
 

@@ -117,6 +117,8 @@ namespace EthereumJobs.Job
                     OperationId = message.OperationId,
                     TraceDate = DateTime.UtcNow
                 });
+
+                return;
             }
             switch (coinEvent.CoinEventType)
             {
@@ -154,12 +156,12 @@ namespace EthereumJobs.Job
                         {
                             context.MoveMessageToEnd();
                             context.SetCountQueueBasedDelay(10000, 100);
-                            //transferContract - userAddress
-                            await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
 
                             return false;
                         }
 
+                        //transferContract - userAddress
+                        await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
                         coinEvent.Amount = cashinEvent.Amount;
                         coinEvent.CoinEventType++;
                         break;
@@ -171,14 +173,14 @@ namespace EthereumJobs.Job
                     default: break;
                 }
 
-                await _coinEventService.PublishEvent(coinEvent, false);
-                await _pendingTransactionsRepository.Delete(transactionHash);
                 await _eventTraceRepository.InsertAsync(new EventTrace()
                 {
                     Note = $"Operation processing is completed with hash {transactionHash}",
                     OperationId = coinEvent.OperationId,
                     TraceDate = DateTime.UtcNow
                 });
+                await _coinEventService.PublishEvent(coinEvent, false);
+                await _pendingTransactionsRepository.Delete(transactionHash);
 
                 return true;
             }
