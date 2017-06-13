@@ -17,18 +17,18 @@ namespace AzureRepositories.Repositories
             return $"EventTrace_{operationId}";
         }
 
-        public string TimeKey { get { return this.RowKey; } set { this.RowKey = value; } }
+        public string TimeKey => this.RowKey;
         public string OperationId { get; set; }
-        public DateTime TraceDate { get { return DateTime.Parse(TimeKey); } set { TimeKey = value.ToString(); } }
+        public DateTime TraceDate => DateTime.Parse(RowKey);
         public string Note { get; set; }
 
         public static EventTraceEntity CreateCoinEntity(IEventTrace trace)
         {
             return new EventTraceEntity
             {
+                RowKey = trace.TraceDate.ToString(),
                 PartitionKey = GetPartitionKey(trace.OperationId),
                 OperationId = trace.OperationId,
-                TraceDate = trace.TraceDate,
                 Note = trace.Note
             };
         }
