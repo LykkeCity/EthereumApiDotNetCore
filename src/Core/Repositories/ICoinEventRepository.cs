@@ -67,5 +67,6 @@ namespace Core.Repositories
         Task<ICoinEvent> GetCoinEvent(string transactonHash);
         Task InsertOrReplace(ICoinEvent coinEvent);
         Task<ICoinEvent> GetCoinEventById(string operationId);
+        Task<IEnumerable<ICoinEvent>> GetAll();
     }
 }

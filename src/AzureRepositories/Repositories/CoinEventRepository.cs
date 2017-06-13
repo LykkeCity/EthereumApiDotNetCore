@@ -110,5 +110,11 @@ namespace AzureRepositories.Repositories
             await _table.InsertOrReplaceAsync(entity);
             await _index.InsertOrReplaceAsync(index);
         }
+
+        public async Task<IEnumerable<ICoinEvent>> GetAll()
+        {
+            var all = await _table.GetDataAsync(CoinEventEntity.GetPartitionKey());
+            return all;
+        }
     }
 }

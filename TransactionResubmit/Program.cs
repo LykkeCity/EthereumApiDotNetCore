@@ -14,6 +14,7 @@ using Services.New.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -60,6 +61,8 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 3 to CHECK pending operations");
             Console.WriteLine($"Type 4 to SCAN transfer contracts for issues");
             Console.WriteLine($"Type 5 to REASSIGN contracts");
+            Console.WriteLine($"Type 6 to List all sucesful coin events");
+            Console.WriteLine($"Type 7 to RESUBMIT all succesful coin events");
             var command = "";
 
             do
@@ -82,6 +85,12 @@ namespace TransactionResubmit
                     case "5":
                         StartReassignment();
                         break;
+                    case "6":
+                        ListUnPublishedCoinEvents();
+                        break;
+                    case "7":
+                        ResubmittUnPublishedCoinEvents();
+                        break;
                     default:
                         break;
                 }
@@ -89,6 +98,105 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void ResubmittUnPublishedCoinEvents()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
+                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
+                var opRepo = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
+                var allCoinEvents = events.ToLookup(x => x.OperationId);
+                opRepo.ProcessAllAsync((matches) =>
+                {
+                    foreach (var match in matches)
+                    {
+                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        {
+                            var coinEvents = allCoinEvents[match.OperationId]?.OrderByDescending(x => x.EventTime);
+                            if (coinEvents != null)
+                            {
+                                foreach (var @event in coinEvents)
+                                {
+                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                                    {
+                                        Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
+                                        queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = @event.TransactionHash, OperationId = match.OperationId, LastError = "FROM_CONSOLE", PutDateTime = DateTime.UtcNow })).Wait();
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                    return Task.FromResult(0);
+                }).Wait();
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        private static void ListUnPublishedCoinEvents()
+        {
+            try
+            {
+                List<string> allUnpublishedEvents = new List<string>();
+                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
+                var opRepo = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
+                var allCoinEvents = events.ToLookup(x => x.OperationId);
+                opRepo.ProcessAllAsync((matches) =>
+                {
+                    foreach (var match in matches)
+                    {
+                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        {
+                            var coinEvents = allCoinEvents[match.OperationId]?.OrderByDescending(x => x.EventTime);
+                            if (coinEvents != null)
+                            {
+                                foreach (var @event in coinEvents)
+                                {
+                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                                    {
+                                        Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
+                                        allUnpublishedEvents.Add(@event.TransactionHash);
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+
+                    return Task.FromResult(0);
+                }).Wait();
+
+                Console.WriteLine("All has been processed");
+                File.WriteAllText("listUnPublishedCoinEvents.txt", Newtonsoft.Json.JsonConvert.SerializeObject(allUnpublishedEvents));
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static void StartReassignment()
