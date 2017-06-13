@@ -394,7 +394,7 @@ namespace Services
         {
             await CreateOperation(operation);
             await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = operation.OperationId }));
-            await _eventTraceRepository.InsertAsync(new EventTrace() { Note = $"First appearance for the operation. Put it in {Constants.PendingOperationsQueue}",
+            await _eventTraceRepository.InsertAsync(new EventTrace() { Note = $"First appearance for the operation. Put it in{Constants.PendingOperationsQueue}",
                 OperationId = operation.OperationId, TraceDate = DateTime.UtcNow });
         }
 

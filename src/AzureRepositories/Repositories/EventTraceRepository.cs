@@ -7,6 +7,7 @@ using Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;
 using AzureStorage.Tables.Templates.Index;
+using System.Globalization;
 
 namespace AzureRepositories.Repositories
 {
@@ -19,21 +20,20 @@ namespace AzureRepositories.Repositories
 
         public string TimeKey => this.RowKey;
         public string OperationId { get; set; }
-        public DateTime TraceDate => DateTime.Parse(RowKey);
+        public DateTime TraceDate => DateTime.Parse(RowKey, CultureInfo.InvariantCulture);
         public string Note { get; set; }
 
         public static EventTraceEntity CreateCoinEntity(IEventTrace trace)
         {
             return new EventTraceEntity
             {
-                RowKey = trace.TraceDate.ToString(),
+                RowKey = trace.TraceDate.ToString("o", CultureInfo.InvariantCulture),
                 PartitionKey = GetPartitionKey(trace.OperationId),
                 OperationId = trace.OperationId,
                 Note = trace.Note
             };
         }
     }
-
 
     public class EventTraceRepository : IEventTraceRepository
     {
