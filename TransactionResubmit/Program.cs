@@ -5,6 +5,7 @@ using Core.Repositories;
 using Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nethereum.Web3;
 using RabbitMQ;
 using Services;
 using Services.Coins;
@@ -42,7 +43,18 @@ namespace TransactionResubmit
             RegisterDependency.RegisterServices(collection);
             ServiceProvider = collection.BuildServiceProvider();
 
-            Console.WriteLine($"Type 0 to exit");
+            var web3 = ServiceProvider.GetService<Web3>();
+
+            try
+            {
+                var blockNumber = web3.Eth.Blocks.GetBlockNumber.SendRequestAsync().Result;
+                Console.WriteLine($"RPC Works! {blockNumber.Value.ToString()}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Rpc does not work at all! {e.Message}");
+            }
+                Console.WriteLine($"Type 0 to exit");
             //Console.WriteLine($"Type 1 to resubmit transaction");
             Console.WriteLine($"Type 2 to REPEAT all operation without hash");
             Console.WriteLine($"Type 3 to CHECK pending operations");
