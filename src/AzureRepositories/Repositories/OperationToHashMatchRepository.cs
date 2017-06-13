@@ -114,12 +114,12 @@ namespace AzureRepositories.Repositories
 
         public async Task ProcessAllAsync(Func<IEnumerable<IOperationToHashMatch>, Task> processAction)
         {
-            Func<IEnumerable<IOperationToHashMatch>, Task> function = async (items) =>
+            Action<IEnumerable<IOperationToHashMatch>> function = async (items) =>
             {
                 await processAction(items);
             };
 
-            await _table.GetDataByChunksAsync(function);
+            await _table.GetDataByChunksAsync(OperationToHashMatchEntity.GetPartitionKey(), function);
         }
 
     }
