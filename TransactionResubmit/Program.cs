@@ -44,10 +44,10 @@ namespace TransactionResubmit
 
             Console.WriteLine($"Type 0 to exit");
             //Console.WriteLine($"Type 1 to resubmit transaction");
-            Console.WriteLine($"Type 2 to repeat all operation without hash");
-            //Console.WriteLine($"Type 3 to repeat all rabbit events");
-            Console.WriteLine($"Type 4 to scan transfer contracts for issues");
-            Console.WriteLine($"Type 5 to reassign contracts");
+            Console.WriteLine($"Type 2 to REPEAT all operation without hash");
+            Console.WriteLine($"Type 3 to CHECK pending operations");
+            Console.WriteLine($"Type 4 to SCAN transfer contracts for issues");
+            Console.WriteLine($"Type 5 to REASSIGN contracts");
             var command = "";
 
             do
@@ -61,9 +61,9 @@ namespace TransactionResubmit
                     case "2":
                         OperationResubmit();
                         break;
-                    //case "3":
-                    //    HashResubmit();
-                    //    break;
+                    case "3":
+                        OperationCheck();
+                        break;
                     case "4":
                         GetAllFailedAssignments();
                         break;
@@ -221,10 +221,49 @@ namespace TransactionResubmit
             });
         }
 
+        private static void OperationCheck()
+        {
+            try
+            {
+                var list = new List<string>();
+                Console.WriteLine("CheckingOperation");
+                IEthereumTransactionService coinTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var operationToHashMatchRepository = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                operationToHashMatchRepository.ProcessAllAsync((items) =>
+                {
+                    foreach (var item in items)
+                    {
+                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        {
+                            Console.WriteLine($"Operation is dead {item.OperationId}");
+                            list.Add(item.OperationId);
+                        }
+                    }
+                    return Task.FromResult(0);
+                }).Wait();
+
+                File.WriteAllText("reportOperations.txt", Newtonsoft.Json.JsonConvert.SerializeObject(list));
+                Console.WriteLine("Report completed");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e.Message}, {e.StackTrace}");
+            }
+            Console.WriteLine();
+        }
+
         private static void OperationResubmit()
         {
             try
             {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel Resubmit");
+                    return;
+                }
+
                 var queueFactory = ServiceProvider.GetService<IQueueFactory>();
                 IEthereumTransactionService coinTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
                 var queue = queueFactory.Build(Constants.PendingOperationsQueue);
@@ -241,6 +280,8 @@ namespace TransactionResubmit
                     }
                     return Task.FromResult(0);
                 }).Wait();
+
+                Console.WriteLine("Resubmitted");
             }
             catch (Exception e)
             {
@@ -262,5 +303,6 @@ namespace TransactionResubmit
 
             return settings;
         }
+
     }
 }
