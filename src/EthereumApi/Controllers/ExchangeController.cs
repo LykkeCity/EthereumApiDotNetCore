@@ -36,7 +36,7 @@ namespace EthereumApi.Controllers
 
         [Route("cashout")]
         [HttpPost]
-        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(OperationIdResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> Cashout([FromBody]CashoutModel model)
@@ -78,7 +78,7 @@ namespace EthereumApi.Controllers
 
         [Route("transfer")]
         [HttpPost]
-        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(OperationIdResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> Transfer([FromBody] TransferModel model)
@@ -124,7 +124,7 @@ namespace EthereumApi.Controllers
 
         [Route("transferWithChange")]
         [HttpPost]
-        [ProducesResponseType(typeof(TransactionResponse), 200)]
+        [ProducesResponseType(typeof(OperationIdResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferWithChange([FromBody] TransferWithChangeModel model)
