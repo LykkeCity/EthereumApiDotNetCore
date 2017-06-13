@@ -41,7 +41,7 @@ namespace EthereumJobs.Job
             {
                 string assignedUser = await _transferContractService.GetTransferAddressUser(transaction.CoinAdapterAddress, transaction.TransferContractAddress);
 
-                if (string.IsNullOrEmpty(assignedUser) || assignedUser == "0x0000000000000000000000000000000000000000")
+                if (string.IsNullOrEmpty(assignedUser) || assignedUser == Constants.EmptyEthereumAddress)
                 {
                     await _transferContractUserAssignmentQueueService.CompleteTransfer(transaction);
                 }

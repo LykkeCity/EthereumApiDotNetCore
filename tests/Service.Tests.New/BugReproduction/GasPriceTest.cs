@@ -13,6 +13,7 @@ using System.Diagnostics;
 using LkeServices.Signature;
 using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
+using Core.Settings;
 
 namespace Service.Tests.BugReproduction
 {
@@ -24,9 +25,10 @@ namespace Service.Tests.BugReproduction
         [TestInitialize]
         public void Init()
         {
+            var baseSettings = Config.Services.GetService<IBaseSettings>();
             var web3 = Config.Services.GetService<Web3>();
             var signatureApi = Config.Services.GetService<ILykkeSigningAPI>();
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi);
+            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings);
         }
 
         [TestMethod]

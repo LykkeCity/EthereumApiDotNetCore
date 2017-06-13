@@ -46,6 +46,7 @@ namespace Services
         private readonly ICoinTransactionService _cointTransactionService;
         private readonly ICoinTransactionRepository _coinTransactionRepository;
         private readonly ICoinEventService _coinEventService;
+        private readonly IEventTraceRepository _eventTraceRepository;
 
         public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
             ILog logger,
@@ -57,8 +58,10 @@ namespace Services
             IUserPaymentHistoryRepository userPaymentHistoryRepository,
             ICoinTransactionService cointTransactionService,
             ICoinTransactionRepository coinTransactionRepository,
-            ICoinEventService coinEventService)
+            ICoinEventService coinEventService,
+            IEventTraceRepository eventTraceRepository)
         {
+            _eventTraceRepository = eventTraceRepository;
             _logger = logger;
             _baseSettings = baseSettings;
             _queue = queueFactory(Constants.ContractTransferQueue);
@@ -92,10 +95,17 @@ namespace Services
                     return;
                 }
 
+                var opId = $"InternalOperation-{Guid.NewGuid().ToString()}";
                 var transactionHash = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
-                await _coinEventService.PublishEvent(new CoinEvent($"InternalOperation-{Guid.NewGuid().ToString()}", 
+                await _coinEventService.PublishEvent(new CoinEvent(opId, 
                     transactionHash, contractTransferTr.ContractAddress, contractTransferTr.UserAddress,
                     balance.ToString(), CoinEventType.CashinStarted, contractEntity.CoinAdapterAddress));
+                await _eventTraceRepository.InsertAsync(new EventTrace()
+                {
+                    Note = $"First Cashin appearance {transactionHash} put in {Constants.TransactionMonitoringQueue}",
+                    OperationId = opId,
+                    TraceDate = DateTime.UtcNow
+                });
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {
                     Amount = balance.ToString(),
@@ -107,7 +117,7 @@ namespace Services
                     UserAddress = contractTransferTr.UserAddress
                 });
 
-                await UpdateUserTransferWallet(contractTransferTr);
+                //await UpdateUserTransferWallet(contractTransferTr);
                 await _logger.WriteInfoAsync("ContractTransferTransactionService", "TransferToCoinContract", "",
                     $"Transfered {balance} from transfer contract to \"{contractTransferTr.CoinAdapterAddress}\" by transaction \"{transactionHash}\". Receiver = {contractEntity.UserAddress}");
             }

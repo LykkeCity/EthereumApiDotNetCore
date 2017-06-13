@@ -11,6 +11,7 @@ using Services.Coins;
 using Services.Coins.Models;
 using Services.New.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -40,30 +41,13 @@ namespace TransactionResubmit
             RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.EthereumCore, ServiceProvider.GetService<ILog>());
             RegisterDependency.RegisterServices(collection);
             ServiceProvider = collection.BuildServiceProvider();
-            //File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), "TransactionsForResubmit.json"),
-            //    Newtonsoft.Json.JsonConvert.SerializeObject(new ResubmitModel()
-            //    {
-            //        Transactions = new System.Collections.Generic.List<ResubmitTransactionModel>()
-            //        {
-            //            new ResubmitTransactionModel()
-            //            {
-            //                Amount = "",
-            //                Change = "",
-            //                CoinAdapterAddress = "",
-            //                FromAddress = "",
-            //                Id = Guid.NewGuid(),
-            //                OperationType ="",
-            //                SignFrom ="",
-            //                SignTo ="",
-            //                ToAddress ="",
-            //            }
-            //        }
-            //    }));
 
             Console.WriteLine($"Type 0 to exit");
-            Console.WriteLine($"Type 1 to resubmit transaction");
-            Console.WriteLine($"Type 2 to repeat all operation without hash");
-            Console.WriteLine($"Type 3 to repeat all rabbit events");
+            //Console.WriteLine($"Type 1 to resubmit transaction");
+            //Console.WriteLine($"Type 2 to repeat all operation without hash");
+            //Console.WriteLine($"Type 3 to repeat all rabbit events");\
+            Console.WriteLine($"Type 4 to scan transfer contracts for issues");
+            Console.WriteLine($"Type 5 to reassign contracts");
             var command = "";
 
             do
@@ -71,14 +55,20 @@ namespace TransactionResubmit
                 command = Console.ReadLine();
                 switch (command)
                 {
-                    case "1":
-                        TransactionResubmitTransaction();
+                    //case "1":
+                    //    TransactionResubmitTransaction();
+                    //    break;
+                    //case "2":
+                    //    OperationResubmit();
+                    //    break;
+                    //case "3":
+                    //    HashResubmit();
+                    //    break;
+                    case "4":
+                        GetAllFailedAssignments();
                         break;
-                    case "2":
-                        OperationResubmit();
-                        break;
-                    case "3":
-                        HashResubmit();
+                    case "5":
+                        StartReassignment();
                         break;
                     default:
                         break;
@@ -87,6 +77,83 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void StartReassignment()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel Reassignment");
+                    return;
+                }
+                Console.WriteLine("Reassignment started");
+
+                List<string> allTransferContracts = new List<string>();
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var transferRepo = ServiceProvider.GetService<ITransferContractRepository>();
+                var assignmentService = ServiceProvider.GetService<ITransferContractUserAssignmentQueueService>();
+                var transferContractService = ServiceProvider.GetService<ITransferContractService>();
+
+                transferRepo.ProcessAllAsync((contract) =>
+                {
+                    var currentUser = transferContractService.GetTransferAddressUser(contract.CoinAdapterAddress, contract.ContractAddress).Result;
+                    if (string.IsNullOrEmpty(currentUser) || currentUser == Constants.EmptyEthereumAddress)
+                    {
+                        assignmentService.PushContract(new TransferContractUserAssignment()
+                        {
+                            CoinAdapterAddress = contract.CoinAdapterAddress,
+                            TransferContractAddress = contract.ContractAddress,
+                            UserAddress = contract.UserAddress,
+                            PutDateTime = DateTime.UtcNow
+                        });
+                        Console.WriteLine($"Reassign - {contract.ContractAddress} - -_-");
+                        allTransferContracts.Add(contract.ContractAddress);
+                    };
+
+                    return Task.FromResult(0);
+                }).Wait();
+
+                File.WriteAllText("report.txt", Newtonsoft.Json.JsonConvert.SerializeObject(allTransferContracts));
+                Console.WriteLine("Reassignment completed");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error during check: {e.Message} - {e.StackTrace}");
+            }
+        }
+
+
+        private static void GetAllFailedAssignments()
+        {
+            try
+            {
+                List<string> allTransferContracts = new List<string>();
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var transferRepo = ServiceProvider.GetService<ITransferContractRepository>();
+                var transferContractService = ServiceProvider.GetService<ITransferContractService>();
+                transferRepo.ProcessAllAsync((contract) =>
+                {
+                    var currentUser = transferContractService.GetTransferAddressUser(contract.CoinAdapterAddress, contract.ContractAddress).Result;
+                    if (string.IsNullOrEmpty(currentUser) || currentUser == Constants.EmptyEthereumAddress)
+                    {
+                        Console.WriteLine($"Broken - {contract.ContractAddress} - X_X");
+                        allTransferContracts.Add(contract.ContractAddress);
+                    }
+
+                    return Task.FromResult(0);
+                }).Wait();
+
+                File.WriteAllText("report.txt", Newtonsoft.Json.JsonConvert.SerializeObject(allTransferContracts));
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error during check: {e.Message} - {e.StackTrace}");
+            }
         }
 
         private static void TransactionResubmitTransaction()
@@ -167,7 +234,7 @@ namespace TransactionResubmit
                 {
                     foreach (var item in items)
                     {
-                        if (string.IsNullOrEmpty(item.TransactionHash) || ! coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
                         {
                             Console.WriteLine($"Resubmitting {item.OperationId}");
                             queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = item.OperationId })).Wait();

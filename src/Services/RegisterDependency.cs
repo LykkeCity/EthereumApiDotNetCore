@@ -48,8 +48,9 @@ namespace Services
 
             services.AddSingleton<Web3>((provider) =>
             {
-                var web3 = new Web3(provider.GetService<IBaseSettings>().EthereumUrl);
-                web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(provider.GetService<ILykkeSigningAPI>(), web3);
+                var baseSettings = provider.GetService<IBaseSettings>();
+                var web3 = new Web3(baseSettings.EthereumUrl);
+                web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(provider.GetService<ILykkeSigningAPI>(), web3, baseSettings);
 
                 return web3;
             });

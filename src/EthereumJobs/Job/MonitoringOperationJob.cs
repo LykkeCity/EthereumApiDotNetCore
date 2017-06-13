@@ -24,10 +24,12 @@ namespace EthereumJobs.Job
         private readonly IExchangeContractService _exchangeContractService;
         private readonly ICoinEventService _coinEventService;
         private readonly ITransferContractService _transferContractService;
+        private readonly IEventTraceRepository _eventTraceRepository;
 
         public MonitoringOperationJob(ILog log, IBaseSettings settings,
-            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService, ITransferContractService transferContractService)
+            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService, ITransferContractService transferContractService, IEventTraceRepository eventTraceRepository)
         {
+            _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;
             _pendingOperationService = pendingOperationService;
             _settings = settings;
@@ -86,6 +88,12 @@ namespace EthereumJobs.Job
                 {
                     await _pendingOperationService.MatchHashToOpId(transactionHash, operation.OperationId);
                     await _coinEventService.PublishEvent(new CoinEvent(operation.OperationId.ToString(), transactionHash, operation.FromAddress, operation.ToAddress, resultAmount.ToString(), eventType.Value, operation.CoinAdapterAddress));
+                    await _eventTraceRepository.InsertAsync(new EventTrace()
+                    {
+                        Note = $"Operation Processed. Put it in the {Constants.TransactionMonitoringQueue}. With hash {transactionHash}",
+                        OperationId = operation.OperationId,
+                        TraceDate = DateTime.UtcNow
+                    });
 
                     return;
                 }
@@ -96,9 +104,9 @@ namespace EthereumJobs.Job
                     await _log.WriteWarningAsync("MonitoringOperationJob", "Execute", $"OperationId: [{opMessage.OperationId}]", "");
 
                 opMessage.LastError = ex.Message;
-
                 opMessage.DequeueCount++;
 
+                context.MoveMessageToPoison();
 
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "", ex);
                 return;
