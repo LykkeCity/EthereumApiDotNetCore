@@ -173,12 +173,12 @@ namespace EthereumJobs.Job
                     default: break;
                 }
 
-                await _eventTraceRepository.InsertAsync(new EventTrace()
-                {
-                    Note = $"Operation processing is completed with hash {transactionHash}",
-                    OperationId = coinEvent.OperationId,
-                    TraceDate = DateTime.UtcNow
-                });
+                //await _eventTraceRepository.InsertAsync(new EventTrace()
+                //{
+                //    Note = $"Operation processing is completed with hash {transactionHash}",
+                //    OperationId = coinEvent.OperationId,
+                //    TraceDate = DateTime.UtcNow
+                //});
                 await _coinEventService.PublishEvent(coinEvent, false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
 

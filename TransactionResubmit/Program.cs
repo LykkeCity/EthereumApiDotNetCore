@@ -44,8 +44,8 @@ namespace TransactionResubmit
 
             Console.WriteLine($"Type 0 to exit");
             //Console.WriteLine($"Type 1 to resubmit transaction");
-            //Console.WriteLine($"Type 2 to repeat all operation without hash");
-            Console.WriteLine($"Type 3 to repeat all rabbit events");
+            Console.WriteLine($"Type 2 to repeat all operation without hash");
+            //Console.WriteLine($"Type 3 to repeat all rabbit events");
             Console.WriteLine($"Type 4 to scan transfer contracts for issues");
             Console.WriteLine($"Type 5 to reassign contracts");
             var command = "";
@@ -58,12 +58,12 @@ namespace TransactionResubmit
                     //case "1":
                     //    TransactionResubmitTransaction();
                     //    break;
-                    //case "2":
-                    //    OperationResubmit();
-                    //    break;
-                    case "3":
-                        HashResubmit();
+                    case "2":
+                        OperationResubmit();
                         break;
+                    //case "3":
+                    //    HashResubmit();
+                    //    break;
                     case "4":
                         GetAllFailedAssignments();
                         break;
