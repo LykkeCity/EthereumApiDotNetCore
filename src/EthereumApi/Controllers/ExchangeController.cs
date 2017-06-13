@@ -111,13 +111,13 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await Log("TransferWithChange", $"Begin Process {this.GetIp()}", model);
+            await Log("CheckSign", $"Begin Process {this.GetIp()}", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             var result = _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
-            await Log("TransferWithChange", "End Process", model, result.ToString());
+            await Log("CheckSign", "End Process", model, result.ToString());
 
             return Ok(new CheckSignResponse { SignIsCorrect = result });
         }
