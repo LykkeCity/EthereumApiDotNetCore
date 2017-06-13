@@ -10,6 +10,10 @@ using System.Numerics;
 using System;
 using Nethereum.Util;
 using Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EthereumApi.Controllers
 {
@@ -42,7 +46,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await Log("Cashout", "Begin Process", model);
+            await Log("Cashout", $"Begin Process {this.GetIp()}", model);
 
             var amount = BigInteger.Parse(model.Amount);
             var operationId = await _pendingOperationService.CashOut(model.Id, model.CoinAdapterAddress,
@@ -84,7 +88,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await Log("Transfer", "Begin Process", model);
+            await Log("Transfer", $"Begin Process {this.GetIp()}", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             var operationId = await _pendingOperationService.Transfer(model.Id, model.CoinAdapterAddress,
@@ -107,7 +111,7 @@ namespace EthereumApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await Log("TransferWithChange", "Begin Process", model);
+            await Log("TransferWithChange", $"Begin Process {this.GetIp()}", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             var result = _exchangeContractService.CheckSign(model.Id, model.CoinAdapterAddress,
@@ -129,12 +133,12 @@ namespace EthereumApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            await Log("TransferWithChange", "Begin Process", model);
+            
+            await Log("TransferWithChange", $"Begin Process {this.GetIp()}", model);
 
             BigInteger amount = BigInteger.Parse(model.Amount);
             BigInteger change = BigInteger.Parse(model.Change);
-            var operationId = await _pendingOperationService.TransferWithChange(model.Id, model.CoinAdapterAddress, 
+            var operationId = await _pendingOperationService.TransferWithChange(model.Id, model.CoinAdapterAddress,
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress),
                 amount, model.SignFrom, change, model.SignTo);
 
@@ -173,4 +177,59 @@ namespace EthereumApi.Controllers
             await _logger.WriteInfoAsync("CoinController", method, status, builder.ToString());
         }
     }
+
+
+
+    public static class CtxExtension
+    {
+        public static string GetIp(this Controller ctx)
+        {
+            string ip = string.Empty;
+
+            // http://stackoverflow.com/a/43554000/538763
+            var xForwardedForVal = GetHeaderValueAs<string>(ctx.HttpContext, "X-Forwarded-For").SplitCsv().FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(xForwardedForVal))
+            {
+                ip = xForwardedForVal.Split(':')[0];
+            }
+
+            // RemoteIpAddress is always null in DNX RC1 Update1 (bug).
+            if (string.IsNullOrWhiteSpace(ip) && ctx.HttpContext?.Connection?.RemoteIpAddress != null)
+                ip = ctx.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            if (string.IsNullOrWhiteSpace(ip))
+                ip = GetHeaderValueAs<string>(ctx.HttpContext, "REMOTE_ADDR");
+
+            return ip;
+        }
+
+        private static T GetHeaderValueAs<T>(HttpContext httpContext, string headerName)
+        {
+            StringValues values;
+
+            if (httpContext?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
+            {
+                string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+
+                if (!string.IsNullOrEmpty(rawValues))
+                    return (T)Convert.ChangeType(values.ToString(), typeof(T));
+            }
+            return default(T);
+        }
+
+        private static List<string> SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        {
+            if (string.IsNullOrWhiteSpace(csvList))
+                return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
+
+            return csvList
+                .TrimEnd(',')
+                .Split(',')
+                .AsEnumerable<string>()
+                .Select(s => s.Trim())
+                .ToList();
+        }
+    }
 }
+
