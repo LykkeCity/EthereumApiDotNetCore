@@ -144,6 +144,8 @@ namespace Services
             {
                 throw new ClientSideException(ExceptionType.WrongParams, "Amount can't be less or equal than change");
             }
+
+            await ThrowOnExistingId(id);
             var operation = new PendingOperation()
             {
                 OperationId = id.ToString(),
@@ -159,7 +161,6 @@ namespace Services
             };
             var opId = await CreateOperation(operation);
 
-            await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
 
             var signFromResult = await GetAndCheckSign(id, coinAddress, fromAddress, toAddress, amount, signFrom);
