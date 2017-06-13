@@ -44,6 +44,10 @@ namespace AzureRepositories
                 new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.TransferContractTable,
                 provider.GetService<ILog>())));
 
+            services.AddSingleton<IEventTraceRepository>(provider => new EventTraceRepository(
+                new AzureTableStorage<EventTraceEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.EventTraceTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<IPendingOperationRepository>(provider => new PendingOperationRepository(
                 new AzureTableStorage<PendingOperationEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingOperationsTable,
                     provider.GetService<ILog>())));

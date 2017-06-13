@@ -56,7 +56,7 @@ namespace Services
 
             if (putInProcessingQueue)
             {
-                await _coinTransactionService.PutTransactionToQueue(coinEvent.TransactionHash);
+                await _coinTransactionService.PutTransactionToQueue(coinEvent.TransactionHash, coinEvent.OperationId);
             }
         }
     }

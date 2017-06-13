@@ -9,5 +9,6 @@ namespace Services.Coins.Models
     public class CoinTransactionMessage : QueueMessageBase
     {
         public string TransactionHash { get; set; }
+        public string OperationId { get; set; }
     }
 }

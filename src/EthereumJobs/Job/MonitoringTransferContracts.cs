@@ -66,7 +66,7 @@ namespace EthereumJobs.Job
                     if (!string.IsNullOrEmpty(item.UserAddress))
                     {
                         var userAddress = await _transferContractService.GetUserAddressForTransferContract(item.ContractAddress);
-                        if (string.IsNullOrEmpty(userAddress)|| userAddress == "0x0000000000000000000000000000000000000000")
+                        if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
                         {
                             bool assignmentCompleted = false;
                             if (!string.IsNullOrEmpty(item.AssignmentHash))
@@ -75,14 +75,15 @@ namespace EthereumJobs.Job
                             }
                             if (!assignmentCompleted)
                             {
-                                await _transferContractUserAssignmentQueueService.PushContract(new TransferContractUserAssignment()
-                                {
-                                    TransferContractAddress = item.ContractAddress,
-                                    UserAddress = item.UserAddress,
-                                    CoinAdapterAddress = item.CoinAdapterAddress
-                                });
+                                //await _transferContractUserAssignmentQueueService.PushContract(new TransferContractUserAssignment()
+                                //{
+                                //    TransferContractAddress = item.ContractAddress,
+                                //    UserAddress = item.UserAddress,
+                                //    CoinAdapterAddress = item.CoinAdapterAddress
+                                //});
                                 //    await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
                                 //    //_ethereumTransactionService
+                                await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
                                 throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                             }
                         }

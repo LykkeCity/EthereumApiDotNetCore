@@ -50,7 +50,7 @@ namespace EthereumJobs.Job
                 else
                 {
                     transaction.DequeueCount++;
-                    context.MoveMessageToEnd(transaction.ToJson());
+                    context.MoveMessageToEnd();
                     context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
                 }
                 await _logger.WriteErrorAsync("MonitoringTransferTransactions", "Execute", "", ex);

@@ -8,6 +8,7 @@ using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using SigningServiceApiCaller;
 using Nethereum.RPC.Eth.TransactionManagers;
+using Core.Settings;
 
 namespace LkeServices.Signature
 {
@@ -15,9 +16,9 @@ namespace LkeServices.Signature
     {
         private readonly ITransactionManager _transactionManager;
 
-        public SignatureInterceptor(ILykkeSigningAPI signatureApi, Web3 web3)
+        public SignatureInterceptor(ILykkeSigningAPI signatureApi, Web3 web3, IBaseSettings baseSettings)
         {
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi);
+            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings);
         }
 
         public RpcResponse BuildResponse(object results, string route = null)

@@ -14,7 +14,7 @@ namespace Services.Coins
     public interface ICoinTransactionService
     {
         Task<ICoinTransaction> ProcessTransaction(CoinTransactionMessage transaction);
-        Task PutTransactionToQueue(string transactionHash);
+        Task PutTransactionToQueue(string transactionHash, string operationId);
     }
     public class CoinTransactionService : ICoinTransactionService
     {
@@ -28,7 +28,6 @@ namespace Services.Coins
         private readonly IBaseSettings _baseSettings;
         private readonly ILog _logger;
         private readonly IQueueExt _coinTransationMonitoringQueue;
-        private readonly IQueueExt _coinTransactionQueue;
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
 
         public CoinTransactionService(Func<string, IQueueExt> queueFactory, IEthereumTransactionService transactionService,
@@ -41,7 +40,6 @@ namespace Services.Coins
             _baseSettings = baseSettings;
             _logger = logger;
             _coinTransationMonitoringQueue = queueFactory(Constants.TransactionMonitoringQueue);
-            _coinTransactionQueue = queueFactory(Constants.CoinTransactionQueue);
             _pendingTransactionsRepository = pendingTransactionsRepository;
         }
 
@@ -52,12 +50,12 @@ namespace Services.Coins
             if (receipt == null)
                 return null;
 
-            ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash) 
+            ICoinTransaction coinDbTransaction = await _coinTransactionRepository.GetTransaction(transaction.TransactionHash)
                 ?? new CoinTransaction()
-                    {
-                        ConfirmationLevel = 0,
-                        TransactionHash = transaction.TransactionHash
-                    };
+                {
+                    ConfirmationLevel = 0,
+                    TransactionHash = transaction.TransactionHash
+                };
             bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash, Constants.GasForCoinTransaction);
 
             var confimations = await _contractService.GetCurrentBlock() - receipt.BlockNumber;
@@ -84,9 +82,14 @@ namespace Services.Coins
             return 0;
         }
 
-        public Task PutTransactionToQueue(string transactionHash)
+        public Task PutTransactionToQueue(string transactionHash, string operationId)
         {
-            return PutTransactionToQueue(new CoinTransactionMessage { TransactionHash = transactionHash, PutDateTime = DateTime.UtcNow });
+            return PutTransactionToQueue(new CoinTransactionMessage
+            {
+                TransactionHash = transactionHash,
+                OperationId = operationId,
+                PutDateTime = DateTime.UtcNow
+            });
         }
 
         public async Task PutTransactionToQueue(CoinTransactionMessage transaction)

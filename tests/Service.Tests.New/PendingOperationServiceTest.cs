@@ -51,7 +51,7 @@ namespace Tests
             var log = new Moq.Mock<ILog>();
             var slack = new Moq.Mock<ISlackNotifier>();
             var queueMock = new Moq.Mock<IQueueExt>();
-
+            var eventTraceMock = new Moq.Mock<IEventTraceRepository>();
             queueFactory.Setup(x => x.Build(It.IsAny<string>())).Returns(queueMock.Object);
 
             _pendingOperationService = new PendingOperationService(settings,
@@ -63,7 +63,9 @@ namespace Tests
                 coinRepository.Object,
                 signingApi,
                 log.Object, 
-                slack.Object);
+                slack.Object,
+                eventTraceMock.Object
+                );
         }
 
         [TestMethod]
@@ -75,7 +77,6 @@ namespace Tests
             var to = _clientA;
 
             await _pendingOperationService.Transfer(id, _clientTokenTransferAddress, from, to, amount,"");
-
         }
     }
 }

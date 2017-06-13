@@ -26,12 +26,16 @@ namespace EthereumJobs.Job
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
         private readonly IPendingOperationService _pendingOperationService;
         private readonly ITransactionEventsService _transactionEventsService;
+        private readonly IEventTraceRepository _eventTraceRepository;
+        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService,
             IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService,
             IPendingTransactionsRepository pendingTransactionsRepository,
             IPendingOperationService pendingOperationService,
-            ITransactionEventsService transactionEventsService)
+            ITransactionEventsService transactionEventsService,
+            IEventTraceRepository eventTraceRepository,
+            IUserTransferWalletRepository userTransferWalletRepository)
         {
             _transactionEventsService = transactionEventsService;
             _settings = settings;
@@ -41,6 +45,9 @@ namespace EthereumJobs.Job
             _coinEventService = coinEventService;
             _pendingTransactionsRepository = pendingTransactionsRepository;
             _pendingOperationService = pendingOperationService;
+            _eventTraceRepository = eventTraceRepository;
+            _userTransferWalletRepository = userTransferWalletRepository;
+
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
@@ -68,15 +75,14 @@ namespace EthereumJobs.Job
             if ((coinTransaction == null || (coinTransaction.Error || coinTransaction.ConfirmationLevel == 0)) &&
                 DateTime.UtcNow - transaction.PutDateTime > TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds))
             {
-                await RepeatOperationTillWin(transaction.TransactionHash);
+                await RepeatOperationTillWin(transaction);
                 await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations. Reason - timeout");
-                //await SendCompletedCoinEvent(transaction.TransactionHash, false);
             }
             else
             {
                 if (coinTransaction != null && coinTransaction.ConfirmationLevel != 0)
                 {
-                    bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, true, context);
+                    bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, true, context);
 
                     if (sentToRabbit)
                     {
@@ -96,32 +102,49 @@ namespace EthereumJobs.Job
                     await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
                             $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                 }
-
             }
         }
 
-        private async Task RepeatOperationTillWin(string hash)
+        private async Task RepeatOperationTillWin(CoinTransactionMessage message)
         {
-            var pendingOp = await _pendingOperationService.GetOperationByHashAsync(hash);
-            if (pendingOp == null)
+            ICoinEvent coinEvent = await GetCoinEvent(message.TransactionHash, message.OperationId, true);
+
+            if (coinEvent == null)
             {
-                //ignore because that mean that cashin somehow failed
-                return;
+                await _eventTraceRepository.InsertAsync(new EventTrace()
+                {
+                    Note = $"Operation processing is over. Put it in the garbage. With hash {message.TransactionHash}",
+                    OperationId = message.OperationId,
+                    TraceDate = DateTime.UtcNow
+                });
+            }
+            switch (coinEvent.CoinEventType)
+            {
+                case CoinEventType.CashinStarted:
+                case CoinEventType.CashoutCompleted:
+                    await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
+
+                    return;
+                default:
+                    break;
             }
 
-            await _pendingOperationService.RefreshOperationByIdAsync(pendingOp.OperationId);
+            await _eventTraceRepository.InsertAsync(new EventTrace()
+            {
+                Note = $"Operation With Id {coinEvent.OperationId} hash {message.TransactionHash} goes to {Constants.PendingOperationsQueue}",
+                OperationId = message.OperationId,
+                TraceDate = DateTime.UtcNow
+            });
+
+            await _pendingOperationService.RefreshOperationByIdAsync(coinEvent.OperationId);
         }
 
         //return whether we have sent to rabbit or not
-        private async Task<bool> SendCompletedCoinEvent(string transactionHash, bool success, QueueTriggeringContext context)
+        private async Task<bool> SendCompletedCoinEvent(string transactionHash, string operationId, bool success, QueueTriggeringContext context)
         {
             try
             {
-                var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
-                var coinEvent = pendingOp != null ?
-                    await _coinEventService.GetCoinEventById(pendingOp.OperationId) : await _coinEventService.GetCoinEvent(transactionHash);
-                coinEvent.Success = success;
-                coinEvent.TransactionHash = transactionHash;
+                ICoinEvent coinEvent = await GetCoinEvent(transactionHash, operationId, success);
 
                 switch (coinEvent.CoinEventType)
                 {
@@ -131,6 +154,8 @@ namespace EthereumJobs.Job
                         {
                             context.MoveMessageToEnd();
                             context.SetCountQueueBasedDelay(10000, 100);
+                            //transferContract - userAddress
+                            await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
 
                             return false;
                         }
@@ -148,6 +173,12 @@ namespace EthereumJobs.Job
 
                 await _coinEventService.PublishEvent(coinEvent, false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
+                await _eventTraceRepository.InsertAsync(new EventTrace()
+                {
+                    Note = $"Operation processing is completed with hash {transactionHash}",
+                    OperationId = coinEvent.OperationId,
+                    TraceDate = DateTime.UtcNow
+                });
 
                 return true;
             }
@@ -159,6 +190,29 @@ namespace EthereumJobs.Job
 
                 return false;
             }
+        }
+
+        private async Task<ICoinEvent> GetCoinEvent(string transactionHash, string operationId, bool success)
+        {
+            var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
+            string opIdToSearch = pendingOp?.OperationId ?? operationId;
+            var coinEvent = !string.IsNullOrEmpty(opIdToSearch) ?
+                await _coinEventService.GetCoinEventById(opIdToSearch) : await _coinEventService.GetCoinEvent(transactionHash);
+            coinEvent.Success = success;
+            coinEvent.TransactionHash = transactionHash;
+
+            return coinEvent;
+        }
+
+        private async Task UpdateUserTransferWallet(string transferContractAddress, string userAddress)
+        {
+            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+            {
+                LastBalance = "",
+                TransferContractAddress = transferContractAddress,
+                UpdateDate = DateTime.UtcNow,
+                UserAddress = userAddress
+            });
         }
     }
 }

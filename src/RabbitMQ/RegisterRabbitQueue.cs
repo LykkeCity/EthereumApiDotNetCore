@@ -13,15 +13,16 @@ namespace RabbitMQ
     {
         public static void RegisterRabbitQueue(this IServiceCollection services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
         {
+            //FIX BACK TO HOST
             string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
             RabbitMqPublisherSettings rabbitMqSettings = new RabbitMqPublisherSettings
             {
-                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
+                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.ExternalHost}:{settings.RabbitMq.Port}",
                 ExchangeName = exchangeName
             };
             RabbitMqSubscriberSettings rabbitMqSubscriberSettings = new RabbitMqSubscriberSettings
             {
-                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
+                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.ExternalHost}:{settings.RabbitMq.Port}",
                 ExchangeName = exchangeName,
                 IsDurable = true,
                 QueueName = settings.RabbitMq.RoutingKey

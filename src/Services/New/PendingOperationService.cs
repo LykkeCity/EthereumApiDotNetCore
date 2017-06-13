@@ -58,11 +58,14 @@ namespace Services
         private readonly ILykkeSigningAPI _lykkeSigningAPI;
         private readonly ILog _log;
         private ISlackNotifier _slackNotifier;
+        private readonly IEventTraceRepository _eventTraceRepository;
 
         public PendingOperationService(IBaseSettings settings, IOperationToHashMatchRepository operationToHashMatchRepository,
             IPendingOperationRepository pendingOperationRepository, IQueueFactory queueFactory, Web3 web3, IHashCalculator hashCalculator,
-            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI, ILog log, ISlackNotifier slackNotifier)
+            ICoinRepository coinRepository, ILykkeSigningAPI lykkeSigningAPI, ILog log,
+            ISlackNotifier slackNotifier, IEventTraceRepository eventTraceRepository)
         {
+            _eventTraceRepository = eventTraceRepository;
             _slackNotifier = slackNotifier;
             _web3 = web3;
             _settings = settings;
@@ -262,7 +265,7 @@ namespace Services
         {
             var coin = await _coinRepository.GetCoinByAddress(coinAddress);
 
-            if (coinAddress == null)
+            if (coin == null)
             {
                 throw new ClientSideException(ExceptionType.WrongParams, $"Coin with address {coinAddress}");
             }
@@ -390,6 +393,8 @@ namespace Services
         {
             await CreateOperation(operation);
             await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = operation.OperationId }));
+            await _eventTraceRepository.InsertAsync(new EventTrace() { Note = $"First appearance for the operation. Put it in {Constants.PendingOperationsQueue}",
+                OperationId = operation.OperationId, TraceDate = DateTime.UtcNow });
         }
 
         private async Task<string> GetSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)
