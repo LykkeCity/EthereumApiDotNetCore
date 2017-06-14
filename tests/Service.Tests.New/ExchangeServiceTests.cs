@@ -31,17 +31,12 @@ namespace Tests
     [TestClass]
     public class ExchangeServiceTests : BaseTest
     {
-        public static string _ethereumAdapterAddress = "";
+        public static string _ethereumAdapterAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
         public static string _clientEthereumTransferAddress = "";
 
         //BCAPTokenAddress -         0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0
         //BCAPTokenAdapter-	   0x1e8e8ccbd9a7a8d82875054aa8342159d96356a9
         //BCAPTransferAddress -      0x7ff01d3225726eb3dd3356fc57e71e5ec0aab042
-
-        protected static string _tokenAdapterAddress = "0x1e8e8ccbd9a7a8d82875054aa8342159d96356a9";//"0x27b1ad3f1ae08eec8205bcbe91166b6387d67c4f";
-        protected static string _clientTokenTransferAddress = "0x7ff01d3225726eb3dd3356fc57e71e5ec0aab042";//"0x967ddcf62c2ecec1c4d231c7498c287b857846e7";
-        protected static string _externalTokenAddress = "0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0";//"0x79e34063d05324e0bffc19901963d9ae5b101fba";
-        protected static string _ethereumCoinOwnerB = "0xd513BeA430322c488600Af6eE094aB32238C7169";
         private IBaseSettings _settings;
         private ICoinRepository _coinRepository;
         private IExchangeContractService _exchangeService;
@@ -205,6 +200,20 @@ namespace Tests
         #endregion
 
         #region Common
+
+        [TestMethod]
+        public async Task Test_EstimateCashoutGas()
+        {
+            var guid = Guid.NewGuid();
+            var amount = new BigInteger(1000000000000000000);
+            var from = _clientA;
+            string transferUser = "0x0f0b0affc64dc8d644ac45152c82f993dbb2931d";
+            var to = _clientB;//_clientB;//"0xfBfA258B9028c7d4fc52cE28031469214D10DAEB";
+
+            var result = await _exchangeService.EstimateCashoutGas(guid, _ethereumAdapterAddress, from, to, amount, "");
+
+            Assert.IsTrue(result.IsAllowed);
+        }
 
         [TestMethod]
         public async Task TestCheckId_IsNotInList()
