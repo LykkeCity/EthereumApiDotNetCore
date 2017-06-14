@@ -21,6 +21,7 @@ using Core.Common;
 using SigningServiceApiCaller.Models;
 using Core.Exceptions;
 using Nethereum.Signer;
+using Services.Model;
 
 namespace Services.Coins
 {
@@ -48,6 +49,7 @@ namespace Services.Coins
 
         bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
         Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr);
+        Task<CashoutOperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -113,6 +115,29 @@ namespace Services.Coins
         //    await _cointTransactionService.PutTransactionToQueue(tr);
         //    return tr;
         //}
+        public async Task<CashoutOperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
+        {
+            var coinAFromDb = await GetCoinWithCheck(coinAdapterAddress);
+
+            if (string.IsNullOrEmpty(sign))
+            {
+                sign = await GetSign(id, coinAdapterAddress, fromAddress, toAddress, amount);
+            }
+
+            ThrowOnWrongSignature(id, coinAdapterAddress, fromAddress, toAddress, amount, sign);
+
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var cashout = contract.GetFunction("cashout");
+            var convertedId = EthUtils.GuidToBigInteger(id);
+            //ACTION
+            var estimatedGasForOperation = await cashout.EstimateGasAsync(convertedId, coinAFromDb.AdapterAddress, fromAddress, toAddress, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+
+            return new CashoutOperationEstimationResult()
+            {
+                GasAmount = estimatedGasForOperation.Value,
+                IsAllowed = estimatedGasForOperation.Value < Constants.GasForCoinTransaction
+            };
+        }
 
         public async Task<string> CashIn(Guid id, string coinAddress, string receiver, BigInteger amount)
         {
@@ -155,7 +180,7 @@ namespace Services.Coins
                 tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
                             new HexBigInteger(0), receiver, convertedAmountA);
             }
-            
+
             return tr;
         }
 
@@ -319,7 +344,7 @@ namespace Services.Coins
             var hash = GetHash(id, coinAddress, clientAddr, toAddr, amount);
             var signer = new MessageSigner();
             string sender = signer.EcRecover(hash, sign);
-            var util = new AddressUtil();//.ConvertToChecksumAddress(
+            var util = new AddressUtil();
             string checksumClientAddr = util.ConvertToChecksumAddress(clientAddr);
             string checksumSender = util.ConvertToChecksumAddress(sender);
 
@@ -434,15 +459,5 @@ namespace Services.Coins
         {
             await _pendingTransactionsRepository.InsertOrReplace(new PendingTransaction() { CoinAdapterAddress = coinAddress, UserAddress = clientAddr, TransactionHash = transactionHash });
         }
-
-        //private async Task CheckBalanceIsEnough(string coinAdapterAddress, string fromAddress, BigInteger amount)
-        //{
-        //    var currentBalance = await _transferContractService.GetBalanceOnAdapter(coinAdapterAddress, fromAddress);
-
-        //    if (currentBalance < amount)
-        //    {
-        //        throw new ClientSideException(ExceptionType.BalanceIsTooLow, $"User {fromAddress} balance on adapter {coinAdapterAddress} is ");
-        //    }
-        //}
     }
 }

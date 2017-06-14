@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Linq;
+using Services.Model;
+using Common;
 
 namespace EthereumApi.Controllers
 {
@@ -162,6 +164,32 @@ namespace EthereumApi.Controllers
             var isSynced = await _exchangeContractService.CheckLastTransactionCompleted(model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.UserAddress));
 
             return Ok(new CheckPendingResponse { IsSynced = isSynced });
+        }
+
+        [Route("estimateCashoutGas")]
+        [HttpPost]
+        [ProducesResponseType(typeof(EstimatedGasModel), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> EstimateCashoutGas([FromBody]TransferModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            BigInteger amount = BigInteger.Parse(model.Amount);
+            CashoutOperationEstimationResult cashoutEstimationResult = await _exchangeContractService.EstimateCashoutGas(model.Id, model.CoinAdapterAddress,
+                _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
+
+            await _logger.WriteInfoAsync("ExchangeController", "EstimateCashoutGas", 
+                model.ToJson(), $"Estimated amount:{cashoutEstimationResult.GasAmount}", DateTime.UtcNow);
+
+            return Ok(new EstimatedGasModel
+            {
+                EstimatedGas = cashoutEstimationResult.GasAmount.ToString(),
+                IsAllowed = cashoutEstimationResult.IsAllowed
+            });
         }
 
         private async Task Log(string method, string status, object model, string transaction = "")
