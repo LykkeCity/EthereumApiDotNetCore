@@ -181,6 +181,8 @@ namespace EthereumJobs.Job
                 //});
                 await _coinEventService.PublishEvent(coinEvent, false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
+                await _pendingOperationService.MatchHashToOpId(transactionHash, coinEvent.OperationId);
+                //TODO
 
                 return true;
             }
