@@ -23,6 +23,7 @@ using Services.Coins.Models;
 using AzureStorage.Queue;
 using Nethereum.Util;
 using Nethereum.Signer;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -202,16 +203,37 @@ namespace Tests
         #region Common
 
         [TestMethod]
+        public async Task SignOld()
+        {
+            string hex = "";
+            string privateKey = "";
+
+            var secret = new EthECKey(privateKey); ;
+            var hash = hex.HexToByteArray();
+            var signature = secret.SignAndCalculateV(hash);
+            string r = signature.R.Length == 32 ? signature.R.ToHex() : "00" + signature.R.ToHex();
+            string s = signature.S.Length == 32 ? signature.S.ToHex() : "00" + signature.S.ToHex();
+            string v = new[] { signature.V }.ToHex();
+
+            var arrHex = (r + s + v);
+
+            Trace.TraceInformation(arrHex);
+
+        }
+
+
+        [TestMethod]
         public async Task Test_EstimateCashoutGas()
         {
             var guid = Guid.NewGuid();
-            var amount = new BigInteger(1000000000000000000);
+            var amount = new BigInteger(500000000000000000);
             var from = _clientA;
             string transferUser = "0x0f0b0affc64dc8d644ac45152c82f993dbb2931d";
-            var to = _clientB;//_clientB;//"0xfBfA258B9028c7d4fc52cE28031469214D10DAEB";
+            var to = _clientB;//"0xa5d3FEd752b8Fd22C3912290b82C8A6C25404c3A";//_clientB;//"0xfBfA258B9028c7d4fc52cE28031469214D10DAEB";
 
             var result = await _exchangeService.EstimateCashoutGas(guid, _ethereumAdapterAddress, from, to, amount, "");
-
+            //var transactionHash = _exchangeService.CashOut(guid, _ethereumAdapterAddress, from, to, amount, "");
+            //var resultS = transactionHash.Result;
             Assert.IsTrue(result.IsAllowed);
         }
 

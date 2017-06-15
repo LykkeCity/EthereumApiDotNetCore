@@ -130,7 +130,8 @@ namespace Services.Coins
             var cashout = contract.GetFunction("cashout");
             var convertedId = EthUtils.GuidToBigInteger(id);
             //ACTION
-            var estimatedGasForOperation = await cashout.EstimateGasAsync(convertedId, coinAFromDb.AdapterAddress, fromAddress, toAddress, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+            var estimatedGasForOperation = await cashout.EstimateGasAsync(_settings.EthereumMainAccount,
+                        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), convertedId, coinAFromDb.AdapterAddress, fromAddress, toAddress, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
 
             return new CashoutOperationEstimationResult()
             {
