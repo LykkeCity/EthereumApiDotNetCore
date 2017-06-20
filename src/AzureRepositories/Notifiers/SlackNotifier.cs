@@ -36,7 +36,7 @@ namespace AzureRepositories.Notifiers
         {
             var obj = new
             {
-                Type = "Errors",
+                Type = "Ethereum",//"Errors",
                 Sender = _sender,
                 Message = message
             };
