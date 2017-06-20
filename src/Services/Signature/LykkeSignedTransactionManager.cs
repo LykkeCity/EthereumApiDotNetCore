@@ -19,9 +19,7 @@ namespace LkeServices.Signature
 {
     public class LykkeSignedTransactionManager : ITransactionManager
     {
-        private static BigInteger DefaultGasPrice = BigInteger.Parse("25000000000");
-        private static BigInteger MaxGasPrice = BigInteger.Parse("30000000000");
-
+        private static BigInteger _maxGasPrice;
         private BigInteger _nonceCount = -1;
         private readonly ILykkeSigningAPI _signatureApi;
         private readonly Web3 _web3;
@@ -30,6 +28,7 @@ namespace LkeServices.Signature
         public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings)
         {
             _baseSettings = baseSettings;
+            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _signatureApi = signatureApi;
             Client = web3.Client;
             _web3 = web3;
@@ -61,7 +60,7 @@ namespace LkeServices.Signature
             var currentGasPrice = currentGasPriceHex.Value;
             var nonce = await GetNonceAsync(transaction);
             var value = transaction.Value?.Value ?? 0;
-            BigInteger selectedGasPrice = (currentGasPrice > MaxGasPrice) ? MaxGasPrice : currentGasPrice * _baseSettings.GasPricePercentage / 100;
+            BigInteger selectedGasPrice = (currentGasPrice > _maxGasPrice) ? _maxGasPrice : currentGasPrice * _baseSettings.GasPricePercentage / 100;
             var gasPrice = transaction.GasPrice?.Value ?? selectedGasPrice;
             var gasValue = transaction.Gas?.Value ?? Constants.GasForCoinTransaction;
             var tr = new Nethereum.Signer.Transaction(transaction.To, value, nonce, gasPrice, gasValue, transaction.Data);

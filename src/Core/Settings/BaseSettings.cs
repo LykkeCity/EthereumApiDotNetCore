@@ -44,6 +44,7 @@ namespace Core.Settings
         RabbitMq RabbitMq { get; set; }
         string MonitoringServiceUrl { get; set; }
         int GasPricePercentage { get; set; }
+        long MaxGasPrice { get; set; } 
     }
 
     public class BaseSettings : IBaseSettings
@@ -93,6 +94,7 @@ namespace Core.Settings
         public RabbitMq RabbitMq { get; set; }
         public string MonitoringServiceUrl { get; set; }
         public int GasPricePercentage { get; set; } = 100;
+        public long MaxGasPrice { get; set; } = 50000000000;
     }
 
     public class EthereumContract
