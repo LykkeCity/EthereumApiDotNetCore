@@ -27,8 +27,8 @@ namespace LkeServices.Signature
 
         public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings)
         {
-            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _baseSettings = baseSettings;
+            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _signatureApi = signatureApi;
             Client = web3.Client;
             _web3 = web3;
