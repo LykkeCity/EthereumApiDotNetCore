@@ -75,14 +75,6 @@ namespace EthereumJobs.Job
                             }
                             if (!assignmentCompleted)
                             {
-                                //await _transferContractUserAssignmentQueueService.PushContract(new TransferContractUserAssignment()
-                                //{
-                                //    TransferContractAddress = item.ContractAddress,
-                                //    UserAddress = item.UserAddress,
-                                //    CoinAdapterAddress = item.CoinAdapterAddress
-                                //});
-                                //    await _transferContractService.SetUserAddressForTransferContract(item.UserAddress, item.ContractAddress);
-                                //    //_ethereumTransactionService
                                 await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
                                 throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                             }

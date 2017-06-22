@@ -13,7 +13,6 @@ namespace RabbitMQ
     {
         public static void RegisterRabbitQueue(this IServiceCollection services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
         {
-            //FIX BACK TO HOST
             string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
             RabbitMqPublisherSettings rabbitMqSettings = new RabbitMqPublisherSettings
             {
