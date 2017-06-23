@@ -62,14 +62,16 @@ namespace LkeServices.Signature
             var currentGasPrice = currentGasPriceHex.Value;
             var nonce = await GetNonceAsync(transaction);
             var value = transaction.Value?.Value ?? 0;
-            BigInteger selectedGasPrice = currentGasPrice;
-            if (currentGasPrice > _maxGasPrice)
+            BigInteger selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
+            if (selectedGasPrice > _maxGasPrice)
             {
                 selectedGasPrice = _maxGasPrice;
-            } else if (currentGasPrice < _minGasPrice)
-            {
-                selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
             }
+            else if (selectedGasPrice < _minGasPrice)
+            {
+                selectedGasPrice = _minGasPrice;
+            }
+
             var gasPrice = transaction.GasPrice?.Value ?? selectedGasPrice;
             var gasValue = transaction.Gas?.Value ?? Constants.GasForCoinTransaction;
             var tr = new Nethereum.Signer.Transaction(transaction.To, value, nonce, gasPrice, gasValue, transaction.Data);
