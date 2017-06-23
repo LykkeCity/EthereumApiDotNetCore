@@ -62,7 +62,8 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 4 to SCAN transfer contracts for issues");
             Console.WriteLine($"Type 5 to REASSIGN contracts");
             Console.WriteLine($"Type 6 to List all sucesful coin events");
-            Console.WriteLine($"Type 7 to RESUBMIT all succesful coin events");
+            Console.WriteLine($"Type 7 to RESUBMIT all succesful coin events(except cashin)");
+            Console.WriteLine($"Type 8 to RESUBMIT all cashin coin events");
             var command = "";
 
             do
@@ -89,7 +90,10 @@ namespace TransactionResubmit
                         ListUnPublishedCoinEvents();
                         break;
                     case "7":
-                        ResubmittUnPublishedCoinEvents();
+                        ResubmittUnPublishedCoinEventsWithMatches();
+                        break;
+                    case "8":
+                        ResubmittUnPublishedCoinEventsCashinOnly();
                         break;
                     default:
                         break;
@@ -100,7 +104,50 @@ namespace TransactionResubmit
             Console.WriteLine("Exited");
         }
 
-        private static void ResubmittUnPublishedCoinEvents()
+        private static void ResubmittUnPublishedCoinEventsCashinOnly()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
+                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId) && x.CoinEventType == CoinEventType.CashinStarted).ToList();
+                if (events != null)
+                {
+                    foreach (var @event in events)
+                    {
+                        if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        {
+                            Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
+                            queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new CoinTransactionMessage()
+                            {
+                                TransactionHash = @event.TransactionHash,
+                                OperationId = "",
+                                LastError = "FROM_CONSOLE_CASHIN",
+                                PutDateTime = DateTime.UtcNow })).Wait();
+                        }
+                    }
+                }
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        private static void ResubmittUnPublishedCoinEventsWithMatches()
         {
             try
             {
