@@ -28,6 +28,7 @@ namespace EthereumJobs.Job
         private readonly ITransactionEventsService _transactionEventsService;
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
+        private readonly IEthereumTransactionService _ethereumTransactionService;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService,
             IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService,
@@ -35,8 +36,10 @@ namespace EthereumJobs.Job
             IPendingOperationService pendingOperationService,
             ITransactionEventsService transactionEventsService,
             IEventTraceRepository eventTraceRepository,
-            IUserTransferWalletRepository userTransferWalletRepository)
+            IUserTransferWalletRepository userTransferWalletRepository,
+            IEthereumTransactionService ethereumTransactionService)
         {
+            _ethereumTransactionService = ethereumTransactionService;
             _transactionEventsService = transactionEventsService;
             _settings = settings;
             _log = log;
@@ -56,6 +59,13 @@ namespace EthereumJobs.Job
             ICoinTransaction coinTransaction = null;
             try
             {
+                bool isTransactionInMemoryPool = await _ethereumTransactionService.IsTransactionInPool(transaction.TransactionHash);
+                if (isTransactionInMemoryPool)
+                {
+                    SendMessageToTheQueueEnd(context, transaction, 100, "Transaction is in memory pool");
+                    return;
+                }
+
                 coinTransaction = await _coinTransactionService.ProcessTransaction(transaction);
             }
             catch (Exception ex)
@@ -63,26 +73,23 @@ namespace EthereumJobs.Job
                 if (ex.Message != transaction.LastError)
                     await _log.WriteWarningAsync("MonitoringCoinTransactionJob", "Execute", $"TrHash: [{transaction.TransactionHash}]", "");
 
-                transaction.LastError = ex.Message;
-                transaction.DequeueCount++;
-                context.MoveMessageToEnd(transaction.ToJson());
-                context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                SendMessageToTheQueueEnd(context, transaction, 200, ex.Message);
 
                 await _log.WriteErrorAsync("MonitoringCoinTransactionJob", "Execute", "", ex);
                 return;
             }
 
-            if ((coinTransaction == null || (coinTransaction.Error || coinTransaction.ConfirmationLevel == 0)) &&
-                DateTime.UtcNow - transaction.PutDateTime > TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds))
+            if ((coinTransaction == null || (coinTransaction.Error || coinTransaction.ConfirmationLevel == 0)))
             {
                 await RepeatOperationTillWin(transaction);
-                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations. Reason - timeout");
+                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations." +
+                    $" Reason - unable to find transaction in txPool and in blockchain");
             }
             else
             {
                 if (coinTransaction != null && coinTransaction.ConfirmationLevel != 0)
                 {
-                    bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, true, context);
+                    bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
 
                     if (sentToRabbit)
                     {
@@ -97,8 +104,7 @@ namespace EthereumJobs.Job
                 }
                 else
                 {
-                    context.MoveMessageToEnd();
-                    context.SetCountQueueBasedDelay(10000, 100);
+                    SendMessageToTheQueueEnd(context, transaction, 100);
                     await _log.WriteInfoAsync("CoinTransactionService", "Execute", "",
                             $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                 }
@@ -142,7 +148,7 @@ namespace EthereumJobs.Job
         }
 
         //return whether we have sent to rabbit or not
-        private async Task<bool> SendCompletedCoinEvent(string transactionHash, string operationId, bool success, QueueTriggeringContext context)
+        private async Task<bool> SendCompletedCoinEvent(string transactionHash, string operationId, bool success, QueueTriggeringContext context, CoinTransactionMessage transaction)
         {
             try
             {
@@ -154,14 +160,13 @@ namespace EthereumJobs.Job
                         ICashinEvent cashinEvent = await _transactionEventsService.GetCashinEvent(transactionHash);
                         if (cashinEvent == null)
                         {
-                            context.MoveMessageToEnd();
-                            context.SetCountQueueBasedDelay(10000, 100);
+                            SendMessageToTheQueueEnd(context, transaction, 100);
 
                             return false;
                         }
 
                         //transferContract - userAddress
-                        await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
+                        await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress.ToLower());
                         coinEvent.Amount = cashinEvent.Amount;
                         coinEvent.CoinEventType++;
                         break;
@@ -173,12 +178,6 @@ namespace EthereumJobs.Job
                     default: break;
                 }
 
-                //await _eventTraceRepository.InsertAsync(new EventTrace()
-                //{
-                //    Note = $"Operation processing is completed with hash {transactionHash}",
-                //    OperationId = coinEvent.OperationId,
-                //    TraceDate = DateTime.UtcNow
-                //});
                 await _coinEventService.PublishEvent(coinEvent, false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
                 await _pendingOperationService.MatchHashToOpId(transactionHash, coinEvent.OperationId);
@@ -188,8 +187,7 @@ namespace EthereumJobs.Job
             catch (Exception e)
             {
                 await _log.WriteErrorAsync("MonitoringCoinTransactionJob", "SendCompletedCoinEvent", $"trHash: {transactionHash}", e, DateTime.UtcNow);
-                context.MoveMessageToEnd();
-                context.SetCountQueueBasedDelay(10000, 100);
+                SendMessageToTheQueueEnd(context, transaction, 100);
 
                 return false;
             }
@@ -216,6 +214,14 @@ namespace EthereumJobs.Job
                 UpdateDate = DateTime.UtcNow,
                 UserAddress = userAddress
             });
+        }
+
+        private void SendMessageToTheQueueEnd(QueueTriggeringContext context, CoinTransactionMessage transaction, int delay, string error = "")
+        {
+            transaction.DequeueCount++;
+            transaction.LastError = string.IsNullOrEmpty(error) ? transaction.LastError : error;
+            context.MoveMessageToEnd(transaction.ToJson());
+            context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, delay);
         }
     }
 }

@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Core.Settings;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using Core;
 
 namespace Services
 {
     public interface IEthereumTransactionService
     {
+        Task<bool> IsTransactionInPool(string transactionHash);
         Task<bool> IsTransactionExecuted(string hash, int gasSended);
         Task<TransactionReceipt> GetTransactionReceipt(string transaction);
     }
@@ -42,6 +44,17 @@ namespace Services
         public async Task<TransactionReceipt> GetTransactionReceipt(string transaction)
         {
             return await _client.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transaction);
+        }
+
+        public async Task<bool> IsTransactionInPool(string transactionHash)
+        {
+            Transaction transaction = await _client.Eth.Transactions.GetTransactionByHash.SendRequestAsync(transactionHash);
+            if (transaction == null || (transaction.BlockNumber.Value != 0))
+            {
+                return false;
+            }
+
+            return true;
         }
 
     }

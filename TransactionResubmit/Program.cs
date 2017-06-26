@@ -64,6 +64,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 6 to List all sucesful coin events");
             Console.WriteLine($"Type 7 to RESUBMIT all succesful coin events(except cashin)");
             Console.WriteLine($"Type 8 to RESUBMIT all cashin coin events");
+            Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
             var command = "";
 
             do
@@ -95,6 +96,9 @@ namespace TransactionResubmit
                     case "8":
                         ResubmittUnPublishedCoinEventsCashinOnly();
                         break;
+                    case "9":
+                        RemoveDuplicateUserTransferWallets();
+                        break;
                     default:
                         break;
                 }
@@ -102,6 +106,39 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void RemoveDuplicateUserTransferWallets()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var userTransferWalletRepository = ServiceProvider.GetService<IUserTransferWalletRepository>();
+                var userTransferWallets = userTransferWalletRepository.GetAllAsync().Result;
+
+                foreach (var wallet in userTransferWallets)
+                {
+                    if (wallet.UserAddress != wallet.UserAddress.ToLower())
+                    {
+                        Console.WriteLine($"Deleting {wallet.UserAddress}");
+                        userTransferWalletRepository.DeleteAsync(wallet.UserAddress, wallet.TransferContractAddress).Wait();
+                    }
+                }
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static void ResubmittUnPublishedCoinEventsCashinOnly()

@@ -19,13 +19,13 @@ namespace RabbitMQ
                 ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
                 ExchangeName = exchangeName
             };
-            RabbitMqSubscriberSettings rabbitMqSubscriberSettings = new RabbitMqSubscriberSettings
-            {
-                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
-                ExchangeName = exchangeName,
-                IsDurable = true,
-                QueueName = settings.RabbitMq.RoutingKey
-            };
+            //RabbitMqSubscriberSettings rabbitMqSubscriberSettings = new RabbitMqSubscriberSettings
+            //{
+            //    ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
+            //    ExchangeName = exchangeName,
+            //    IsDurable = true,
+            //    QueueName = settings.RabbitMq.RoutingKey
+            //};
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqSettings)
                 .SetSerializer(new BytesSerializer())

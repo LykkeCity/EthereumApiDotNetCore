@@ -47,7 +47,6 @@ namespace EthereumJobs.Job
                             "Cashin Indexing has been started", DateTime.UtcNow);
 
                         await _transactionEventsService.IndexCashinEvents(adapter.AdapterAddress, adapter.DeployedTransactionHash);
-                        //await _transactionEventsService.MonitorNewEvents(adapter.AdapterAddress);
                     }
                 });
             }

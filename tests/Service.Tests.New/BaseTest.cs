@@ -31,8 +31,8 @@ namespace Tests
             var config = new Config();
             await config.Initialize();
             //Config.Services.GetService<IUserContractRepository>().DeleteTable();
-            Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
-            Config.Services.GetService<ICoinTransactionRepository>().DeleteTable();
+            //Config.Services.GetService<IAppSettingsRepository>().DeleteTable();
+            //Config.Services.GetService<ICoinTransactionRepository>().DeleteTable();
 
             var queueFactory = Config.Services.GetService<Func<string, IQueueExt>>();
 
