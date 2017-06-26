@@ -36,7 +36,7 @@ namespace AzureRepositories.Repositories
                 PartitionKey = GenerateParitionKey(userTransferWallet.UserAddress),
                 RowKey = userTransferWallet.TransferContractAddress,
                 UpdateDate = userTransferWallet.UpdateDate,
-                UserAddress = userTransferWallet.UserAddress,
+                UserAddress = userTransferWallet.UserAddress.ToLower(),
                 TransferContractAddress = userTransferWallet.TransferContractAddress,
                 LastBalance = userTransferWallet.LastBalance
             };
@@ -52,10 +52,21 @@ namespace AzureRepositories.Repositories
             _table = table;
         }
 
+        public async Task DeleteAsync(string userAddress, string transferContractAddress)
+        {
+            await _table.DeleteIfExistAsync(UserTransferWalletEntity.GenerateParitionKey(userAddress), transferContractAddress);
+        }
+
+        public async Task<IEnumerable<IUserTransferWallet>> GetAllAsync()
+        {
+            return await _table.GetDataAsync((x) => true);
+        }
+
         public async Task<IUserTransferWallet> GetUserContractAsync(string userAddress, string transferContractAddress)
         {
+            var lowerUserAddress = userAddress.ToLower();
             IUserTransferWallet wallet =
-                await _table.GetDataAsync(UserTransferWalletEntity.GenerateParitionKey(userAddress), transferContractAddress);
+                await _table.GetDataAsync(UserTransferWalletEntity.GenerateParitionKey(lowerUserAddress), transferContractAddress);
 
             return wallet;
         }

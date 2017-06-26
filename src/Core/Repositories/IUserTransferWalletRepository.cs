@@ -26,6 +26,8 @@ namespace Core.Repositories
     {
         Task SaveAsync(IUserTransferWallet wallet);
         Task ReplaceAsync(IUserTransferWallet wallet);
+        Task DeleteAsync(string userAddress, string transferContractAddress);
         Task<IUserTransferWallet> GetUserContractAsync(string userAddress, string transferContractAddress);
+        Task<IEnumerable<IUserTransferWallet>> GetAllAsync();
     }
 }
