@@ -11,6 +11,8 @@ namespace EthereumApi.Models
     {
         [DataMember]
         public string EstimatedGas { get; set; }
+
+        [DataMember]
         public bool IsAllowed { get; set; }
     }
 }
