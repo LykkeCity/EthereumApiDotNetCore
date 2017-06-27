@@ -1,6 +1,7 @@
 ﻿using AzureRepositories.Notifiers;
 using Core.Notifiers;
 using Core.Settings;
+using EthereumSamuraiApiCaller;
 using LkeServices.Signature;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.RPC.Eth.TransactionManagers;
@@ -43,6 +44,7 @@ namespace Services
             services.AddSingleton<ITransactionEventsService, TransactionEventsService>();
             services.AddSingleton<INonceCalculator, NonceCalculator>();
             services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
+            services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
@@ -50,6 +52,14 @@ namespace Services
                     , UriKind.Absolute));
 
                 return lykkeSigningAPI;
+            });
+
+            services.AddSingleton<IEthereumSamuraiApi>((provider) =>
+            {
+                var ethereumSamuraiApi = new EthereumSamuraiApi(new Uri(provider.GetService<IBaseSettings>().EthereumSamuraiUrl
+                    , UriKind.Absolute));
+
+                return ethereumSamuraiApi;
             });
 
             services.AddSingleton<Web3>((provider) =>
