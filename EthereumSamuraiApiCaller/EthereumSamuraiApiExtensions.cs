@@ -18,6 +18,51 @@ namespace EthereumSamuraiApiCaller
             /// </param>
             /// <param name='address'>
             /// </param>
+            public static object ApiBalanceGetBalanceByAddressGet(this IEthereumSamuraiApi operations, string address)
+            {
+                return operations.ApiBalanceGetBalanceByAddressGetAsync(address).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiBalanceGetBalanceByAddressGetAsync(this IEthereumSamuraiApi operations, string address, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(address, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            public static void ApiSystemIsAliveGet(this IEthereumSamuraiApi operations)
+            {
+                operations.ApiSystemIsAliveGetAsync().GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task ApiSystemIsAliveGetAsync(this IEthereumSamuraiApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.ApiSystemIsAliveGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
             /// <param name='start'>
             /// </param>
             /// <param name='count'>

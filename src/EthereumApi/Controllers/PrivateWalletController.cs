@@ -1,4 +1,5 @@
 ﻿using BusinessModels;
+using Common.Log;
 using Core.Exceptions;
 using EthereumApi.Models;
 using EthereumApi.Models.Models;
@@ -19,10 +20,12 @@ namespace EthereumApi.Controllers
     public class PrivateWalletController : Controller
     {
         private IPrivateWalletService _privateWalletService;
+        private readonly ILog _log;
 
-        public PrivateWalletController(IPrivateWalletService privateWalletService)
+        public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log)
         {
             _privateWalletService = privateWalletService;
+            _log = log;
         }
 
         [HttpPost("getTransaction")]
@@ -36,6 +39,9 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
+            string serialized = JsonConvert.SerializeObject(ethTransaction);
+            await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", serialized, "Get transaction for signing", DateTime.UtcNow);
+
             string transactionHex = await _privateWalletService.GetTransactionForSigning(new EthTransaction()
             {
                 FromAddress = ethTransaction.FromAddress,
@@ -45,7 +51,11 @@ namespace EthereumApi.Controllers
                 Value = BigInteger.Parse(ethTransaction.Value)
             });
 
-            return Ok(new EthTransactionRaw() {
+            await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized} + TransactionHex:{transactionHex}",
+                "Recieved transaction for signing", DateTime.UtcNow);
+
+            return Ok(new EthTransactionRaw()
+            {
                 FromAddress = ethTransaction.FromAddress,
                 TransactionHex = transactionHex
             });
@@ -62,7 +72,14 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
+            string serialized = JsonConvert.SerializeObject(ethTransactionSigned);
+            await _log.WriteInfoAsync("PrivateWalletController", "SubmitSignedTransaction", serialized
+                , "StartSubmitSignedTransaction", DateTime.UtcNow);
+
             string transactionHash = await _privateWalletService.SubmitSignedTransaction(ethTransactionSigned.FromAddress, ethTransactionSigned.SignedTransactionHex);
+
+            await _log.WriteInfoAsync("PrivateWalletController", "SubmitSignedTransaction",
+                $"{serialized}-TransactionHash:{transactionHash}", "EndSubmitSignedTransaction", DateTime.UtcNow);
 
             return Ok(new HashResponse()
             {

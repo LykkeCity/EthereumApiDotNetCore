@@ -48,19 +48,7 @@ namespace Services.Signature
             
             if (nonce == null)
             {
-                nonce = await ethGetTransactionCount.SendRequestAsync(fromAddress).ConfigureAwait(false);
-                var nonceCache = await _nonceRepository.GetAsync(fromAddress) ?? new AddressNonce() { Address = fromAddress, Nonce = -1 };
-                if (nonce.Value <= nonceCache.Nonce)
-                {
-                    nonceCache.Nonce = nonceCache.Nonce + 1;
-                    nonce = new HexBigInteger(nonceCache.Nonce);
-                }
-                else
-                {
-                    nonceCache.Nonce = nonce.Value;
-                }
-
-                await _nonceRepository.SaveAsync(nonceCache);
+                nonce = await ethGetTransactionCount.SendRequestAsync(fromAddress, BlockParameter.CreatePending()).ConfigureAwait(false);
             }
 
             return nonce;

@@ -5,6 +5,7 @@ using Core.Repositories;
 using Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using RabbitMQ;
 using Services;
@@ -56,7 +57,7 @@ namespace TransactionResubmit
                 Console.WriteLine($"Rpc does not work at all! {e.Message}");
             }
                 Console.WriteLine($"Type 0 to exit");
-            //Console.WriteLine($"Type 1 to resubmit transaction");
+            Console.WriteLine($"Type 1 to SHOW pending Transactions");
             Console.WriteLine($"Type 2 to REPEAT all operation without hash");
             Console.WriteLine($"Type 3 to CHECK pending operations");
             Console.WriteLine($"Type 4 to SCAN transfer contracts for issues");
@@ -72,9 +73,9 @@ namespace TransactionResubmit
                 command = Console.ReadLine();
                 switch (command)
                 {
-                    //case "1":
-                    //    TransactionResubmitTransaction();
-                    //    break;
+                    case "1":
+                        ShowPendingTransactionsAmount();
+                        break;
                     case "2":
                         OperationResubmit();
                         break;
@@ -106,6 +107,15 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void ShowPendingTransactionsAmount()
+        {
+            var web3 = ServiceProvider.GetService<Web3>();
+            var block = web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(BlockParameter.CreatePending()).Result;
+            var transactionsCount = block.Transactions.Count();
+
+            Console.WriteLine($"Transactions Count = {transactionsCount}");
         }
 
         private static void RemoveDuplicateUserTransferWallets()
