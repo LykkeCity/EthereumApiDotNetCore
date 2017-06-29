@@ -52,7 +52,7 @@ namespace EthereumApi.Controllers
                 BlockNumber = (ulong)transaction.BlockNumber,
                 BlockTimestamp = transaction.BlockTimestamp,
                 ContractAddress = transaction.ContractAddress,
-                From = transaction.FromProperty,
+                From = transaction.From,
                 Gas = transaction.Gas,
                 To = transaction.To,
                 GasPrice = transaction.GasPrice,

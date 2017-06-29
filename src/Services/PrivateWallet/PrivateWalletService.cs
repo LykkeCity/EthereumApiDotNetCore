@@ -22,11 +22,11 @@ namespace Services.PrivateWallet
 
     public class PrivateWalletService : IPrivateWalletService
     {
-        private readonly Web3 _web3;
+        private readonly IWeb3 _web3;
         private readonly INonceCalculator _nonceCalculator;
         private AddressUtil _addressUtil;
 
-        public PrivateWalletService(Web3 web3, INonceCalculator nonceCalculator)
+        public PrivateWalletService(IWeb3 web3, INonceCalculator nonceCalculator)
         {
             _addressUtil = new AddressUtil();
             _nonceCalculator = nonceCalculator;
@@ -53,7 +53,7 @@ namespace Services.PrivateWallet
             bool isSignedRight = await CheckTransactionSign(from, signedTrHex);
             if (!isSignedRight)
             {
-                throw new ClientSideException(ExceptionType.WrongSign, "");
+                throw new ClientSideException(ExceptionType.WrongSign, "WrongSign");
             }
 
             var ethSendTransaction = new EthSendRawTransaction(_web3.Client);

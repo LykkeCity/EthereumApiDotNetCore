@@ -68,7 +68,7 @@ namespace Service.Tests
         [TestMethod]
         public async Task SignTransactionOld()
         {
-            string trHex = "";
+            string trHex = "ea81928506fc23ac0082520894aa4981d084120aef4bbaeecb9abdbc7d180c7edb8545d964b80080808080";
 
             string signedHex = SignRawTransaction(trHex, _privateKey);
 

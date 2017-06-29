@@ -50,7 +50,6 @@ namespace EthereumJobs.Job
             _pendingOperationService = pendingOperationService;
             _eventTraceRepository = eventTraceRepository;
             _userTransferWalletRepository = userTransferWalletRepository;
-
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]

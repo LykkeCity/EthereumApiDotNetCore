@@ -35,10 +35,8 @@ namespace Services
         private readonly ITransferContractRepository _transferContractRepository;
         private readonly ISlackNotifier _slackNotifier;
         private readonly ICoinRepository _coinRepository;
-        private readonly IQueueFactory _queueFactory;
         private readonly IBaseSettings _settings;
         private readonly Web3 _web3;
-        private readonly ITransferContractService _transferContractService;
 
         public TransferContractUserAssignmentQueueService(Func<string, IQueueExt> queueFactory,
             ITransferContractRepository transferContractRepository, ISlackNotifier slackNotifier,

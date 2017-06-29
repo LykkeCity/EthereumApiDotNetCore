@@ -70,6 +70,13 @@ namespace Services
                 return web3;
             });
 
+            services.AddSingleton<IWeb3>((provider) =>
+            {
+                var web3 = provider.GetService<Web3>();
+
+                return new Web3Decorator(web3);
+            });
+
 
             services.AddSingleton<ITransactionManager>(provider =>
             {
