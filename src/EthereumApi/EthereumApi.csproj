@@ -38,6 +38,7 @@
     <ProjectReference Include="..\..\EthereumCore.Models\EthereumApi.Models.csproj" />
     <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Models\BusinessModels.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 

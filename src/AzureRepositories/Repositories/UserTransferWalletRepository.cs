@@ -64,7 +64,7 @@ namespace AzureRepositories.Repositories
 
         public async Task<IUserTransferWallet> GetUserContractAsync(string userAddress, string transferContractAddress)
         {
-            var lowerUserAddress = userAddress.ToLower();
+            string lowerUserAddress = userAddress.ToLower();
             IUserTransferWallet wallet =
                 await _table.GetDataAsync(UserTransferWalletEntity.GenerateParitionKey(lowerUserAddress), transferContractAddress);
 

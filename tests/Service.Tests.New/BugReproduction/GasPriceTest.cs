@@ -14,6 +14,8 @@ using LkeServices.Signature;
 using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
 using Core.Settings;
+using Nethereum.RPC.Eth.TransactionManagers;
+using Services.Signature;
 
 namespace Service.Tests.BugReproduction
 {
@@ -28,7 +30,8 @@ namespace Service.Tests.BugReproduction
             var baseSettings = Config.Services.GetService<IBaseSettings>();
             var web3 = Config.Services.GetService<Web3>();
             var signatureApi = Config.Services.GetService<ILykkeSigningAPI>();
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings);
+            var nonceCalculator = Config.Services.GetService<INonceCalculator>();
+            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator);
         }
 
         [TestMethod]

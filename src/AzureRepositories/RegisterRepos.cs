@@ -48,6 +48,10 @@ namespace AzureRepositories
                 new AzureTableStorage<EventTraceEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.EventTraceTable,
                     provider.GetService<ILog>())));
 
+            services.AddSingleton<INonceRepository>(provider => new NonceRepository(
+              new AzureTableStorage<AddressNonceEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.NonceCacheTable,
+                  provider.GetService<ILog>())));
+
             services.AddSingleton<IPendingOperationRepository>(provider => new PendingOperationRepository(
                 new AzureTableStorage<PendingOperationEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.PendingOperationsTable,
                     provider.GetService<ILog>())));

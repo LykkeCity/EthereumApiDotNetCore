@@ -58,8 +58,6 @@ namespace Tests
             _paymentService = Config.Services.GetService<IPaymentService>();
         }
 
-
-
         #region TokenAdapter
 
         [TestMethod]
@@ -218,7 +216,6 @@ namespace Tests
             var arrHex = (r + s + v);
 
             Trace.TraceInformation(arrHex);
-
         }
 
 
