@@ -16,9 +16,9 @@ namespace LkeServices.Signature
     {
         private readonly ITransactionManager _transactionManager;
 
-        public SignatureInterceptor(ILykkeSigningAPI signatureApi, Web3 web3, IBaseSettings baseSettings)
+        public SignatureInterceptor(ITransactionManager transactionManager)
         {
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings);
+            _transactionManager = transactionManager;
         }
 
         public RpcResponse BuildResponse(object results, string route = null)

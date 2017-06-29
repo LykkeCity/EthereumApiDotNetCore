@@ -12,8 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
+    <ProjectReference Include="..\Models\BusinessModels.csproj" />
     <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
     <ProjectReference Include="..\SigningServiceApiCaller\SigningServiceApiCaller.csproj" />
   </ItemGroup>
