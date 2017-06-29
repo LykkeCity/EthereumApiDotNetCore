@@ -199,21 +199,6 @@ namespace Tests
         #endregion
 
         #region Common
-        [TestMethod]
-        public async Task SignTransactionOld()
-        {
-            string trHex = "";
-            string privateKey = "";
-
-            var transaction = new Nethereum.Signer.Transaction(trHex.HexToByteArray());
-            var secret = new EthECKey(privateKey);
-            transaction.Sign(secret);
-
-            string signedHex = transaction.GetRLPEncoded().ToHex();
-
-            Trace.TraceInformation(signedHex);
-        }
-
 
         [TestMethod]
         public async Task SignOld()

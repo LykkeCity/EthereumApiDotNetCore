@@ -10,6 +10,7 @@ using Nethereum.Web3;
 using Services.Signature;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,12 +19,12 @@ namespace Services.PrivateWallet
     public interface IEthereumIndexerService
     {
         Task<IEnumerable<TransactionModel>> GetTransactionHistory(AddressTransactions addressTransactions);
+        Task<BigInteger> GetEthBalance(string address);
     }
 
     public class EthereumIndexerService : IEthereumIndexerService
     {
         private readonly Web3 _web3;
-        private readonly INonceCalculator _nonceCalculator;
         private AddressUtil _addressUtil;
         private IEthereumSamuraiApi _ethereumSamuraiApi;
 
@@ -34,19 +35,23 @@ namespace Services.PrivateWallet
             _web3 = web3;
         }
 
+        public async Task<BigInteger> GetEthBalance(string address)
+        {
+            var response = await _ethereumSamuraiApi.ApiBalanceGetBalanceByAddressGetAsync(address);
+            var balanceResponse = response as BalanceResponse;
+            ThrowOnError(response);
+            BigInteger balance = BigInteger.Parse(balanceResponse.Amount);
+
+            return balance;
+        }
+
         public async Task<IEnumerable<TransactionModel>> GetTransactionHistory(AddressTransactions addressTransactions)
         {
            var response = await _ethereumSamuraiApi.ApiTransactionByAddressGetAsync(addressTransactions.Address, addressTransactions.Start, addressTransactions.Count);
             var transactionResponse = response as FilteredTransactionsResponse;
-            if (transactionResponse == null)
-            {
-                var exception = response as ApiException;
-                var errorMessage = exception?.Error?.Message ?? "Response is empty";
-
-                throw new Exception(errorMessage);
-            }
-
+            ThrowOnError(transactionResponse);
             List<TransactionModel> result = new List<TransactionModel>(transactionResponse.Transactions?.Count ?? 0);
+
             foreach (var transaction in transactionResponse.Transactions)
             {
                 result.Add(new TransactionModel()
@@ -69,6 +74,17 @@ namespace Services.PrivateWallet
             }
 
             return result;
+        }
+
+        private void ThrowOnError(object transactionResponse)
+        {
+            if (transactionResponse == null)
+            {
+                var exception = transactionResponse as ApiException;
+                var errorMessage = exception?.Error?.Message ?? "Response is empty";
+
+                throw new Exception(errorMessage);
+            }
         }
     }
 }
