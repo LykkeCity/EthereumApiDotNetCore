@@ -22,7 +22,7 @@ namespace BusinessModels
 
         public string BlockHash { get; set; }
 
-        public string FromProperty { get; set; }
+        public string From { get; set; }
 
         public string To { get; set; }
 

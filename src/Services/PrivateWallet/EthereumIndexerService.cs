@@ -24,15 +24,13 @@ namespace Services.PrivateWallet
 
     public class EthereumIndexerService : IEthereumIndexerService
     {
-        private readonly Web3 _web3;
         private AddressUtil _addressUtil;
         private IEthereumSamuraiApi _ethereumSamuraiApi;
 
-        public EthereumIndexerService(Web3 web3, IEthereumSamuraiApi ethereumSamuraiApi)
+        public EthereumIndexerService(IEthereumSamuraiApi ethereumSamuraiApi)
         {
             _addressUtil = new AddressUtil();
             _ethereumSamuraiApi = ethereumSamuraiApi;
-            _web3 = web3;
         }
 
         public async Task<BigInteger> GetEthBalance(string address)
@@ -60,7 +58,7 @@ namespace Services.PrivateWallet
                     BlockNumber = transaction.BlockNumber.Value,
                     BlockTimestamp = transaction.BlockTimestamp.Value,
                     ContractAddress= transaction.ContractAddress,
-                    FromProperty= transaction.FromProperty,
+                    From= transaction.FromProperty,
                     Gas = transaction.Gas,
                     GasPrice= transaction.GasPrice,
                     GasUsed= transaction.GasUsed,

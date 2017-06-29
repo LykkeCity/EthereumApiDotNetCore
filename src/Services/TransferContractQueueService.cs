@@ -23,7 +23,6 @@ namespace Services
         private readonly ITransferContractRepository _transferContractRepository;
         private readonly ISlackNotifier _slackNotifier;
         private readonly ICoinRepository _coinRepository;
-        private readonly IQueueFactory _queueFactory;
 
         public TransferContractQueueService(IQueueExt queue,
             ITransferContractRepository transferContractRepository, ISlackNotifier slackNotifier,
