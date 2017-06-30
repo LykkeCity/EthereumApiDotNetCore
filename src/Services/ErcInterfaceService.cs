@@ -36,9 +36,9 @@ namespace Services
     public class ErcInterfaceService : IErcInterfaceService
     {
         private readonly IBaseSettings _settings;
-        private readonly Web3 _web3;
+        private readonly IWeb3 _web3;
 
-        public ErcInterfaceService(IBaseSettings settings, Web3 web3)
+        public ErcInterfaceService(IBaseSettings settings, IWeb3 web3)
         {
             _web3 = web3;
             _settings = settings;

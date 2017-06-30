@@ -1,5 +1,6 @@
 ﻿using BusinessModels;
 using Core;
+using BusinessModels.PrivateWallet;
 using Core.Exceptions;
 using Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;

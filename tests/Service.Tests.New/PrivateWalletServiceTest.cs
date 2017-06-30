@@ -14,6 +14,7 @@ using Nethereum.Web3;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth;
 using Nethereum.RPC.Eth.DTOs;
+using BusinessModels.PrivateWallet;
 using Services.Model;
 
 namespace Service.Tests
@@ -45,14 +46,12 @@ namespace Service.Tests
                 Value = 5000000000
             };
 
-            for (int i = 0; i < 65; i++)
+            for (int i = 0; i < 2; i++)
             {
                 string trRaw = await _privateWallet.GetTransactionForSigning(transaction);
                 string signedRawTr = SignRawTransaction(trRaw, _privateKey);
                 string trHash1 = await _privateWallet.SubmitSignedTransaction(fromAddress, signedRawTr);
             }
-
-            var block = await _web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(BlockParameter.CreatePending());
         }
 
         [TestMethod]

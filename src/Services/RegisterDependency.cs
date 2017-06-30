@@ -91,10 +91,10 @@ namespace Services
             });
         }
 
+        //need to fix that
         public static void ActivateRequestInterceptor(this IServiceProvider provider)
         {
             provider.GetService<ITransactionManager>();
         }
-
     }
 }

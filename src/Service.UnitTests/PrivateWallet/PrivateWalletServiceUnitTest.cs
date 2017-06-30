@@ -17,6 +17,7 @@ using Service.UnitTests.Mocks;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Signer;
 using Core.Exceptions;
+using BusinessModels.PrivateWallet;
 using System.Diagnostics;
 using Nethereum.RPC.Eth;
 using System.Numerics;
@@ -44,6 +45,9 @@ namespace Service.UnitTests.PrivateWallet
             _ethereumTransactionServiceMock = new Mock<IEthereumTransactionService>();
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
             #region SetupMockWeb3
+            _client.Setup(x => x.SendRequestAsync<string>(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(""));
+            web3Mock.Setup(x => x.Client).Returns(_client.Object);
 
             //Task<T> SendRequestAsync<T>(RpcRequest request, string route = null);
             //Task<T> SendRequestAsync<T>(string method, string route = null, params object[] paramList);

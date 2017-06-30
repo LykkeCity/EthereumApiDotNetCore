@@ -32,8 +32,8 @@ namespace LkeServices.Signature
         private readonly INonceCalculator _nonceCalculator;
 
         public IClient Client { get; set; }
-        public BigInteger DefaultGasPrice { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public BigInteger DefaultGas { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public BigInteger DefaultGasPrice { get; set; }
+        public BigInteger DefaultGas { get; set; }
 
         public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings, INonceCalculator nonceCalculator)
         {
@@ -137,6 +137,19 @@ namespace LkeServices.Signature
             var response = await _signatureApi.ApiEthereumSignPostAsync(requestBody);
 
             return await ethSendTransaction.SendRequestAsync(response.SignedTransaction.EnsureHexPrefix()).ConfigureAwait(false);
+        }
+
+        public async Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
+        {
+            if (Client == null) throw new NullReferenceException("Client not configured");
+            if (callInput == null) throw new ArgumentNullException(nameof(callInput));
+            var ethEstimateGas = new EthEstimateGas(Client);
+            return await ethEstimateGas.SendRequestAsync(callInput);
+        }
+
+        public async Task<string> SendTransactionAsync(string from, string to, HexBigInteger amount)
+        {
+            return await SendTransactionAsync(new TransactionInput("", to, from, new HexBigInteger(DefaultGas), amount));
         }
     }
 }

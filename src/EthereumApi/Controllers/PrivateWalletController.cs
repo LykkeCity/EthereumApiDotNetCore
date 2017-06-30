@@ -1,4 +1,5 @@
 ﻿using BusinessModels;
+using BusinessModels.PrivateWallet;
 using Common.Log;
 using Core.Exceptions;
 using EthereumApi.Models;

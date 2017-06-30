@@ -113,7 +113,7 @@ namespace LkeServices.Signature
 
         private async Task<RpcResponse> SignAndSendTransaction(TransactionInput transaction, string route)
         {
-            return BuildResponse(await _transactionManager.SendTransactionAsync(transaction).ConfigureAwait(false), route);
+            return await _transactionManager.SendTransactionAsync(transaction).ConfigureAwait(false);
         }
 
         /*

@@ -7,6 +7,7 @@ using Core.Settings;
 using EthereumApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Nethereum.RPC.TransactionManagers;
 
 namespace ApiRunner
 {
