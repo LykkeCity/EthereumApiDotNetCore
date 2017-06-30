@@ -33,5 +33,7 @@ namespace BusinessModels
         public string ContractAddress { get; set; }
 
         public string GasUsed { get; set; }
+
+        public DateTime BlockTimeUtc { get; set; }
     }
 }
