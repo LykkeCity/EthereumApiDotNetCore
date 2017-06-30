@@ -90,5 +90,11 @@ namespace Services
                 return transactionManager;
             });
         }
+
+        public static void ActivateRequestInterceptor(this IServiceProvider provider)
+        {
+            provider.GetService<ITransactionManager>();
+        }
+
     }
 }
