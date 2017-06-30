@@ -176,8 +176,7 @@ namespace EthereumJobs.Job
                         break;
                     default: break;
                 }
-
-                await _coinEventService.PublishEvent(coinEvent, false);
+                await _coinEventService.PublishEvent(coinEvent, putInProcessingQueue: false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
                 await _pendingOperationService.MatchHashToOpId(transactionHash, coinEvent.OperationId);
 
@@ -198,6 +197,7 @@ namespace EthereumJobs.Job
             string opIdToSearch = pendingOp?.OperationId ?? operationId;
             var coinEvent = !string.IsNullOrEmpty(opIdToSearch) ?
                 await _coinEventService.GetCoinEventById(opIdToSearch) : await _coinEventService.GetCoinEvent(transactionHash);
+            coinEvent = coinEvent ?? await _coinEventService.GetCoinEvent(transactionHash);
             coinEvent.Success = success;
             coinEvent.TransactionHash = transactionHash;
 
