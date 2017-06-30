@@ -61,7 +61,8 @@ namespace EthereumApi.Controllers
                 Nonce = transaction.Nonce,
                 TransactionHash = transaction.TransactionHash,
                 TransactionIndex = transaction.TransactionIndex,
-                Value = transaction.Value
+                Value = transaction.Value,
+                BlockTimeUtc = transaction.BlockTimeUtc
             });
 
             return Ok(new FilteredTransactionsResponse()

@@ -43,5 +43,7 @@ namespace EthereumApi.Models.Indexer
         public string ContractAddress { get; set; }
         [DataMember(Name = "gasUsed")]
         public string GasUsed { get; set; }
+        [DataMember(Name = "BlockTimeUtc")]
+        public DateTime BlockTimeUtc { get; set; }
     }
 }

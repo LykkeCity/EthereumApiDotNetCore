@@ -8,6 +8,7 @@ using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Services.Signature;
+using Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -67,7 +68,8 @@ namespace Services.PrivateWallet
                     To= transaction.To,
                     TransactionHash= transaction.TransactionHash,
                     TransactionIndex= transaction.TransactionIndex.Value,
-                    Value = transaction.Value
+                    Value = transaction.Value,
+                    BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp.Value)
                 });
             }
 
