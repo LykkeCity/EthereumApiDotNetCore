@@ -22,6 +22,7 @@ using System.Diagnostics;
 using Nethereum.RPC.Eth;
 using System.Numerics;
 using Nethereum.RPC.Eth.DTOs;
+using Services.Transactions;
 
 namespace Service.UnitTests.PrivateWallet
 {
@@ -35,6 +36,7 @@ namespace Service.UnitTests.PrivateWallet
         private Mock<IPaymentService> _paymentServiceMock;
         private Mock<IWeb3> _web3Mock;
         private Mock<IEthereumTransactionService> _ethereumTransactionServiceMock;
+        private ISignatureChecker _signatureChecker;
 
         [TestInitialize]
         public void TestInit()
@@ -44,6 +46,7 @@ namespace Service.UnitTests.PrivateWallet
             _paymentServiceMock = new Mock<IPaymentService>();
             _ethereumTransactionServiceMock = new Mock<IEthereumTransactionService>();
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
+            _signatureChecker = Config.Services.GetService<ISignatureChecker>();
             #region SetupMockWeb3
             _client.Setup(x => x.SendRequestAsync<string>(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(""));

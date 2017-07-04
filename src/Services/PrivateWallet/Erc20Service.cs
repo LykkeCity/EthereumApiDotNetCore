@@ -10,6 +10,7 @@ using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Services.Signature;
+using Services.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -33,18 +34,20 @@ namespace Services.PrivateWallet
 
     public interface IErc20Service
     {
+        Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction);
+        Task<string> SubmitSignedTransaction(string from, string signedTrHex);
     }
 
     public class Erc20Service : IErc20Service
     {
         private readonly IWeb3 _web3;
         private readonly INonceCalculator _nonceCalculator;
-        private AddressUtil _addressUtil;
         private readonly IBaseSettings _settings;
+        private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
 
-        public Erc20Service(IWeb3 web3, INonceCalculator nonceCalculator, IBaseSettings settings)
+        public Erc20Service(IWeb3 web3, INonceCalculator nonceCalculator, IBaseSettings settings, IRawTransactionSubmitter rawTransactionSubmitter)
         {
-            _addressUtil = new AddressUtil();
+            _rawTransactionSubmitter = rawTransactionSubmitter;
             _nonceCalculator = nonceCalculator;
             _web3 = web3;
             _settings = settings;
@@ -56,7 +59,7 @@ namespace Services.PrivateWallet
         {
             Contract contract = GetContract(erc20Transaction.TokenAddress);
             Function transferFunction = contract.GetFunction("transfer");
-            string functionDataEncoded = transferFunction.GetData();
+            string functionDataEncoded = transferFunction.GetData(erc20Transaction.ToAddress, erc20Transaction.TokenAmount);
             BigInteger nonce =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress);
             var transaction = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
                  erc20Transaction.GasAmount, erc20Transaction.GasPrice, nonce, 0);
@@ -68,29 +71,12 @@ namespace Services.PrivateWallet
         //put in dependency
         public async Task<string> SubmitSignedTransaction(string from, string signedTrHex)
         {
-            bool isSignedRight = await CheckTransactionSign(from, signedTrHex);
-            if (!isSignedRight)
-            {
-                throw new ClientSideException(ExceptionType.WrongSign, "WrongSign");
-            }
-
-            var ethSendTransaction = new EthSendRawTransaction(_web3.Client);
-            string transactionHex = await ethSendTransaction.SendRequestAsync(signedTrHex);
+            string transactionHex = await _rawTransactionSubmitter.SubmitSignedTransaction(from, signedTrHex);
 
             return transactionHex;
         }
 
         #endregion transfer
-
-
-        //put in dependency
-        public async Task<bool> CheckTransactionSign(string from, string signedTrHex)
-        {
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
-            string signedBy = transaction.Key.GetPublicAddress();
-
-            return _addressUtil.ConvertToChecksumAddress(from) == _addressUtil.ConvertToChecksumAddress(signedBy);
-        }
 
         private Contract GetContract(string erc20ContactAddress)
         {

@@ -10,6 +10,7 @@ using Services.Coins;
 using Services.New;
 using Services.PrivateWallet;
 using Services.Signature;
+using Services.Transactions;
 using SigningServiceApiCaller;
 using System;
 
@@ -45,6 +46,9 @@ namespace Services
             services.AddSingleton<INonceCalculator, NonceCalculator>();
             services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
             services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
+            services.AddSingleton<ISignatureChecker, SignatureChecker>();
+            services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
+            services.AddSingleton<IErc20Service, Erc20Service>();
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {

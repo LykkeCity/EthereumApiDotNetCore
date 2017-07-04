@@ -13,6 +13,7 @@ using Services;
 using Common.Log;
 using Services.Signature;
 using EthereumSamuraiApiCaller;
+using Services.Transactions;
 
 // ReSharper disable once CheckNamespace
 namespace Service.UnitTests
@@ -26,6 +27,9 @@ namespace Service.UnitTests
             IServiceCollection collection = new ServiceCollection();
             collection.AddSingleton<INonceCalculator, Mocks.MockNonceCalculator>();
             collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
+            collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
+            collection.AddSingleton<ISignatureChecker, SignatureChecker>();
+            //collection.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
 
 
             Services = collection.BuildServiceProvider();

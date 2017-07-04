@@ -20,6 +20,7 @@ using Core.Exceptions;
 using Core.Settings;
 using BusinessModels.PrivateWallet;
 using Nethereum.Contracts;
+using Services.Transactions;
 
 namespace Service.UnitTests.PrivateWallet
 {
@@ -34,6 +35,7 @@ namespace Service.UnitTests.PrivateWallet
         Erc20Service _erc20Service;
         private MockNonceCalculator _nonceCalc;
         private Mock<IClient> _client;
+        private ISignatureChecker _signatureChecker;
 
         [TestInitialize]
         public void TestInit()
@@ -41,6 +43,7 @@ namespace Service.UnitTests.PrivateWallet
             _client = new Mock<IClient>();
             Mock<IWeb3> web3Mock = new Mock<IWeb3>();
             Mock<IBaseSettings> baseSettings = new Mock<IBaseSettings>();
+            _signatureChecker = Config.Services.GetService<ISignatureChecker>();
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
             #region SetupMock
             _client.Setup(x => x.SendRequestAsync<string>(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), null))
@@ -49,8 +52,8 @@ namespace Service.UnitTests.PrivateWallet
             web3Mock.Setup(x => x.Client).Returns(_client.Object);
             web3Mock.Setup(x => x.Eth).Returns(new EthApiContractService(_client.Object));
             #endregion
-
-            _erc20Service = new Erc20Service(web3Mock.Object, _nonceCalc, baseSettings.Object);
+            IRawTransactionSubmitter rawTransactionSubmitter = new RawTransactionSubmitter(web3Mock.Object, _signatureChecker);
+            _erc20Service = new Erc20Service(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter);
         }
 
         [TestMethod]

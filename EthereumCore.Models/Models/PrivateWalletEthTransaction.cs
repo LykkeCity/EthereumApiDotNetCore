@@ -8,7 +8,7 @@ using System.Text;
 namespace EthereumApi.Models.Models
 {
     [DataContract]
-    public class PrivateWalletEthTransaction
+    public class EthTransactionBase
     {
         [DataMember]
         [Required]
@@ -27,11 +27,28 @@ namespace EthereumApi.Models.Models
         [Required]
         [RegularExpression(Constants.BigIntTemplate)]
         public string GasPrice { get; set; }
+    }
 
+    [DataContract]
+    public class PrivateWalletEthTransaction : EthTransactionBase
+    {
         [DataMember]
         [Required]
         [RegularExpression(Constants.BigIntTemplate)]
         public string Value { get; set; }
+    }
+
+    [DataContract]
+    public class PrivateWalletErc20Transaction : EthTransactionBase
+    {
+        [DataMember]
+        [Required]
+        public string TokenAddress { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string TokenAmount { get; set; }
     }
 
     [DataContract]

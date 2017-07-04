@@ -11,6 +11,7 @@ using Nethereum.Util;
 using Nethereum.Web3;
 using Services.Model;
 using Services.Signature;
+using Services.Transactions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,13 +39,14 @@ namespace Services.PrivateWallet
         private AddressUtil _addressUtil;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IPaymentService _paymentService;
+        private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
             IEthereumTransactionService ethereumTransactionService,
             IPaymentService paymentService)
         {
-            _addressUtil = new AddressUtil();
+            _rawTransactionSubmitter = rawTransactionSubmitter;
             _nonceCalculator = nonceCalculator;
             _web3 = web3;
             _ethereumTransactionService = ethereumTransactionService;
