@@ -17,6 +17,7 @@ using Service.UnitTests.Mocks;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Signer;
 using Core.Exceptions;
+using System.Diagnostics;
 
 namespace Service.UnitTests.PrivateWallet
 {
@@ -121,6 +122,16 @@ namespace Service.UnitTests.PrivateWallet
             }
 
             Assert.IsTrue(isExceptionProcessed);
+        }
+
+        [TestMethod]
+        public async Task PrivateWalletServiceUnitest_SignTransaction()
+        {
+            string trHex = "e581958506fc23ac0082520894fe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b60280808080";
+            string from = TestConstants.PW_ADDRESS;
+            string signedTransaction = SignRawTransaction(trHex, _privateKey);
+
+            Trace.TraceInformation(signedTransaction);
         }
 
         private string SignRawTransaction(string trHex, string privateKey)
