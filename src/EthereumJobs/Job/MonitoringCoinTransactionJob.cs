@@ -29,6 +29,7 @@ namespace EthereumJobs.Job
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IEthereumTransactionService _ethereumTransactionService;
+        private readonly TimeSpan _broadcastMonitoringPeriodSeconds;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService,
             IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService,
@@ -50,6 +51,7 @@ namespace EthereumJobs.Job
             _pendingOperationService = pendingOperationService;
             _eventTraceRepository = eventTraceRepository;
             _userTransferWalletRepository = userTransferWalletRepository;
+            _broadcastMonitoringPeriodSeconds = TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds);
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
@@ -78,11 +80,12 @@ namespace EthereumJobs.Job
                 return;
             }
 
-            if ((coinTransaction == null || (coinTransaction.Error || coinTransaction.ConfirmationLevel == 0)))
+            if ((coinTransaction == null || coinTransaction.Error || coinTransaction.ConfirmationLevel == 0) && 
+                (DateTime.UtcNow - transaction.PutDateTime > _broadcastMonitoringPeriodSeconds))
             {
                 await RepeatOperationTillWin(transaction);
                 await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations." +
-                    $" Reason - unable to find transaction in txPool and in blockchain");
+                    $" Reason - unable to find transaction in txPool and in blockchain within {_broadcastMonitoringPeriodSeconds} seconds");
             }
             else
             {
