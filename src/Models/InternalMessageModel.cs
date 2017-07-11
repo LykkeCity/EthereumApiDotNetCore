@@ -16,5 +16,6 @@ namespace BusinessModels
         public int MessageIndex { get; set; }
         public string Type { get; set; }
         public uint BlockTimestamp { get; set; }
+        public DateTime BlockTimeUtc { get; set; }
     }
 }

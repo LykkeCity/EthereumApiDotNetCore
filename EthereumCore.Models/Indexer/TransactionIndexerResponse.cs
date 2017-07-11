@@ -75,5 +75,7 @@ namespace EthereumApi.Models.Indexer
         public string Type { get; set; }
         [DataMember(Name = "blockTimestamp")]
         public uint BlockTimestamp { get; set; }
+        [DataMember(Name = "blockTimeUtc")]
+        public DateTime BlockTimeUtc { get; set; }
     }
 }
