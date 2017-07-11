@@ -56,7 +56,9 @@ namespace EthereumApi.Controllers
                     ToAddress = message.ToAddress,
                     TransactionHash = message.TransactionHash,
                     Type = message.Type,
-                    Value = message.Value.ToString()
+                    Value = message.Value.ToString(),
+                    BlockTimestamp = message.BlockTimestamp
+
                 });
 
             return Ok(new FilteredInternalMessagessResponse()
