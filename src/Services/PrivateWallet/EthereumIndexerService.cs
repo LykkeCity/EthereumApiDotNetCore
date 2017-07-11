@@ -74,7 +74,8 @@ namespace Services.PrivateWallet
                         TransactionHash = transaction.TransactionHash,
                         TransactionIndex = transaction.TransactionIndex.Value,
                         Value = transaction.Value,
-                        BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp.Value)
+                        BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp.Value),
+                        HasError = transaction.HasError.Value
                     }
                 });
             }
