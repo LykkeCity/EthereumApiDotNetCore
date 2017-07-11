@@ -20,7 +20,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the InternalMessageResponse class.
         /// </summary>
-        public InternalMessageResponse(string transactionHash = default(string), long? blockNumber = default(long?), string fromAddress = default(string), string toAddress = default(string), int? depth = default(int?), string value = default(string), int? messageIndex = default(int?), string type = default(string))
+        public InternalMessageResponse(string transactionHash = default(string), long? blockNumber = default(long?), string fromAddress = default(string), string toAddress = default(string), int? depth = default(int?), string value = default(string), int? messageIndex = default(int?), string type = default(string), int? blockTimeStamp = default(int?))
         {
             TransactionHash = transactionHash;
             BlockNumber = blockNumber;
@@ -30,6 +30,7 @@ namespace EthereumSamuraiApiCaller.Models
             Value = value;
             MessageIndex = messageIndex;
             Type = type;
+            BlockTimeStamp = blockTimeStamp;
             CustomInit();
         }
 
@@ -77,6 +78,11 @@ namespace EthereumSamuraiApiCaller.Models
         /// </summary>
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "blockTimeStamp")]
+        public int? BlockTimeStamp { get; set; }
 
     }
 }

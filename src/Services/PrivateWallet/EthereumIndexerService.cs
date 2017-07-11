@@ -102,7 +102,8 @@ namespace Services.PrivateWallet
                     ToAddress = message.ToAddress,
                     TransactionHash = message.TransactionHash,
                     Type = message.Type,
-                    Value = BigInteger.Parse(message.Value)
+                    Value = BigInteger.Parse(message.Value),
+                    BlockTimestamp = (uint)message.BlockTimeStamp
                 });
             }
 

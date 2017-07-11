@@ -15,5 +15,6 @@ namespace BusinessModels
         public BigInteger Value { get; set; }
         public int MessageIndex { get; set; }
         public string Type { get; set; }
+        public uint BlockTimestamp { get; set; }
     }
 }
