@@ -45,24 +45,29 @@ namespace EthereumApi.Controllers
                 Start = addressTransactions.Start,
             };
 
-            IEnumerable<TransactionModel> transactions = await _ethereumIndexerService.GetTransactionHistory(request);
-            IEnumerable<Models.Indexer.TransactionResponse> result = transactions.Select(transaction => new Models.Indexer.TransactionResponse()
+            IEnumerable<TransactionContentModel> transactions = await _ethereumIndexerService.GetTransactionHistory(request);
+            IEnumerable<Models.Indexer.TransactionResponse> result = transactions.Select(transactionContent =>
             {
-                BlockHash = transaction.BlockHash,
-                BlockNumber = (ulong)transaction.BlockNumber,
-                BlockTimestamp = transaction.BlockTimestamp,
-                ContractAddress = transaction.ContractAddress,
-                From = transaction.From,
-                Gas = transaction.Gas,
-                To = transaction.To,
-                GasPrice = transaction.GasPrice,
-                GasUsed = transaction.GasUsed,
-                Input = transaction.Input,
-                Nonce = transaction.Nonce,
-                TransactionHash = transaction.TransactionHash,
-                TransactionIndex = transaction.TransactionIndex,
-                Value = transaction.Value,
-                BlockTimeUtc = transaction.BlockTimeUtc
+                var transaction = transactionContent.Transaction;
+
+                return new Models.Indexer.TransactionResponse()
+                {
+                    BlockHash = transaction.BlockHash,
+                    BlockNumber = (ulong)transaction.BlockNumber,
+                    BlockTimestamp = transaction.BlockTimestamp,
+                    ContractAddress = transaction.ContractAddress,
+                    From = transaction.From,
+                    Gas = transaction.Gas,
+                    To = transaction.To,
+                    GasPrice = transaction.GasPrice,
+                    GasUsed = transaction.GasUsed,
+                    Input = transaction.Input,
+                    Nonce = transaction.Nonce,
+                    TransactionHash = transaction.TransactionHash,
+                    TransactionIndex = transaction.TransactionIndex,
+                    Value = transaction.Value,
+                    BlockTimeUtc = transaction.BlockTimeUtc,
+                };
             });
 
             return Ok(new FilteredTransactionsResponse()
