@@ -57,7 +57,8 @@ namespace EthereumApi.Controllers
                     TransactionHash = message.TransactionHash,
                     Type = message.Type,
                     Value = message.Value.ToString(),
-                    BlockTimestamp = message.BlockTimestamp
+                    BlockTimestamp = message.BlockTimestamp,
+                    BlockTimeUtc = message.BlockTimeUtc
 
                 });
 

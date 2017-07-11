@@ -103,7 +103,8 @@ namespace Services.PrivateWallet
                     TransactionHash = message.TransactionHash,
                     Type = message.Type,
                     Value = BigInteger.Parse(message.Value),
-                    BlockTimestamp = (uint)message.BlockTimeStamp
+                    BlockTimestamp = (uint)message.BlockTimeStamp,
+                    BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(message.BlockTimeStamp.Value)
                 });
             }
 
