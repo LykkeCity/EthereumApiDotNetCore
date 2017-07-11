@@ -42,6 +42,48 @@ namespace EthereumSamuraiApiCaller
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='startBlock'>
+            /// </param>
+            /// <param name='stopBlock'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            public static object ApiInternalMessagesByAddressGet(this IEthereumSamuraiApi operations, string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?))
+            {
+                return operations.ApiInternalMessagesByAddressGetAsync(address, startBlock, stopBlock, start, count).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='startBlock'>
+            /// </param>
+            /// <param name='stopBlock'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiInternalMessagesByAddressGetAsync(this IEthereumSamuraiApi operations, string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiInternalMessagesByAddressGetWithHttpMessagesAsync(address, startBlock, stopBlock, start, count, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             public static void ApiSystemIsAliveGet(this IEthereumSamuraiApi operations)
             {
                 operations.ApiSystemIsAliveGetAsync().GetAwaiter().GetResult();

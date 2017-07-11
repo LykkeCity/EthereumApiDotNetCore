@@ -35,13 +35,34 @@ namespace Service.UnitTests.PrivateWallet
                 Count = count,
                 Start = start
             };
-            IEnumerable<TransactionModel> transactions = await _ethereumIndexerService.GetTransactionHistory(addressTransactions);
+            IEnumerable<TransactionContentModel> transactions = await _ethereumIndexerService.GetTransactionHistory(addressTransactions);
 
             Assert.IsTrue(count - start >= transactions.Count());
 
             foreach (var transaction in transactions)
             {
-                Assert.AreEqual(transaction.From, TestConstants.PW_ADDRESS);
+                Assert.AreEqual(transaction.Transaction.From, TestConstants.PW_ADDRESS);
+            }
+        }
+
+        [TestMethod]
+        public async Task EthereumIndexerServiceUnitTest_TestQueryingInternalMessagesForAddress()
+        {
+            int count = 3;
+            int start = 0;
+            AddressTransactions addressTransactions = new AddressTransactions()
+            {
+                Address = TestConstants.PW_ADDRESS,
+                Count = count,
+                Start = start
+            };
+            IEnumerable<InternalMessageModel> messages = await _ethereumIndexerService.GetInternalMessagesHistory(addressTransactions);
+
+            Assert.IsTrue(count - start >= messages.Count());
+
+            foreach (var message in messages)
+            {
+                Assert.AreEqual(message.ToAddress, TestConstants.PW_ADDRESS);
             }
         }
 
