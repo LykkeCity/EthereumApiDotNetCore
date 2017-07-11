@@ -67,6 +67,7 @@ namespace EthereumApi.Controllers
                     TransactionIndex = transaction.TransactionIndex,
                     Value = transaction.Value,
                     BlockTimeUtc = transaction.BlockTimeUtc,
+                    HasError = transaction.HasError,
                 };
             });
 

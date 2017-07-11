@@ -20,7 +20,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the TransactionResponse class.
         /// </summary>
-        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string))
+        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), bool? hasError = default(bool?))
         {
             TransactionIndex = transactionIndex;
             BlockNumber = blockNumber;
@@ -36,6 +36,7 @@ namespace EthereumSamuraiApiCaller.Models
             BlockTimestamp = blockTimestamp;
             ContractAddress = contractAddress;
             GasUsed = gasUsed;
+            HasError = hasError;
             CustomInit();
         }
 
@@ -113,6 +114,11 @@ namespace EthereumSamuraiApiCaller.Models
         /// </summary>
         [JsonProperty(PropertyName = "gasUsed")]
         public string GasUsed { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "hasError")]
+        public bool? HasError { get; set; }
 
     }
 }

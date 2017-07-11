@@ -35,5 +35,7 @@ namespace BusinessModels
         public string GasUsed { get; set; }
 
         public DateTime BlockTimeUtc { get; set; }
+
+        public bool HasError { get; set; }
     }
 }
