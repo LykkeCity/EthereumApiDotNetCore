@@ -28,6 +28,7 @@ namespace Service.UnitTests.Mocks
             {
                 new TransactionResponse()
                 {
+                    TransactionHash = "0x10",
                     TransactionIndex = 0,
                     BlockTimestamp = 0,
                     BlockNumber = 1,
@@ -39,6 +40,7 @@ namespace Service.UnitTests.Mocks
                 },
                 new TransactionResponse()
                 {
+                     TransactionHash = "0x20",
                     TransactionIndex = 0,
                     BlockTimestamp = 10,
                     BlockNumber = 2,
@@ -50,6 +52,7 @@ namespace Service.UnitTests.Mocks
                 },
                 new TransactionResponse()
                 {
+                     TransactionHash = "0x30",
                     TransactionIndex = 0,
                     BlockTimestamp = 20,
                     BlockNumber = 3,
@@ -61,6 +64,48 @@ namespace Service.UnitTests.Mocks
                 }
             } }
         };
+
+        public Dictionary<string, IEnumerable<InternalMessageResponse>> MessageDictionary = new Dictionary<string, IEnumerable<InternalMessageResponse>>()
+        {
+            { TestConstants.PW_ADDRESS, new List<InternalMessageResponse>()
+            {
+                new InternalMessageResponse()
+                {
+                    TransactionHash = "0x10",
+                    BlockNumber = 1,
+                    Depth = 1,
+                    FromAddress = TestConstants.PW_ADDRESS,
+                    MessageIndex = 0,
+                    ToAddress = TestConstants.PW_ADDRESS,
+                    Type = "TRANSFER", 
+                    Value = "10000000000"
+                },
+                new InternalMessageResponse()
+                {
+                    TransactionHash = "0x20",
+                    BlockNumber = 1,
+                    Depth = 1,
+                    FromAddress = TestConstants.PW_ADDRESS,
+                    MessageIndex = 0,
+                    ToAddress = TestConstants.PW_ADDRESS,
+                    Type = "TRANSFER",
+                    Value = "10000000000"
+                },
+                new InternalMessageResponse()
+                {
+                    TransactionHash = "0x30",
+                    BlockNumber = 1,
+                    Depth = 1,
+                    FromAddress = TestConstants.PW_ADDRESS,
+                    MessageIndex = 1,
+                    ToAddress = TestConstants.PW_ADDRESS,
+                    Type = "TRANSFER",
+                    Value = "10000000000"
+                },
+            } }
+        };
+
+
 
         public Uri BaseUri { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -81,6 +126,27 @@ namespace Service.UnitTests.Mocks
                 Body = new BalanceResponse()
                 {
                    Amount = balance
+                }
+            };
+
+            return Task.FromResult(httpResponse);
+        }
+
+        public Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, long? startBlock, long? stopBlock, int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IEnumerable<InternalMessageResponse> addressMessages;
+            MessageDictionary.TryGetValue(address, out addressMessages);
+            if (addressMessages == null)
+            {
+                addressMessages = new List<InternalMessageResponse>();
+            }
+            HttpOperationResponse<object> httpResponse = new HttpOperationResponse<object>()
+            {
+                Body = new FilteredInternalMessageResponse()
+                {
+                    Messages= addressMessages
+                .Skip(start.Value)
+                .Take(count.Value).ToList()
                 }
             };
 
