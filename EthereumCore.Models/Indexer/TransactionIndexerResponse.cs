@@ -38,7 +38,7 @@ namespace EthereumApi.Models.Indexer
         [DataMember(Name = "input")]
         public string Input { get; set; }
         [DataMember(Name = "blockTimestamp")]
-        public int BlockTimestamp { get; set; }
+        public uint BlockTimestamp { get; set; }
         [DataMember(Name = "contractAddress")]
         public string ContractAddress { get; set; }
         [DataMember(Name = "gasUsed")]

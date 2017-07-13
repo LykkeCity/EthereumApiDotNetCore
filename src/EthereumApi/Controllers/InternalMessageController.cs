@@ -27,6 +27,27 @@ namespace EthereumApi.Controllers
             _ethereumIndexerService = ethereumIndexerService;
         }
 
+        [HttpPost("txHash/{transactionHash}")]
+        [ProducesResponseType(typeof(FilteredInternalMessagessResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> GetInternalMessages([FromQuery] string transactionHash)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            IEnumerable<InternalMessageModel> messages = await _ethereumIndexerService.GetInternalMessagesForTransactionAsync(transactionHash);
+            IEnumerable<Models.Indexer.InternalMessageResponse> result = messages.Select(message =>
+                MapInternalMessageModelToResponse(message));
+
+            return Ok(new FilteredInternalMessagessResponse()
+            {
+                Messages = result
+            });
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(FilteredInternalMessagessResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
@@ -47,25 +68,29 @@ namespace EthereumApi.Controllers
 
             IEnumerable<InternalMessageModel> messages = await _ethereumIndexerService.GetInternalMessagesHistory(request);
             IEnumerable<Models.Indexer.InternalMessageResponse> result = messages.Select(message =>
-                new InternalMessageResponse()
-                {
-                    BlockNumber = message.BlockNumber,
-                    Depth = message.Depth,
-                    FromAddress = message.FromAddress,
-                    MessageIndex = message.MessageIndex,
-                    ToAddress = message.ToAddress,
-                    TransactionHash = message.TransactionHash,
-                    Type = message.Type,
-                    Value = message.Value.ToString(),
-                    BlockTimestamp = message.BlockTimestamp,
-                    BlockTimeUtc = message.BlockTimeUtc
-
-                });
+                MapInternalMessageModelToResponse(message));
 
             return Ok(new FilteredInternalMessagessResponse()
             {
                 Messages = result
             });
+        }
+
+        private static InternalMessageResponse MapInternalMessageModelToResponse(InternalMessageModel message)
+        {
+            return new InternalMessageResponse()
+            {
+                BlockNumber = message.BlockNumber,
+                Depth = message.Depth,
+                FromAddress = message.FromAddress,
+                MessageIndex = message.MessageIndex,
+                ToAddress = message.ToAddress,
+                TransactionHash = message.TransactionHash,
+                Type = message.Type,
+                Value = message.Value.ToString(),
+                BlockTimestamp = message.BlockTimestamp,
+                BlockTimeUtc = message.BlockTimeUtc
+            };
         }
     }
 }
