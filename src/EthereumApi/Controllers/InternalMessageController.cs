@@ -31,7 +31,7 @@ namespace EthereumApi.Controllers
         [ProducesResponseType(typeof(FilteredInternalMessagessResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public async Task<IActionResult> GetInternalMessages([FromQuery] string transactionHash)
+        public async Task<IActionResult> GetInternalMessages([FromRoute] string transactionHash)
         {
             if (!ModelState.IsValid)
             {
