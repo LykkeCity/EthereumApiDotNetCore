@@ -36,7 +36,8 @@ namespace Service.UnitTests.Mocks
                     Gas = "21000",
                     GasPrice = "30000000000",
                     Value = "3000000000000",
-                    To = "0x0"
+                    To = "0x0",
+                    HasError = false
                 },
                 new TransactionResponse()
                 {
@@ -48,7 +49,8 @@ namespace Service.UnitTests.Mocks
                     Gas = "21000",
                     GasPrice = "30000000000",
                     Value = "3000000000000",
-                    To = "0x0"
+                    To = "0x0",
+                    HasError = false
                 },
                 new TransactionResponse()
                 {
@@ -60,7 +62,8 @@ namespace Service.UnitTests.Mocks
                     Gas = "21000",
                     GasPrice = "30000000000",
                     Value = "3000000000000",
-                    To = "0x0"
+                    To = "0x0",
+                    HasError = false
                 }
             } }
         };
@@ -78,7 +81,8 @@ namespace Service.UnitTests.Mocks
                     MessageIndex = 0,
                     ToAddress = TestConstants.PW_ADDRESS,
                     Type = "TRANSFER", 
-                    Value = "10000000000"
+                    Value = "10000000000", 
+                    BlockTimeStamp = 0
                 },
                 new InternalMessageResponse()
                 {
@@ -89,7 +93,8 @@ namespace Service.UnitTests.Mocks
                     MessageIndex = 0,
                     ToAddress = TestConstants.PW_ADDRESS,
                     Type = "TRANSFER",
-                    Value = "10000000000"
+                    Value = "10000000000",
+                    BlockTimeStamp = 0
                 },
                 new InternalMessageResponse()
                 {
@@ -100,7 +105,8 @@ namespace Service.UnitTests.Mocks
                     MessageIndex = 1,
                     ToAddress = TestConstants.PW_ADDRESS,
                     Type = "TRANSFER",
-                    Value = "10000000000"
+                    Value = "10000000000",
+                    BlockTimeStamp = 0
                 },
             } }
         };
@@ -112,6 +118,11 @@ namespace Service.UnitTests.Mocks
         public JsonSerializerSettings SerializationSettings => throw new NotImplementedException();
 
         public JsonSerializerSettings DeserializationSettings => throw new NotImplementedException();
+
+        public Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<HttpOperationResponse<object>> ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -153,6 +164,11 @@ namespace Service.UnitTests.Mocks
             return Task.FromResult(httpResponse);
         }
 
+        public Task<HttpOperationResponse<object>> ApiInternalMessagesTxHashByTransactionHashGetWithHttpMessagesAsync(string transactionHash, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse> ApiSystemIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();
@@ -184,6 +200,11 @@ namespace Service.UnitTests.Mocks
             };
 
             return Task.FromResult(httpResponse);
+        }
+
+        public Task<HttpOperationResponse<object>> ApiTransactionTxHashByTransactionHashGetWithHttpMessagesAsync(string transactionHash, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
