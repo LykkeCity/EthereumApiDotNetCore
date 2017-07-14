@@ -42,16 +42,9 @@ namespace LkeServices.Signature
             var nonce = transaction.Nonce;
             if (nonce == null)
             {
-                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
-
-                if (nonce.Value <= _nonceCount)
-                {
-                    _nonceCount = _nonceCount + 1;
-                    nonce = new HexBigInteger(_nonceCount);
-                }
-                else
-                    _nonceCount = nonce.Value;
+                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From, BlockParameter.CreatePending()).ConfigureAwait(false);
             }
+
             return nonce;
         }
 
