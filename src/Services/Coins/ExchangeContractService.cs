@@ -22,6 +22,7 @@ using SigningServiceApiCaller.Models;
 using Core.Exceptions;
 using Nethereum.Signer;
 using Services.Model;
+using System.Text.RegularExpressions;
 
 namespace Services.Coins
 {
@@ -29,6 +30,7 @@ namespace Services.Coins
     {
         //Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB,
         //    string signAHex, string signBHex);
+        bool IsValidAddress(string address);
 
         Task<string> CashIn(Guid id, string coin, string receiver, BigInteger amount);
 
@@ -66,6 +68,7 @@ namespace Services.Coins
         private readonly IHashCalculator _hashCalculator;
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
         private readonly ITransferContractService _transferContractService;
+        private readonly AddressUtil _addressUtil;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
@@ -90,8 +93,28 @@ namespace Services.Coins
             _hashCalculator = hashCalculator;
             _pendingTransactionsRepository = pendingTransactionsRepository;
             _transferContractService = transferContractService;
+            _addressUtil = new AddressUtil();
         }
 
+        public bool IsValidAddress(string address)
+        {
+            if (new Regex("!^(0x)?[0-9a-f]{40}$", RegexOptions.IgnoreCase).IsMatch(address))
+            {
+                // check if it has the basic requirements of an address
+                return false;
+            }
+            else if (new Regex("^(0x)?[0-9a-f]{40}$").IsMatch(address) ||
+                new Regex("^(0x)?[0-9A-F]{40}$").IsMatch(address))
+            {
+                // If it's all small caps or all all caps, return true
+                return true;
+            }
+            else
+            {
+                // Check each case
+                return _addressUtil.IsChecksumAddress(address);
+            };
+        }
         //public async Task<string> Swap(Guid id, string clientA, string clientB, string coinA, string coinB, decimal amountA, decimal amountB, string signAHex,
         //    string signBHex)
         //{

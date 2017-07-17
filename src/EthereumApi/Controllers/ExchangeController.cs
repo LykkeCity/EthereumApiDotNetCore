@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Services.Model;
 using Common;
+using Newtonsoft.Json;
+using EthereumApi.Utils;
 
 namespace EthereumApi.Controllers
 {
@@ -45,7 +47,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             await Log("Cashout", $"Begin Process {this.GetIp()}", model);
@@ -66,7 +68,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             var result = await _exchangeContractService.CheckId(guid);
@@ -87,7 +89,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             await Log("Transfer", $"Begin Process {this.GetIp()}", model);
@@ -110,7 +112,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             await Log("CheckSign", $"Begin Process {this.GetIp()}", model);
@@ -133,7 +135,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
             
             await Log("TransferWithChange", $"Begin Process {this.GetIp()}", model);
@@ -158,7 +160,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             var isSynced = await _exchangeContractService.CheckLastTransactionCompleted(model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.UserAddress));
@@ -175,7 +177,7 @@ namespace EthereumApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
             BigInteger amount = BigInteger.Parse(model.Amount);
