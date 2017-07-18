@@ -39,7 +39,7 @@ namespace EthereumApi.Controllers
         [ProducesResponseType(typeof(HashResponseWithId), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public IActionResult GetHashWithIdAsync([FromBody]BaseCoinRequestParametersModel model)
+        public async Task<IActionResult> GetHashWithIdAsync([FromBody]BaseCoinRequestParametersModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -49,8 +49,17 @@ namespace EthereumApi.Controllers
             var guid = Guid.NewGuid();
             //IdCheckResult idCheckResult = await _exchangeContractService.CheckId(guid);
             var amount = BigInteger.Parse(model.Amount);
-            var hash = _hashCalculator.GetHash(guid, model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.FromAddress),
-                _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount);
+            byte[] hash;
+            try
+            {
+                hash = _hashCalculator.GetHash(guid, model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.FromAddress),
+                    _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount);
+            }
+            catch (Exception e)
+            {
+                await _logger.WriteErrorAsync("HashController", "GetHashWithIdAsync", JsonConvert.SerializeObject(model), e, DateTime.UtcNow);
+                throw;
+            }
 
             return Ok(new HashResponseWithId
             {
@@ -64,7 +73,7 @@ namespace EthereumApi.Controllers
         [ProducesResponseType(typeof(HashResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public IActionResult GetHashAsync([FromBody]BaseCoinRequestModel model)
+        public async Task<IActionResult> GetHashAsync([FromBody]BaseCoinRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -72,8 +81,18 @@ namespace EthereumApi.Controllers
             }
 
             var amount = BigInteger.Parse(model.Amount);
-            var hash = _hashCalculator.GetHash(model.Id, model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.FromAddress),
-                _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount);
+            byte[] hash;
+
+            try
+            {
+                hash = _hashCalculator.GetHash(model.Id, model.CoinAdapterAddress, _addressUtil.ConvertToChecksumAddress(model.FromAddress),
+                  _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount);
+            }
+            catch (Exception e)
+            {
+                await _logger.WriteErrorAsync("HashController", "GetHashAsync", JsonConvert.SerializeObject(model), e, DateTime.UtcNow);
+                throw;
+            }
 
             return Ok(new HashResponse { HashHex = hash.ToHex() });
         }

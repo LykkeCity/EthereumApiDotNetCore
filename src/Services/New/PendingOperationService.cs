@@ -225,7 +225,6 @@ namespace Services
                 return;
             }
 
-            IPendingOperation operation = await _pendingOperationRepository.GetOperation(match.OperationId);
             match.TransactionHash = "";
 
             await _operationToHashMatchRepository.InsertOrReplaceAsync(match);
