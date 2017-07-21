@@ -14,6 +14,7 @@ using Nethereum.Signer;
 using SigningServiceApiCaller.Models;
 using Core;
 using Core.Settings;
+using System.Threading;
 
 namespace LkeServices.Signature
 {
@@ -25,6 +26,7 @@ namespace LkeServices.Signature
         private readonly ILykkeSigningAPI _signatureApi;
         private readonly Web3 _web3;
         private readonly IBaseSettings _baseSettings;
+        private readonly SemaphoreSlim _readLock;
 
         public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings)
         {
@@ -34,6 +36,7 @@ namespace LkeServices.Signature
             _signatureApi = signatureApi;
             Client = web3.Client;
             _web3 = web3;
+            _readLock = new SemaphoreSlim(1, 1);
         }
 
         public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
@@ -42,7 +45,7 @@ namespace LkeServices.Signature
             var nonce = transaction.Nonce;
             if (nonce == null)
             {
-                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From, BlockParameter.CreatePending()).ConfigureAwait(false);
+                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From, BlockParameter.CreatePending());
             }
 
             return nonce;
@@ -53,7 +56,16 @@ namespace LkeServices.Signature
             var ethSendTransaction = new EthSendRawTransaction(Client);
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
             var currentGasPrice = currentGasPriceHex.Value;
-            var nonce = await GetNonceAsync(transaction);
+            HexBigInteger nonce;
+            try
+            {
+                await _readLock.WaitAsync();
+                nonce = await GetNonceAsync(transaction);
+            }
+            finally
+            {
+                _readLock.Release();
+            }
             var value = transaction.Value?.Value ?? 0;
             BigInteger selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
             if (selectedGasPrice > _maxGasPrice)
