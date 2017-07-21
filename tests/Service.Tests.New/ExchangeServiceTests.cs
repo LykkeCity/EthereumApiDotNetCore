@@ -228,8 +228,8 @@ namespace Tests
             var guid = Guid.NewGuid();
             var amount = new BigInteger(500000000000000000);
             var from = _clientA;
-            string transferUser = "0x0f0b0affc64dc8d644ac45152c82f993dbb2931d";
-            var to = _clientB;//"0xa5d3FEd752b8Fd22C3912290b82C8A6C25404c3A";//_clientB;//"0xfBfA258B9028c7d4fc52cE28031469214D10DAEB";
+            string transferUser = "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa";//"0x0f0b0affc64dc8d644ac45152c82f993dbb2931d";//0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa
+            var to = "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa";//_clientB;//"0xa5d3FEd752b8Fd22C3912290b82C8A6C25404c3A";//_clientB;//"0xfBfA258B9028c7d4fc52cE28031469214D10DAEB";
 
             var result = await _exchangeService.EstimateCashoutGas(guid, _ethereumAdapterAddress, from, to, amount, "");
             //var transactionHash = _exchangeService.CashOut(guid, _ethereumAdapterAddress, from, to, amount, "");

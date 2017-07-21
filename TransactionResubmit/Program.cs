@@ -6,6 +6,7 @@ using Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.Web3;
+using Newtonsoft.Json;
 using RabbitMQ;
 using Services;
 using Services.Coins;
@@ -65,6 +66,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 7 to RESUBMIT all succesful coin events(except cashin)");
             Console.WriteLine($"Type 8 to RESUBMIT all cashin coin events");
             Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
+            Console.WriteLine($"Type 10 to move from pending-poison to processing");
             var command = "";
 
             do
@@ -99,6 +101,9 @@ namespace TransactionResubmit
                     case "9":
                         RemoveDuplicateUserTransferWallets();
                         break;
+                    case "10":
+                        MoveFromPoisonToProcessing();
+                        break;
                     default:
                         break;
                 }
@@ -106,6 +111,41 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void MoveFromPoisonToProcessing()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queuePoison = queueFactory.Build(Constants.PendingOperationsQueue + "-poison");
+                var queue = queueFactory.Build(Constants.PendingOperationsQueue);
+                var count = queuePoison.Count().Result;
+                for (int i = 0; i < count; i++)
+                {
+                    var message = queuePoison.GetRawMessageAsync().Result;
+
+                    OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
+
+                    queue.PutRawMessageAsync(message.AsString).Wait();
+                    queuePoison.FinishRawMessageAsync(message);
+                }
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static void RemoveDuplicateUserTransferWallets()
