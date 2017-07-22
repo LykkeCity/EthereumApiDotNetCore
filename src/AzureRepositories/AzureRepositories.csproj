@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Lykke.AzureStorage" Version="1.2.21" />
     <PackageReference Include="Lykke.Common" Version="1.1.69" />
-    <PackageReference Include="Lykke.JobTriggers" Version="1.1.5" />
+    <PackageReference Include="Lykke.JobTriggers" Version="1.1.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
