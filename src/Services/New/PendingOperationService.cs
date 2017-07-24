@@ -34,7 +34,7 @@ namespace Services
         Task<IPendingOperation> GetOperationAsync(string operationId);
         Task<IPendingOperation> GetOperationByHashAsync(string hash);
         Task RefreshOperationAsync(string hash);
-        Task RefreshOperationByIdAsync(string hash);
+        Task RefreshOperationByIdAsync(string operationId);
         Task MatchHashToOpId(string transactionHash, string operationId);
         Task<string> CreateOperation(IPendingOperation operation);
     }

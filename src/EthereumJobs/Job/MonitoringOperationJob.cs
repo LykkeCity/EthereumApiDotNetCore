@@ -26,8 +26,13 @@ namespace EthereumJobs.Job
         private readonly ITransferContractService _transferContractService;
         private readonly IEventTraceRepository _eventTraceRepository;
 
-        public MonitoringOperationJob(ILog log, IBaseSettings settings,
-            IPendingOperationService pendingOperationService, IExchangeContractService exchangeContractService, ICoinEventService coinEventService, ITransferContractService transferContractService, IEventTraceRepository eventTraceRepository)
+        public MonitoringOperationJob(ILog log, 
+            IBaseSettings settings,
+            IPendingOperationService pendingOperationService, 
+            IExchangeContractService exchangeContractService,
+            ICoinEventService coinEventService,
+            ITransferContractService transferContractService, 
+            IEventTraceRepository eventTraceRepository)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;

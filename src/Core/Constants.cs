@@ -80,6 +80,7 @@
         public const string BlockSyncedTable = "BlockSynced";
         public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
+        public const string NonceCacheTable = "NonceCache";
     }
 
     public static class OperationTypes

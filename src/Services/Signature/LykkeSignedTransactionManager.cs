@@ -15,6 +15,7 @@ using SigningServiceApiCaller.Models;
 using Core;
 using Core.Settings;
 using System.Threading;
+using Services.Signature;
 
 namespace LkeServices.Signature
 {
@@ -27,9 +28,13 @@ namespace LkeServices.Signature
         private readonly Web3 _web3;
         private readonly IBaseSettings _baseSettings;
         private readonly SemaphoreSlim _readLock;
+        private readonly INonceCalculator _nonceCalculator;
 
-        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings)
+        public IClient Client { get; set; }
+
+        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings, INonceCalculator nonceCalculator)
         {
+            _nonceCalculator = nonceCalculator;
             _baseSettings = baseSettings;
             _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
@@ -39,13 +44,13 @@ namespace LkeServices.Signature
             _readLock = new SemaphoreSlim(1, 1);
         }
 
-        public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
-        {
-            var ethGetTransactionCount = new EthGetTransactionCount(Client);
-            var nonce = transaction.Nonce;
-            if (nonce == null)
-            {
-                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
+        //public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
+        //{
+        //    var ethGetTransactionCount = new EthGetTransactionCount(Client);
+        //    var nonce = transaction.Nonce;
+        //    if (nonce == null)
+        //    {
+        //        nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
 
                 if (nonce.Value <= _nonceCount)
                 {
@@ -102,7 +107,5 @@ namespace LkeServices.Signature
 
             return await ethSendTransaction.SendRequestAsync(response.SignedTransaction.EnsureHexPrefix()).ConfigureAwait(false);
         }
-
-        public IClient Client { get; set; }
     }
 }
