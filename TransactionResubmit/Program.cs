@@ -263,7 +263,6 @@ namespace TransactionResubmit
                                     }
                                 }
                             }
-
                         }
                     }
 
