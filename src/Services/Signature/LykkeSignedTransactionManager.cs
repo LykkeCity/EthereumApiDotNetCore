@@ -44,13 +44,13 @@ namespace LkeServices.Signature
             _readLock = new SemaphoreSlim(1, 1);
         }
 
-        //public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
-        //{
-        //    var ethGetTransactionCount = new EthGetTransactionCount(Client);
-        //    var nonce = transaction.Nonce;
-        //    if (nonce == null)
-        //    {
-        //        nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
+        public async Task<HexBigInteger> GetNonceAsync(TransactionInput transaction)
+        {
+            var ethGetTransactionCount = new EthGetTransactionCount(Client);
+            var nonce = transaction.Nonce;
+            if (nonce == null)
+            {
+                nonce = await ethGetTransactionCount.SendRequestAsync(transaction.From).ConfigureAwait(false);
 
                 if (nonce.Value <= _nonceCount)
                 {
