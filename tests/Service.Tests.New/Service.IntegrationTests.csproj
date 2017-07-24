@@ -2,8 +2,8 @@
 
   <PropertyGroup>    
     <TargetFramework>netcoreapp1.1</TargetFramework>    
-    <AssemblyName>Service.Tests</AssemblyName>    
-    <RootNamespace>Service.Tests</RootNamespace>
+    <AssemblyName>Service.IntegrationTests</AssemblyName>    
+    <RootNamespace>Service.IntegrationTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

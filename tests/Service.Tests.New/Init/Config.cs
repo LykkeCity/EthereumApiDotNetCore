@@ -74,6 +74,7 @@ namespace Tests
             collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
             Services = collection.BuildServiceProvider();
+            Services.ActivateRequestInterceptor();
         }
 
         public class TestSettings

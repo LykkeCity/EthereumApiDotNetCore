@@ -203,8 +203,7 @@ namespace EthereumJobs.Job
                         break;
                     default: break;
                 }
-
-                await _coinEventService.PublishEvent(coinEvent, false);
+                await _coinEventService.PublishEvent(coinEvent, putInProcessingQueue: false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
                 await _pendingOperationService.MatchHashToOpId(transactionHash, coinEvent.OperationId);
 

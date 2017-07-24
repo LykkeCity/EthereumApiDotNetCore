@@ -34,13 +34,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningServiceApiCaller", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "src\TestRunner\TestRunner.csproj", "{F6A39A57-2559-41F4-8212-6AB257ADB45A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Tests", "tests\Service.Tests.New\Service.Tests.csproj", "{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.IntegrationTests", "tests\Service.Tests.New\Service.IntegrationTests.csproj", "{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ", "src\RabbitMQ\RabbitMQ.csproj", "{F5D3F906-67D2-47DD-95D1-80DB7993D098}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionResubmit", "TransactionResubmit\TransactionResubmit.csproj", "{8940252C-50A4-4026-9104-34E10E6C6AB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthereumApi.Models", "EthereumCore.Models\EthereumApi.Models.csproj", "{5871BC0C-3488-4682-BCB2-48D94738C54A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessModels", "src\Models\BusinessModels.csproj", "{9BDC7E53-A8BF-4C71-80EA-93A075ACC234}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthereumSamuraiApiCaller", "EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj", "{4B4FE824-BA5B-4989-9872-00EA0C0C21F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.UnitTests", "src\Service.UnitTests\Service.UnitTests.csproj", "{F5BE99AE-133C-4CAE-8163-504F746C6CE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +110,18 @@ Global
 		{5871BC0C-3488-4682-BCB2-48D94738C54A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5871BC0C-3488-4682-BCB2-48D94738C54A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5871BC0C-3488-4682-BCB2-48D94738C54A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BDC7E53-A8BF-4C71-80EA-93A075ACC234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BDC7E53-A8BF-4C71-80EA-93A075ACC234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BDC7E53-A8BF-4C71-80EA-93A075ACC234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BDC7E53-A8BF-4C71-80EA-93A075ACC234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,5 +136,8 @@ Global
 		{F6A39A57-2559-41F4-8212-6AB257ADB45A} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 		{F5D3F906-67D2-47DD-95D1-80DB7993D098} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{9BDC7E53-A8BF-4C71-80EA-93A075ACC234} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 	EndGlobalSection
 EndGlobal

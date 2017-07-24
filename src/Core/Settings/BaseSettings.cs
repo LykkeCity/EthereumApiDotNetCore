@@ -46,6 +46,7 @@ namespace Core.Settings
         int GasPricePercentage { get; set; }
         long MaxGasPrice { get; set; }
         long MinGasPrice { get; set; }
+        string EthereumSamuraiUrl { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -97,6 +98,7 @@ namespace Core.Settings
         public int GasPricePercentage { get; set; } = 100;
         public long MaxGasPrice { get; set; } = 50000000000;
         public long MinGasPrice { get; set; } = 30000000000;
+        public string EthereumSamuraiUrl { get; set; }
     }
 
     public class EthereumContract
