@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="DeepCloner" Version="0.10.1" />
-    <PackageReference Include="Lykke.JobTriggers" Version="1.1.5" />
+    <PackageReference Include="Lykke.JobTriggers" Version="1.1.11" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Moq" Version="4.7.63" />
