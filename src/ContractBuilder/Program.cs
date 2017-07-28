@@ -43,7 +43,8 @@ namespace ContractBuilder
                 .AddJsonFile("appsettings.json").AddEnvironmentVariables();
             var configuration = configurationBuilder.Build();
 
-            var settings = GetCurrentSettings();
+            var settings = GetCurrentSettingsFromUrl();
+            SaveSettings(settings.EthereumCore);
 
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             collection.AddSingleton<IBaseSettings>(settings.EthereumCore);
@@ -334,6 +335,21 @@ namespace ContractBuilder
             }
         }
 
+        static SettingsWrapper GetCurrentSettingsFromUrl()
+        {
+            FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(location)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            var configuration = builder.Build();
+            var connString = configuration.GetConnectionString("ConnectionString");
+            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connString);
+
+            return settings;
+        }
+
         static SettingsWrapper GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -343,7 +359,9 @@ namespace ContractBuilder
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
-            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(configuration.GetConnectionString("ConnectionString"));
+            var connString = configuration.GetConnectionString("ConnectionString");
+            var path = @"..\..\..\generalsettings.json";
+            var settings = GeneralSettingsReader.ReadGeneralSettingsLocal<SettingsWrapper>(path);
 
             return settings;
         }
