@@ -65,11 +65,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
+    <None Update="transferTransaction.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EthereumCore.Models\EthereumApi.Models.csproj" />
     <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\EthereumJobs\EthereumJobs.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 

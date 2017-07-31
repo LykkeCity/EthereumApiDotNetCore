@@ -1,0 +1,8 @@
+﻿{
+  "sign": "string",
+  "id": "string",
+  "coinAdapterAddress": "string",
+  "fromAddress": "string",
+  "toAddress": "string",
+  "amount": "string"
+}

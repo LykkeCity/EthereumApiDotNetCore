@@ -37,6 +37,8 @@ namespace Services
         Task RefreshOperationByIdAsync(string operationId);
         Task MatchHashToOpId(string transactionHash, string operationId);
         Task<string> CreateOperation(IPendingOperation operation);
+        //When MonitorinOperationJob is stopped
+        Task RemoveFromPendingOperationQueue(string operationId);
         Task<IEnumerable<IOperationToHashMatch>> GetHistoricalAsync(string operationId);
     }
 
@@ -435,6 +437,23 @@ namespace Services
 
             await _log.WriteInfoAsync("PendingOperationService", "GetSign", "", $"ID({id})-COINADDRESS({coinAddress})-FROM({clientAddr})-TO({toAddr})-AMOUNT({amount})-HASH({response.SignedHash})", DateTime.UtcNow);
             return response.SignedHash;
+        }
+
+        public async Task RemoveFromPendingOperationQueue(string opId)
+        {
+            var count = await _queue.Count();
+            for (int i = 0; i < count; i++)
+            {
+                var message = _queue.GetRawMessageAsync().Result;
+
+                OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
+
+                await _queue.FinishRawMessageAsync(message);
+                if (newMessage.OperationId?.ToLower() != opId?.ToLower())
+                {
+                    _queue.PutRawMessageAsync(message.AsString).Wait();
+                }
+            }
         }
     }
 }
