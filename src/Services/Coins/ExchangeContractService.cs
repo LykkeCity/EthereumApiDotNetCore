@@ -51,7 +51,8 @@ namespace Services.Coins
 
         bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
         Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr);
-        Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
+        Task<CashoutOperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
+        Task<string> ChangeMainContractInCoin(string coinAddress, string newExchangeContractAddress, string newMainExchangeAbi);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -252,7 +253,7 @@ namespace Services.Coins
             var transferFunction = contract.GetFunction("transfer");
 
             var convertedId = EthUtils.GuidToBigInteger(id);
-            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
@@ -405,6 +406,19 @@ namespace Services.Coins
             }
 
             return response.SignedHash;
+        }
+
+        public async Task<string> ChangeMainContractInCoin(string coinAddress, string newExchangeContractAddress, string newMainExchangeAbi)
+        {
+            var coinAFromDb = await GetCoinWithCheck(coinAddress);
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var transferFunction = contract.GetFunction("changeMainContractInCoin");
+            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
+                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), coinAddress, newExchangeContractAddress);
+            //_settings.MainExchangeContract.Abi = newMainExchangeAbi;
+            //_settings.MainExchangeContract.Address = newExchangeContractAddress;
+
+            return transactionHash;
         }
 
         private byte[] GetHash(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount)

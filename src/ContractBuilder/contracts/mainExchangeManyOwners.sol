@@ -10,7 +10,7 @@ contract MainExchange is ManyOwnersBaseContract{
 
     //private fields
     address _owner;
-    mapping(address => bool) _owners;
+    mapping(address => bool) public _owners;
     uint _lastPing;
     mapping (uint => bool) public transactions;
 
@@ -147,7 +147,7 @@ contract MainExchange is ManyOwnersBaseContract{
         return true;
     }
 
-    function IsOwner(address ownerAddress) onlyowner returns (bool isOwner){
+    function isOwner(address ownerAddress) constant returns (bool isOwner){
         return _owners[ownerAddress];
     }
 

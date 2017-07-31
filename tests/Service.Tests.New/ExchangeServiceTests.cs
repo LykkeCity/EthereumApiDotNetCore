@@ -166,6 +166,44 @@ namespace Tests
             Assert.IsTrue(currentBalance == 0);
         }
 
+        [TestMethod]
+        public async Task TestTransferTokens_WithRoundRobin()
+        {
+            var colorCoin = await _coinRepository.GetCoinByAddress(_tokenAdapterAddress);
+            var toAddress = _settings.EthereumMainAccount;
+            await CashinTokens(_externalTokenAddress, _clientTokenTransferAddress, new BigInteger(100), _tokenAdapterAddress, _clientA);
+            var transferUser = await _transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, _clientTokenTransferAddress);
+            var currentBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+
+            Assert.AreEqual(transferUser, _clientA.ToLower());
+
+            string firstTransfer;
+            string secondTransfer;
+            {
+                var guid = Guid.NewGuid();
+                var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / 2);
+                firstTransfer = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
+                    currentBalance / 2, externalSign);
+            }
+            {
+                var guid = Guid.NewGuid();
+                var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / 2);
+                secondTransfer = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
+                    currentBalance / 2, externalSign);
+            }
+            while (await _transactionService.GetTransactionReceipt(firstTransfer) == null)
+                await Task.Delay(100);
+            while (await _transactionService.GetTransactionReceipt(secondTransfer) == null)
+                await Task.Delay(100);
+
+            var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+            var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
+
+            //Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
+            //Assert.IsTrue(currentBalanceOnAdapter == 0);
+            //Assert.IsTrue(currentBalance <= newBalance);
+        }
+
         #endregion
 
         #region EthereumAdapter

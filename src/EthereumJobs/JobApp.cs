@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Threading;
 using System.Runtime.Loader;
 using Lykke.JobTriggers.Extenstions;
-using Nethereum.RPC.TransactionManagers;
 using Services;
 
 namespace EthereumJobs
