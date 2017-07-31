@@ -27,6 +27,7 @@ namespace Services
             _settings = settings;
         }
 
+        // Do not use with private wallets
         public async Task<bool> IsTransactionExecuted(string hash, int gasSended)
         {
             var receipt = await GetTransactionReceipt(hash);

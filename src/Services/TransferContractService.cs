@@ -296,7 +296,7 @@ namespace Services
             }
             else
             {
-                balance = await _paymentService.GetTransferContractBalanceInWei(transferContract.ContractAddress);
+                balance = await _paymentService.GetAddressBalanceInWei(transferContract.ContractAddress);
             }
 
             return balance;

@@ -18,6 +18,9 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.Signer;
 using Core.Exceptions;
 using System.Diagnostics;
+using Nethereum.RPC.Eth;
+using System.Numerics;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace Service.UnitTests.PrivateWallet
 {
@@ -28,25 +31,37 @@ namespace Service.UnitTests.PrivateWallet
         PrivateWalletService _privateWalletService;
         private MockNonceCalculator _nonceCalc;
         private Mock<IClient> _client;
+        private Mock<IPaymentService> _paymentServiceMock;
+        private Mock<IWeb3> _web3Mock;
+        private Mock<IEthereumTransactionService> _ethereumTransactionServiceMock;
 
         [TestInitialize]
         public void TestInit()
         {
             _client = new Mock<IClient>();
-            Mock<IWeb3> web3Mock = new Mock<IWeb3>();
+            _web3Mock = new Mock<IWeb3>();
+            _paymentServiceMock = new Mock<IPaymentService>();
+            _ethereumTransactionServiceMock = new Mock<IEthereumTransactionService>();
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
             #region SetupMockWeb3
+
             _client.Setup(x => x.SendRequestAsync(It.IsAny<RpcRequest>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(new RpcResponse(null, (JToken)null)));
-            web3Mock.Setup(x => x.Client).Returns(_client.Object);
+            _web3Mock.Setup(x => x.Client).Returns(_client.Object);
+            _web3Mock.Setup(x => x.Eth).Returns(new Nethereum.Contracts.EthApiContractService(_client.Object));
+            _paymentServiceMock.Setup(x => x.GetAddressBalancePendingInWei(TestConstants.PW_ADDRESS))
+                .Returns(Task.FromResult(new BigInteger(700000000000000)));
 
             #endregion
 
-            _privateWalletService = new PrivateWalletService(web3Mock.Object, _nonceCalc);
+            _privateWalletService = new PrivateWalletService(_web3Mock.Object, 
+                _nonceCalc, 
+                _ethereumTransactionServiceMock.Object,
+                _paymentServiceMock.Object);
         }
 
         [TestMethod]
-        public async Task PrivateWalletServiceUnitest_TestGetTransaction()
+        public async Task PrivateWalletServiceUnitTest_TestGetTransaction()
         {
             string from = TestConstants.PW_ADDRESS;
             EthTransaction ethTransaction = new EthTransaction()
@@ -69,7 +84,7 @@ namespace Service.UnitTests.PrivateWallet
         }
 
         [TestMethod]
-        public async Task PrivateWalletServiceUnitest_SignAndCommitTransaction()
+        public async Task PrivateWalletServiceUnitTest_SignAndCommitTransaction()
         {
             string from = TestConstants.PW_ADDRESS;
             EthTransaction ethTransaction = new EthTransaction()
@@ -96,7 +111,7 @@ namespace Service.UnitTests.PrivateWallet
         }
 
         [TestMethod]
-        public async Task PrivateWalletServiceUnitest_WrongSignAndCommitTransaction()
+        public async Task PrivateWalletServiceUnitTest_WrongSignAndCommitTransaction()
         {
             string from = TestConstants.PW_ADDRESS;
             EthTransaction ethTransaction = new EthTransaction()
@@ -125,7 +140,89 @@ namespace Service.UnitTests.PrivateWallet
         }
 
         [TestMethod]
-        public async Task PrivateWalletServiceUnitest_SignTransaction()
+        public async Task PrivateWalletServiceUnitTest_NotEnoughFundsAndCommitTransaction()
+        {
+            #region MockSetup
+
+            _ethereumTransactionServiceMock = new Mock<IEthereumTransactionService>();
+            _ethereumTransactionServiceMock.Setup(x => x.GetTransactionReceipt(It.IsAny<string>()))
+                .Returns(Task.FromResult(new TransactionReceipt()));
+            _ethereumTransactionServiceMock.Setup(x => x.IsTransactionInPool(It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+            _privateWalletService = new PrivateWalletService(_web3Mock.Object,
+               _nonceCalc,
+               _ethereumTransactionServiceMock.Object,
+               _paymentServiceMock.Object);
+
+            #endregion
+
+            string from = TestConstants.PW_ADDRESS;
+            EthTransaction ethTransaction = new EthTransaction()
+            {
+                FromAddress = from,
+                GasAmount = 21000,
+                GasPrice = 30000000000,
+                ToAddress = "0xaA4981d084120AEf4BbaEeCB9abdBc7D180C7EdB",
+                Value = 30000000000
+            };
+
+            bool isExceptionProcessed = false;
+            string transactionHex = await _privateWalletService.GetTransactionForSigning(ethTransaction);
+            string signedTransaction = SignRawTransaction(transactionHex, _privateKey);
+            try
+            {
+                string transactionHash = await _privateWalletService.SubmitSignedTransaction(from, signedTransaction);
+            }
+            catch (ClientSideException exc) when (exc.ExceptionType == ExceptionType.TransactionExists)
+            {
+                isExceptionProcessed = true;
+            }
+
+            Assert.IsTrue(isExceptionProcessed);
+        }
+
+        [TestMethod]
+        public async Task PrivateWalletServiceUnitTestNotEnoughFundsAndCommitTransaction()
+        {
+            #region MockSetup
+
+            _paymentServiceMock = new Mock<IPaymentService>();
+            _paymentServiceMock.Setup(x => x.GetAddressBalancePendingInWei(TestConstants.PW_ADDRESS))
+                .Returns(Task.FromResult<BigInteger>(new BigInteger(100000000000000)));
+            _privateWalletService = new PrivateWalletService(_web3Mock.Object,
+               _nonceCalc,
+               _ethereumTransactionServiceMock.Object,
+               _paymentServiceMock.Object);
+
+            #endregion
+
+            string from = TestConstants.PW_ADDRESS;
+            EthTransaction ethTransaction = new EthTransaction()
+            {
+                FromAddress = from,
+                GasAmount = 21000,
+                GasPrice = 30000000000,
+                ToAddress = "0xaA4981d084120AEf4BbaEeCB9abdBc7D180C7EdB",
+                Value = 30000000000
+            };
+
+            bool isExceptionProcessed = false;
+            string transactionHex = await _privateWalletService.GetTransactionForSigning(ethTransaction);
+            string signedTransaction = SignRawTransaction(transactionHex, _privateKey);
+            try
+            {
+                string transactionHash = await _privateWalletService.SubmitSignedTransaction(from, signedTransaction);
+            }
+            catch (ClientSideException exc) when (exc.ExceptionType == ExceptionType.NotEnoughFunds)
+            {
+                isExceptionProcessed = true;
+            }
+
+            Assert.IsTrue(isExceptionProcessed);
+        }
+
+        [TestMethod]
+        public async Task PrivateWalletServiceUnitTest_SignTransaction()
         {
             string trHex = "e581958506fc23ac0082520894fe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b60280808080";
             string from = TestConstants.PW_ADDRESS;
