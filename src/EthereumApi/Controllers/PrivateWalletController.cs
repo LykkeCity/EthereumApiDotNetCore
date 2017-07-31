@@ -41,15 +41,17 @@ namespace EthereumApi.Controllers
 
             string serialized = JsonConvert.SerializeObject(ethTransaction);
             await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", serialized, "Get transaction for signing", DateTime.UtcNow);
-
-            string transactionHex = await _privateWalletService.GetTransactionForSigning(new EthTransaction()
+            var transaction = new EthTransaction()
             {
                 FromAddress = ethTransaction.FromAddress,
                 GasAmount = BigInteger.Parse(ethTransaction.GasAmount),
                 GasPrice = BigInteger.Parse(ethTransaction.GasPrice),
                 ToAddress = ethTransaction.ToAddress,
                 Value = BigInteger.Parse(ethTransaction.Value)
-            });
+            };
+
+            await _privateWalletService.ValidateInputAsync(transaction);
+            string transactionHex = await _privateWalletService.GetTransactionForSigning(transaction);
 
             await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized} + TransactionHex:{transactionHex}",
                 "Recieved transaction for signing", DateTime.UtcNow);

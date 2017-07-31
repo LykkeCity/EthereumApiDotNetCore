@@ -8,6 +8,7 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Common.Log;
 using Nethereum.Util;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace Services
 {
@@ -17,7 +18,9 @@ namespace Services
 
         Task<decimal> GetUserContractBalance(string address);
 
-        Task<BigInteger> GetTransferContractBalanceInWei(string transferContractAddress);
+        Task<BigInteger> GetAddressBalanceInWei(string address);
+
+        Task<BigInteger> GetAddressBalancePendingInWei(string address);
 
         Task<string> SendEthereum(string fromAddress, string toAddress, BigInteger amont);
     }
@@ -49,9 +52,16 @@ namespace Services
             return UnitConversion.Convert.FromWei(balance);
         }
 
-        public async Task<BigInteger> GetTransferContractBalanceInWei(string address)
+        public async Task<BigInteger> GetAddressBalanceInWei(string address)
         {
             var balance = await _web3.Eth.GetBalance.SendRequestAsync(address);
+
+            return balance.Value;
+        }
+
+        public async Task<BigInteger> GetAddressBalancePendingInWei(string address)
+        {
+            var balance = await _web3.Eth.GetBalance.SendRequestAsync(address, BlockParameter.CreatePending());
 
             return balance.Value;
         }

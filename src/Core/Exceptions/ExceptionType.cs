@@ -16,5 +16,12 @@ namespace Core.Exceptions
         EntityAlreadyExists = 4,
         WrongSign = 5,
         OperationWithIdAlreadyExists = 6,
+
+        #region PrivateWallets
+
+        NotEnoughFunds = 100,
+        TransactionExists = 101,
+
+        #endregion
     }
 }
