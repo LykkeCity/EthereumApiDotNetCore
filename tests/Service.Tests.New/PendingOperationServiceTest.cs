@@ -8,7 +8,6 @@ using Core.Repositories;
 using Core.Settings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
-using NBitcoin.Crypto;
 using Nethereum.ABI.Encoders;
 using Nethereum.ABI.Util;
 using Services;

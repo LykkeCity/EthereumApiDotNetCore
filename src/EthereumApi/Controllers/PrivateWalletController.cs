@@ -88,5 +88,32 @@ namespace EthereumApi.Controllers
                 HashHex = transactionHash
             });
         }
+
+        [HttpPost("estimateTransaction")]
+        [ProducesResponseType(typeof(EstimatedGasModel), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> EstimateSignedTransaction([FromBody]PrivateWalletEthSignedTransaction ethTransactionSigned)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            string serialized = JsonConvert.SerializeObject(ethTransactionSigned);
+            await _log.WriteInfoAsync("PrivateWalletController", "EstimateSignedTransaction", serialized
+                , "StartEstimateSignedTransaction", DateTime.UtcNow);
+
+            var executionCost = await _privateWalletService.EstimateTransactionExecutionCost(ethTransactionSigned.FromAddress, ethTransactionSigned.SignedTransactionHex);
+
+            await _log.WriteInfoAsync("PrivateWalletController", "EstimateSignedTransaction",
+                $"{serialized}-TransactionHash:{executionCost.GasAmount.ToString()}", "EndEstimateSignedTransaction", DateTime.UtcNow);
+
+            return Ok(new EstimatedGasModel
+            {
+                EstimatedGas = executionCost.GasAmount.ToString(),
+                IsAllowed = executionCost.IsAllowed
+            });
+        }
     }
 }

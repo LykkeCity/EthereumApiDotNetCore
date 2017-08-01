@@ -1,15 +1,21 @@
 ﻿using BusinessModels;
+using Core;
 using Core.Exceptions;
+using Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
+using Services.Model;
 using Services.Signature;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
 using System.Numerics;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +23,7 @@ namespace Services.PrivateWallet
 {
     public interface IPrivateWalletService
     {
+        Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex);
         Task<string> GetTransactionForSigning(EthTransaction ethTransaction);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task<bool> CheckTransactionSign(string from, string signedTrHex);
@@ -31,8 +38,8 @@ namespace Services.PrivateWallet
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IPaymentService _paymentService;
 
-        public PrivateWalletService(IWeb3 web3, 
-            INonceCalculator nonceCalculator, 
+        public PrivateWalletService(IWeb3 web3,
+            INonceCalculator nonceCalculator,
             IEthereumTransactionService ethereumTransactionService,
             IPaymentService paymentService)
         {
@@ -56,6 +63,26 @@ namespace Services.PrivateWallet
             var hex = tr.GetRLPEncoded().ToHex();
 
             return hex;
+        }
+
+        public async Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex)
+        {
+            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
+            var gasLimit = new HexBigInteger(transaction.GasLimit.ToHexCompact());
+            var gasPrice = new HexBigInteger(transaction.GasPrice.ToHexCompact());
+            var value = new HexBigInteger(transaction.Value.ToHexCompact());
+            var to = transaction.ReceiveAddress.ToHex().EnsureHexPrefix();
+            var callInput = new CallInput(null, to, from, gasLimit, gasLimit);//new CallInput(null, to, from, gasLimit, value);
+            callInput.GasPrice = gasLimit;
+
+            var callResult = await _web3.Eth.Transactions.Call.SendRequestAsync(callInput);
+            var response = await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(callInput);
+            
+            return new OperationEstimationResult()
+            {
+                GasAmount = response.Value,
+                IsAllowed = response.Value < gasLimit.Value || response.Value == Constants.DefaultTransactionGas
+            };
         }
 
         public async Task<string> SubmitSignedTransaction(string from, string signedTrHex)
@@ -97,7 +124,7 @@ namespace Services.PrivateWallet
 
             await ThrowOnExistingHashAsync(transaction.Hash.ToHex());
             ThrowOnWrongSignature(isSignedRight);
-            await ValidateAddressBalanceAsync(fromAddress, 
+            await ValidateAddressBalanceAsync(fromAddress,
                 new HexBigInteger(transaction.Value.ToHex()),
                 new HexBigInteger(gasLimit),
                 new HexBigInteger(gasPrice));

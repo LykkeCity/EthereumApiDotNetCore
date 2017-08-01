@@ -51,7 +51,7 @@ namespace Services.Coins
 
         bool CheckSign(Guid id, string coinAddress, string clientAddr, string toAddr, BigInteger amount, string sign);
         Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr);
-        Task<CashoutOperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
+        Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -138,7 +138,7 @@ namespace Services.Coins
         //    await _cointTransactionService.PutTransactionToQueue(tr);
         //    return tr;
         //}
-        public async Task<CashoutOperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
+        public async Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
         {
             var coinAFromDb = await GetCoinWithCheck(coinAdapterAddress);
 
@@ -156,7 +156,7 @@ namespace Services.Coins
             var estimatedGasForOperation = await cashout.EstimateGasAsync(_settings.EthereumMainAccount,
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), convertedId, coinAFromDb.AdapterAddress, fromAddress, toAddress, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
 
-            return new CashoutOperationEstimationResult()
+            return new OperationEstimationResult()
             {
                 GasAmount = estimatedGasForOperation.Value,
                 IsAllowed = estimatedGasForOperation.Value < Constants.GasForCoinTransaction

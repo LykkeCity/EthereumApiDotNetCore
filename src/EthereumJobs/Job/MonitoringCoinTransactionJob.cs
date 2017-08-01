@@ -157,7 +157,6 @@ namespace EthereumJobs.Job
                 case CoinEventType.CashinStarted:
                 case CoinEventType.CashinCompleted:
                     await UpdateUserTransferWallet(coinEvent.FromAddress, coinEvent.ToAddress);
-
                     return;
                 default:
                     break;

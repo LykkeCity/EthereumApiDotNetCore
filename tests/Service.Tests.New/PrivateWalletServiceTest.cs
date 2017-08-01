@@ -14,6 +14,7 @@ using Nethereum.Web3;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth;
 using Nethereum.RPC.Eth.DTOs;
+using Services.Model;
 
 namespace Service.Tests
 {
@@ -52,6 +53,24 @@ namespace Service.Tests
             }
 
             var block = await _web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(BlockParameter.CreatePending());
+        }
+
+        [TestMethod]
+        public async Task PrivateWalletServiceTest_TestTransactionEstimation()
+        {
+            string fromAddress = "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28";
+            EthTransaction transaction = new EthTransaction()
+            {
+                FromAddress = fromAddress,
+                GasAmount = 21000,
+                GasPrice = 50000000000,
+                ToAddress = "0xaA4981d084120AEf4BbaEeCB9abdBc7D180C7EdB",//"0xaA4981d084120AEf4BbaEeCB9abdBc7D180C7EdB",
+                Value = 5000000000
+            };
+
+            string trRaw = await _privateWallet.GetTransactionForSigning(transaction);
+            string signedRawTr = SignRawTransaction(trRaw, _privateKey);
+            OperationEstimationResult result = await _privateWallet.EstimateTransactionExecutionCost(fromAddress, signedRawTr);
         }
 
         [TestMethod]
