@@ -4,7 +4,7 @@ using Core.Settings;
 using EthereumSamuraiApiCaller;
 using LkeServices.Signature;
 using Microsoft.Extensions.DependencyInjection;
-using Nethereum.RPC.Eth.TransactionManagers;
+using Nethereum.RPC.TransactionManagers;
 using Nethereum.Web3;
 using Services.Coins;
 using Services.New;

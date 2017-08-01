@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using System.Numerics;
+
+namespace Core
 {
     public class Constants
     {
@@ -81,6 +83,7 @@
         public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
         public const string NonceCacheTable = "NonceCache";
+        public static BigInteger DefaultTransactionGas = 21000;
     }
 
     public static class OperationTypes

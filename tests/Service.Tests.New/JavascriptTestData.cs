@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Utils;
-using NBitcoin.Crypto;
 using Nethereum.ABI.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nethereum.Hex.HexConvertors.Extensions;

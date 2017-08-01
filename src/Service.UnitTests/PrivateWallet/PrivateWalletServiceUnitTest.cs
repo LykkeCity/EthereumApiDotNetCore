@@ -45,8 +45,18 @@ namespace Service.UnitTests.PrivateWallet
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
             #region SetupMockWeb3
 
-            _client.Setup(x => x.SendRequestAsync(It.IsAny<RpcRequest>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(new RpcResponse(null, (JToken)null)));
+            //Task<T> SendRequestAsync<T>(RpcRequest request, string route = null);
+            //Task<T> SendRequestAsync<T>(string method, string route = null, params object[] paramList);
+            //Task SendRequestAsync(RpcRequest request, string route = null);
+            //Task SendRequestAsync(string method, string route = null, params object[] paramList);
+            _client.Setup(x => x.SendRequestAsync(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(0));
+            _client.Setup(x => x.SendRequestAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns(Task.FromResult(0));
+            _client.Setup(x => x.SendRequestAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns(Task.FromResult<RpcResponse>(new RpcResponse(null, (JToken)null)));
+            _client.Setup(x => x.SendRequestAsync(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()))
+                .Returns(Task.FromResult<RpcResponse>(new RpcResponse(null, (JToken)null)));
             _web3Mock.Setup(x => x.Client).Returns(_client.Object);
             _web3Mock.Setup(x => x.Eth).Returns(new Nethereum.Contracts.EthApiContractService(_client.Object));
             _paymentServiceMock.Setup(x => x.GetAddressBalancePendingInWei(TestConstants.PW_ADDRESS))
@@ -101,7 +111,7 @@ namespace Service.UnitTests.PrivateWallet
             string transactionHash = await _privateWalletService.SubmitSignedTransaction(from, signedTransaction);
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
 
-            _client.Verify(x => x.SendRequestAsync(It.IsAny<RpcRequest>(), It.IsAny<string>()), Times.Once);
+            _client.Verify(x => x.SendRequestAsync(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()), Times.Once);
             Assert.AreEqual(from, transaction.Key.GetPublicAddress());
             Assert.AreEqual(_nonceCalc._nonceStorage[from].Value, new HexBigInteger(transaction.Nonce.ToHex()));
             Assert.AreEqual(ethTransaction.GasAmount, new HexBigInteger(transaction.GasLimit.ToHex()));

@@ -14,7 +14,6 @@ using LkeServices.Signature;
 using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
 using Core.Settings;
-using Nethereum.RPC.Eth.TransactionManagers;
 using Services.Signature;
 
 namespace Service.Tests.BugReproduction

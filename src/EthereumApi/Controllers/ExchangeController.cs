@@ -181,7 +181,7 @@ namespace EthereumApi.Controllers
             }
 
             BigInteger amount = BigInteger.Parse(model.Amount);
-            CashoutOperationEstimationResult cashoutEstimationResult = await _exchangeContractService.EstimateCashoutGas(model.Id, model.CoinAdapterAddress,
+            OperationEstimationResult cashoutEstimationResult = await _exchangeContractService.EstimateCashoutGas(model.Id, model.CoinAdapterAddress,
                 _addressUtil.ConvertToChecksumAddress(model.FromAddress), _addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
             await _logger.WriteInfoAsync("ExchangeController", "EstimateCashoutGas", 
