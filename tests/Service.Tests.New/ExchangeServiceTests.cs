@@ -169,39 +169,49 @@ namespace Tests
         [TestMethod]
         public async Task TestTransferTokens_WithRoundRobin()
         {
-            var colorCoin = await _coinRepository.GetCoinByAddress(_tokenAdapterAddress);
-            var toAddress = _settings.EthereumMainAccount;
-            await CashinTokens(_externalTokenAddress, _clientTokenTransferAddress, new BigInteger(100), _tokenAdapterAddress, _clientA);
-            var transferUser = await _transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, _clientTokenTransferAddress);
-            var currentBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+            Func<Task> testFunc = async () =>
+                {
+                    var colorCoin = await _coinRepository.GetCoinByAddress(_tokenAdapterAddress);
+                    var toAddress = _settings.EthereumMainAccount;
+                    await CashinTokens(_externalTokenAddress, _clientTokenTransferAddress, new BigInteger(100), _tokenAdapterAddress, _clientA);
+                    var transferUser = await _transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, _clientTokenTransferAddress);
+                    var currentBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
 
-            Assert.AreEqual(transferUser, _clientA.ToLower());
+                    Assert.AreEqual(transferUser, _clientA.ToLower());
+                    int threadAmount = 4;
+                    List<Task<string>> tasks = new List<Task<string>>(threadAmount);
+                    for (int i = 0; i < threadAmount; i++)
+                    {
+                        tasks.Add(Task<string>.Run(async () =>
+                        {
+                            var guid = Guid.NewGuid();
+                            var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / threadAmount);
+                            var trHash = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
+                                currentBalance / threadAmount, externalSign);
 
-            string firstTransfer;
-            string secondTransfer;
-            {
-                var guid = Guid.NewGuid();
-                var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / 2);
-                firstTransfer = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
-                    currentBalance / 2, externalSign);
-            }
-            {
-                var guid = Guid.NewGuid();
-                var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / 2);
-                secondTransfer = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
-                    currentBalance / 2, externalSign);
-            }
-            while (await _transactionService.GetTransactionReceipt(firstTransfer) == null)
-                await Task.Delay(100);
-            while (await _transactionService.GetTransactionReceipt(secondTransfer) == null)
-                await Task.Delay(100);
+                            return trHash;
+                        }));
+                    }
 
-            var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
-            var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
+                    await Task.WhenAll(tasks);
+                    foreach (var task in tasks)
+                    {
+                        var trHash = task.Result;
+                        while (await _transactionService.GetTransactionReceipt(trHash) == null)
+                            await Task.Delay(100);
+                    }
 
-            //Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
-            //Assert.IsTrue(currentBalanceOnAdapter == 0);
-            //Assert.IsTrue(currentBalance <= newBalance);
+                    var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+                    var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
+
+                    //Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
+                    Assert.IsTrue(currentBalanceOnAdapter == 0);
+                    Assert.IsTrue(currentBalance <= newBalance);
+                };
+
+            await testFunc();
+            await Task.Delay(5 * 60 * 1000 + 10); //5min
+            await testFunc();
         }
 
         #endregion

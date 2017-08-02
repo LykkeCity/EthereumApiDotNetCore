@@ -41,6 +41,8 @@ namespace Services.Coins
         Task<string> TransferWithChange(Guid id, string coinAddress, string from, string to, BigInteger amount,
             string signFrom, BigInteger change, string signTo);
 
+        Task<string> TransferWithoutSignCheck(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign);
+
         Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount);
 
         Task<string> PingMainExchangeContract();
@@ -226,7 +228,7 @@ namespace Services.Coins
 
             var convertedId = EthUtils.GuidToBigInteger(id);
             // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
-            var transactionHash = await cashout.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await cashout.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
                         new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
@@ -291,7 +293,7 @@ namespace Services.Coins
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transferWithChange");
             var convertedId = EthUtils.GuidToBigInteger(id);
-            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
+            var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
                     new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, change,
                     signFrom.HexToByteArray().FixByteOrder(), signTo.HexToByteArray().FixByteOrder(), new byte[0]);
@@ -300,6 +302,31 @@ namespace Services.Coins
             await SaveUserHistory(coinAddress, difference.ToString(), from, to, transactionHash, "TransferWithChange");
             //await _coinEventService.PublishEvent(new CoinEvent(id.ToString(),transactionHash, from, to,
             //    difference.ToString(), CoinEventType.TransferStarted, coinAddress));
+            await CreatePendingTransaction(coinAddress, from, transactionHash);
+
+            return transactionHash;
+        }
+
+        public async Task<string> TransferWithoutSignCheck(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign)
+        {
+            await ThrowOnExistingId(id);
+            var coinAFromDb = await GetCoinWithCheck(coinAddress);
+
+            if (string.IsNullOrEmpty(sign))
+            {
+                sign = await GetSign(id, coinAddress, from, to, amount);
+            }
+
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var transferFunction = contract.GetFunction("transfer");
+
+            var convertedId = EthUtils.GuidToBigInteger(id);
+            var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
+                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                    convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
+            await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
+            //await _coinEventService.PublishEvent(new CoinEvent(id.ToString(), transactionHash, from, to,
+            //    amount.ToString(), CoinEventType.TransferStarted, coinAddress));
             await CreatePendingTransaction(coinAddress, from, transactionHash);
 
             return transactionHash;

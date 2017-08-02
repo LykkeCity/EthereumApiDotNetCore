@@ -40,6 +40,7 @@ namespace Services
         //When MonitorinOperationJob is stopped
         Task RemoveFromPendingOperationQueue(string operationId);
         Task<IEnumerable<IOperationToHashMatch>> GetHistoricalAsync(string operationId);
+        Task<string> TransferWithNoChecks(Guid id, string coin, string from, string to, BigInteger amount, string sign);
     }
 
     public class PendingOperationService : IPendingOperationService
@@ -105,6 +106,29 @@ namespace Services
             amount = signResult.Amount;
             operation.SignFrom = sign;
             operation.Amount = amount.ToString();
+
+            await StartProcessing(operation);
+
+            return opId;
+        }
+
+        public async Task<string> TransferWithNoChecks(Guid id, string coinAddress, string fromAddress, 
+            string toAddress, BigInteger amount, string sign)
+        {
+            var coinAFromDb = await GetCoinWithCheck(coinAddress);
+            var operation = new PendingOperation()
+            {
+                OperationId = id.ToString(),
+                Amount = amount.ToString(),
+                CoinAdapterAddress = coinAddress,
+                FromAddress = fromAddress,
+                OperationType = OperationTypes.Transfer,
+                SignFrom = sign,
+                SignTo = null,
+                ToAddress = toAddress,
+                MainExchangeId = id,
+            };
+            var opId = await CreateOperation(operation);
 
             await StartProcessing(operation);
 

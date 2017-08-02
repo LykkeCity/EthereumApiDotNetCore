@@ -109,10 +109,10 @@ namespace ContractBuilder
                 Console.WriteLine("3. Deploy coin contract using local json file");
                 Console.WriteLine("4. Deploy transfer");
                 Console.WriteLine("5. Deploy BCAP Token");
-                Console.WriteLine("6. Deploy main exchange contract with multiple owners!");
-                Console.WriteLine("7. Add more owners to Main Exchange Contract with multiple owners!");
-                Console.WriteLine("9. Deploy And Migrate To NM!");
-                Console.WriteLine("10. Send transaction to MainExchange!");
+                Console.WriteLine("6. Deploy main exchange contract with multiple owners!(Make sure that jobs are stopped)");
+                Console.WriteLine("7. Add more owners to Main Exchange Contract with multiple owners!(Add addresses with some eth on it)");
+                Console.WriteLine("9. Deploy And Migrate To NM!(Make sure that jobs are stopped)");
+                Console.WriteLine("10. Send transaction to MainExchange!(Make sure that jobs are stopped)");
                 Console.WriteLine("0. Exit");
 
                 var input = Console.ReadLine();
@@ -429,27 +429,36 @@ namespace ContractBuilder
 
         static async Task SendTransactionFromMainExchange()
         {
+            string operationId = "";
+            IPendingOperationService pendingOperationService = ServiceProvider.GetService<IPendingOperationService>();
             try
             {
                 MonitoringOperationJob job = ServiceProvider.GetService<MonitoringOperationJob>();
-                IPendingOperationService pendingOperationService = ServiceProvider.GetService<IPendingOperationService>();
+                IExchangeContractService exchangeContractService = ServiceProvider.GetService<IExchangeContractService>();
                 string filePath = Path.Combine(AppContext.BaseDirectory, "transferTransaction.txt");
                 var content = File.ReadAllText(filePath);
                 TransferModel model = Newtonsoft.Json.JsonConvert.DeserializeObject<TransferModel>(content);
                 var addressUtil = new AddressUtil();
-
                 BigInteger amount = BigInteger.Parse(model.Amount);
-                var operationId = await pendingOperationService.Transfer(model.Id, model.CoinAdapterAddress,
+                operationId = await pendingOperationService.TransferWithNoChecks(model.Id, model.CoinAdapterAddress,
                     addressUtil.ConvertToChecksumAddress(model.FromAddress), addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
-                await job.Execute(new Services.New.Models.OperationHashMatchMessage()
+
+                Console.WriteLine($"OperationId - {operationId}");
+                await job.ProcessOperation(new Services.New.Models.OperationHashMatchMessage()
                 {
                     OperationId = operationId,
-                },null);
+                },null, exchangeContractService.TransferWithoutSignCheck);
+
+                Console.WriteLine("Start removing from processing queue");
                 await pendingOperationService.RemoveFromPendingOperationQueue(operationId);
+                Console.WriteLine("Stop removing from processing queue");
             }
             catch (Exception e)
             {
                 Console.WriteLine($"{e.Message} - {e.StackTrace}");
+                Console.WriteLine("Start removing from processing queue");
+                await pendingOperationService.RemoveFromPendingOperationQueue(operationId);
+                Console.WriteLine("Stop removing from processing queue");
             }
         }
         #endregion
@@ -462,14 +471,14 @@ namespace ContractBuilder
                 //Console.WriteLine("Type new main exchange address:");
                 //string newMainExchangeAddress = Console.ReadLine().Trim().ToLower();
                 var settings = GetCurrentSettings();
-                var abi = GetFileContent("MainExchangeMultipleOwners.abi");
                 var exchangeService = ServiceProvider.GetService<IExchangeContractService>();
                 var ethereumTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
                 IEnumerable<ICoin> adapters = await ServiceProvider.GetService<ICoinRepository>().GetAll();
                 foreach (var adapter in adapters)
                 {
                     string transactionHash = await exchangeService.ChangeMainContractInCoin(adapter.AdapterAddress,
-                        mainExchangeAddress, abi);
+                        mainExchangeAddress, mainExchangeAbi);
+                    Console.WriteLine($"Coin adapter: {adapter.AdapterAddress} - reassign main exchange {transactionHash}");
 
                     while (!await ethereumTransactionService.IsTransactionExecuted(transactionHash, Constants.GasForCoinTransaction))
                     {
@@ -479,7 +488,7 @@ namespace ContractBuilder
 
                 IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
                 baseSettings.MainExchangeContract.Address = mainExchangeAddress;
-                baseSettings.MainExchangeContract.Abi = GetFileContent("MainExchangeMultipleOwners.abi");
+                baseSettings.MainExchangeContract.Abi = mainExchangeAbi;
 
                 Console.WriteLine("Coin adapters has been migrated");
             }
