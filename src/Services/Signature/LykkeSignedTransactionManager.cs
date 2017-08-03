@@ -35,7 +35,11 @@ namespace LkeServices.Signature
         public BigInteger DefaultGasPrice { get; set; }
         public BigInteger DefaultGas { get; set; }
 
-        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings, INonceCalculator nonceCalculator)
+        public LykkeSignedTransactionManager(Web3 web3,
+            ILykkeSigningAPI signatureApi,
+            IBaseSettings baseSettings,
+            INonceCalculator nonceCalculator,
+            IRoundRobinTransactionSender roundRobinTransactionSender)
         {
             _nonceCalculator = nonceCalculator;
             _baseSettings = baseSettings;
@@ -80,7 +84,7 @@ namespace LkeServices.Signature
         public async Task<string> SendTransactionAsync<T>(T transaction) where T : TransactionInput
         {
             var value = (transaction?.Value ?? new BigInteger(0));
-            return await SendTransactionASync(transaction.From, transaction.To, 
+            return await SendTransactionASync(transaction.From, transaction.To,
                 transaction.Data,
                 value,
                 transaction.GasPrice,
@@ -103,16 +107,31 @@ namespace LkeServices.Signature
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
             var currentGasPrice = currentGasPriceHex.Value;
             HexBigInteger nonce;
+
+            #region RoundRobin
             try
             {
                 await _readLock.WaitAsync();
-                nonce = await GetNonceAsync(from);
+                if (from == Constants.AddressForRoundRobinTransactionSending)
+                {
+                    //Send from RoundRobin pool
+                    AddressNonceModel senderInfo = await _roundRobinTransactionSender.GetSenderAndHisNonce();
+                    from = senderInfo.Address;
+                    nonce = new HexBigInteger(senderInfo.Nonce);
+                }
+                else
+                {
+                    //Send from EthereumMainAccount
+                    nonce = await _roundRobinTransactionSender.GetNonceAsync(from);
+                }
             }
             finally
             {
                 _readLock.Release();
             }
-            
+
+            #endregion
+
             BigInteger selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
             if (selectedGasPrice > _maxGasPrice)
             {

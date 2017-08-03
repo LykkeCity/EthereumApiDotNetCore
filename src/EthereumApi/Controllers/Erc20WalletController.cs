@@ -43,15 +43,18 @@ namespace EthereumApi.Controllers
             string serialized = JsonConvert.SerializeObject(ercTransaction);
             await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", serialized, "Get transaction for signing", DateTime.UtcNow);
 
-            string transactionHex = await _erc20Service.GetTransferTransactionRaw(new Erc20Transaction()
+            Erc20Transaction transaction = new Erc20Transaction()
             {
                 TokenAddress = ercTransaction.TokenAddress,
                 TokenAmount = BigInteger.Parse(ercTransaction.TokenAmount),
                 FromAddress = ercTransaction.FromAddress,
                 GasAmount = BigInteger.Parse(ercTransaction.GasAmount),
                 GasPrice = BigInteger.Parse(ercTransaction.GasPrice),
-                ToAddress = ercTransaction.ToAddress
-            });
+                ToAddress = ercTransaction.ToAddress,
+                Value = BigInteger.Parse(ercTransaction.Value),
+            };
+            await _erc20Service.ValidateInput(transaction);
+            string transactionHex = await _erc20Service.GetTransferTransactionRaw(transaction);
 
             await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized} + TransactionHex:{transactionHex}",
                 "Recieved transaction for signing", DateTime.UtcNow);

@@ -27,6 +27,11 @@ namespace EthereumApi.Models.Models
         [Required]
         [RegularExpression(Constants.BigIntTemplate)]
         public string GasPrice { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string Value { get; set; }
     }
 
     [DataContract]

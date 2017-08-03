@@ -36,6 +36,7 @@ namespace Services.PrivateWallet
     {
         Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
+        Task ValidateInput(Erc20Transaction transaction);
     }
 
     public class Erc20Service : IErc20Service
@@ -44,13 +45,25 @@ namespace Services.PrivateWallet
         private readonly INonceCalculator _nonceCalculator;
         private readonly IBaseSettings _settings;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
+        private readonly IErcInterfaceService _ercInterfaceService;
+        private readonly ITransactionValidationService _transactionValidationService;
+        private readonly ISignatureChecker _signatureChecker;
 
-        public Erc20Service(IWeb3 web3, INonceCalculator nonceCalculator, IBaseSettings settings, IRawTransactionSubmitter rawTransactionSubmitter)
+        public Erc20Service(IWeb3 web3, 
+            INonceCalculator nonceCalculator, 
+            IBaseSettings settings,
+            IRawTransactionSubmitter rawTransactionSubmitter,
+            IErcInterfaceService ercInterfaceService,
+            ITransactionValidationService transactionValidationService,
+            ISignatureChecker signatureChecker)
         {
             _rawTransactionSubmitter = rawTransactionSubmitter;
             _nonceCalculator = nonceCalculator;
             _web3 = web3;
             _settings = settings;
+            _ercInterfaceService = ercInterfaceService;
+            _transactionValidationService = transactionValidationService;
+            _signatureChecker = signatureChecker;
         }
 
         #region transfer
@@ -89,6 +102,47 @@ namespace Services.PrivateWallet
             string from, BigInteger gas, BigInteger gasPrice, BigInteger nonce, BigInteger value)
         {
             return new Nethereum.Signer.Transaction(erc20ContractAddress, value, nonce, gasPrice, gas, encodedFunctionCall);
+        }
+
+        public async Task ValidateInput(Erc20Transaction transaction)
+        {
+            await _transactionValidationService.ValidateAddressBalanceAsync(transaction.FromAddress, transaction.Value, transaction.GasAmount, transaction.GasPrice);
+            await ValidateTokenAddressBalanceAsync(transaction.FromAddress, transaction.TokenAddress, transaction.TokenAmount);
+        }
+
+        public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
+        {
+            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
+            bool isSignedRight = await _signatureChecker.CheckTransactionSign(fromAddress, signedTransaction);
+            string valueHex = transaction.Value.ToHex();
+            string gasLimit = transaction.GasLimit.ToHex();
+            string gasPrice = transaction.GasPrice.ToHex();
+            string erc20InvocationData = transaction.Data.ToHexCompact();
+            await _transactionValidationService.ThrowOnExistingHashAsync(transaction.Hash.ToHex());
+            ThrowOnWrongSignature(isSignedRight);
+            //TODO:
+            //await ValidateInput(fromAddress,
+            //    new HexBigInteger(transaction.Value.ToHex()),
+            //    new HexBigInteger(gasLimit),
+            //    new HexBigInteger(gasPrice));
+        }
+
+        public async Task ValidateTokenAddressBalanceAsync(string address, string tokenAddress, BigInteger tokenAmount)
+        {
+            var balance = await _ercInterfaceService.GetPendingBalanceForExternalTokenAsync(address, tokenAddress);
+
+            if (balance < tokenAmount)
+            {
+                throw new ClientSideException(ExceptionType.NotEnoughFunds, "Not enough tokens");
+            }
+        }
+
+        private void ThrowOnWrongSignature(bool isSignedRight)
+        {
+            if (!isSignedRight)
+            {
+                throw new ClientSideException(ExceptionType.WrongSign, "Wrong Signature");
+            }
         }
     }
 }

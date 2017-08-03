@@ -18,6 +18,7 @@ namespace Services.Signature
     public interface IRoundRobinTransactionSender
     {
         Task<AddressNonceModel> GetSenderAndHisNonce();
+        Task<HexBigInteger> GetNonceAsync(string fromAddress);
     }
 
     public class RoundRobinTransactionSender : IRoundRobinTransactionSender

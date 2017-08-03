@@ -2,6 +2,7 @@
 using Nethereum.ABI;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,8 @@ namespace Services
 
     public interface IErcInterfaceService
     {
-        Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress);
+        Task<BigInteger> GetPendingBalanceForExternalTokenAsync(string address, string externalTokenAddress);
+        Task<BigInteger> GetBalanceForExternalTokenAsync(string address, string externalTokenAddress);
         Task<string> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
     }
 
@@ -44,12 +46,18 @@ namespace Services
             _settings = settings;
         }
 
-        public async Task<BigInteger> GetBalanceForExternalTokenAsync(string transferContractAddress, string externalTokenAddress)
+        public async Task<BigInteger> GetPendingBalanceForExternalTokenAsync(string address, string externalTokenAddress)
         {
-            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
-            Function function = contract.GetFunction("balanceOf");
+            Function function = GetBalanceOfFunction(externalTokenAddress);
+            BigInteger result = await function.CallAsync<BigInteger>(address, BlockParameter.CreatePending());
 
-            BigInteger result = await function.CallAsync<BigInteger>(transferContractAddress);
+            return result;
+        }
+
+        public async Task<BigInteger> GetBalanceForExternalTokenAsync(string address, string externalTokenAddress)
+        {
+            Function function = GetBalanceOfFunction(externalTokenAddress);
+            BigInteger result = await function.CallAsync<BigInteger>(address);
 
             return result;
          }
@@ -82,6 +90,13 @@ namespace Services
             string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount);
 
             return trHash;
+        }
+
+        private Function GetBalanceOfFunction(string externalTokenAddress)
+        {
+            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
+            Function function = contract.GetFunction("balanceOf");
+            return function;
         }
     }
 }

@@ -40,17 +40,22 @@ namespace Services.PrivateWallet
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IPaymentService _paymentService;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
+        private readonly ISignatureChecker _signatureChecker;
+        private readonly ITransactionValidationService _transactionValidationService;
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
             IEthereumTransactionService ethereumTransactionService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            ISignatureChecker signatureChecker,
+            ITransactionValidationService transactionValidationService)
         {
             _rawTransactionSubmitter = rawTransactionSubmitter;
             _nonceCalculator = nonceCalculator;
             _web3 = web3;
             _ethereumTransactionService = ethereumTransactionService;
             _paymentService = paymentService;
+            _transactionValidationService = transactionValidationService;
         }
 
         public async Task<string> GetTransactionForSigning(EthTransaction ethTransaction)
@@ -91,9 +96,7 @@ namespace Services.PrivateWallet
         public async Task<string> SubmitSignedTransaction(string from, string signedTrHex)
         {
             await ValidateInputForSignedAsync(from, signedTrHex);
-
-            var ethSendTransaction = new EthSendRawTransaction(_web3.Client);
-            string transactionHex = await ethSendTransaction.SendRequestAsync(signedTrHex);
+            string transactionHex = await _rawTransactionSubmitter.SubmitSignedTransaction(from, signedTrHex);
 
             return transactionHex;
         }
@@ -114,7 +117,7 @@ namespace Services.PrivateWallet
         /// <exception cref="ClientSideException">Throws client side exception</exception>
         public async Task ValidateInputAsync(EthTransaction transaction)
         {
-            await ValidateAddressBalanceAsync(transaction.FromAddress, transaction.Value, transaction.GasAmount, transaction.GasPrice);
+            await _transactionValidationService.ValidateAddressBalanceAsync(transaction.FromAddress, transaction.Value, transaction.GasAmount, transaction.GasPrice);
         }
 
         public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
@@ -125,7 +128,7 @@ namespace Services.PrivateWallet
             string gasLimit = transaction.GasLimit.ToHex();
             string gasPrice = transaction.GasPrice.ToHex();
 
-            await ThrowOnExistingHashAsync(transaction.Hash.ToHex());
+            await _transactionValidationService.ThrowOnExistingHashAsync(transaction.Hash.ToHex());
             ThrowOnWrongSignature(isSignedRight);
             await ValidateAddressBalanceAsync(fromAddress,
                 new HexBigInteger(transaction.Value.ToHex()),
@@ -149,17 +152,6 @@ namespace Services.PrivateWallet
             if (!isSignedRight)
             {
                 throw new ClientSideException(ExceptionType.WrongSign, "Wrong Signature");
-            }
-        }
-
-        private async Task ThrowOnExistingHashAsync(string trHash)
-        {
-            bool transactionInPool = await _ethereumTransactionService.IsTransactionInPool(trHash);
-            TransactionReceipt reciept = await _ethereumTransactionService.GetTransactionReceipt(trHash);
-
-            if (transactionInPool || reciept != null)
-            {
-                throw new ClientSideException(ExceptionType.TransactionExists, $"Transaction with hash {trHash} already exists");
             }
         }
     }
