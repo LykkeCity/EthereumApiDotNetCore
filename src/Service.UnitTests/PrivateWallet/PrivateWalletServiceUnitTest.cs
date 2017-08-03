@@ -36,6 +36,8 @@ namespace Service.UnitTests.PrivateWallet
         private Mock<IPaymentService> _paymentServiceMock;
         private Mock<IWeb3> _web3Mock;
         private Mock<IEthereumTransactionService> _ethereumTransactionServiceMock;
+        private RawTransactionSubmitter _rawTransactionSubmitter;
+        private ITransactionValidationService _transactionValidationService;
         private ISignatureChecker _signatureChecker;
 
         [TestInitialize]
@@ -47,6 +49,7 @@ namespace Service.UnitTests.PrivateWallet
             _ethereumTransactionServiceMock = new Mock<IEthereumTransactionService>();
             _nonceCalc = (MockNonceCalculator)Config.Services.GetService<INonceCalculator>();
             _signatureChecker = Config.Services.GetService<ISignatureChecker>();
+            _transactionValidationService = Config.Services.GetService<ITransactionValidationService>();
             #region SetupMockWeb3
             _client.Setup(x => x.SendRequestAsync<string>(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(""));
@@ -74,7 +77,9 @@ namespace Service.UnitTests.PrivateWallet
             _privateWalletService = new PrivateWalletService(_web3Mock.Object, 
                 _nonceCalc, 
                 _ethereumTransactionServiceMock.Object,
-                _paymentServiceMock.Object);
+                _paymentServiceMock.Object,
+                _signatureChecker,
+                _transactionValidationService);
         }
 
         [TestMethod]
@@ -166,10 +171,12 @@ namespace Service.UnitTests.PrivateWallet
                 .Returns(Task.FromResult(new TransactionReceipt()));
             _ethereumTransactionServiceMock.Setup(x => x.IsTransactionInPool(It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
-            _privateWalletService = new PrivateWalletService(_web3Mock.Object,
-               _nonceCalc,
-               _ethereumTransactionServiceMock.Object,
-               _paymentServiceMock.Object);
+            _privateWalletService = new PrivateWalletService(_web3Mock.Object, _nonceCalc,
+                _rawTransactionSubmitter,
+                _ethereumTransactionServiceMock.Object,
+                _paymentServiceMock.Object,
+                _signatureChecker,
+                _transactionValidationService);
 
             #endregion
 
@@ -206,10 +213,12 @@ namespace Service.UnitTests.PrivateWallet
             _paymentServiceMock = new Mock<IPaymentService>();
             _paymentServiceMock.Setup(x => x.GetAddressBalancePendingInWei(TestConstants.PW_ADDRESS))
                 .Returns(Task.FromResult<BigInteger>(new BigInteger(100000000000000)));
-            _privateWalletService = new PrivateWalletService(_web3Mock.Object,
-               _nonceCalc,
-               _ethereumTransactionServiceMock.Object,
-               _paymentServiceMock.Object);
+            _privateWalletService = new PrivateWalletService(_web3Mock.Object, _nonceCalc,
+                _rawTransactionSubmitter,
+                _ethereumTransactionServiceMock.Object,
+                _paymentServiceMock.Object,
+                _signatureChecker,
+                _transactionValidationService);
 
             #endregion
 
