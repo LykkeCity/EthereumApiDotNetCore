@@ -43,6 +43,7 @@ namespace EthereumJobs.Config
             collection.AddSingleton<TransferTransactionQueueJob>();
             collection.AddSingleton<MonitoringOperationJob>();
             collection.AddSingleton<CashinIndexingJob>();
+            collection.AddSingleton<CoinEventResubmittJob>();
             #endregion
 
         }

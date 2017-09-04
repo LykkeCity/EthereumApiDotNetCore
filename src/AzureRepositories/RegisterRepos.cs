@@ -60,7 +60,10 @@ namespace AzureRepositories
                 new AzureTableStorage<OperationToHashMatchEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
                     provider.GetService<ILog>()),
                 new AzureTableStorage<HashToOperationMatchEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
+                    provider.GetService<ILog>()),
+                new AzureTableStorage<OperationToHashMatchHistoryEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
                     provider.GetService<ILog>())));
+
 
             services.AddSingleton<IBlockSyncedRepository>(provider => new BlockSyncedRepository(
                 new AzureTableStorage<BlockSyncedEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.BlockSyncedTable,

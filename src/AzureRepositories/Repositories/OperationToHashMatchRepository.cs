@@ -11,6 +11,36 @@ using System.Numerics;
 
 namespace AzureRepositories.Repositories
 {
+    public class OperationToHashMatchHistoryEntity : TableEntity, IOperationToHashMatch
+    {
+        public static string GetPartitionKey(string operationId)
+        {
+            return operationId;
+        }
+
+        public string TransactionHash
+        {
+            get { return this.RowKey; }
+            set { this.RowKey = value; }
+        }
+
+        public string OperationId
+        {
+            get;
+            set;
+        }
+
+        public static OperationToHashMatchHistoryEntity Create(IOperationToHashMatch match)
+        {
+            return new OperationToHashMatchHistoryEntity
+            {
+                PartitionKey = GetPartitionKey(match.OperationId),
+                OperationId = match.OperationId,
+                TransactionHash = match.TransactionHash
+            };
+        }
+    }
+
     public class HashToOperationMatchEntity : TableEntity, IOperationToHashMatch
     {
         public static string GetPartitionKey()
@@ -75,11 +105,15 @@ namespace AzureRepositories.Repositories
     {
         private readonly INoSQLTableStorage<OperationToHashMatchEntity> _table;
         private readonly INoSQLTableStorage<HashToOperationMatchEntity> _tableReverse;
+        private readonly INoSQLTableStorage<OperationToHashMatchHistoryEntity> _tableHistory;
 
-        public OperationToHashMatchRepository(INoSQLTableStorage<OperationToHashMatchEntity> table, INoSQLTableStorage<HashToOperationMatchEntity> table2)
+        public OperationToHashMatchRepository(INoSQLTableStorage<OperationToHashMatchEntity> table, 
+            INoSQLTableStorage<HashToOperationMatchEntity> table2,
+            INoSQLTableStorage<OperationToHashMatchHistoryEntity> tableHistory)
         {
             _table = table;
             _tableReverse = table2;
+            _tableHistory = tableHistory;
         }
 
         public async Task<IOperationToHashMatch> GetAsync(string operationId)
@@ -96,9 +130,25 @@ namespace AzureRepositories.Repositories
             return entity;
         }
 
+        public async Task<IEnumerable<IOperationToHashMatch>> GetHistoricalForOperationAsync(string operationId)
+        {
+            var entities = await _tableHistory.GetDataAsync(operationId);
+
+            return entities;
+        }
+
+        public async Task InsertOrReplaceHistoricalAsync(IOperationToHashMatch match)
+        {
+            var historyEntity = OperationToHashMatchHistoryEntity.Create(match);
+
+            await _tableHistory.InsertOrReplaceAsync(historyEntity);
+        }
+
         public async Task InsertOrReplaceAsync(IOperationToHashMatch match)
         {
             var entity = OperationToHashMatchEntity.Create(match);
+            var historyEntity = OperationToHashMatchHistoryEntity.Create(match);
+
             if (match.TransactionHash != null)
             {
                 var entityReverse = HashToOperationMatchEntity.Create(match);
@@ -110,6 +160,7 @@ namespace AzureRepositories.Repositories
             }
 
             await _table.InsertOrReplaceAsync(entity);
+            await _tableHistory.InsertOrReplaceAsync(historyEntity);
         }
 
         public async Task ProcessAllAsync(Func<IEnumerable<IOperationToHashMatch>, Task> processAction)
@@ -122,5 +173,14 @@ namespace AzureRepositories.Repositories
             await _table.GetDataByChunksAsync(OperationToHashMatchEntity.GetPartitionKey(), function);
         }
 
+        public async Task ProcessHistoricalAsync(string operationId, Func<IEnumerable<IOperationToHashMatch>, Task> processAction)
+        {
+            Action<IEnumerable<IOperationToHashMatch>> function = async (items) =>
+            {
+                await processAction(items);
+            };
+
+            await _tableHistory.GetDataByChunksAsync(operationId, function);
+        }
     }
 }
