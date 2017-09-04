@@ -31,6 +31,7 @@ namespace Service.UnitTests.Jobs
         private Mock<ICoinEventService> _coinEventService;
         private Mock<ITransferContractService> _transferContractService;
         private Mock<IEventTraceRepository> _eventTraceRepository;
+        public Mock<IQueueFactory> _queueFactory;
 
         [TestInitialize]
         public void Init()
@@ -42,6 +43,7 @@ namespace Service.UnitTests.Jobs
             _coinEventService = new Mock<ICoinEventService>();
             _transferContractService = new Mock<ITransferContractService>();
             _eventTraceRepository = new Mock<IEventTraceRepository>();
+            _queueFactory = new Mock<IQueueFactory>();
         }
 
         //1.
@@ -70,7 +72,7 @@ namespace Service.UnitTests.Jobs
             _pendingOperationService.Setup(x => x.GetOperationAsync(pendingOperation.OperationId)).Returns(Task.FromResult(pendingOperation));
             _transferContractService.Setup(x => x.GetBalanceOnAdapter(pendingOperation.CoinAdapterAddress, pendingOperation.FromAddress))
                 .Returns(Task.FromResult(new BigInteger(0)));
-            _coinEventService.Setup( x => x.PublishEvent(It.IsAny<ICoinEvent>(), It.IsAny<bool>())).Returns(Task.FromResult(0)).Verifiable();
+            _coinEventService.Setup(x => x.PublishEvent(It.IsAny<ICoinEvent>(), It.IsAny<bool>())).Returns(Task.FromResult(0)).Verifiable();
 
             #endregion
 
@@ -131,7 +133,8 @@ namespace Service.UnitTests.Jobs
                 _exchangeContractService.Object,
                 _coinEventService.Object,
                 _transferContractService.Object,
-                _eventTraceRepository.Object
+                _eventTraceRepository.Object,
+                _queueFactory.Object
                 );
         }
     }

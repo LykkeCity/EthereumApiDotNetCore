@@ -21,8 +21,11 @@ namespace Core.Repositories
     {
         Task<IOperationToHashMatch> GetByHashAsync(string transactionHash);
         Task<IOperationToHashMatch> GetAsync(string operationId);
+        Task<IEnumerable<IOperationToHashMatch>> GetHistoricalForOperationAsync(string operationId);
         Task InsertOrReplaceAsync(IOperationToHashMatch match);
+        Task InsertOrReplaceHistoricalAsync(IOperationToHashMatch match);
         Task ProcessAllAsync(Func<IEnumerable<IOperationToHashMatch>, Task> processAction);
+        Task ProcessHistoricalAsync(string operationId, Func<IEnumerable<IOperationToHashMatch>, Task> processAction);
     }
 
     public interface ICreatePendingOperation

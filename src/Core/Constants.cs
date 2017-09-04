@@ -18,6 +18,7 @@ namespace Core
         public const string EthereumOutQueue = "ethereum-queue-out";
         public const string EmailNotifierQueue = "emailsqueue";
         public const string ContractPoolQueuePrefix = "ethereum-tc-pool";
+        public const string CoinEventResubmittQueue = "ethereum-coin-event-resubmitt-queue";
 
         /// <summary>
         /// Used to internal monitoring of refill transactions

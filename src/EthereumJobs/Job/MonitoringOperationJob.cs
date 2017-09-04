@@ -13,6 +13,10 @@ using Core.Repositories;
 using Services;
 using Services.New.Models;
 using System.Numerics;
+using Core.Exceptions;
+using AzureStorage.Queue;
+using Newtonsoft.Json;
+using EdjCase.JsonRpc.Client;
 
 namespace EthereumJobs.Job
 {
@@ -25,14 +29,17 @@ namespace EthereumJobs.Job
         private readonly ICoinEventService _coinEventService;
         private readonly ITransferContractService _transferContractService;
         private readonly IEventTraceRepository _eventTraceRepository;
+        private readonly IQueueExt _coinEventResubmittQueue;
 
-        public MonitoringOperationJob(ILog log, 
+        public MonitoringOperationJob(
+            ILog log,
             IBaseSettings settings,
             IPendingOperationService pendingOperationService, 
             IExchangeContractService exchangeContractService,
             ICoinEventService coinEventService,
             ITransferContractService transferContractService, 
-            IEventTraceRepository eventTraceRepository)
+            IEventTraceRepository eventTraceRepository,
+            IQueueFactory queueFactory)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;
@@ -41,6 +48,7 @@ namespace EthereumJobs.Job
             _log = log;
             _coinEventService = coinEventService;
             _transferContractService = transferContractService;
+            _coinEventResubmittQueue = queueFactory.Build(Constants.CoinEventResubmittQueue);
         }
 
         [QueueTrigger(Constants.PendingOperationsQueue, 100, true)]
@@ -49,8 +57,15 @@ namespace EthereumJobs.Job
             try
             {
                 var operation = await _pendingOperationService.GetOperationAsync(opMessage.OperationId);
+                if (operation == null)
+                {
+                    await _coinEventResubmittQueue.PutRawMessageAsync(JsonConvert.SerializeObject(opMessage));
+
+                    return;
+                }
                 var guid = Guid.Parse(operation.OperationId);
                 var amount = BigInteger.Parse(operation.Amount);
+
                 BigInteger resultAmount;
                 string transactionHash = null;
                 CoinEventType? eventType = null;
@@ -103,7 +118,13 @@ namespace EthereumJobs.Job
                     return;
                 }
             }
-            catch (EdjCase.JsonRpc.Client.RpcClientException exc)
+            catch (ClientSideException clientSideExc) when (clientSideExc.ExceptionType == ExceptionType.OperationWithIdAlreadyExists)
+            {
+                await _coinEventResubmittQueue.PutRawMessageAsync(JsonConvert.SerializeObject(opMessage));
+
+                return;
+            }
+            catch (RpcClientException exc)
             {
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "RpcException", exc);
                 opMessage.LastError = exc.Message;
