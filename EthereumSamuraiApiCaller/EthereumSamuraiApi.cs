@@ -198,19 +198,19 @@ namespace EthereumSamuraiApiCaller
             List<string> _queryParameters = new List<string>();
             if (startBlock != null)
             {
-                _queryParameters.Add(string.Format("StartBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(startBlock, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("startBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(startBlock, SerializationSettings).Trim('"'))));
             }
             if (stopBlock != null)
             {
-                _queryParameters.Add(string.Format("StopBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(stopBlock, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("stopBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(stopBlock, SerializationSettings).Trim('"'))));
             }
             if (start != null)
             {
-                _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
             }
             if (count != null)
             {
-                _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
             }
             if (_queryParameters.Count > 0)
             {
