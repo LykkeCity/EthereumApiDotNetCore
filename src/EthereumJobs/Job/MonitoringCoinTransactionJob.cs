@@ -57,11 +57,6 @@ namespace EthereumJobs.Job
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
         public async Task Execute(CoinTransactionMessage transaction, QueueTriggeringContext context)
         {
-            if (transaction?.TransactionHash == "0xea0a914111f572b89f599e45ed35ffebef0bbb57bbe3d393095110c5525b3740")
-            {
-                return;
-            }
-
             ICoinTransaction coinTransaction = null;
             try
             {
