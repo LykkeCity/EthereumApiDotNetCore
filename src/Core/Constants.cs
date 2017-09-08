@@ -84,6 +84,8 @@ namespace Core
         public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
         public const string NonceCacheTable = "NonceCache";
+        public const string UserAssignmentFailTable = "UserAssignmentFail";
+        
         public static BigInteger DefaultTransactionGas = 21000;
     }
 
