@@ -16,6 +16,7 @@ using Core.Exceptions;
 using Services.Coins.Models;
 using AzureStorage.Queue;
 using System.Linq;
+using Core.Notifiers;
 
 namespace EthereumJobs.Job
 {
@@ -30,6 +31,7 @@ namespace EthereumJobs.Job
         private readonly ITransferContractService _transferContractService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IQueueExt _transactionMonitoringQueue;
+        private readonly ISlackNotifier _slackNotifier;
 
         public CoinEventResubmittJob(
             ILog log,
@@ -40,7 +42,8 @@ namespace EthereumJobs.Job
             ITransferContractService transferContractService,
             IEventTraceRepository eventTraceRepository,
             IEthereumTransactionService ethereumTransactionService,
-            IQueueFactory queueFactory)
+            IQueueFactory queueFactory,
+            ISlackNotifier slackNotifier)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;
@@ -51,6 +54,7 @@ namespace EthereumJobs.Job
             _transferContractService = transferContractService;
             _ethereumTransactionService = ethereumTransactionService;
             _transactionMonitoringQueue = queueFactory.Build(Constants.TransactionMonitoringQueue);
+            _slackNotifier = slackNotifier;
         }
 
         [QueueTrigger(Constants.CoinEventResubmittQueue, 100, true)]
@@ -61,6 +65,7 @@ namespace EthereumJobs.Job
                 var historicalMessages = await _pendingOperationService.GetHistoricalAsync(opMessage.OperationId);
                 if (historicalMessages == null || historicalMessages.Count() == 0)
                 {
+                    //Process cashin operations
                     var coinEvent = await _coinEventService.GetCoinEventById(opMessage.OperationId);
                     if (coinEvent != null &&
                         await _ethereumTransactionService.IsTransactionExecuted(coinEvent.TransactionHash, Constants.GasForCoinTransaction))
@@ -79,35 +84,51 @@ namespace EthereumJobs.Job
 
                         return;
                     }
-                }
-
-                foreach (var match in historicalMessages)
-                {
-                    if (!string.IsNullOrEmpty(match.TransactionHash) &&
-                        await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction))
+                    else
                     {
-                        var coinEvent = await _coinEventService.GetCoinEventById(match.OperationId);
-                        if (coinEvent != null && coinEvent.TransactionHash.ToLower() == match.TransactionHash.ToLower())
+                        context.MoveMessageToPoison(opMessage.ToJson());
+                        await _slackNotifier.ErrorAsync($"Moved message {opMessage.OperationId} to poison: no corresponding coinEvent");
+                    }
+                }
+                else
+                {
+                    //Process transfer/cashout operations
+                    foreach (var match in historicalMessages)
+                    {
+                        if (!string.IsNullOrEmpty(match.TransactionHash) &&
+                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction))
                         {
-                            await _transactionMonitoringQueue.PutRawMessageAsync(
-                                Newtonsoft.Json.JsonConvert.SerializeObject(
-                                    new CoinTransactionMessage()
-                                    {
-                                        TransactionHash = coinEvent.TransactionHash,
-                                        OperationId = match.OperationId,
-                                        LastError = "FROM_JOB",
-                                        PutDateTime = DateTime.UtcNow
-                                    }
-                                )
-                            );
+                            var coinEvent = await _coinEventService.GetCoinEventById(match.OperationId);
+                            if (coinEvent != null && coinEvent.TransactionHash.ToLower() == match.TransactionHash.ToLower())
+                            {
+                                await _transactionMonitoringQueue.PutRawMessageAsync(
+                                    Newtonsoft.Json.JsonConvert.SerializeObject(
+                                        new CoinTransactionMessage()
+                                        {
+                                            TransactionHash = coinEvent.TransactionHash,
+                                            OperationId = match.OperationId,
+                                            LastError = "FROM_JOB",
+                                            PutDateTime = DateTime.UtcNow
+                                        }
+                                    )
+                                );
 
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
+                if (opMessage.DequeueCount > 100000)
+                {
+                    context.MoveMessageToPoison(opMessage.ToJson());
+                    await _slackNotifier.ErrorAsync($"Moved message {opMessage.OperationId} to poison: dequeue count is {opMessage.DequeueCount }" +
+                        $" error is {ex.Message}");
+
+                    return;
+                }
                 opMessage.LastError = ex.Message;
                 opMessage.DequeueCount++;
                 context.MoveMessageToEnd(opMessage.ToJson());
@@ -115,6 +136,17 @@ namespace EthereumJobs.Job
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "", ex);
 
                 return;
+            }
+
+            if (opMessage.DequeueCount > 100000)
+            {
+                context.MoveMessageToPoison(opMessage.ToJson());
+                await _slackNotifier.ErrorAsync($"Moved message {opMessage.OperationId} to poison: dequeue count is {opMessage.DequeueCount }");
+            }
+            else
+            {
+                opMessage.DequeueCount++;
+                context.MoveMessageToEnd(opMessage.ToJson());
             }
         }
     }

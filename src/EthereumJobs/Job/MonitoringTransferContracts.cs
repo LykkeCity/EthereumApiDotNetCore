@@ -10,6 +10,9 @@ using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Core;
 using Nethereum.Util;
+using AzureStorage.Queue;
+using Newtonsoft.Json;
+using Core.Notifiers;
 
 namespace EthereumJobs.Job
 {
@@ -27,6 +30,9 @@ namespace EthereumJobs.Job
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly AddressUtil _util;
         private readonly ITransferContractUserAssignmentQueueService _transferContractUserAssignmentQueueService;
+        private readonly IUserAssignmentFailRepository _userAssignmentFailRepository;
+        private readonly IQueueExt _queueUserAssignment;
+        private readonly ISlackNotifier _slackNotifier;
 
         public MonitoringTransferContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -38,7 +44,10 @@ namespace EthereumJobs.Job
             IUserTransferWalletRepository userTransferWalletRepository,
             ITransferContractTransactionService transferContractTransactionService,
             IEthereumTransactionService ethereumTransactionService,
-            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService
+            ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
+            IUserAssignmentFailRepository userAssignmentFailRepository,
+            IQueueFactory queueFactory,
+            ISlackNotifier slackNotifier
             )
         {
             _util = new AddressUtil();
@@ -53,9 +62,12 @@ namespace EthereumJobs.Job
             _userTransferWalletRepository = userTransferWalletRepository;
             _transferContractTransactionService = transferContractTransactionService;
             _transferContractUserAssignmentQueueService = transferContractUserAssignmentQueueService;
+            _userAssignmentFailRepository = userAssignmentFailRepository;
+            _queueUserAssignment = queueFactory.Build(Constants.TransferContractUserAssignmentQueueName);
+            _slackNotifier = slackNotifier;
         }
 
-        [TimerTrigger("0.00:04:00")]
+        [TimerTrigger("0.00:00:30")]
         public async Task Execute()
         {
             await _transferContractsRepository.ProcessAllAsync(async (item) =>
@@ -75,7 +87,9 @@ namespace EthereumJobs.Job
                             }
                             if (!assignmentCompleted)
                             {
+                                //await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
                                 await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
+
                                 throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                             }
                         }
@@ -113,12 +127,61 @@ namespace EthereumJobs.Job
                             }
                         }
                     }
+                    //else
+                    //{
+                    //    await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
+                    //}
                 }
                 catch (Exception e)
                 {
                     await _logger.WriteErrorAsync("MonitoringTransferContracts", "Execute", "", e, DateTime.UtcNow);
                 }
             });
+        }
+
+        public async Task UpdateUserAssignmentFail(string contractAddress, string userAddress, string coinAdapter)
+        {
+            var canBeRestoredInternally = !string.IsNullOrEmpty(userAddress) && userAddress == Constants.EmptyEthereumAddress;
+            var userAssignmentFail = await _userAssignmentFailRepository.GetAsync(contractAddress);
+
+            if (userAssignmentFail == null)
+            {
+                userAssignmentFail = new UserAssignmentFail()
+                {
+                    CanBeRestoredInternally = canBeRestoredInternally,
+                    ContractAddress = contractAddress,
+                    FailCount = 0
+                };
+            }
+
+            if (userAssignmentFail.FailCount == 5)
+            {
+                if (canBeRestoredInternally)
+                {
+                    var message = new TransferContractUserAssignment()
+                    {
+                        CoinAdapterAddress = coinAdapter,
+                        TransferContractAddress = contractAddress,
+                        UserAddress = userAddress
+                    };
+
+                    await _queueUserAssignment.PutRawMessageAsync(JsonConvert.SerializeObject(message));
+                    userAssignmentFail.FailCount = 0;
+                }
+                else
+                {
+                    await _slackNotifier.ErrorAsync($"TransferAddress - {contractAddress}, UserAddress - {userAddress}, " +
+                        $"CoinAdapter Address - {coinAdapter} can't be restored internally");
+                }
+            } else
+            {
+                userAssignmentFail.FailCount++;
+            }
+
+            if (canBeRestoredInternally)
+            {
+                await _userAssignmentFailRepository.SaveAsync(userAssignmentFail);
+            }
         }
     }
 }

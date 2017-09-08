@@ -113,6 +113,10 @@ namespace AzureRepositories
                     , provider.GetService<ILog>())
                 , new AzureTableStorage<AzureIndex>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinTableInedex
                    , provider.GetService<ILog>()))));
+
+            services.AddSingleton<IUserAssignmentFailRepository>(provider => new UserAssignmentFailRepository(
+                new AzureTableStorage<UserAssignmentFailEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.UserAssignmentFailTable,
+                    provider.GetService<ILog>())));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
