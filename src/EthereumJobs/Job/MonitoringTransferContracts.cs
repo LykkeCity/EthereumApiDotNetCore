@@ -67,7 +67,7 @@ namespace EthereumJobs.Job
             _slackNotifier = slackNotifier;
         }
 
-        [TimerTrigger("0.00:00:30")]
+        [TimerTrigger("0.00:04:00")]
         public async Task Execute()
         {
             await _transferContractsRepository.ProcessAllAsync(async (item) =>
