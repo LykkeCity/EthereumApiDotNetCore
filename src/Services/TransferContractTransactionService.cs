@@ -95,7 +95,17 @@ namespace Services
                     return;
                 }
 
-                var opId = $"InternalOperation-{Guid.NewGuid().ToString()}";
+                var userAddress = await _transferContractService.GetUserAddressForTransferContract(contractTransferTr.ContractAddress);
+                if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
+                {
+                    await UpdateUserTransferWallet(contractTransferTr);
+                    await _logger.WriteInfoAsync("TransferContractTransactionService", "TransferToCoinContract", "",
+                        $"Can't cashin: there is no user assigned to the transfer contract {contractTransferTr.ContractAddress}", DateTime.UtcNow);
+
+                    return;
+                }
+
+                    var opId = $"InternalOperation-{Guid.NewGuid().ToString()}";
                 var transactionHash = await _transferContractService.RecievePaymentFromTransferContract(contractEntity.ContractAddress, contractEntity.CoinAdapterAddress);
                 await _coinEventService.PublishEvent(new CoinEvent(opId, 
                     transactionHash, contractTransferTr.ContractAddress, contractTransferTr.UserAddress,
