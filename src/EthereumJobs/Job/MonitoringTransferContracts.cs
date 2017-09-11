@@ -80,18 +80,10 @@ namespace EthereumJobs.Job
                         var userAddress = await _transferContractService.GetUserAddressForTransferContract(item.ContractAddress);
                         if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
                         {
-                            bool assignmentCompleted = false;
-                            if (!string.IsNullOrEmpty(item.AssignmentHash))
-                            {
-                                assignmentCompleted = await _ethereumTransactionService.IsTransactionExecuted(item.AssignmentHash, Constants.GasForCoinTransaction);
-                            }
-                            if (!assignmentCompleted)
-                            {
-                                //await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
-                                await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
+                            //await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
+                            await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
 
-                                throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
-                            }
+                            throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                         }
                         //it is a transfer wallet
                         IUserTransferWallet wallet = await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, item.ContractAddress);
@@ -173,7 +165,8 @@ namespace EthereumJobs.Job
                     await _slackNotifier.ErrorAsync($"TransferAddress - {contractAddress}, UserAddress - {userAddress}, " +
                         $"CoinAdapter Address - {coinAdapter} can't be restored internally");
                 }
-            } else
+            }
+            else
             {
                 userAssignmentFail.FailCount++;
             }
