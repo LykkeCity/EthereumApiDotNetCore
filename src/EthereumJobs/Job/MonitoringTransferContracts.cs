@@ -18,6 +18,7 @@ namespace EthereumJobs.Job
 {
     public class MonitoringTransferContracts
     {
+        private const int _attempsBeforeReassign = 20;
         private readonly ILog _logger;
         private readonly IPaymentService _paymentService;
         private readonly ITransferContractRepository _transferContractsRepository;
@@ -80,7 +81,7 @@ namespace EthereumJobs.Job
                         var userAddress = await _transferContractService.GetUserAddressForTransferContract(item.ContractAddress);
                         if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
                         {
-                            //await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
+                            await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
                             await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
 
                             throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
@@ -119,10 +120,10 @@ namespace EthereumJobs.Job
                             }
                         }
                     }
-                    //else
-                    //{
-                    //    await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
-                    //}
+                    else
+                    {
+                        await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -146,7 +147,7 @@ namespace EthereumJobs.Job
                 };
             }
 
-            if (userAssignmentFail.FailCount == 5)
+            if (userAssignmentFail.FailCount == _attempsBeforeReassign)
             {
                 if (canBeRestoredInternally)
                 {

@@ -131,7 +131,7 @@ namespace Services
 
             string coinAbi     = _settings.CoinAbi;
             Contract contract  = _web3.Eth.GetContract(coinAbi, transferContract.CoinAdapterAddress);
-            Function function  = contract.GetFunction("transferContractUser");
+            Function function  = contract.GetFunction("getTransferAddressUser");
             string userAddress = await function.CallAsync<string>(transferContractAddress);
 
             return userAddress;
