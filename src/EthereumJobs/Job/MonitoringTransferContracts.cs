@@ -134,7 +134,8 @@ namespace EthereumJobs.Job
 
         public async Task UpdateUserAssignmentFail(string contractAddress, string userAddress, string coinAdapter)
         {
-            var canBeRestoredInternally = !string.IsNullOrEmpty(userAddress) && userAddress == Constants.EmptyEthereumAddress;
+            var canBeRestoredInternally = !string.IsNullOrEmpty(userAddress) && userAddress != Constants.EmptyEthereumAddress;
+
             var userAssignmentFail = await _userAssignmentFailRepository.GetAsync(contractAddress);
 
             if (userAssignmentFail == null)
@@ -165,6 +166,8 @@ namespace EthereumJobs.Job
                 {
                     await _slackNotifier.ErrorAsync($"TransferAddress - {contractAddress}, UserAddress - {userAddress}, " +
                         $"CoinAdapter Address - {coinAdapter} can't be restored internally");
+
+                    return;
                 }
             }
             else
@@ -172,10 +175,7 @@ namespace EthereumJobs.Job
                 userAssignmentFail.FailCount++;
             }
 
-            if (canBeRestoredInternally)
-            {
-                await _userAssignmentFailRepository.SaveAsync(userAssignmentFail);
-            }
+            await _userAssignmentFailRepository.SaveAsync(userAssignmentFail);
         }
     }
 }
