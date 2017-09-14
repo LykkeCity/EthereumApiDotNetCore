@@ -32,6 +32,7 @@ namespace EthereumJobs.Job
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IQueueExt _transactionMonitoringQueue;
         private readonly ISlackNotifier _slackNotifier;
+        private IOperationResubmittRepository _operationResubmittRepository;
 
         public CoinEventResubmittJob(
             ILog log,
@@ -43,7 +44,8 @@ namespace EthereumJobs.Job
             IEventTraceRepository eventTraceRepository,
             IEthereumTransactionService ethereumTransactionService,
             IQueueFactory queueFactory,
-            ISlackNotifier slackNotifier)
+            ISlackNotifier slackNotifier,
+            IOperationResubmittRepository operationResubmittRepository)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;
@@ -55,6 +57,7 @@ namespace EthereumJobs.Job
             _ethereumTransactionService = ethereumTransactionService;
             _transactionMonitoringQueue = queueFactory.Build(Constants.TransactionMonitoringQueue);
             _slackNotifier = slackNotifier;
+            _operationResubmittRepository = operationResubmittRepository;
         }
 
         [QueueTrigger(Constants.CoinEventResubmittQueue, 100, true)]
@@ -62,6 +65,24 @@ namespace EthereumJobs.Job
         {
             try
             {
+                string operatioId = opMessage.OperationId;
+                IOperationResubmitt opResubmitCounter = await _operationResubmittRepository.GetAsync(operatioId);
+                if (opResubmitCounter == null)
+                {
+                    opResubmitCounter = new OperationResubmitt()
+                    {
+                        OperationId = operatioId,
+                        ResubmittCount = 0
+                    };
+                }
+                if (opResubmitCounter.ResubmittCount > 2)
+                {
+                    await _log.WriteWarningAsync("CoinEventResubmittJob", "Execute", "", $"Message put to poison {opMessage.OperationId}");
+                    context.MoveMessageToPoison(opMessage.ToJson());
+                    
+                    return;
+                }
+
                 var historicalMessages = await _pendingOperationService.GetHistoricalAsync(opMessage.OperationId);
                 if (historicalMessages == null || historicalMessages.Count() == 0)
                 {
@@ -70,17 +91,7 @@ namespace EthereumJobs.Job
                     if (coinEvent != null &&
                         await _ethereumTransactionService.IsTransactionExecuted(coinEvent.TransactionHash, Constants.GasForCoinTransaction))
                     {
-                        await _transactionMonitoringQueue.PutRawMessageAsync(
-                            Newtonsoft.Json.JsonConvert.SerializeObject(
-                                new CoinTransactionMessage()
-                                {
-                                    TransactionHash = coinEvent.TransactionHash,
-                                    OperationId = coinEvent.OperationId,
-                                    LastError = "FROM_JOB",
-                                    PutDateTime = DateTime.UtcNow
-                                }
-                            )
-                        );
+                        await ResubmittTransactionAsync(coinEvent.TransactionHash, operatioId, opResubmitCounter);
 
                         return;
                     }
@@ -101,17 +112,7 @@ namespace EthereumJobs.Job
                             var coinEvent = await _coinEventService.GetCoinEventById(match.OperationId);
                             if (coinEvent != null && coinEvent.TransactionHash.ToLower() == match.TransactionHash.ToLower())
                             {
-                                await _transactionMonitoringQueue.PutRawMessageAsync(
-                                    Newtonsoft.Json.JsonConvert.SerializeObject(
-                                        new CoinTransactionMessage()
-                                        {
-                                            TransactionHash = coinEvent.TransactionHash,
-                                            OperationId = match.OperationId,
-                                            LastError = "FROM_JOB",
-                                            PutDateTime = DateTime.UtcNow
-                                        }
-                                    )
-                                );
+                                await ResubmittTransactionAsync(match.TransactionHash, operatioId, opResubmitCounter);
 
                                 break;
                             }
@@ -149,5 +150,24 @@ namespace EthereumJobs.Job
                 context.MoveMessageToEnd(opMessage.ToJson());
             }
         }
+
+
+        private async Task ResubmittTransactionAsync(string transactionHash, string operationId, IOperationResubmitt counter)
+        {
+            await _transactionMonitoringQueue.PutRawMessageAsync(
+                            Newtonsoft.Json.JsonConvert.SerializeObject(
+                                new CoinTransactionMessage()
+                                {
+                                    TransactionHash = transactionHash,
+                                    OperationId = operationId,
+                                    LastError = "FROM_JOB",
+                                    PutDateTime = DateTime.UtcNow
+                                }
+                            ));
+
+            counter.ResubmittCount++;
+            await _operationResubmittRepository.InsertOrReplaceAsync(counter);
+        }
     }
 }
+
