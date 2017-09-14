@@ -85,7 +85,8 @@ namespace Core
         public const string PendingOperationsQueue = "pending-operations";
         public const string NonceCacheTable = "NonceCache";
         public const string UserAssignmentFailTable = "UserAssignmentFail";
-        
+        public const string OperationResubmittTable = "OperationResubmitt";
+
         public static BigInteger DefaultTransactionGas = 21000;
     }
 
