@@ -98,7 +98,7 @@ namespace Services.Coins
 
         public bool IsValidAddress(string address)
         {
-            if (new Regex("!^(0x)?[0-9a-f]{40}$", RegexOptions.IgnoreCase).IsMatch(address))
+            if (!new Regex("^(0x)?[0-9a-f]{40}$", RegexOptions.IgnoreCase).IsMatch(address))
             {
                 // check if it has the basic requirements of an address
                 return false;
