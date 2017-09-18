@@ -23,5 +23,7 @@ namespace BusinessModels
         public bool HasError { get; set; }
         public int TransactionIndexInBlock { get; set; }
         public int MessageIndex { get; set; }
+        public string GasUsed { get; set; }
+        public string GasPrice { get; set; }
     }
 }

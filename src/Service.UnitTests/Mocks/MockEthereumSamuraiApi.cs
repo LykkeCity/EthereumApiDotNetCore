@@ -143,6 +143,11 @@ namespace Service.UnitTests.Mocks
             return Task.FromResult(httpResponse);
         }
 
+        public Task<HttpOperationResponse<object>> ApiErc20BalanceGetErc20BalanceByAddressPostWithHttpMessagesAsync(string address, IList<string> contracts = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, long? startBlock, long? stopBlock, int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             IEnumerable<InternalMessageResponse> addressMessages;

@@ -20,23 +20,23 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the TransactionResponse class.
         /// </summary>
-        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), bool? hasError = default(bool?))
+        public TransactionResponse(string blockHash = default(string), long? blockNumber = default(long?), int? blockTimestamp = default(int?), string contractAddress = default(string), string fromProperty = default(string), string gas = default(string), string gasPrice = default(string), string gasUsed = default(string), bool? hasError = default(bool?), string input = default(string), string nonce = default(string), string to = default(string), string transactionHash = default(string), int? transactionIndex = default(int?), string value = default(string))
         {
-            TransactionIndex = transactionIndex;
-            BlockNumber = blockNumber;
-            Gas = gas;
-            GasPrice = gasPrice;
-            Value = value;
-            Nonce = nonce;
-            TransactionHash = transactionHash;
             BlockHash = blockHash;
-            FromProperty = fromProperty;
-            To = to;
-            Input = input;
+            BlockNumber = blockNumber;
             BlockTimestamp = blockTimestamp;
             ContractAddress = contractAddress;
+            FromProperty = fromProperty;
+            Gas = gas;
+            GasPrice = gasPrice;
             GasUsed = gasUsed;
             HasError = hasError;
+            Input = input;
+            Nonce = nonce;
+            To = to;
+            TransactionHash = transactionHash;
+            TransactionIndex = transactionIndex;
+            Value = value;
             CustomInit();
         }
 
@@ -47,58 +47,13 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "transactionIndex")]
-        public int? TransactionIndex { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "gas")]
-        public string Gas { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "gasPrice")]
-        public string GasPrice { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "nonce")]
-        public string Nonce { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "transactionHash")]
-        public string TransactionHash { get; set; }
-
-        /// <summary>
-        /// </summary>
         [JsonProperty(PropertyName = "blockHash")]
         public string BlockHash { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "from")]
-        public string FromProperty { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "to")]
-        public string To { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "input")]
-        public string Input { get; set; }
+        [JsonProperty(PropertyName = "blockNumber")]
+        public long? BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
@@ -112,6 +67,21 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "from")]
+        public string FromProperty { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "gas")]
+        public string Gas { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "gasPrice")]
+        public string GasPrice { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "gasUsed")]
         public string GasUsed { get; set; }
 
@@ -119,6 +89,36 @@ namespace EthereumSamuraiApiCaller.Models
         /// </summary>
         [JsonProperty(PropertyName = "hasError")]
         public bool? HasError { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "input")]
+        public string Input { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "nonce")]
+        public string Nonce { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "to")]
+        public string To { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "transactionHash")]
+        public string TransactionHash { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "transactionIndex")]
+        public int? TransactionIndex { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "value")]
+        public string Value { get; set; }
 
     }
 }

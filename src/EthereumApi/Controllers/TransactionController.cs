@@ -131,7 +131,9 @@ namespace EthereumApi.Controllers
                     To =item.To,
                     TransactionHash = item.TransactionHash,
                     TransactionIndexInBlock = item.TransactionIndexInBlock,
-                    Value = item.Value
+                    Value = item.Value,
+                    GasPrice = item.GasPrice,
+                    GasUsed = item.GasUsed,
                 };
             });
 

@@ -120,6 +120,8 @@ namespace Services.PrivateWallet
                         To = item.To,
                         TransactionHash = item.TransactionHash,
                         Value = item.Value,
+                        GasPrice = item.GasPrice,
+                        GasUsed = item.GasUsed
                     });
             }
 

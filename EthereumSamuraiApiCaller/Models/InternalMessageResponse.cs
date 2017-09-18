@@ -20,17 +20,17 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the InternalMessageResponse class.
         /// </summary>
-        public InternalMessageResponse(string transactionHash = default(string), long? blockNumber = default(long?), string fromAddress = default(string), string toAddress = default(string), int? depth = default(int?), string value = default(string), int? messageIndex = default(int?), string type = default(string), int? blockTimeStamp = default(int?))
+        public InternalMessageResponse(long? blockNumber = default(long?), int? blockTimeStamp = default(int?), int? depth = default(int?), string fromAddress = default(string), int? messageIndex = default(int?), string toAddress = default(string), string transactionHash = default(string), string type = default(string), string value = default(string))
         {
-            TransactionHash = transactionHash;
             BlockNumber = blockNumber;
-            FromAddress = fromAddress;
-            ToAddress = toAddress;
-            Depth = depth;
-            Value = value;
-            MessageIndex = messageIndex;
-            Type = type;
             BlockTimeStamp = blockTimeStamp;
+            Depth = depth;
+            FromAddress = fromAddress;
+            MessageIndex = messageIndex;
+            ToAddress = toAddress;
+            TransactionHash = transactionHash;
+            Type = type;
+            Value = value;
             CustomInit();
         }
 
@@ -41,23 +41,13 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "transactionHash")]
-        public string TransactionHash { get; set; }
-
-        /// <summary>
-        /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
         public long? BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
-        public string FromAddress { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
-        public string ToAddress { get; set; }
+        [JsonProperty(PropertyName = "blockTimeStamp")]
+        public int? BlockTimeStamp { get; set; }
 
         /// <summary>
         /// </summary>
@@ -66,8 +56,8 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
+        [JsonProperty(PropertyName = "fromAddress")]
+        public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
@@ -76,13 +66,23 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "toAddress")]
+        public string ToAddress { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "transactionHash")]
+        public string TransactionHash { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "blockTimeStamp")]
-        public int? BlockTimeStamp { get; set; }
+        [JsonProperty(PropertyName = "value")]
+        public string Value { get; set; }
 
     }
 }

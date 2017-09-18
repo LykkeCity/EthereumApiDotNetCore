@@ -20,17 +20,19 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the AddressHistoryResponse class.
         /// </summary>
-        public AddressHistoryResponse(long? blockNumber = default(long?), string value = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), bool? hasError = default(bool?), int? transactionIndex = default(int?), int? messageIndex = default(int?))
+        public AddressHistoryResponse(long? blockNumber = default(long?), int? blockTimestamp = default(int?), string fromProperty = default(string), bool? hasError = default(bool?), int? messageIndex = default(int?), string to = default(string), string transactionHash = default(string), int? transactionIndex = default(int?), string value = default(string), string gasPrice = default(string), string gasUsed = default(string))
         {
             BlockNumber = blockNumber;
-            Value = value;
-            TransactionHash = transactionHash;
-            FromProperty = fromProperty;
-            To = to;
             BlockTimestamp = blockTimestamp;
+            FromProperty = fromProperty;
             HasError = hasError;
-            TransactionIndex = transactionIndex;
             MessageIndex = messageIndex;
+            To = to;
+            TransactionHash = transactionHash;
+            TransactionIndex = transactionIndex;
+            Value = value;
+            GasPrice = gasPrice;
+            GasUsed = gasUsed;
             CustomInit();
         }
 
@@ -46,13 +48,8 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "transactionHash")]
-        public string TransactionHash { get; set; }
+        [JsonProperty(PropertyName = "blockTimestamp")]
+        public int? BlockTimestamp { get; set; }
 
         /// <summary>
         /// </summary>
@@ -61,18 +58,23 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "hasError")]
+        public bool? HasError { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "messageIndex")]
+        public int? MessageIndex { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "to")]
         public string To { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "blockTimestamp")]
-        public int? BlockTimestamp { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "hasError")]
-        public bool? HasError { get; set; }
+        [JsonProperty(PropertyName = "transactionHash")]
+        public string TransactionHash { get; set; }
 
         /// <summary>
         /// </summary>
@@ -81,8 +83,18 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "messageIndex")]
-        public int? MessageIndex { get; set; }
+        [JsonProperty(PropertyName = "value")]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "gasPrice")]
+        public string GasPrice { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "gasUsed")]
+        public string GasUsed { get; set; }
 
     }
 }

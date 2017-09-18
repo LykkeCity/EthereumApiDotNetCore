@@ -21,6 +21,12 @@ namespace EthereumApi.Models.Models
         [DataMember(Name = "value")]
         public string Value { get; set; }
 
+        [DataMember(Name = "gasUsed")]
+        public string GasUsed { get; set; }
+
+        [DataMember(Name = "gasPrice")]
+        public string GasPrice { get; set; }
+
         [DataMember(Name = "transactionHash")]
         public string TransactionHash { get; set; }
 

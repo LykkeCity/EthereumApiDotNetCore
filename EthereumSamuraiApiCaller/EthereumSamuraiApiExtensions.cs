@@ -5,6 +5,8 @@
 namespace EthereumSamuraiApiCaller
 {
     using Models;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -76,6 +78,36 @@ namespace EthereumSamuraiApiCaller
             public static async Task<object> ApiBalanceGetBalanceByAddressGetAsync(this IEthereumSamuraiApi operations, string address, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(address, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='contracts'>
+            /// </param>
+            public static object ApiErc20BalanceGetErc20BalanceByAddressPost(this IEthereumSamuraiApi operations, string address, IList<string> contracts = default(IList<string>))
+            {
+                return operations.ApiErc20BalanceGetErc20BalanceByAddressPostAsync(address, contracts).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='contracts'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20BalanceGetErc20BalanceByAddressPostAsync(this IEthereumSamuraiApi operations, string address, IList<string> contracts = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20BalanceGetErc20BalanceByAddressPostWithHttpMessagesAsync(address, contracts, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
