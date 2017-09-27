@@ -1,4 +1,5 @@
-﻿using Core.Repositories;
+﻿using Core;
+using Core.Repositories;
 using Core.Settings;
 using Nethereum.Web3;
 using Services.New.Models;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using AzureStorage.Queue;
 
 namespace Services.New
 {
@@ -22,6 +24,8 @@ namespace Services.New
     {
         private readonly Web3 _web3;
         private readonly IBaseSettings _baseSettings;
+        private readonly IQueueFactory _queueFactory;
+        private readonly IQueueExt _cashinQueue;
         private readonly ICoinRepository _coinRepository;
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
@@ -30,13 +34,16 @@ namespace Services.New
             IBaseSettings baseSettings,
             ICoinRepository coinRepository,
             ICashinEventRepository cashinEventRepository,
-            IBlockSyncedRepository blockSyncedRepository)
+            IBlockSyncedRepository blockSyncedRepository,
+            IQueueFactory queueFactory)
         {
             _cashinEventRepository = cashinEventRepository;
             _coinRepository = coinRepository;
             _web3 = web3;
             _blockSyncedRepository = blockSyncedRepository;
             _baseSettings = baseSettings;
+            _queueFactory = queueFactory;
+            _cashinQueue = _queueFactory.Build(Constants.CashinCompletedEventsQueue);
         }
 
         public async Task IndexCashinEvents(string coinAdapterAddress, string deployedTransactionHash)
@@ -98,13 +105,21 @@ namespace Services.New
 
             filterByCaller.ForEach(async @event =>
             {
+                string transactionHash = @event.Log.TransactionHash;
+                CoinEventCashinCompletedMessage cashinTransactionMessage = new CoinEventCashinCompletedMessage()
+                {
+                    TransactionHash = transactionHash
+                };
+
                 await _cashinEventRepository.InsertAsync(new CashinEvent()
                 {
                     CoinAdapterAddress = coinAdapterAddress,
                     Amount = @event.Event.Amount.ToString(),
-                    TransactionHash = @event.Log.TransactionHash,
+                    TransactionHash = transactionHash,
                     UserAddress = @event.Event.Caller
                 });
+
+                await _cashinQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(cashinTransactionMessage));
             });
 
             await _blockSyncedRepository.InsertAsync(new BlockSynced() { BlockNumber = to.ToString(), CoinAdapterAddress = coinAdapterAddress });
