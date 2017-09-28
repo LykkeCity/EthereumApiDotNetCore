@@ -204,6 +204,16 @@ namespace Service.UnitTests.Mocks
             return Task.FromResult(httpResponse);
         }
 
+        public Task<HttpOperationResponse<object>> ApiErc20BalanceGetErc20BalancePostWithHttpMessagesAsync(GetErc20BalanceRequest request = null, int? start = null, int? count = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpOperationResponse<object>> ApiErc20TransferHistoryGetErc20TransfersPostWithHttpMessagesAsync(GetErc20TransferHistoryRequest request = null, int? start = null, int? count = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(
             string address,
             long? startBlock,

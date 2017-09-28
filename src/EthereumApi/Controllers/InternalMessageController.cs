@@ -59,7 +59,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransactions request = new BusinessModels.AddressTransactions()
+            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,

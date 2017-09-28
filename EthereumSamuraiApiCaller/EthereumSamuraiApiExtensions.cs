@@ -86,6 +86,40 @@ namespace EthereumSamuraiApiCaller
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            public static object ApiErc20BalanceGetErc20BalancePost(this IEthereumSamuraiApi operations, GetErc20BalanceRequest request = default(GetErc20BalanceRequest), int? start = default(int?), int? count = default(int?))
+            {
+                return operations.ApiErc20BalanceGetErc20BalancePostAsync(request, start, count).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20BalanceGetErc20BalancePostAsync(this IEthereumSamuraiApi operations, GetErc20BalanceRequest request = default(GetErc20BalanceRequest), int? start = default(int?), int? count = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20BalanceGetErc20BalancePostWithHttpMessagesAsync(request, start, count, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='address'>
             /// </param>
             /// <param name='contracts'>
@@ -108,6 +142,40 @@ namespace EthereumSamuraiApiCaller
             public static async Task<object> ApiErc20BalanceGetErc20BalanceByAddressPostAsync(this IEthereumSamuraiApi operations, string address, IList<string> contracts = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20BalanceGetErc20BalanceByAddressPostWithHttpMessagesAsync(address, contracts, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            public static object ApiErc20TransferHistoryGetErc20TransfersPost(this IEthereumSamuraiApi operations, GetErc20TransferHistoryRequest request = default(GetErc20TransferHistoryRequest), int? start = default(int?), int? count = default(int?))
+            {
+                return operations.ApiErc20TransferHistoryGetErc20TransfersPostAsync(request, start, count).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20TransferHistoryGetErc20TransfersPostAsync(this IEthereumSamuraiApi operations, GetErc20TransferHistoryRequest request = default(GetErc20TransferHistoryRequest), int? start = default(int?), int? count = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20TransferHistoryGetErc20TransfersPostWithHttpMessagesAsync(request, start, count, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

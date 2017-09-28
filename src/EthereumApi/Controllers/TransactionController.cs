@@ -38,7 +38,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransactions request = new BusinessModels.AddressTransactions()
+            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,
@@ -110,7 +110,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransactions request = new BusinessModels.AddressTransactions()
+            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,
@@ -138,6 +138,51 @@ namespace EthereumApi.Controllers
             });
 
             return Ok(new FilteredAddressHistoryResponse()
+            {
+                History = result
+            });
+        }
+
+        [HttpPost("ercHistory")]
+        [ProducesResponseType(typeof(FilteredTokenAddressHistoryResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> GetAddressErcHistory([FromBody]EthereumApi.Models.Models.TokenAddressTransactions addressTransactions)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            BusinessModels.TokenTransaction request = new BusinessModels.TokenTransaction()
+            {
+                Address = addressTransactions.Address,
+                Count = addressTransactions.Count,
+                Start = addressTransactions.Start,
+                TokenAddress = addressTransactions.TokenAddress
+            };
+
+            IEnumerable<AddressHistoryModel> history = await _ethereumIndexerService.GetAddressHistory(request);
+            IEnumerable<TokenAddressHistoryResponse> result = history.Select(item =>
+            {
+                return new TokenAddressHistoryResponse()
+                {
+                    BlockNumber = item.BlockNumber,
+                    BlockTimestamp = item.BlockTimestamp,
+                    BlockTimeUtc = item.BlockTimeUtc,
+                    From = item.From,
+                    HasError = item.HasError,
+                    MessageIndex = item.MessageIndex,
+                    To = item.To,
+                    TransactionHash = item.TransactionHash,
+                    TransactionIndexInBlock = item.TransactionIndexInBlock,
+                    TokenTransfered = item.Value,
+                    GasPrice = item.GasPrice,
+                    GasUsed = item.GasUsed,
+                };
+            });
+
+            return Ok(new FilteredTokenAddressHistoryResponse()
             {
                 History = result
             });

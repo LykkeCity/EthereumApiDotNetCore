@@ -60,6 +60,20 @@ namespace EthereumSamuraiApiCaller
         /// </param>
         Task<HttpOperationResponse<object>> ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='request'>
+        /// </param>
+        /// <param name='start'>
+        /// </param>
+        /// <param name='count'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiErc20BalanceGetErc20BalancePostWithHttpMessagesAsync(GetErc20BalanceRequest request = default(GetErc20BalanceRequest), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='address'>
         /// </param>
         /// <param name='contracts'>
@@ -71,6 +85,20 @@ namespace EthereumSamuraiApiCaller
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiErc20BalanceGetErc20BalanceByAddressPostWithHttpMessagesAsync(string address, IList<string> contracts = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='request'>
+        /// </param>
+        /// <param name='start'>
+        /// </param>
+        /// <param name='count'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiErc20TransferHistoryGetErc20TransfersPostWithHttpMessagesAsync(GetErc20TransferHistoryRequest request = default(GetErc20TransferHistoryRequest), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='transactionHash'>
         /// </param>
