@@ -8,6 +8,7 @@ namespace EthereumApi.Models.Models
     [DataContract]
     public class AddressTokenBalanceContainerResponse
     {
+        [DataMember]
         public IEnumerable<AddressTokenBalanceResponse> Balances { get; set; }
     }
 
