@@ -36,7 +36,7 @@ namespace EthereumApi.Controllers
         [ProducesResponseType(typeof(AddressTokenBalanceContainerResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public async Task<IActionResult> GetTransaction(GetErcBalance ercTransaction)
+        public async Task<IActionResult> GetTransaction([FromBody]GetErcBalance ercTransaction)
         {
             if (!ModelState.IsValid)
             {

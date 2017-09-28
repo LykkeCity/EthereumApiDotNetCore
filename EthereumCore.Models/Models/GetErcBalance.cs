@@ -7,7 +7,7 @@ namespace EthereumApi.Models.Models
     [DataContract]
     public class GetErcBalance
     {
-        [DataMember]
+        [DataMember] 
         public string Address { get; set; }
 
         [DataMember]
