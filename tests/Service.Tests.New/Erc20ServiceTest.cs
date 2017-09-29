@@ -21,14 +21,14 @@ namespace Service.Tests
     [TestClass]
     public class Erc20ServiceTest : BaseTest
     {
-        private IErc20Service _erc20Service;
+        private IErc20PrivateWalletService _erc20Service;
         private string _privateKey = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
         private Web3 _web3;
 
         [TestInitialize]
         public void Init()
         {
-            _erc20Service = Config.Services.GetService<IErc20Service>();
+            _erc20Service = Config.Services.GetService<IErc20PrivateWalletService>();
             _web3 = Config.Services.GetService<Web3>();
         }
 

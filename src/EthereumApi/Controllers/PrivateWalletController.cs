@@ -24,11 +24,11 @@ namespace EthereumApi.Controllers
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IPrivateWalletService _privateWalletService;
         private readonly ILog _log;
-        private readonly IErc20Service _erc20Service;
+        private readonly IErc20PrivateWalletService _erc20Service;
 
         public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log, 
             ITransactionValidationService transactionValidationService,
-            IErc20Service erc20Service)
+            IErc20PrivateWalletService erc20Service)
         {
             _transactionValidationService = transactionValidationService;
             _privateWalletService = privateWalletService;

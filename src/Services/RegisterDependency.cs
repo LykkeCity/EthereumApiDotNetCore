@@ -49,7 +49,7 @@ namespace Services
             services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
             services.AddSingleton<ISignatureChecker, SignatureChecker>();
             services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
-            services.AddSingleton<IErc20Service, Erc20Service>();
+            services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
             services.AddSingleton<IOwnerService, OwnerService>();
             services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
             services.AddSingleton<IRoundRobinTransactionSender, RoundRobinTransactionSender>();

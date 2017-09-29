@@ -32,7 +32,7 @@ namespace Service.UnitTests.PrivateWallet
         #endregion
         private string _contractAddress = "0xaa4981d084120aef4bbaeecb9abdbc7d180c7edb";
         private string _privateKey = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
-        Erc20Service _erc20Service;
+        Erc20PrivateWalletService _erc20Service;
         private MockNonceCalculator _nonceCalc;
         private Mock<IClient> _client;
         private ISignatureChecker _signatureChecker;
@@ -53,7 +53,7 @@ namespace Service.UnitTests.PrivateWallet
             web3Mock.Setup(x => x.Eth).Returns(new EthApiContractService(_client.Object));
             #endregion
             IRawTransactionSubmitter rawTransactionSubmitter = new RawTransactionSubmitter(web3Mock.Object, _signatureChecker);
-            _erc20Service = new Erc20Service(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null, null);
+            _erc20Service = new Erc20PrivateWalletService(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null, null);
         }
 
         [TestMethod]

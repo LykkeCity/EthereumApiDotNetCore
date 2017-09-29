@@ -21,9 +21,9 @@ namespace EthereumApi.Controllers
     public class Erc20WalletController : Controller
     {
         private readonly ILog _log;
-        private IErc20Service _erc20Service;
+        private IErc20PrivateWalletService _erc20Service;
 
-        public Erc20WalletController(IErc20Service erc20Service, ILog log)
+        public Erc20WalletController(IErc20PrivateWalletService erc20Service, ILog log)
         {
             _erc20Service = erc20Service;
             _log = log;

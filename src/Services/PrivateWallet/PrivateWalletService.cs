@@ -42,7 +42,7 @@ namespace Services.PrivateWallet
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly ISignatureChecker _signatureChecker;
         private readonly ITransactionValidationService _transactionValidationService;
-        private readonly IErc20Service _erc20Service;
+        private readonly IErc20PrivateWalletService _erc20Service;
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
@@ -50,7 +50,7 @@ namespace Services.PrivateWallet
             IPaymentService paymentService,
             ISignatureChecker signatureChecker,
             ITransactionValidationService transactionValidationService,
-            IErc20Service erc20Service)
+            IErc20PrivateWalletService erc20Service)
         {
             _signatureChecker             = signatureChecker;
             _rawTransactionSubmitter      = rawTransactionSubmitter;

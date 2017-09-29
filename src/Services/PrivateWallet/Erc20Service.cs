@@ -33,7 +33,7 @@ namespace Services.PrivateWallet
     }
      */
 
-    public interface IErc20Service
+    public interface IErc20PrivateWalletService
     {
         Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
@@ -41,7 +41,7 @@ namespace Services.PrivateWallet
         Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction);
     }
 
-    public class Erc20Service : IErc20Service
+    public class Erc20PrivateWalletService : IErc20PrivateWalletService
     {
         private readonly IWeb3 _web3;
         private readonly INonceCalculator _nonceCalculator;
@@ -52,7 +52,7 @@ namespace Services.PrivateWallet
         private readonly ISignatureChecker _signatureChecker;
         private readonly AddressUtil _addressUtil;
 
-        public Erc20Service(IWeb3 web3, 
+        public Erc20PrivateWalletService(IWeb3 web3, 
             INonceCalculator nonceCalculator, 
             IBaseSettings settings,
             IRawTransactionSubmitter rawTransactionSubmitter,
