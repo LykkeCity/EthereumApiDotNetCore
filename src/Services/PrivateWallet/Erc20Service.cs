@@ -1,5 +1,6 @@
 ﻿using BusinessModels;
 using BusinessModels.PrivateWallet;
+using Core;
 using Core.Exceptions;
 using Core.Settings;
 using Nethereum.Contracts;
@@ -37,6 +38,7 @@ namespace Services.PrivateWallet
         Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task ValidateInput(Erc20Transaction transaction);
+        Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction);
     }
 
     public class Erc20Service : IErc20Service
@@ -48,6 +50,7 @@ namespace Services.PrivateWallet
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly ISignatureChecker _signatureChecker;
+        private readonly AddressUtil _addressUtil;
 
         public Erc20Service(IWeb3 web3, 
             INonceCalculator nonceCalculator, 
@@ -57,26 +60,27 @@ namespace Services.PrivateWallet
             ITransactionValidationService transactionValidationService,
             ISignatureChecker signatureChecker)
         {
-            _rawTransactionSubmitter = rawTransactionSubmitter;
-            _nonceCalculator = nonceCalculator;
-            _web3 = web3;
-            _settings = settings;
-            _ercInterfaceService = ercInterfaceService;
+            _rawTransactionSubmitter      = rawTransactionSubmitter;
+            _nonceCalculator              = nonceCalculator;
+            _web3                         = web3;
+            _settings                     = settings;
+            _ercInterfaceService          = ercInterfaceService;
             _transactionValidationService = transactionValidationService;
-            _signatureChecker = signatureChecker;
+            _signatureChecker             = signatureChecker;
+            _addressUtil                  = new AddressUtil();
         }
 
         #region transfer
 
         public async Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction)
         {
-            Contract contract = GetContract(erc20Transaction.TokenAddress);
-            Function transferFunction = contract.GetFunction("transfer");
+            Contract contract          = GetContract(erc20Transaction.TokenAddress);
+            Function transferFunction  = contract.GetFunction("transfer");
             string functionDataEncoded = transferFunction.GetData(erc20Transaction.ToAddress, erc20Transaction.TokenAmount);
-            BigInteger nonce =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress);
-            var transaction = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
+            BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress);
+            var transaction            = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
                  erc20Transaction.GasAmount, erc20Transaction.GasPrice, nonce, 0);
-            string raw = transaction.GetRLPEncoded().ToHex();
+            string raw                 = transaction.GetRLPEncoded().ToHex();
 
             return raw;
         }
@@ -84,6 +88,7 @@ namespace Services.PrivateWallet
         //put in dependency
         public async Task<string> SubmitSignedTransaction(string from, string signedTrHex)
         {
+            await ValidateInputForSignedAsync(from, signedTrHex);
             string transactionHex = await _rawTransactionSubmitter.SubmitSignedTransaction(from, signedTrHex);
 
             return transactionHex;
@@ -112,19 +117,22 @@ namespace Services.PrivateWallet
 
         public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
         {
+            await _transactionValidationService.ValidateInputForSignedAsync(fromAddress, signedTransaction);
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
-            bool isSignedRight = await _signatureChecker.CheckTransactionSign(fromAddress, signedTransaction);
-            string valueHex = transaction.Value.ToHex();
-            string gasLimit = transaction.GasLimit.ToHex();
-            string gasPrice = transaction.GasPrice.ToHex();
-            string erc20InvocationData = transaction.Data.ToHexCompact();
-            await _transactionValidationService.ThrowOnExistingHashAsync(transaction.Hash.ToHex());
-            ThrowOnWrongSignature(isSignedRight);
-            //TODO:
-            //await ValidateInput(fromAddress,
-            //    new HexBigInteger(transaction.Value.ToHex()),
-            //    new HexBigInteger(gasLimit),
-            //    new HexBigInteger(gasPrice));
+            string erc20Address                      = transaction.ReceiveAddress.ToHexCompact().EnsureHexPrefix();
+            string erc20InvocationData               = transaction.Data.ToHexCompact().EnsureHexPrefix();
+            //0xa9059cbb000000000000000000000000aa4981d084120aef4bbaeecb9abdbc7d180c7edb000000000000000000000000000000000000000000000000000000000000000a
+            if (! await _transactionValidationService.IsTransactionErc20Transfer(signedTransaction))
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, "Transaction is not a erc20 transfer");
+            }
+
+            string parametrsString    = erc20InvocationData.Replace(Constants.Erc20TransferSignature, "");
+            var amount                = parametrsString.Substring(64, 64);
+            //string addressString    = parametrsString.Substring(0, 64).TrimStart(new char[] { '0' }).EnsureHexPrefix();
+            //string address          = _addressUtil.ConvertToChecksumAddress(addressString);
+            HexBigInteger tokenAmount = new HexBigInteger(amount);
+            await ValidateTokenAddressBalanceAsync(fromAddress, erc20Address, tokenAmount);
         }
 
         public async Task ValidateTokenAddressBalanceAsync(string address, string tokenAddress, BigInteger tokenAmount)

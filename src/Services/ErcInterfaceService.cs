@@ -49,7 +49,7 @@ namespace Services
         public async Task<BigInteger> GetPendingBalanceForExternalTokenAsync(string address, string externalTokenAddress)
         {
             Function function = GetBalanceOfFunction(externalTokenAddress);
-            BigInteger result = await function.CallAsync<BigInteger>(address, BlockParameter.CreatePending());
+            BigInteger result = await function.CallAsync<BigInteger>(BlockParameter.CreatePending(), address);
 
             return result;
         }

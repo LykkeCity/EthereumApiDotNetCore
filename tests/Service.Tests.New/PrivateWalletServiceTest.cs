@@ -16,12 +16,14 @@ using Nethereum.RPC.Eth;
 using Nethereum.RPC.Eth.DTOs;
 using BusinessModels.PrivateWallet;
 using Services.Model;
+using Services.Transactions;
 
 namespace Service.Tests
 {
     [TestClass]
     public class PrivateWalletServiceTest : BaseTest
     {
+        private ITransactionValidationService _transactionValidationService;
         private IPrivateWalletService _privateWallet;
         private string _privateKey = "0x1149984b590c0bcd88ca4e7ef80d2f4aa7b0bc0f52ac7895068e89262c8733c6";
         private Web3 _web3;
@@ -29,6 +31,7 @@ namespace Service.Tests
         [TestInitialize]
         public void Init()
         {
+            _transactionValidationService = Config.Services.GetService<ITransactionValidationService>();
             _privateWallet = Config.Services.GetService<IPrivateWalletService>();
             _web3 = Config.Services.GetService<Web3>();
         }
@@ -50,7 +53,15 @@ namespace Service.Tests
             {
                 string trRaw = await _privateWallet.GetTransactionForSigning(transaction);
                 string signedRawTr = SignRawTransaction(trRaw, _privateKey);
-                string trHash1 = await _privateWallet.SubmitSignedTransaction(fromAddress, signedRawTr);
+                string transactionHash;
+                if (!await _transactionValidationService.IsTransactionErc20Transfer(signedRawTr))
+                {
+                    transactionHash = await _privateWallet.SubmitSignedTransaction(fromAddress, signedRawTr);
+                }
+                else
+                {
+                    throw new Exception("Can;t reach it");
+                }
             }
         }
 
