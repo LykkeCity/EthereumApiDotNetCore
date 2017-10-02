@@ -331,6 +331,12 @@ namespace Tests
 
         #endregion
 
+        [TestMethod]
+        public async Task SendTokensAsync()
+        {
+            var transferHash = await _ercService.Transfer(_externalTokenAddress, _settings.EthereumMainAccount, "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28", 20000);
+        }
+
         private byte[] Sign(byte[] hash, string privateKey)
         {
             var key = new EthECKey(privateKey.HexToByteArray(), true);

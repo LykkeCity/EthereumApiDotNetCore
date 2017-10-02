@@ -162,7 +162,7 @@ namespace EthereumApi.Controllers
                 TokenAddress = addressTransactions.TokenAddress
             };
 
-            IEnumerable<AddressHistoryModel> history = await _ethereumIndexerService.GetAddressHistory(request);
+            IEnumerable<AddressHistoryModel> history = await _ethereumIndexerService.GetTokenHistory(request);
             IEnumerable<TokenAddressHistoryResponse> result = history.Select(item =>
             {
                 return new TokenAddressHistoryResponse()
