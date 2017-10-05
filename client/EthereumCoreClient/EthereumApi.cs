@@ -4,6 +4,7 @@
 
 namespace Lykke.EthereumCoreClient
 {
+    
     using Microsoft.Rest;
     using Microsoft.Rest.Serialization;
     using Models;

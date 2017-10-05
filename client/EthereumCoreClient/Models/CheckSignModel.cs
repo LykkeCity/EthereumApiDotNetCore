@@ -4,6 +4,7 @@
 
 namespace Lykke.EthereumCoreClient.Models
 {
+    
     using Lykke.EthereumCoreClient;
     using Microsoft.Rest;
     using Newtonsoft.Json;
