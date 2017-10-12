@@ -11,22 +11,23 @@ namespace Lykke.EthereumCoreClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ListResultCoinResult
+    public partial class GetErcBalance
     {
         /// <summary>
-        /// Initializes a new instance of the ListResultCoinResult class.
+        /// Initializes a new instance of the GetErcBalance class.
         /// </summary>
-        public ListResultCoinResult()
+        public GetErcBalance()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ListResultCoinResult class.
+        /// Initializes a new instance of the GetErcBalance class.
         /// </summary>
-        public ListResultCoinResult(IList<CoinResult> data = default(IList<CoinResult>))
+        public GetErcBalance(string address = default(string), IList<string> tokenAddresses = default(IList<string>))
         {
-            Data = data;
+            Address = address;
+            TokenAddresses = tokenAddresses;
             CustomInit();
         }
 
@@ -37,8 +38,13 @@ namespace Lykke.EthereumCoreClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "data")]
-        public IList<CoinResult> Data { get; set; }
+        [JsonProperty(PropertyName = "address")]
+        public string Address { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "tokenAddresses")]
+        public IList<string> TokenAddresses { get; set; }
 
     }
 }

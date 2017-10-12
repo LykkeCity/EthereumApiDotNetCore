@@ -10,23 +10,25 @@ namespace Lykke.EthereumCoreClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class PrivateWalletEthTransaction
+    public partial class PrivateWalletErc20Transaction
     {
         /// <summary>
-        /// Initializes a new instance of the PrivateWalletEthTransaction
+        /// Initializes a new instance of the PrivateWalletErc20Transaction
         /// class.
         /// </summary>
-        public PrivateWalletEthTransaction()
+        public PrivateWalletErc20Transaction()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the PrivateWalletEthTransaction
+        /// Initializes a new instance of the PrivateWalletErc20Transaction
         /// class.
         /// </summary>
-        public PrivateWalletEthTransaction(string value, string fromAddress, string toAddress, string gasAmount, string gasPrice)
+        public PrivateWalletErc20Transaction(string tokenAddress, string tokenAmount, string value, string fromAddress, string toAddress, string gasAmount, string gasPrice)
         {
+            TokenAddress = tokenAddress;
+            TokenAmount = tokenAmount;
             Value = value;
             FromAddress = fromAddress;
             ToAddress = toAddress;
@@ -39,6 +41,16 @@ namespace Lykke.EthereumCoreClient.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "tokenAddress")]
+        public string TokenAddress { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "tokenAmount")]
+        public string TokenAmount { get; set; }
 
         /// <summary>
         /// </summary>
@@ -73,6 +85,14 @@ namespace Lykke.EthereumCoreClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            if (TokenAddress == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "TokenAddress");
+            }
+            if (TokenAmount == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "TokenAmount");
+            }
             if (Value == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Value");
@@ -93,11 +113,18 @@ namespace Lykke.EthereumCoreClient.Models
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "GasPrice");
             }
+            if (TokenAmount != null)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(TokenAmount, "^[1-9][0-9]*$"))
+                {
+                    throw new ValidationException(ValidationRules.Pattern, "TokenAmount", "^[1-9][0-9]*$");
+                }
+            }
             if (Value != null)
             {
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Value, "^[1-9][0-9]*$"))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(Value, "^([1-9][0-9])|0*$"))
                 {
-                    throw new ValidationException(ValidationRules.Pattern, "Value", "^[1-9][0-9]*$");
+                    throw new ValidationException(ValidationRules.Pattern, "Value", "^([1-9][0-9])|0*$");
                 }
             }
             if (GasAmount != null)

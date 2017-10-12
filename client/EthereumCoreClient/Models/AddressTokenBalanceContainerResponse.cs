@@ -7,24 +7,28 @@
 namespace Lykke.EthereumCoreClient.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class OperationIdResponse
+    public partial class AddressTokenBalanceContainerResponse
     {
         /// <summary>
-        /// Initializes a new instance of the OperationIdResponse class.
+        /// Initializes a new instance of the
+        /// AddressTokenBalanceContainerResponse class.
         /// </summary>
-        public OperationIdResponse()
+        public AddressTokenBalanceContainerResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the OperationIdResponse class.
+        /// Initializes a new instance of the
+        /// AddressTokenBalanceContainerResponse class.
         /// </summary>
-        public OperationIdResponse(string operationId = default(string))
+        public AddressTokenBalanceContainerResponse(IList<AddressTokenBalanceResponse> balances = default(IList<AddressTokenBalanceResponse>))
         {
-            OperationId = operationId;
+            Balances = balances;
             CustomInit();
         }
 
@@ -35,8 +39,8 @@ namespace Lykke.EthereumCoreClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "operationId")]
-        public string OperationId { get; set; }
+        [JsonProperty(PropertyName = "balances")]
+        public IList<AddressTokenBalanceResponse> Balances { get; set; }
 
     }
 }

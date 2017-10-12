@@ -9,21 +9,24 @@ namespace Lykke.EthereumCoreClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class AddressHistoryResponse
+    public partial class TokenAddressHistoryResponse
     {
         /// <summary>
-        /// Initializes a new instance of the AddressHistoryResponse class.
+        /// Initializes a new instance of the TokenAddressHistoryResponse
+        /// class.
         /// </summary>
-        public AddressHistoryResponse()
+        public TokenAddressHistoryResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the AddressHistoryResponse class.
+        /// Initializes a new instance of the TokenAddressHistoryResponse
+        /// class.
         /// </summary>
-        public AddressHistoryResponse(long? blockNumber = default(long?), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), int? transactionIndexInBlock = default(int?), int? messageIndex = default(int?))
+        public TokenAddressHistoryResponse(string tokenTransfered = default(string), long? blockNumber = default(long?), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), int? transactionIndexInBlock = default(int?), int? messageIndex = default(int?))
         {
+            TokenTransfered = tokenTransfered;
             BlockNumber = blockNumber;
             Value = value;
             GasUsed = gasUsed;
@@ -43,6 +46,11 @@ namespace Lykke.EthereumCoreClient.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "TokenTransfered")]
+        public string TokenTransfered { get; set; }
 
         /// <summary>
         /// </summary>
