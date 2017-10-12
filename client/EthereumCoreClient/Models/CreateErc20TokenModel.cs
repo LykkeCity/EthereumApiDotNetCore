@@ -9,22 +9,23 @@ namespace Lykke.EthereumCoreClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class OperationIdResponse
+    public partial class CreateErc20TokenModel
     {
         /// <summary>
-        /// Initializes a new instance of the OperationIdResponse class.
+        /// Initializes a new instance of the CreateErc20TokenModel class.
         /// </summary>
-        public OperationIdResponse()
+        public CreateErc20TokenModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the OperationIdResponse class.
+        /// Initializes a new instance of the CreateErc20TokenModel class.
         /// </summary>
-        public OperationIdResponse(string operationId = default(string))
+        public CreateErc20TokenModel(string address = default(string), string name = default(string))
         {
-            OperationId = operationId;
+            Address = address;
+            Name = name;
             CustomInit();
         }
 
@@ -35,8 +36,13 @@ namespace Lykke.EthereumCoreClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "operationId")]
-        public string OperationId { get; set; }
+        [JsonProperty(PropertyName = "address")]
+        public string Address { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
 
     }
 }

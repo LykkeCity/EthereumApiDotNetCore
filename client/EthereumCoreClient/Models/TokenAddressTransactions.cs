@@ -10,21 +10,22 @@ namespace Lykke.EthereumCoreClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class AddressTransactions
+    public partial class TokenAddressTransactions
     {
         /// <summary>
-        /// Initializes a new instance of the AddressTransactions class.
+        /// Initializes a new instance of the TokenAddressTransactions class.
         /// </summary>
-        public AddressTransactions()
+        public TokenAddressTransactions()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the AddressTransactions class.
+        /// Initializes a new instance of the TokenAddressTransactions class.
         /// </summary>
-        public AddressTransactions(string address, int? start = default(int?), int? count = default(int?))
+        public TokenAddressTransactions(string tokenAddress, string address, int? start = default(int?), int? count = default(int?))
         {
+            TokenAddress = tokenAddress;
             Address = address;
             Start = start;
             Count = count;
@@ -35,6 +36,11 @@ namespace Lykke.EthereumCoreClient.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "tokenAddress")]
+        public string TokenAddress { get; set; }
 
         /// <summary>
         /// </summary>
@@ -59,6 +65,10 @@ namespace Lykke.EthereumCoreClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            if (TokenAddress == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "TokenAddress");
+            }
             if (Address == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Address");
