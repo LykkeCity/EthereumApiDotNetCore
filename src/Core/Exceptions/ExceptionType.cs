@@ -21,6 +21,7 @@ namespace Core.Exceptions
 
         NotEnoughFunds = 100,
         TransactionExists = 101,
+        TransactionRequiresMoreGas = 102,
 
         #endregion
     }

@@ -33,7 +33,19 @@ namespace Services.Transactions
             }
 
             var ethSendTransaction = new EthSendRawTransaction(_web3.Client);
-            string transactionHex = await ethSendTransaction.SendRequestAsync(signedTrHex);
+            string transactionHex;
+
+            try
+            {
+                transactionHex = await ethSendTransaction.SendRequestAsync(signedTrHex);
+            }
+            catch (Nethereum.JsonRpc.Client.RpcResponseException ex)
+            {
+                if (ex.Message == "intrinsic gas too low")
+                    throw new ClientSideException(ExceptionType.TransactionRequiresMoreGas, ex.Message);
+
+                throw ex;
+            }
 
             return transactionHex;
         }
