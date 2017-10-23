@@ -82,14 +82,24 @@ namespace Services.PrivateWallet
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
             var gasLimit                             = new HexBigInteger(transaction.GasLimit.ToHexCompact());
             var gasPrice                             = new HexBigInteger(transaction.GasPrice.ToHexCompact());
-            var value                                = new HexBigInteger(transaction.Value.ToHexCompact());
+            string hexValue                          = transaction.Value.ToHexCompact();
+            var value                                = new HexBigInteger(!string.IsNullOrEmpty(hexValue) ? hexValue : "0");
             var to                                   = transaction.ReceiveAddress.ToHex().EnsureHexPrefix();
             var data                                 = transaction.Data.ToHex().EnsureHexPrefix();
-            var callInput                            = new CallInput(data, to, from, gasLimit, gasLimit);
-            callInput.GasPrice                       = gasLimit;
+            var callInput                            = new CallInput(data, to, from, gasLimit, gasPrice, value);
+            HexBigInteger response;
 
-            var callResult = await _web3.Eth.Transactions.Call.SendRequestAsync(callInput);
-            var response = await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(callInput);
+            try
+            {
+                var callResult = await _web3.Eth.Transactions.Call.SendRequestAsync(callInput);
+                response = await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(callInput);
+            }
+            catch (Exception e)
+            {
+                response = new HexBigInteger(gasLimit.Value);
+            }
+             
+            
 
             return new OperationEstimationResult()
             {
