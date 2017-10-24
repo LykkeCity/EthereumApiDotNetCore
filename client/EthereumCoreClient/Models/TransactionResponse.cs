@@ -7,6 +7,8 @@
 namespace Lykke.EthereumCoreClient.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
     public partial class TransactionResponse
@@ -22,7 +24,7 @@ namespace Lykke.EthereumCoreClient.Models
         /// <summary>
         /// Initializes a new instance of the TransactionResponse class.
         /// </summary>
-        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?))
+        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), IList<AddressHistoryResponse> ercTransfer = default(IList<AddressHistoryResponse>))
         {
             TransactionIndex = transactionIndex;
             BlockNumber = blockNumber;
@@ -40,6 +42,7 @@ namespace Lykke.EthereumCoreClient.Models
             GasUsed = gasUsed;
             BlockTimeUtc = blockTimeUtc;
             HasError = hasError;
+            ErcTransfer = ercTransfer;
             CustomInit();
         }
 
@@ -127,6 +130,11 @@ namespace Lykke.EthereumCoreClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "hasError")]
         public bool? HasError { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "ercTransfer")]
+        public IList<AddressHistoryResponse> ErcTransfer { get; set; }
 
     }
 }

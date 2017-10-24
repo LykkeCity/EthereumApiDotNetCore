@@ -25,15 +25,15 @@ namespace Lykke.EthereumCoreClient.Models
         /// Initializes a new instance of the PrivateWalletErc20Transaction
         /// class.
         /// </summary>
-        public PrivateWalletErc20Transaction(string tokenAddress, string tokenAmount, string value, string fromAddress, string toAddress, string gasAmount, string gasPrice)
+        public PrivateWalletErc20Transaction(string tokenAddress, string tokenAmount, string fromAddress, string toAddress, string gasAmount, string gasPrice, string value)
         {
             TokenAddress = tokenAddress;
             TokenAmount = tokenAmount;
-            Value = value;
             FromAddress = fromAddress;
             ToAddress = toAddress;
             GasAmount = gasAmount;
             GasPrice = gasPrice;
+            Value = value;
             CustomInit();
         }
 
@@ -51,11 +51,6 @@ namespace Lykke.EthereumCoreClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "tokenAmount")]
         public string TokenAmount { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
 
         /// <summary>
         /// </summary>
@@ -78,6 +73,11 @@ namespace Lykke.EthereumCoreClient.Models
         public string GasPrice { get; set; }
 
         /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "value")]
+        public string Value { get; set; }
+
+        /// <summary>
         /// Validate the object.
         /// </summary>
         /// <exception cref="ValidationException">
@@ -92,10 +92,6 @@ namespace Lykke.EthereumCoreClient.Models
             if (TokenAmount == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "TokenAmount");
-            }
-            if (Value == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Value");
             }
             if (FromAddress == null)
             {
@@ -113,18 +109,15 @@ namespace Lykke.EthereumCoreClient.Models
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "GasPrice");
             }
+            if (Value == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Value");
+            }
             if (TokenAmount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(TokenAmount, "^[1-9][0-9]*$"))
                 {
                     throw new ValidationException(ValidationRules.Pattern, "TokenAmount", "^[1-9][0-9]*$");
-                }
-            }
-            if (Value != null)
-            {
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Value, "^([1-9][0-9])|0*$"))
-                {
-                    throw new ValidationException(ValidationRules.Pattern, "Value", "^([1-9][0-9])|0*$");
                 }
             }
             if (GasAmount != null)
@@ -139,6 +132,13 @@ namespace Lykke.EthereumCoreClient.Models
                 if (!System.Text.RegularExpressions.Regex.IsMatch(GasPrice, "^[1-9][0-9]*$"))
                 {
                     throw new ValidationException(ValidationRules.Pattern, "GasPrice", "^[1-9][0-9]*$");
+                }
+            }
+            if (Value != null)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(Value, "^[1-9][0-9]*$"))
+                {
+                    throw new ValidationException(ValidationRules.Pattern, "Value", "^[1-9][0-9]*$");
                 }
             }
         }
