@@ -24,7 +24,7 @@ namespace Lykke.EthereumCoreClient.Models
         /// <summary>
         /// Initializes a new instance of the TransactionResponse class.
         /// </summary>
-        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), IList<AddressHistoryResponse> ercTransfer = default(IList<AddressHistoryResponse>))
+        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), IList<TokenAddressHistoryResponse> ercTransfer = default(IList<TokenAddressHistoryResponse>))
         {
             TransactionIndex = transactionIndex;
             BlockNumber = blockNumber;
@@ -134,7 +134,7 @@ namespace Lykke.EthereumCoreClient.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "ercTransfer")]
-        public IList<AddressHistoryResponse> ErcTransfer { get; set; }
+        public IList<TokenAddressHistoryResponse> ErcTransfer { get; set; }
 
     }
 }

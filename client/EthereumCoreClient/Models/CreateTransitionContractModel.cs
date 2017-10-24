@@ -25,7 +25,7 @@ namespace Lykke.EthereumCoreClient.Models
         /// Initializes a new instance of the CreateTransitionContractModel
         /// class.
         /// </summary>
-        public CreateTransitionContractModel(string coinAdapterAddress, string userAddress)
+        public CreateTransitionContractModel(string userAddress, string coinAdapterAddress = default(string))
         {
             CoinAdapterAddress = coinAdapterAddress;
             UserAddress = userAddress;
@@ -55,10 +55,6 @@ namespace Lykke.EthereumCoreClient.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (CoinAdapterAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "CoinAdapterAddress");
-            }
             if (UserAddress == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "UserAddress");
