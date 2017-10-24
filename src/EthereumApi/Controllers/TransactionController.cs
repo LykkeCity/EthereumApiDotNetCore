@@ -96,6 +96,7 @@ namespace EthereumApi.Controllers
                 Value = transaction.Value,
                 BlockTimeUtc = transaction.BlockTimeUtc,
                 HasError = transaction.HasError,
+                ErcTransfers = transactionContent.ErcTransfer?.Select(MapErcTransferResponse)
             };
         }
 
@@ -165,27 +166,32 @@ namespace EthereumApi.Controllers
             IEnumerable<AddressHistoryModel> history = await _ethereumIndexerService.GetTokenHistory(request);
             IEnumerable<TokenAddressHistoryResponse> result = history.Select(item =>
             {
-                return new TokenAddressHistoryResponse()
-                {
-                    BlockNumber = item.BlockNumber,
-                    BlockTimestamp = item.BlockTimestamp,
-                    BlockTimeUtc = item.BlockTimeUtc,
-                    From = item.From,
-                    HasError = item.HasError,
-                    MessageIndex = item.MessageIndex,
-                    To = item.To,
-                    TransactionHash = item.TransactionHash,
-                    TransactionIndexInBlock = item.TransactionIndexInBlock,
-                    TokenTransfered = item.Value,
-                    GasPrice = item.GasPrice,
-                    GasUsed = item.GasUsed,
-                };
+                return MapErcTransferResponse(item);
             });
 
             return Ok(new FilteredTokenAddressHistoryResponse()
             {
                 History = result
             });
+        }
+
+        private static TokenAddressHistoryResponse MapErcTransferResponse(AddressHistoryModel item)
+        {
+            return new TokenAddressHistoryResponse()
+            {
+                BlockNumber = item.BlockNumber,
+                BlockTimestamp = item.BlockTimestamp,
+                BlockTimeUtc = item.BlockTimeUtc,
+                From = item.From,
+                HasError = item.HasError,
+                MessageIndex = item.MessageIndex,
+                To = item.To,
+                TransactionHash = item.TransactionHash,
+                TransactionIndexInBlock = item.TransactionIndexInBlock,
+                TokenTransfered = item.Value,
+                GasPrice = item.GasPrice,
+                GasUsed = item.GasUsed,
+            };
         }
     }
 }

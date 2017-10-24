@@ -209,6 +209,16 @@ namespace Service.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<HttpOperationResponse<object>> ApiErc20TokenByContractAddressGetWithHttpMessagesAsync(string contractAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(string query = null, int? count = null, int? start = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiErc20TransferHistoryGetErc20TransfersPostWithHttpMessagesAsync(GetErc20TransferHistoryRequest request = null, int? start = null, int? count = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();

@@ -7,5 +7,6 @@ namespace BusinessModels
     public class TransactionContentModel
     {
         public TransactionModel Transaction { get; set; }
+        public List<AddressHistoryModel> ErcTransfer { get; set; }
     }
 }

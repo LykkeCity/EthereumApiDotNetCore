@@ -53,12 +53,13 @@ namespace Services.PrivateWallet
         public async Task<TransactionContentModel> GetTransactionAsync(string transactionHash)
         {
             var transactionResponseRaw = await _ethereumSamuraiApi.ApiTransactionTxHashByTransactionHashGetAsync(transactionHash);
-            var transactionResponse = transactionResponseRaw as TransactionResponse;
+            var transactionResponse = transactionResponseRaw as TransactionFullInfoResponse;
             ThrowOnError(transactionResponseRaw);
 
             return new TransactionContentModel()
             {
-                Transaction = MapTransactionResponseToModel(transactionResponse)
+                Transaction = MapTransactionResponseToModel(transactionResponse.Transaction),
+                ErcTransfer = MapErcHistoryFromResponse(transactionResponse.Erc20Transfers)
             };
         }
 
@@ -86,8 +87,15 @@ namespace Services.PrivateWallet
                 {
                     addressTransactions.TokenAddress
                 }),
-                addressTransactions.Start, 
+                addressTransactions.Start,
                 addressTransactions.Count);
+            List<AddressHistoryModel> result = MapErcHistoryFromResponse(transactionResponseRaw);
+
+            return result;
+        }
+
+        private List<AddressHistoryModel> MapErcHistoryFromResponse(object transactionResponseRaw)
+        {
             var transactionResponse = transactionResponseRaw as IList<Erc20TransferHistoryResponse>;
             ThrowOnError(transactionResponseRaw);
             int responseCount = transactionResponse?.Count ?? 0;
