@@ -50,7 +50,7 @@ namespace EthereumApi.Models.Indexer
         public bool HasError { get; set; }
 
         [DataMember(Name = "ercTransfer")]
-        public IEnumerable<AddressHistoryResponse> ErcTransfers { get; set; }
+        public IEnumerable<TokenAddressHistoryResponse> ErcTransfers { get; set; }
     }
 
     [DataContract]
