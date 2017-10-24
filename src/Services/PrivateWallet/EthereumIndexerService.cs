@@ -20,7 +20,7 @@ namespace Services.PrivateWallet
 {
     public interface IEthereumIndexerService
     {
-        Task<IEnumerable<AddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions);
+        Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions);
         Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransaction addressTransactions);
         Task<TransactionContentModel> GetTransactionAsync(string transactionHash);
         Task<IEnumerable<InternalMessageModel>> GetInternalMessagesForTransactionAsync(string transactionHash);
@@ -80,7 +80,7 @@ namespace Services.PrivateWallet
             return result;
         }
 
-        public async Task<IEnumerable<AddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions)
+        public async Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions)
         {
             var transactionResponseRaw = await _ethereumSamuraiApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync(
                 new GetErc20TransferHistoryRequest(addressTransactions.Address, null, new List<string>()
@@ -89,22 +89,23 @@ namespace Services.PrivateWallet
                 }),
                 addressTransactions.Start,
                 addressTransactions.Count);
-            List<AddressHistoryModel> result = MapErcHistoryFromResponse(transactionResponseRaw);
+            List<ErcAddressHistoryModel> result = MapErcHistoryFromResponse(transactionResponseRaw);
 
             return result;
         }
 
-        private List<AddressHistoryModel> MapErcHistoryFromResponse(object transactionResponseRaw)
+        private List<ErcAddressHistoryModel> MapErcHistoryFromResponse(object transactionResponseRaw)
         {
             var transactionResponse = transactionResponseRaw as IList<Erc20TransferHistoryResponse>;
             ThrowOnError(transactionResponseRaw);
             int responseCount = transactionResponse?.Count ?? 0;
-            List<AddressHistoryModel> result = new List<AddressHistoryModel>(responseCount);
+            List<ErcAddressHistoryModel> result = new List<ErcAddressHistoryModel>(responseCount);
 
             foreach (var transaction in transactionResponse)
             {
-                result.Add(new AddressHistoryModel()
+                result.Add(new ErcAddressHistoryModel()
                 {
+                    ContractAddress = transaction.Contract,
                     BlockNumber = (ulong)transaction.BlockNumber,
                     BlockTimestamp = (uint)transaction.BlockTimestamp,
                     BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp),

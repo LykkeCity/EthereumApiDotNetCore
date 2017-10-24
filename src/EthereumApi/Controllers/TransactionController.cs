@@ -163,7 +163,7 @@ namespace EthereumApi.Controllers
                 TokenAddress = addressTransactions.TokenAddress
             };
 
-            IEnumerable<AddressHistoryModel> history = await _ethereumIndexerService.GetTokenHistory(request);
+            IEnumerable<ErcAddressHistoryModel> history = await _ethereumIndexerService.GetTokenHistory(request);
             IEnumerable<TokenAddressHistoryResponse> result = history.Select(item =>
             {
                 return MapErcTransferResponse(item);
@@ -175,10 +175,11 @@ namespace EthereumApi.Controllers
             });
         }
 
-        private static TokenAddressHistoryResponse MapErcTransferResponse(AddressHistoryModel item)
+        private static TokenAddressHistoryResponse MapErcTransferResponse(ErcAddressHistoryModel item)
         {
             return new TokenAddressHistoryResponse()
             {
+                ContractAddress = item.ContractAddress,
                 BlockNumber = item.BlockNumber,
                 BlockTimestamp = item.BlockTimestamp,
                 BlockTimeUtc = item.BlockTimeUtc,

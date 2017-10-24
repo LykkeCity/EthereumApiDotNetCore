@@ -64,5 +64,6 @@ namespace EthereumApi.Models.Models
     {
         [DataMember(Name = "TokenTransfered")]
         public string TokenTransfered { get; set; }
+        public string ContractAddress { get; set; }
     }
 }

@@ -4,6 +4,11 @@ using System.Text;
 
 namespace BusinessModels
 {
+    public class ErcAddressHistoryModel : AddressHistoryModel
+    {
+        public string ContractAddress { get; set; }
+    }
+
     public class AddressHistoryModel
     {
         public ulong BlockNumber { get; set; }
