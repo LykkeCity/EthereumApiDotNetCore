@@ -24,9 +24,10 @@ namespace Lykke.EthereumCoreClient.Models
         /// Initializes a new instance of the TokenAddressHistoryResponse
         /// class.
         /// </summary>
-        public TokenAddressHistoryResponse(string tokenTransfered = default(string), long? blockNumber = default(long?), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), int? transactionIndexInBlock = default(int?), int? messageIndex = default(int?))
+        public TokenAddressHistoryResponse(string tokenTransfered = default(string), string contractAddress = default(string), long? blockNumber = default(long?), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), int? transactionIndexInBlock = default(int?), int? messageIndex = default(int?))
         {
             TokenTransfered = tokenTransfered;
+            ContractAddress = contractAddress;
             BlockNumber = blockNumber;
             Value = value;
             GasUsed = gasUsed;
@@ -49,8 +50,13 @@ namespace Lykke.EthereumCoreClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "TokenTransfered")]
+        [JsonProperty(PropertyName = "tokenTransfered")]
         public string TokenTransfered { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "contractAddress")]
+        public string ContractAddress { get; set; }
 
         /// <summary>
         /// </summary>

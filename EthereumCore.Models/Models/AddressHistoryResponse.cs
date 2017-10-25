@@ -62,8 +62,10 @@ namespace EthereumApi.Models.Models
     [DataContract]
     public class TokenAddressHistoryResponse : AddressHistoryResponse
     {
-        [DataMember(Name = "TokenTransfered")]
+        [DataMember(Name = "tokenTransfered")]
         public string TokenTransfered { get; set; }
+
+        [DataMember(Name = "contractAddress")]
         public string ContractAddress { get; set; }
     }
 }

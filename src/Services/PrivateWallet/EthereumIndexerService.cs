@@ -59,7 +59,7 @@ namespace Services.PrivateWallet
             return new TransactionContentModel()
             {
                 Transaction = MapTransactionResponseToModel(transactionResponse.Transaction),
-                ErcTransfer = MapErcHistoryFromResponse(transactionResponse.Erc20Transfers)
+                ErcTransfer = MapErcHistoryFromResponse(transactionResponse.Erc20Transfers ?? new List<Erc20TransferHistoryResponse>())
             };
         }
 
@@ -220,6 +220,9 @@ namespace Services.PrivateWallet
 
         private static TransactionModel MapTransactionResponseToModel(TransactionResponse transaction)
         {
+            if (transaction == null)
+                return null;
+
             return new TransactionModel()
             {
                 BlockHash = transaction.BlockHash,

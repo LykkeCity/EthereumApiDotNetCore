@@ -69,6 +69,8 @@ namespace EthereumApi.Controllers
             }
 
             TransactionContentModel transaction = await _ethereumIndexerService.GetTransactionAsync(transactionHash);
+            if (transaction == null)
+                return NotFound();
             Models.Indexer.TransactionResponse result = MapTransactionModelContentToResponse(transaction);
 
             return Ok(result);
