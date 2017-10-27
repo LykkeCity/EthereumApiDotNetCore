@@ -31,7 +31,7 @@ namespace EthereumApi.Models.Models
         [DataMember]
         [Required]
         [RegularExpression(Constants.BigIntTemplate)]
-        public string Value { get; set; }
+        public virtual string Value { get; set; }
     }
 
     [DataContract]
