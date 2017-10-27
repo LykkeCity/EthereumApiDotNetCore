@@ -54,6 +54,11 @@ namespace EthereumApi.Models.Models
         [Required]
         [RegularExpression(Constants.BigIntTemplate)]
         public string TokenAmount { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntAllowZeroTemplate)]
+        public override string Value { get; set; }
     }
 
     [DataContract]
