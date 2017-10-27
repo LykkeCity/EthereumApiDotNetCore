@@ -80,7 +80,8 @@ namespace Services.PrivateWallet
         public async Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex)
         {
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
-            var gasLimit                             = new HexBigInteger(transaction.GasLimit.ToHexCompact());
+            var increasedGas                         = new HexBigInteger(transaction.GasLimit.ToHexCompact()).Value + 1;
+            var gasLimit                             = new HexBigInteger(increasedGas);
             var gasPrice                             = new HexBigInteger(transaction.GasPrice.ToHexCompact());
             string hexValue                          = transaction.Value.ToHexCompact();
             var value                                = new HexBigInteger(!string.IsNullOrEmpty(hexValue) ? hexValue : "0");
@@ -98,8 +99,6 @@ namespace Services.PrivateWallet
             {
                 response = new HexBigInteger(gasLimit.Value);
             }
-             
-            
 
             return new OperationEstimationResult()
             {
