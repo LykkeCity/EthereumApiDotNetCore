@@ -85,7 +85,7 @@ namespace Services.PrivateWallet
             string hexValue                          = transaction.Value.ToHexCompact();
             var value                                = new HexBigInteger(!string.IsNullOrEmpty(hexValue) ? hexValue : "0");
             var to                                   = transaction.ReceiveAddress.ToHex().EnsureHexPrefix();
-            var data                                 = transaction.Data.ToHex().EnsureHexPrefix();
+            var data                                 = transaction?.Data?.ToHex()?.EnsureHexPrefix() ?? "";
             var callInput                            = new CallInput(data, to, from, gasLimit, gasPrice, value);
             HexBigInteger response;
 
