@@ -50,7 +50,8 @@ namespace Services.PrivateWallet
             IPaymentService paymentService,
             ISignatureChecker signatureChecker,
             ITransactionValidationService transactionValidationService,
-            IErc20PrivateWalletService erc20Service)
+            IErc20PrivateWalletService erc20Service,
+            IRawTransactionSubmitter rawTransactionSubmitter)
         {
             _signatureChecker             = signatureChecker;
             _rawTransactionSubmitter      = rawTransactionSubmitter;

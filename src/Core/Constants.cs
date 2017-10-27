@@ -10,6 +10,7 @@ namespace Core
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
 
+        public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
         public const string EventTraceTable = "EventTrace";
         public const string TransferContractUserAssignmentQueueName = "transfer-contract-user-assignment";

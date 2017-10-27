@@ -17,6 +17,7 @@ using System.Threading;
 using Services.Signature;
 using Nethereum.RPC.TransactionManagers;
 using System;
+using BusinessModels;
 
 namespace LkeServices.Signature
 {
@@ -30,6 +31,7 @@ namespace LkeServices.Signature
         private readonly IBaseSettings _baseSettings;
         private readonly SemaphoreSlim _readLock;
         private readonly INonceCalculator _nonceCalculator;
+        private readonly IRoundRobinTransactionSender _roundRobinTransactionSender;
 
         public IClient Client { get; set; }
         public BigInteger DefaultGasPrice { get; set; }
@@ -42,6 +44,7 @@ namespace LkeServices.Signature
             IRoundRobinTransactionSender roundRobinTransactionSender)
         {
             _nonceCalculator = nonceCalculator;
+            _roundRobinTransactionSender = roundRobinTransactionSender;
             _baseSettings = baseSettings;
             _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
@@ -90,12 +93,7 @@ namespace LkeServices.Signature
                 transaction.GasPrice,
                 transaction.Gas);
         }
-
-        public Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<string> SendTransactionAsync(string from, string to, HexBigInteger amount)
         {
             return await SendTransactionASync(from, to, "", amount);
@@ -164,11 +162,6 @@ namespace LkeServices.Signature
             if (callInput == null) throw new ArgumentNullException(nameof(callInput));
             var ethEstimateGas = new EthEstimateGas(Client);
             return await ethEstimateGas.SendRequestAsync(callInput);
-        }
-
-        public async Task<string> SendTransactionAsync(string from, string to, HexBigInteger amount)
-        {
-            return await SendTransactionAsync(new TransactionInput("", to, from, new HexBigInteger(DefaultGas), amount));
         }
     }
 }

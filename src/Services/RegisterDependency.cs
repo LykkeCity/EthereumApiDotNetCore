@@ -95,7 +95,8 @@ namespace Services
                 var web3 = provider.GetService<Web3>();
                 var signatureApi = provider.GetService<ILykkeSigningAPI>();
                 var nonceCalculator = provider.GetService<INonceCalculator>();
-                var transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator);
+                var roundRobinTransactionSender = provider.GetService<IRoundRobinTransactionSender>();
+                var transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator, roundRobinTransactionSender);
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;

@@ -18,12 +18,14 @@ using Services.Coins;
 using RabbitMQ;
 using Common.Log;
 using Services.New;
-using Core.Repositories;
+//using Core.Repositories;
 using Core;
 using EthereumApi.Models;
 using System.Numerics;
+using Core.Repositories;
 using Nethereum.Util;
 using EthereumJobs.Job;
+using EthereumContract = Core.Settings.EthereumContract;
 
 namespace ContractBuilder
 {
@@ -363,7 +365,6 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("MainExchangeMultipleOwners.bin");
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
                 IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
-                _oldMainExchangeAddress = settings.EthereumCore.MainExchangeContract.Address;
                 settings.EthereumCore.MainExchangeContract = new Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
