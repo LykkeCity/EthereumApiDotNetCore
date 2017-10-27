@@ -127,6 +127,9 @@ namespace EthereumApi.Controllers
             await _log.WriteInfoAsync("PrivateWalletController", "EstimateSignedTransaction",
                 $"{serialized}-TransactionHash:{executionCost.GasAmount.ToString()}", "EndEstimateSignedTransaction", DateTime.UtcNow);
 
+            if (executionCost.IsAllowed)
+                executionCost.GasAmount++;
+
             return Ok(new EstimatedGasModel
             {
                 EstimatedGas = executionCost.GasAmount.ToString(),
