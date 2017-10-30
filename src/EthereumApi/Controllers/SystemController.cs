@@ -5,7 +5,7 @@ using Nethereum.Web3;
 
 namespace EthereumApi.Controllers
 {
-    [Route("api/system")]
+    [Route("api")]
     [Produces("application/json")]
     public class SystemController : Controller
     {
@@ -19,7 +19,7 @@ namespace EthereumApi.Controllers
             _contractService = contractService;
         }
 
-        [Route("amialive")]
+        [Route("isalive")]
         [HttpGet]
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> NewClient()

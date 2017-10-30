@@ -92,6 +92,7 @@ namespace Core
 
         public static BigInteger DefaultTransactionGas = 21000;
         public const string Erc20TransferSignature =  "0xa9059cbb";
+        public const string OwnerTable = "Owner";
     }
 
     public static class OperationTypes
