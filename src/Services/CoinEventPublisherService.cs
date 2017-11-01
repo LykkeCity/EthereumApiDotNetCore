@@ -33,10 +33,12 @@ namespace Services
             await _rabbitPublisher.PublshEvent(coinEventSerialized);
         }
 
-        private static CoinEvent GetCoinEvent(ICoinEvent coinEvent)
+        private static Lykke.Job.EthereumCore.Contracts.Events.CoinEvent GetCoinEvent(ICoinEvent coinEvent)
         {
-            return new CoinEvent(coinEvent.OperationId, coinEvent.TransactionHash, coinEvent.FromAddress, coinEvent.ToAddress, 
-                coinEvent.Amount, coinEvent.CoinEventType, coinEvent.ContractAddress, coinEvent.Success, coinEvent.Additional);
+            var coinEventType = (Lykke.Job.EthereumCore.Contracts.Enums.CoinEventType)coinEvent.CoinEventType;
+            return new Lykke.Job.EthereumCore.Contracts.Events.CoinEvent(coinEvent.OperationId, coinEvent.TransactionHash, 
+                coinEvent.FromAddress, coinEvent.ToAddress, coinEvent.Amount, coinEventType,
+                coinEvent.ContractAddress, coinEvent.Success, coinEvent.Additional);
         }
     }
 }

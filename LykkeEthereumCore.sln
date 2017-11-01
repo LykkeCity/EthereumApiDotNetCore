@@ -52,6 +52,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{7092F3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumCoreClient", "client\EthereumCoreClient\EthereumCoreClient.csproj", "{10CBAD86-46AB-449E-92B3-0B33DA742F6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthereumJobs.UnitTests", "test\EthereumJobs.UnitTests\EthereumJobs.UnitTests.csproj", "{BC7E4283-E1F7-4853-B6CA-79D70C6ABCFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Job.EthereumCore.Contracts", "client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj", "{CCC87573-1C68-457A-B105-9DBFF82C2A7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +133,10 @@ Global
 		{10CBAD86-46AB-449E-92B3-0B33DA742F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10CBAD86-46AB-449E-92B3-0B33DA742F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10CBAD86-46AB-449E-92B3-0B33DA742F6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +155,7 @@ Global
 		{4B4FE824-BA5B-4989-9872-00EA0C0C21F3} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{F5BE99AE-133C-4CAE-8163-504F746C6CE5} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 		{10CBAD86-46AB-449E-92B3-0B33DA742F6A} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}

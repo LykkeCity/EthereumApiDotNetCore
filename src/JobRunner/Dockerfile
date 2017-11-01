@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:1.1.2-runtime
+FROM microsoft/dotnet:2.0-sdk
 ENTRYPOINT ["dotnet", "JobRunner.dll"]
 ARG source=.
 WORKDIR /app
