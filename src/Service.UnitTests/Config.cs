@@ -29,7 +29,6 @@ namespace Service.UnitTests
             collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
             collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
             collection.AddSingleton<ISignatureChecker, SignatureChecker>();
-            //collection.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
 
 
             Services = collection.BuildServiceProvider();

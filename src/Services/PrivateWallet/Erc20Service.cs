@@ -115,13 +115,14 @@ namespace Services.PrivateWallet
             await ValidateTokenAddressBalanceAsync(transaction.FromAddress, transaction.TokenAddress, transaction.TokenAmount);
         }
 
+        /// Example for debugging purpose: signedTransaction - 0xa9059cbb000000000000000000000000aa4981d084120aef4bbaeecb9abdbc7d180c7edb000000000000000000000000000000000000000000000000000000000000000a
         public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
         {
             await _transactionValidationService.ValidateInputForSignedAsync(fromAddress, signedTransaction);
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
             string erc20Address                      = transaction.ReceiveAddress.ToHexCompact().EnsureHexPrefix();
             string erc20InvocationData               = transaction.Data.ToHexCompact().EnsureHexPrefix();
-            //0xa9059cbb000000000000000000000000aa4981d084120aef4bbaeecb9abdbc7d180c7edb000000000000000000000000000000000000000000000000000000000000000a
+            
             if (! await _transactionValidationService.IsTransactionErc20Transfer(signedTransaction))
             {
                 throw new ClientSideException(ExceptionType.WrongParams, "Transaction is not a erc20 transfer");
@@ -129,9 +130,8 @@ namespace Services.PrivateWallet
 
             string parametrsString    = erc20InvocationData.Replace(Constants.Erc20TransferSignature, "");
             var amount                = parametrsString.Substring(64, 64);
-            //string addressString    = parametrsString.Substring(0, 64).TrimStart(new char[] { '0' }).EnsureHexPrefix();
-            //string address          = _addressUtil.ConvertToChecksumAddress(addressString);
             HexBigInteger tokenAmount = new HexBigInteger(amount);
+
             await ValidateTokenAddressBalanceAsync(fromAddress, erc20Address, tokenAmount);
         }
 

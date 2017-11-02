@@ -468,14 +468,14 @@ namespace Services
             var count = await _queue.Count();
             for (int i = 0; i < count; i++)
             {
-                var message = _queue.GetRawMessageAsync().Result;
+                var message = await _queue.GetRawMessageAsync();
 
                 OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
 
                 await _queue.FinishRawMessageAsync(message);
                 if (newMessage.OperationId?.ToLower() != opId?.ToLower())
                 {
-                    _queue.PutRawMessageAsync(message.AsString).Wait();
+                    await _queue.PutRawMessageAsync(message.AsString);
                 }
             }
         }
