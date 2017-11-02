@@ -10,7 +10,6 @@ namespace Core
         /// Used to change table and queue names in testing enviroment
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
-
         public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
         public const string EventTraceTable = "EventTrace";
@@ -90,9 +89,9 @@ namespace Core
         public const string UserAssignmentFailTable = "UserAssignmentFail";
         public const string OperationResubmittTable = "OperationResubmitt";
 
+        public const string OwnerTable = "Owner";
         public static BigInteger DefaultTransactionGas = 21000;
         public const string Erc20TransferSignature =  "0xa9059cbb";
-        public const string OwnerTable = "Owner";
     }
 
     public static class OperationTypes

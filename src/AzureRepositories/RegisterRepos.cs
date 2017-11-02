@@ -75,6 +75,10 @@ namespace AzureRepositories
                 new AzureTableStorage<CashinEventEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CashInEventTable,
                     provider.GetService<ILog>())));
 
+            services.AddSingleton<IOwnerRepository>(provider => new OwnerRepository(
+                new AzureTableStorage<OwnerEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OwnerTable,
+                    provider.GetService<ILog>())));
+
             services.AddSingleton<ICoinEventRepository>(provider => new CoinEventRepository(
                 new AzureTableStorage<CoinEventEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.CoinEventEntityTable,
                     provider.GetService<ILog>()),
