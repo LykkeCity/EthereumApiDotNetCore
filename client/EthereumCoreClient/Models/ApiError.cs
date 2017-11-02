@@ -25,7 +25,8 @@ namespace Lykke.EthereumCoreClient.Models
         /// <param name="code">Possible values include: 'None',
         /// 'ContractPoolEmpty', 'MissingRequiredParams', 'WrongParams',
         /// 'EntityAlreadyExists', 'WrongSign', 'OperationWithIdAlreadyExists',
-        /// 'NotEnoughFunds', 'TransactionExists'</param>
+        /// 'NotEnoughFunds', 'TransactionExists',
+        /// 'TransactionRequiresMoreGas'</param>
         public ApiError(string code = default(string), string message = default(string))
         {
             Code = code;
@@ -42,7 +43,7 @@ namespace Lykke.EthereumCoreClient.Models
         /// Gets or sets possible values include: 'None', 'ContractPoolEmpty',
         /// 'MissingRequiredParams', 'WrongParams', 'EntityAlreadyExists',
         /// 'WrongSign', 'OperationWithIdAlreadyExists', 'NotEnoughFunds',
-        /// 'TransactionExists'
+        /// 'TransactionExists', 'TransactionRequiresMoreGas'
         /// </summary>
         [JsonProperty(PropertyName = "code")]
         public string Code { get; set; }

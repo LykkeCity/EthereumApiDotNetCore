@@ -29,7 +29,7 @@ namespace Service.UnitTests.PrivateWallet
         {
             int count = 3;
             int start = 0;
-            AddressTransactions addressTransactions = new AddressTransactions()
+            AddressTransaction addressTransactions = new AddressTransaction()
             {
                 Address = TestConstants.PW_ADDRESS,
                 Count = count,
@@ -50,7 +50,7 @@ namespace Service.UnitTests.PrivateWallet
         {
             int count = 3;
             int start = 0;
-            AddressTransactions addressTransactions = new AddressTransactions()
+            AddressTransaction addressTransactions = new AddressTransaction()
             {
                 Address = TestConstants.PW_ADDRESS,
                 Count = count,

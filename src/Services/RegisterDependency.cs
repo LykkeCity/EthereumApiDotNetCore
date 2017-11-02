@@ -7,9 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Nethereum.RPC.TransactionManagers;
 using Nethereum.Web3;
 using Services.Coins;
+using Services.Erc20;
 using Services.New;
 using Services.PrivateWallet;
 using Services.Signature;
+using Services.Transactions;
 using SigningServiceApiCaller;
 using System;
 
@@ -45,6 +47,15 @@ namespace Services
             services.AddSingleton<INonceCalculator, NonceCalculator>();
             services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
             services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
+            services.AddSingleton<ISignatureChecker, SignatureChecker>();
+            services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
+            services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
+            services.AddSingleton<IOwnerService, OwnerService>();
+            services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
+            services.AddSingleton<IRoundRobinTransactionSender, RoundRobinTransactionSender>();
+            services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
+            services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
+
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
@@ -84,17 +95,18 @@ namespace Services
                 var web3 = provider.GetService<Web3>();
                 var signatureApi = provider.GetService<ILykkeSigningAPI>();
                 var nonceCalculator = provider.GetService<INonceCalculator>();
-                var transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator);
+                var roundRobinTransactionSender = provider.GetService<IRoundRobinTransactionSender>();
+                var transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator, roundRobinTransactionSender);
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;
             });
         }
 
+        //need to fix that
         public static void ActivateRequestInterceptor(this IServiceProvider provider)
         {
             provider.GetService<ITransactionManager>();
         }
-
     }
 }

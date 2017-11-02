@@ -37,7 +37,10 @@ namespace Services
         Task RefreshOperationByIdAsync(string operationId);
         Task MatchHashToOpId(string transactionHash, string operationId);
         Task<string> CreateOperation(IPendingOperation operation);
+        //When MonitorinOperationJob is stopped
+        Task RemoveFromPendingOperationQueue(string operationId);
         Task<IEnumerable<IOperationToHashMatch>> GetHistoricalAsync(string operationId);
+        Task<string> TransferWithNoChecks(Guid id, string coin, string from, string to, BigInteger amount, string sign);
     }
 
     public class PendingOperationService : IPendingOperationService
@@ -103,6 +106,29 @@ namespace Services
             amount = signResult.Amount;
             operation.SignFrom = sign;
             operation.Amount = amount.ToString();
+
+            await StartProcessing(operation);
+
+            return opId;
+        }
+
+        public async Task<string> TransferWithNoChecks(Guid id, string coinAddress, string fromAddress, 
+            string toAddress, BigInteger amount, string sign)
+        {
+            var coinAFromDb = await GetCoinWithCheck(coinAddress);
+            var operation = new PendingOperation()
+            {
+                OperationId = id.ToString(),
+                Amount = amount.ToString(),
+                CoinAdapterAddress = coinAddress,
+                FromAddress = fromAddress,
+                OperationType = OperationTypes.Transfer,
+                SignFrom = sign,
+                SignTo = null,
+                ToAddress = toAddress,
+                MainExchangeId = id,
+            };
+            var opId = await CreateOperation(operation);
 
             await StartProcessing(operation);
 
@@ -435,6 +461,23 @@ namespace Services
 
             await _log.WriteInfoAsync("PendingOperationService", "GetSign", "", $"ID({id})-COINADDRESS({coinAddress})-FROM({clientAddr})-TO({toAddr})-AMOUNT({amount})-HASH({response.SignedHash})", DateTime.UtcNow);
             return response.SignedHash;
+        }
+
+        public async Task RemoveFromPendingOperationQueue(string opId)
+        {
+            var count = await _queue.Count();
+            for (int i = 0; i < count; i++)
+            {
+                var message = await _queue.GetRawMessageAsync();
+
+                OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
+
+                await _queue.FinishRawMessageAsync(message);
+                if (newMessage.OperationId?.ToLower() != opId?.ToLower())
+                {
+                    await _queue.PutRawMessageAsync(message.AsString);
+                }
+            }
         }
     }
 }

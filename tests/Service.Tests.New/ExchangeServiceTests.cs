@@ -166,6 +166,54 @@ namespace Tests
             Assert.IsTrue(currentBalance == 0);
         }
 
+        [TestMethod]
+        public async Task TestTransferTokens_WithRoundRobin()
+        {
+            Func<Task> testFunc = async () =>
+                {
+                    var colorCoin = await _coinRepository.GetCoinByAddress(_tokenAdapterAddress);
+                    var toAddress = _settings.EthereumMainAccount;
+                    await CashinTokens(_externalTokenAddress, _clientTokenTransferAddress, new BigInteger(100), _tokenAdapterAddress, _clientA);
+                    var transferUser = await _transferContractService.GetTransferAddressUser(colorCoin.AdapterAddress, _clientTokenTransferAddress);
+                    var currentBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+
+                    Assert.AreEqual(transferUser, _clientA.ToLower());
+                    int threadAmount = 4;
+                    List<Task<string>> tasks = new List<Task<string>>(threadAmount);
+                    for (int i = 0; i < threadAmount; i++)
+                    {
+                        tasks.Add(Task<string>.Run(async () =>
+                        {
+                            var guid = Guid.NewGuid();
+                            var externalSign = await _exchangeService.GetSign(guid, _tokenAdapterAddress, _clientA, toAddress, currentBalance / threadAmount);
+                            var trHash = await _exchangeService.Transfer(guid, _tokenAdapterAddress, _clientA, toAddress,
+                                currentBalance / threadAmount, externalSign);
+
+                            return trHash;
+                        }));
+                    }
+
+                    await Task.WhenAll(tasks);
+                    foreach (var task in tasks)
+                    {
+                        var trHash = task.Result;
+                        while (await _transactionService.GetTransactionReceipt(trHash) == null)
+                            await Task.Delay(100);
+                    }
+
+                    var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
+                    var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
+
+                    //Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
+                    Assert.IsTrue(currentBalanceOnAdapter == 0);
+                    Assert.IsTrue(currentBalance <= newBalance);
+                };
+
+            await testFunc();
+            await Task.Delay(5 * 60 * 1000 + 10); //5min
+            await testFunc();
+        }
+
         #endregion
 
         #region EthereumAdapter
@@ -282,6 +330,12 @@ namespace Tests
         }
 
         #endregion
+
+        [TestMethod]
+        public async Task SendTokensAsync()
+        {
+            var transferHash = await _ercService.Transfer(_externalTokenAddress, _settings.EthereumMainAccount, "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28", 20000);
+        }
 
         private byte[] Sign(byte[] hash, string privateKey)
         {

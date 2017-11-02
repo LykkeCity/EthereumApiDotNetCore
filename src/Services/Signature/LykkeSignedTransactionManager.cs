@@ -17,6 +17,7 @@ using System.Threading;
 using Services.Signature;
 using Nethereum.RPC.TransactionManagers;
 using System;
+using BusinessModels;
 
 namespace LkeServices.Signature
 {
@@ -30,14 +31,20 @@ namespace LkeServices.Signature
         private readonly IBaseSettings _baseSettings;
         private readonly SemaphoreSlim _readLock;
         private readonly INonceCalculator _nonceCalculator;
+        private readonly IRoundRobinTransactionSender _roundRobinTransactionSender;
 
         public IClient Client { get; set; }
-        public BigInteger DefaultGasPrice { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public BigInteger DefaultGas { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public BigInteger DefaultGasPrice { get; set; }
+        public BigInteger DefaultGas { get; set; }
 
-        public LykkeSignedTransactionManager(Web3 web3, ILykkeSigningAPI signatureApi, IBaseSettings baseSettings, INonceCalculator nonceCalculator)
+        public LykkeSignedTransactionManager(Web3 web3,
+            ILykkeSigningAPI signatureApi,
+            IBaseSettings baseSettings,
+            INonceCalculator nonceCalculator,
+            IRoundRobinTransactionSender roundRobinTransactionSender)
         {
             _nonceCalculator = nonceCalculator;
+            _roundRobinTransactionSender = roundRobinTransactionSender;
             _baseSettings = baseSettings;
             _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
@@ -80,18 +87,13 @@ namespace LkeServices.Signature
         public async Task<string> SendTransactionAsync<T>(T transaction) where T : TransactionInput
         {
             var value = (transaction?.Value ?? new BigInteger(0));
-            return await SendTransactionASync(transaction.From, transaction.To, 
+            return await SendTransactionASync(transaction.From, transaction.To,
                 transaction.Data,
                 value,
                 transaction.GasPrice,
                 transaction.Gas);
         }
-
-        public Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<string> SendTransactionAsync(string from, string to, HexBigInteger amount)
         {
             return await SendTransactionASync(from, to, "", amount);
@@ -103,16 +105,31 @@ namespace LkeServices.Signature
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
             var currentGasPrice = currentGasPriceHex.Value;
             HexBigInteger nonce;
+
+            #region RoundRobin
             try
             {
                 await _readLock.WaitAsync();
-                nonce = await GetNonceAsync(from);
+                if (from == Constants.AddressForRoundRobinTransactionSending)
+                {
+                    //Send from RoundRobin pool
+                    AddressNonceModel senderInfo = await _roundRobinTransactionSender.GetSenderAndHisNonce();
+                    from = senderInfo.Address;
+                    nonce = new HexBigInteger(senderInfo.Nonce);
+                }
+                else
+                {
+                    //Send from EthereumMainAccount
+                    nonce = await _roundRobinTransactionSender.GetNonceAsync(from);
+                }
             }
             finally
             {
                 _readLock.Release();
             }
-            
+
+            #endregion
+
             BigInteger selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
             if (selectedGasPrice > _maxGasPrice)
             {
@@ -137,6 +154,14 @@ namespace LkeServices.Signature
             var response = await _signatureApi.ApiEthereumSignPostAsync(requestBody);
 
             return await ethSendTransaction.SendRequestAsync(response.SignedTransaction.EnsureHexPrefix()).ConfigureAwait(false);
+        }
+
+        public async Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
+        {
+            if (Client == null) throw new NullReferenceException("Client not configured");
+            if (callInput == null) throw new ArgumentNullException(nameof(callInput));
+            var ethEstimateGas = new EthEstimateGas(Client);
+            return await ethEstimateGas.SendRequestAsync(callInput);
         }
     }
 }

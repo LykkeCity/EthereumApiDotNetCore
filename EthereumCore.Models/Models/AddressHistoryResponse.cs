@@ -51,4 +51,21 @@ namespace EthereumApi.Models.Models
         [DataMember(Name = "messageIndex")]
         public int MessageIndex { get; set; }
     }
+
+    [DataContract]
+    public class FilteredTokenAddressHistoryResponse
+    {
+        [DataMember(Name = "history")]
+        public IEnumerable<TokenAddressHistoryResponse> History { get; set; }
+    }
+
+    [DataContract]
+    public class TokenAddressHistoryResponse : AddressHistoryResponse
+    {
+        [DataMember(Name = "tokenTransfered")]
+        public string TokenTransfered { get; set; }
+
+        [DataMember(Name = "contractAddress")]
+        public string ContractAddress { get; set; }
+    }
 }

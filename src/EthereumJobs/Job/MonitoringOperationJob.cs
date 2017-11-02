@@ -54,6 +54,13 @@ namespace EthereumJobs.Job
         [QueueTrigger(Constants.PendingOperationsQueue, 100, true)]
         public async Task Execute(OperationHashMatchMessage opMessage, QueueTriggeringContext context)
         {
+            await ProcessOperation(opMessage, context, _exchangeContractService.Transfer);
+            
+        }
+
+        public async Task ProcessOperation(OperationHashMatchMessage opMessage, QueueTriggeringContext context, 
+            Func<Guid, string, string, string, BigInteger, string, Task<string>> transferDelegate)
+        {
             try
             {
                 var operation = await _pendingOperationService.GetOperationAsync(opMessage.OperationId);
@@ -86,7 +93,7 @@ namespace EthereumJobs.Job
                         eventType = CoinEventType.TransferStarted;
                         resultAmount = amount;
                         if (!CheckBalance(currentBalance, resultAmount)) break;
-                        transactionHash = await _exchangeContractService.Transfer(guid, operation.CoinAdapterAddress,
+                        transactionHash = await transferDelegate(guid, operation.CoinAdapterAddress,
                             operation.FromAddress,
                             operation.ToAddress, amount, operation.SignFrom);
                         break;

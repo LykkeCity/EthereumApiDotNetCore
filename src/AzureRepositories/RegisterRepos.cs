@@ -121,6 +121,10 @@ namespace AzureRepositories
             services.AddSingleton<IOperationResubmittRepository>(provider => new OperationResubmittRepository(
                new AzureTableStorage<OperationResubmittEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OperationResubmittTable,
                    provider.GetService<ILog>())));
+
+            services.AddSingleton<IOwnerRepository>(provider => new OwnerRepository(
+                new AzureTableStorage<OwnerEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OwnerTable,
+                    provider.GetService<ILog>())));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)

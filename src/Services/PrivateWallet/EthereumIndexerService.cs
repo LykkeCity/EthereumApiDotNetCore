@@ -20,11 +20,12 @@ namespace Services.PrivateWallet
 {
     public interface IEthereumIndexerService
     {
-        Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransactions addressTransactions);
+        Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions);
+        Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransaction addressTransactions);
         Task<TransactionContentModel> GetTransactionAsync(string transactionHash);
         Task<IEnumerable<InternalMessageModel>> GetInternalMessagesForTransactionAsync(string transactionHash);
-        Task<IEnumerable<TransactionContentModel>> GetTransactionHistory(AddressTransactions addressTransactions);
-        Task<IEnumerable<InternalMessageModel>> GetInternalMessagesHistory(AddressTransactions addressMessages);
+        Task<IEnumerable<TransactionContentModel>> GetTransactionHistory(AddressTransaction addressTransactions);
+        Task<IEnumerable<InternalMessageModel>> GetInternalMessagesHistory(AddressTransaction addressMessages);
         Task<BigInteger> GetEthBalance(string address);
     }
 
@@ -52,12 +53,13 @@ namespace Services.PrivateWallet
         public async Task<TransactionContentModel> GetTransactionAsync(string transactionHash)
         {
             var transactionResponseRaw = await _ethereumSamuraiApi.ApiTransactionTxHashByTransactionHashGetAsync(transactionHash);
-            var transactionResponse = transactionResponseRaw as TransactionResponse;
+            var transactionResponse = transactionResponseRaw as TransactionFullInfoResponse;
             ThrowOnError(transactionResponseRaw);
 
             return new TransactionContentModel()
             {
-                Transaction = MapTransactionResponseToModel(transactionResponse)
+                Transaction = MapTransactionResponseToModel(transactionResponse.Transaction),
+                ErcTransfer = MapErcHistoryFromResponse(transactionResponse.Erc20Transfers ?? new List<Erc20TransferHistoryResponse>())
             };
         }
 
@@ -78,7 +80,50 @@ namespace Services.PrivateWallet
             return result;
         }
 
-        public async Task<IEnumerable<TransactionContentModel>> GetTransactionHistory(AddressTransactions addressTransactions)
+        public async Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions)
+        {
+            var transactionResponseRaw = await _ethereumSamuraiApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync(
+                new GetErc20TransferHistoryRequest(addressTransactions.Address, null, new List<string>()
+                {
+                    addressTransactions.TokenAddress
+                }),
+                addressTransactions.Start,
+                addressTransactions.Count);
+            List<ErcAddressHistoryModel> result = MapErcHistoryFromResponse(transactionResponseRaw);
+
+            return result;
+        }
+
+        private List<ErcAddressHistoryModel> MapErcHistoryFromResponse(object transactionResponseRaw)
+        {
+            var transactionResponse = transactionResponseRaw as IList<Erc20TransferHistoryResponse>;
+            ThrowOnError(transactionResponseRaw);
+            int responseCount = transactionResponse?.Count ?? 0;
+            List<ErcAddressHistoryModel> result = new List<ErcAddressHistoryModel>(responseCount);
+
+            foreach (var transaction in transactionResponse)
+            {
+                result.Add(new ErcAddressHistoryModel()
+                {
+                    ContractAddress = transaction.Contract,
+                    BlockNumber = (ulong)transaction.BlockNumber,
+                    BlockTimestamp = (uint)transaction.BlockTimestamp,
+                    BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp),
+                    From = transaction.FromProperty,
+                    GasPrice = transaction.GasPrice,
+                    GasUsed = transaction.GasUsed,
+                    HasError = false,
+                    MessageIndex = transaction.LogIndex,
+                    To = transaction.To,
+                    TransactionHash = transaction.TransactionHash,
+                    Value = transaction.TransferAmount
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<IEnumerable<TransactionContentModel>> GetTransactionHistory(AddressTransaction addressTransactions)
         {
             var transactionResponseRaw = await _ethereumSamuraiApi.ApiTransactionByAddressGetAsync(addressTransactions.Address, addressTransactions.Start, addressTransactions.Count);
             var transactionResponse = transactionResponseRaw as FilteredTransactionsResponse;
@@ -97,7 +142,7 @@ namespace Services.PrivateWallet
             return result;
         }
 
-        public async Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransactions addressTransactions)
+        public async Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransaction addressTransactions)
         {
             var historyResponseRaw = await _ethereumSamuraiApi.ApiAddressHistoryByAddressGetAsync(addressTransactions.Address, null, null, addressTransactions.Start, addressTransactions.Count);
             var addressHistoryResponse = historyResponseRaw as FilteredAddressHistoryResponse;
@@ -128,7 +173,7 @@ namespace Services.PrivateWallet
             return result;
         }
 
-        public async Task<IEnumerable<InternalMessageModel>> GetInternalMessagesHistory(AddressTransactions addressMessages)
+        public async Task<IEnumerable<InternalMessageModel>> GetInternalMessagesHistory(AddressTransaction addressMessages)
         {
             var internalMessageResponseRaw = await _ethereumSamuraiApi.
                      ApiInternalMessagesByAddressGetAsync(addressMessages.Address, null, null, addressMessages.Start, addressMessages.Count);
@@ -175,6 +220,9 @@ namespace Services.PrivateWallet
 
         private static TransactionModel MapTransactionResponseToModel(TransactionResponse transaction)
         {
+            if (transaction == null)
+                return null;
+
             return new TransactionModel()
             {
                 BlockHash = transaction.BlockHash,

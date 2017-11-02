@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EthereumApi.Models.Models;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
@@ -47,6 +48,9 @@ namespace EthereumApi.Models.Indexer
         public DateTime BlockTimeUtc { get; set; }
         [DataMember(Name = "hasError")]
         public bool HasError { get; set; }
+
+        [DataMember(Name = "ercTransfer")]
+        public IEnumerable<TokenAddressHistoryResponse> ErcTransfers { get; set; }
     }
 
     [DataContract]

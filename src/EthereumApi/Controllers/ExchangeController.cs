@@ -208,8 +208,6 @@ namespace EthereumApi.Controllers
         }
     }
 
-
-
     public static class CtxExtension
     {
         public static string GetIp(this Controller ctx)

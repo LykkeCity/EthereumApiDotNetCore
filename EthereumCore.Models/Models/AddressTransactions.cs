@@ -19,4 +19,12 @@ namespace EthereumApi.Models.Models
         [DataMember]
         public int Count { get; set; }
     }
+
+    [DataContract]
+    public class TokenAddressTransactions : AddressTransactions
+    {
+        [DataMember]
+        [Required]
+        public string TokenAddress { get; set; }
+    }
 }

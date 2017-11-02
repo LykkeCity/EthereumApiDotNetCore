@@ -27,7 +27,7 @@ namespace JobRunner
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
                 var configuration = builder.Build();
-
+                
                 var app = new JobApp();
                 app.Run(configuration);
             }

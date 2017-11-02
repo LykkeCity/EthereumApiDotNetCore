@@ -30,7 +30,8 @@ namespace Service.Tests.BugReproduction
             var web3 = Config.Services.GetService<Web3>();
             var signatureApi = Config.Services.GetService<ILykkeSigningAPI>();
             var nonceCalculator = Config.Services.GetService<INonceCalculator>();
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator);
+            var roundRobinTransactionSender = Config.Services.GetService<IRoundRobinTransactionSender>();
+            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator, roundRobinTransactionSender);
         }
 
         [TestMethod]

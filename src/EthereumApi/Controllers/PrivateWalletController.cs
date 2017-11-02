@@ -1,4 +1,5 @@
 ﻿using BusinessModels;
+using BusinessModels.PrivateWallet;
 using Common.Log;
 using Core.Exceptions;
 using EthereumApi.Models;
@@ -7,6 +8,7 @@ using EthereumApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.PrivateWallet;
+using Services.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -19,13 +21,19 @@ namespace EthereumApi.Controllers
     [Produces("application/json")]
     public class PrivateWalletController : Controller
     {
-        private IPrivateWalletService _privateWalletService;
+        private readonly ITransactionValidationService _transactionValidationService;
+        private readonly IPrivateWalletService _privateWalletService;
         private readonly ILog _log;
+        private readonly IErc20PrivateWalletService _erc20Service;
 
-        public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log)
+        public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log, 
+            ITransactionValidationService transactionValidationService,
+            IErc20PrivateWalletService erc20Service)
         {
+            _transactionValidationService = transactionValidationService;
             _privateWalletService = privateWalletService;
             _log = log;
+            _erc20Service = erc20Service;
         }
 
         [HttpPost("getTransaction")]
@@ -78,7 +86,17 @@ namespace EthereumApi.Controllers
             await _log.WriteInfoAsync("PrivateWalletController", "SubmitSignedTransaction", serialized
                 , "StartSubmitSignedTransaction", DateTime.UtcNow);
 
-            string transactionHash = await _privateWalletService.SubmitSignedTransaction(ethTransactionSigned.FromAddress, ethTransactionSigned.SignedTransactionHex);
+            string transactionHash;
+            if (!await _transactionValidationService.IsTransactionErc20Transfer(ethTransactionSigned.SignedTransactionHex))
+            {
+                transactionHash = await _privateWalletService.SubmitSignedTransaction(ethTransactionSigned.FromAddress,
+                    ethTransactionSigned.SignedTransactionHex);
+            }
+            else
+            {
+                transactionHash = await _erc20Service.SubmitSignedTransaction(ethTransactionSigned.FromAddress,
+                    ethTransactionSigned.SignedTransactionHex);
+            }
 
             await _log.WriteInfoAsync("PrivateWalletController", "SubmitSignedTransaction",
                 $"{serialized}-TransactionHash:{transactionHash}", "EndSubmitSignedTransaction", DateTime.UtcNow);

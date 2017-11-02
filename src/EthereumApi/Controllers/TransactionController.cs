@@ -38,7 +38,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransactions request = new BusinessModels.AddressTransactions()
+            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,
@@ -69,6 +69,8 @@ namespace EthereumApi.Controllers
             }
 
             TransactionContentModel transaction = await _ethereumIndexerService.GetTransactionAsync(transactionHash);
+            if (transaction == null)
+                return NotFound();
             Models.Indexer.TransactionResponse result = MapTransactionModelContentToResponse(transaction);
 
             return Ok(result);
@@ -96,6 +98,7 @@ namespace EthereumApi.Controllers
                 Value = transaction.Value,
                 BlockTimeUtc = transaction.BlockTimeUtc,
                 HasError = transaction.HasError,
+                ErcTransfers = transactionContent.ErcTransfer?.Select(MapErcTransferResponse)
             };
         }
 
@@ -110,7 +113,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransactions request = new BusinessModels.AddressTransactions()
+            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,
@@ -141,6 +144,57 @@ namespace EthereumApi.Controllers
             {
                 History = result
             });
+        }
+
+        [HttpPost("ercHistory")]
+        [ProducesResponseType(typeof(FilteredTokenAddressHistoryResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> GetAddressErcHistory([FromBody]EthereumApi.Models.Models.TokenAddressTransactions addressTransactions)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            BusinessModels.TokenTransaction request = new BusinessModels.TokenTransaction()
+            {
+                Address = addressTransactions.Address,
+                Count = addressTransactions.Count,
+                Start = addressTransactions.Start,
+                TokenAddress = addressTransactions.TokenAddress
+            };
+
+            IEnumerable<ErcAddressHistoryModel> history = await _ethereumIndexerService.GetTokenHistory(request);
+            IEnumerable<TokenAddressHistoryResponse> result = history.Select(item =>
+            {
+                return MapErcTransferResponse(item);
+            });
+
+            return Ok(new FilteredTokenAddressHistoryResponse()
+            {
+                History = result
+            });
+        }
+
+        private static TokenAddressHistoryResponse MapErcTransferResponse(ErcAddressHistoryModel item)
+        {
+            return new TokenAddressHistoryResponse()
+            {
+                ContractAddress = item.ContractAddress,
+                BlockNumber = item.BlockNumber,
+                BlockTimestamp = item.BlockTimestamp,
+                BlockTimeUtc = item.BlockTimeUtc,
+                From = item.From,
+                HasError = item.HasError,
+                MessageIndex = item.MessageIndex,
+                To = item.To,
+                TransactionHash = item.TransactionHash,
+                TransactionIndexInBlock = item.TransactionIndexInBlock,
+                TokenTransfered = item.Value,
+                GasPrice = item.GasPrice,
+                GasUsed = item.GasUsed,
+            };
         }
     }
 }

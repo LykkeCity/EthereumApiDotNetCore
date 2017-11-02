@@ -10,7 +10,7 @@ using RabbitMQ;
 
 namespace EthereumJobs.Config
 {
-    public static class RegisterDepencency
+    public static class RegisterDependency
     {
         public static void InitJobDependencies(this IServiceCollection collection, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
         {
@@ -29,7 +29,7 @@ namespace EthereumJobs.Config
             RegisterJobs(collection);
         }
 
-        private static void RegisterJobs(IServiceCollection collection)
+        public static void RegisterJobs(IServiceCollection collection)
         {
             #region NewJobs
 

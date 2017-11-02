@@ -5,11 +5,13 @@ namespace Core
     public class Constants
     {
         public const string BigIntTemplate =  "^[1-9][0-9]*$";
+        public const string BigIntAllowZeroTemplate = "^([1-9][0-9])|0*$";
         /// <summary>
         /// Used to change table and queue names in testing enviroment
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
 
+        public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
         public const string EventTraceTable = "EventTrace";
         public const string TransferContractUserAssignmentQueueName = "transfer-contract-user-assignment";
@@ -89,6 +91,8 @@ namespace Core
         public const string OperationResubmittTable = "OperationResubmitt";
 
         public static BigInteger DefaultTransactionGas = 21000;
+        public const string Erc20TransferSignature =  "0xa9059cbb";
+        public const string OwnerTable = "Owner";
     }
 
     public static class OperationTypes
