@@ -21,4 +21,27 @@ namespace RabbitMQ
             return Encoding.UTF8.GetString(data);
         }
     }
+
+
+    public class BytesSerializer<T> : IRabbitMqSerializer<T>
+    {
+        public byte[] Serialize(T model)
+        {
+            string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+
+            return Encoding.UTF8.GetBytes(serialized);
+        }
+    }
+
+    public class BytesDeserializer<T> : IMessageDeserializer<T>
+    {
+        public T Deserialize(byte[] data)
+        {
+            string encoded = Encoding.UTF8.GetString(data);
+            T deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(encoded);
+
+            return deserialized;
+        }
+    }
+
 }
