@@ -10,12 +10,14 @@
     <Copyright>Lykke 2017</Copyright>
     <PackageLicenseUrl>https://github.com/LykkeCity/EthereumApiDotNetCore</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/LykkeCity/EthereumApiDotNetCore</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/LykkeCity/EthereumApiDotNetCore</RepositoryUrl>
+    <RepositoryUrl>https://github.com/LykkeCity/EthereumApiDotNetCore.git</RepositoryUrl>
     <PackageTags>Lykke Ethereum Eth EthereumCore EthereumApiDotNetCore Lykke.EthereumCoreClient EthereumCoreClient</PackageTags>
     <NeutralLanguage>en-001</NeutralLanguage>
     <Description>Http Client for EthereumApiDotNetCore</Description>
-    <AssemblyName>Lykke.EthereumCoreClient</AssemblyName>
-    <RootNamespace>Lykke.EthereumCoreClient</RootNamespace>
+    <AssemblyName>Lykke.Service.EthereumCore.Client</AssemblyName>
+    <RootNamespace>Lykke.Service.EthereumCore.Client</RootNamespace>
+    <PackageIconUrl>https://avatars3.githubusercontent.com/u/14153330?v=3&amp;s=200</PackageIconUrl>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
