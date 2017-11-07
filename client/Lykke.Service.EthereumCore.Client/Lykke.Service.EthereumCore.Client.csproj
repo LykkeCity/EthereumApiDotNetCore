@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.1</Version>
-    <PackageId>Lykke.EthereumCoreClient</PackageId>
+    <PackageId>Lykke.Service.EthereumCore.Client</PackageId>
     <Authors>Lykke</Authors>
     <Company>Lykke</Company>
     <Copyright>Lykke 2017</Copyright>
