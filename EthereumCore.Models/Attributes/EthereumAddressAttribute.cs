@@ -10,8 +10,11 @@ namespace EthereumApi.Models.Attributes
   AttributeTargets.Field, AllowMultiple = false)]
     sealed public class EthereumAddressAttribute : ValidationAttribute
     {
-        public EthereumAddressAttribute()
+        private readonly bool _allowsEmpty;
+
+        public EthereumAddressAttribute(bool allowsEmpty = false)
         {
+            _allowsEmpty = allowsEmpty;
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -19,7 +22,14 @@ namespace EthereumApi.Models.Attributes
             string address = value as string;
             if (address == null)
             {
-                return new ValidationResult($"Address should not be null ({validationContext.DisplayName})");
+                if (!_allowsEmpty)
+                {
+                    return new ValidationResult($"Address should not be null ({validationContext.DisplayName})");
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             IExchangeContractService exchangeContractService = (IExchangeContractService)validationContext.GetService(typeof(IExchangeContractService));

@@ -21,7 +21,7 @@ namespace Core
         public const string ContractPoolQueuePrefix = "ethereum-tc-pool";
         public const string CoinEventResubmittQueue = "ethereum-coin-event-resubmitt-queue";
         public const string CashinCompletedEventsQueue = "cashin-completed-events-queue";
-
+        public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
         /// <summary>
         /// Used to internal monitoring of refill transactions
         /// </summary>
