@@ -1,4 +1,5 @@
-﻿using EthereumApi.Models.Attributes;
+﻿using Core;
+using EthereumApi.Models.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,6 +24,7 @@ namespace EthereumApi.Models.Models
         public string ToAddress { get; set; }
 
         [DataMember]
+        [RegularExpression(Constants.BigIntTemplate)]
         public string Amount { get; set; }
 
         [DataMember]
