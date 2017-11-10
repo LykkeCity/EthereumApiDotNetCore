@@ -52,14 +52,10 @@ namespace Services
             services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
             services.AddSingleton<IOwnerService, OwnerService>();
             services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
+            services.AddSingleton<IRoundRobinTransactionSender, RoundRobinTransactionSender>();
             services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
             services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
             services.AddSingleton<ISignatureService, SignatureService>();
-
-            services.AddSingleton<IOwnerService, OwnerService>();
-            services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
-            services.AddSingleton<ITransactionRouter, TransactionRouter>();
-
 
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
@@ -96,14 +92,16 @@ namespace Services
 
             services.AddSingleton<ITransactionManager>(provider =>
             {
-                var baseSettings      = provider.GetService<IBaseSettings>();
-                var web3              = provider.GetService<Web3>();
-                var signatureApi      = provider.GetService<ILykkeSigningAPI>();
-                var nonceCalculator   = provider.GetService<INonceCalculator>();
-                var transactionRouter = provider.GetService<ITransactionRouter>();
-
-                var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3);
-
+                var baseSettings = provider.GetService<IBaseSettings>();
+                var web3 = provider.GetService<Web3>();
+                var signatureService = provider.GetService<ISignatureService>();
+                var nonceCalculator = provider.GetService<INonceCalculator>();
+                var roundRobinTransactionSender = provider.GetService<IRoundRobinTransactionSender>();
+                var transactionManager = new LykkeSignedTransactionManager(web3, 
+                    signatureService,
+                    baseSettings, 
+                    nonceCalculator,
+                    roundRobinTransactionSender);
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;
