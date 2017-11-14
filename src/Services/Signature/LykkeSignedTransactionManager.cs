@@ -49,7 +49,7 @@ namespace Services.Signature
             _signingApi         = signingApi;
             _transactionRouter  = transactionRouter;
             _web3               = web3;
-
+            
             Client = web3.Client;
         }
 
@@ -131,9 +131,11 @@ namespace Services.Signature
                 };
                 
                 var signResponse = await _signingApi.ApiEthereumSignPostAsync(signRequest);
+                var txHash       = await _sendRawTransaction.SendRequestAsync(signResponse.SignedTransaction.EnsureHexPrefix());
 
-
-                return await _sendRawTransaction.SendRequestAsync(signResponse.SignedTransaction.EnsureHexPrefix());
+                await WaitUntilTransactionIsInPoolOrMined(txHash, 10);
+                
+                return txHash;
             }
             finally
             {
@@ -161,6 +163,27 @@ namespace Services.Signature
             gasValue = gasValue == null || gasValue.Value == 0 ? Constants.GasForCoinTransaction : gasValue;
 
             return (gasPrice, gasValue);
+        }
+
+        private async Task WaitUntilTransactionIsInPoolOrMined(string transactionHash, int maxNumberOfRetries)
+        {
+            var retry = 0;
+
+            do
+            {
+
+                var isInPoolOrMined = await _web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(transactionHash) != null;
+
+                if (isInPoolOrMined)
+                {
+                    break;
+                }
+                else
+                {
+                    await Task.Delay(50);
+                }
+
+            } while (retry++ < maxNumberOfRetries);
         }
     }
 }
