@@ -1,26 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Settings;
 using Services.New;
 
 namespace Services.Signature
 {
     public class TransactionRouter : ITransactionRouter, IDisposable
     {
+        private readonly IBaseSettings _baseSettings;
         private readonly TimeSpan      _cacheDuration;
         private readonly IOwnerService _ownerService;
         private readonly SemaphoreSlim _semaphore;
 
         private int            _addressIndex;
-        private string[]       _addresses;
+        private List<string>   _addresses;
         private DateTimeOffset _lastOwnerCheck;
 
 
         public TransactionRouter(
+            IBaseSettings baseSettings,
             IOwnerService ownerService)
         {
-            _addresses      = new string[0];
+            _addresses      = new List<string>();
+            _baseSettings   = baseSettings;
             _cacheDuration  = TimeSpan.FromMinutes(5);
             _ownerService   = ownerService;
             _lastOwnerCheck = DateTimeOffset.MinValue;
@@ -41,16 +46,16 @@ namespace Services.Signature
             {
                 if (DateTimeOffset.UtcNow - _lastOwnerCheck > _cacheDuration)
                 {
-                    _addresses      = (await _ownerService.GetAll()).Select(x => x.Address).ToArray();
+                    _addresses      = await GetAddressesAsync();
                     _addressIndex   = 0;
                     _lastOwnerCheck = DateTimeOffset.UtcNow;
                 }
 
-                if (_addresses.Length > 0)
+                if (_addresses.Count > 0)
                 {
                     var nextAddress = _addresses[_addressIndex];
 
-                    _addressIndex = (_addressIndex + 1) % _addresses.Length;
+                    _addressIndex = (_addressIndex + 1) % _addresses.Count;
 
                     return nextAddress;
                 }
@@ -63,6 +68,18 @@ namespace Services.Signature
             {
                 _semaphore.Release();
             }
+        }
+
+        private async Task<List<string>> GetAddressesAsync()
+        {
+            var addresses = new List<string>
+            {
+                _baseSettings.EthereumMainAccount
+            };
+
+            addresses.AddRange((await _ownerService.GetAll()).Select(x => x.Address));
+
+            return addresses;
         }
     }
 }
