@@ -69,7 +69,7 @@ namespace Services.PrivateWallet
 
             var gas      = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasAmount);
             var gasPrice = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasPrice);
-            var nonce    = await _nonceCalculator.GetNonceAsync(from);
+            var nonce    = await _nonceCalculator.GetNonceAsync(from, false);
             var to       = ethTransaction.ToAddress;
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);

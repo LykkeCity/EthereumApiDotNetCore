@@ -5,6 +5,6 @@ namespace Services.Signature
 {
     public interface INonceCalculator
     {
-        Task<HexBigInteger> GetNonceAsync(string fromAddress);
+        Task<HexBigInteger> GetNonceAsync(string fromAddress, bool checkTxPool);
     }
 }
