@@ -17,6 +17,8 @@ using Core.Exceptions;
 using AzureStorage.Queue;
 using Newtonsoft.Json;
 using EdjCase.JsonRpc.Client;
+using Services.HotWallet;
+using Core.Messages.HotWallet;
 
 namespace EthereumJobs.Job
 {
@@ -24,17 +26,46 @@ namespace EthereumJobs.Job
     {
         private readonly ILog _log;
         private readonly IBaseSettings _settings;
+        private readonly IHotWalletService _hotWalletService;
 
         public HotWalletCashoutJob(
-            ILog log
-            //IBaseSettings settings,
+            ILog log,
+            IBaseSettings settings,
+            IHotWalletService hotWalletService
             )
         {
+            _log = log;
+            _settings = settings;
+            _hotWalletService = hotWalletService;
         }
 
         [QueueTrigger(Constants.HotWalletCashoutQueue, 100, true)]
-        public async Task Execute(OperationHashMatchMessage opMessage, QueueTriggeringContext context)
+        public async Task Execute(HotWalletCashoutMessage cashoutMessage, QueueTriggeringContext context)
         {
+            if (cashoutMessage == null || string.IsNullOrEmpty(cashoutMessage.OperationId))
+            {
+                return;
+            }
+
+            try
+            {
+                await _hotWalletService.StartCashoutAsync(cashoutMessage.OperationId);
+            }
+            catch(Exception exc)
+            {
+                await _log.WriteErrorAsync("HotWalletCashoutJob", "Execute", $"{cashoutMessage.OperationId}", exc);
+                cashoutMessage.LastError = exc.Message;
+                cashoutMessage.DequeueCount++;
+                if (cashoutMessage.DequeueCount < 6)
+                {
+                    context.MoveMessageToEnd(cashoutMessage.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                }
+                else
+                {
+                    context.MoveMessageToPoison(cashoutMessage.ToJson());
+                }
+            }
         }
     }
 }

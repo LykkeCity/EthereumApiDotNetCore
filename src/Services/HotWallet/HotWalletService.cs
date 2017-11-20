@@ -13,11 +13,13 @@ using Common.Log;
 using Nethereum.Web3;
 using System.Numerics;
 using Core.Exceptions;
+using Services.Coins.Models;
 
 namespace Services.HotWallet
 {
     public class HotWalletService : IHotWalletService
     {
+        private readonly IQueueExt _hotWalletCashoutTransactionMonitoringQueue;
         private readonly IQueueExt _hotWalletCashoutQueue;
         private readonly IBaseSettings _baseSettings;
         private readonly IHotWalletCashoutRepository _hotWalletCashoutRepository;
@@ -27,7 +29,8 @@ namespace Services.HotWallet
         private readonly Web3 _web3;
         private readonly BigInteger _maxGasPrice;
         private readonly BigInteger _minGasPrice;
-        private readonly SignatureService _signatureService;
+        private readonly IHotWalletCashoutTransactionRepository _hotWalletCashoutTransactionRepository;
+        private readonly ISignatureService _signatureService;
 
         public HotWalletService(IBaseSettings baseSettings,
             IQueueFactory queueFactory,
@@ -36,8 +39,10 @@ namespace Services.HotWallet
             IErc20PrivateWalletService erc20PrivateWalletService,
             ISignatureService signatureService,
             ILog log,
-            Web3 web3)
+            Web3 web3,
+            IHotWalletCashoutTransactionRepository hotWalletCashoutTransactionRepository)
         {
+            _hotWalletCashoutTransactionMonitoringQueue = queueFactory.Build(Constants.HotWalletCashoutTransactionMonitoringQueue);
             _hotWalletCashoutQueue = queueFactory.Build(Constants.HotWalletCashoutQueue);
             _baseSettings = baseSettings;//.HotWalletAddress
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
@@ -47,6 +52,8 @@ namespace Services.HotWallet
             _web3 = web3;
             _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
             _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
+            _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
+            _signatureService = signatureService;
         }
 
         public async Task EnqueueCashoutAsync(IHotWalletCashout hotWalletCashout)
@@ -125,6 +132,23 @@ namespace Services.HotWallet
             }
             transactionHash = isErc20Transfer ? await _erc20PrivateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction) :
                 await _privateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction);
+
+            if (string.IsNullOrEmpty(transactionHash))
+            {
+                throw new Exception("Transaction was not sent");
+            }
+
+            await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
+            {
+                OperationId = operationId,
+                TransactionHash = transactionHash
+            });
+            CoinTransactionMessage message = new CoinTransactionMessage()
+            {
+                OperationId = operationId,
+                TransactionHash = transactionHash
+            };
+            await _hotWalletCashoutTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
 
             return transactionHash;
         }

@@ -13,7 +13,7 @@ namespace AzureRepositories.Repositories
 {
     public class HotWalletCashoutEntity : TableEntity, IHotWalletCashout
     {
-        public const string Key = "Asset";
+        public const string Key = "HotWalletCashout";
 
         public string OperationId
         {
@@ -42,11 +42,16 @@ namespace AzureRepositories.Repositories
         public string AmountStr { get; set; }
         public string TokenAddress { get; set; }
 
-        public static HotWalletCashoutEntity CreateCoinEntity(IHotWalletCashout cashout)
+        public static HotWalletCashoutEntity CreateEntity(IHotWalletCashout cashout)
         {
             return new HotWalletCashoutEntity()
             {
-
+                Amount = cashout.Amount,
+                FromAddress = cashout.FromAddress,
+                OperationId = cashout.OperationId,
+                PartitionKey = Key,
+                ToAddress = cashout.ToAddress,
+                TokenAddress = cashout.TokenAddress,
             };
         }
     }
@@ -54,54 +59,33 @@ namespace AzureRepositories.Repositories
 
     public class HotWalletCashoutRepository : IHotWalletCashoutRepository
     {
-        private readonly INoSQLTableStorage<CoinEntity> _table;
+        private readonly INoSQLTableStorage<HotWalletCashoutEntity> _table;
 
-        public HotWalletCashoutRepository(INoSQLTableStorage<CoinEntity> table)
+        public HotWalletCashoutRepository(INoSQLTableStorage<HotWalletCashoutEntity> table)
         {
             _table = table;
         }
 
-        public async Task<ICoin> GetCoin(string coinId)
-        {
-            var coin = await _table.GetDataAsync(CoinEntity.Key, coinId);
-            if (coin == null)
-                throw new Exception("Unknown coin name - " + coinId);
-
-            return coin;
-        }
-
-        public async Task InsertOrReplace(ICoin coin)
-        {
-            var entity = CoinEntity.CreateCoinEntity(coin);
-            var index = AzureIndex.Create(_addressIndexName, coin.AdapterAddress, entity);
-
-            await _table.InsertOrReplaceAsync(entity);
-            await _addressIndex.InsertAsync(index);
-        }
-
-        public async Task<ICoin> GetCoinByAddress(string coinAddress)
-        {
-            AzureIndex index = await _addressIndex.GetDataAsync(_addressIndexName, coinAddress);
-            if (index == null)
-                return null;
-            var coin = await _table.GetDataAsync(index);
-
-            return coin;
-        }
 
         public async Task<IEnumerable<IHotWalletCashout>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var all = await _table.GetDataAsync(HotWalletCashoutEntity.Key);
+
+            return all;
         }
 
-        public async Task SaveAsync(IHotWalletCashout owner)
+        public async Task SaveAsync(IHotWalletCashout cashout)
         {
-            throw new NotImplementedException();
+            HotWalletCashoutEntity entity = HotWalletCashoutEntity.CreateEntity(cashout);
+
+            await _table.InsertOrReplaceAsync(entity);
         }
 
         public async Task<IHotWalletCashout> GetAsync(string operationId)
         {
-            throw new NotImplementedException();
+            var entity = await _table.GetDataAsync(HotWalletCashoutEntity.Key, operationId);
+
+            return entity;
         }
     }
 }
