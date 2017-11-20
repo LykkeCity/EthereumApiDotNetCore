@@ -129,6 +129,19 @@ namespace AzureRepositories
             services.AddSingleton<IOwnerRepository>(provider => new OwnerRepository(
                 new AzureTableStorage<OwnerEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.OwnerTable,
                     provider.GetService<ILog>())));
+
+            services.AddSingleton<IHotWalletCashoutRepository>(provider => new HotWalletCashoutRepository(
+                new AzureTableStorage<HotWalletCashoutEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.HotWalletCashoutTable,
+                    provider.GetService<ILog>())));
+
+            services.AddSingleton<IHotWalletCashoutTransactionRepository>(provider => new HotWalletCashoutTransactionRepository(
+                new AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>(settings.Db.DataConnString, 
+                Constants.StoragePrefix + Constants.HotWalletCashoutTable,
+                    provider.GetService<ILog>()),
+                new AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>(settings.Db.DataConnString, 
+                Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
+                    provider.GetService<ILog>())));
+
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)

@@ -22,6 +22,8 @@ namespace Core
         public const string CoinEventResubmittQueue = "ethereum-coin-event-resubmitt-queue";
         public const string CashinCompletedEventsQueue = "cashin-completed-events-queue";
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
+        public const string HotWalletCashoutTransactionMonitoringQueue = "hotwallet-cashout-transaction-monitoring-queue";
+
         /// <summary>
         /// Used to internal monitoring of refill transactions
         /// </summary>
@@ -55,6 +57,8 @@ namespace Core
         public const string CoinFiltersTable = "CoinFilters";
         public const string CoinTable = "CoinTable";
         public const string CoinTableInedex = "CoinTableIndex";
+        public const string HotWalletCashoutTable = "HotWalletCashout";
+        public const string HotWalletCashoutTransactionTable = "HotWalletCashoutTransaction";
 
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
