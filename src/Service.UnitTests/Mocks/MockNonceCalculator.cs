@@ -17,7 +17,7 @@ namespace Service.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<HexBigInteger> GetNonceAsync(string fromAddress)
+        public Task<HexBigInteger> GetNonceAsync(string fromAddress, bool checkTxPool)
         {
             HexBigInteger currentNonce;
             _nonceStorage.TryGetValue(fromAddress, out currentNonce);

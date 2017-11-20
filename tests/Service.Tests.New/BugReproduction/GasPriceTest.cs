@@ -26,12 +26,13 @@ namespace Service.Tests.BugReproduction
         [TestInitialize]
         public void Init()
         {
-            var baseSettings = Config.Services.GetService<IBaseSettings>();
-            var web3 = Config.Services.GetService<Web3>();
-            var signatureApi = Config.Services.GetService<ILykkeSigningAPI>();
-            var nonceCalculator = Config.Services.GetService<INonceCalculator>();
-            var roundRobinTransactionSender = Config.Services.GetService<IRoundRobinTransactionSender>();
-            _transactionManager = new LykkeSignedTransactionManager(web3, signatureApi, baseSettings, nonceCalculator, roundRobinTransactionSender);
+            var baseSettings      = Config.Services.GetService<IBaseSettings>();
+            var web3              = Config.Services.GetService<Web3>();
+            var signatureApi      = Config.Services.GetService<ILykkeSigningAPI>();
+            var nonceCalculator   = Config.Services.GetService<INonceCalculator>();
+            var transactionRouter = Config.Services.GetService<ITransactionRouter>();
+            
+            _transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3);
         }
 
         [TestMethod]

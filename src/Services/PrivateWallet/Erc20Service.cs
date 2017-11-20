@@ -77,7 +77,7 @@ namespace Services.PrivateWallet
             Contract contract          = GetContract(erc20Transaction.TokenAddress);
             Function transferFunction  = contract.GetFunction("transfer");
             string functionDataEncoded = transferFunction.GetData(erc20Transaction.ToAddress, erc20Transaction.TokenAmount);
-            BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress);
+            BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress, false);
             var transaction            = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
                  erc20Transaction.GasAmount, erc20Transaction.GasPrice, nonce, 0);
             string raw                 = transaction.GetRLPEncoded().ToHex();
