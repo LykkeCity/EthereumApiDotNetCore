@@ -204,6 +204,16 @@ namespace Lykke.EthereumCoreClient
         /// </param>
         Task<HttpOperationResponse<object>> ApiHashCalculatePostWithHttpMessagesAsync(BaseCoinRequestModel model = default(BaseCoinRequestModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='hotWalletCashout'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ApiException>> ApiHotWalletPostWithHttpMessagesAsync(HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='transactionHash'>
         /// </param>
         /// <param name='customHeaders'>

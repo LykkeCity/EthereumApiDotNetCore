@@ -460,6 +460,32 @@ namespace Lykke.EthereumCoreClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='hotWalletCashout'>
+            /// </param>
+            public static ApiException ApiHotWalletPost(this IEthereumApi operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest))
+            {
+                return operations.ApiHotWalletPostAsync(hotWalletCashout).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='hotWalletCashout'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<ApiException> ApiHotWalletPostAsync(this IEthereumApi operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiHotWalletPostWithHttpMessagesAsync(hotWalletCashout, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='transactionHash'>
             /// </param>
             public static object ApiInternalMessagesTxHashByTransactionHashPost(this IEthereumApi operations, string transactionHash)
