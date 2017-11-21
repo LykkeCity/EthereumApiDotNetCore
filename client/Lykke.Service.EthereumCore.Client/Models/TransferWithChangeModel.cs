@@ -4,7 +4,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Lykke.EthereumCoreClient.Models
+namespace Lykke.Service.EthereumCore.Client.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;

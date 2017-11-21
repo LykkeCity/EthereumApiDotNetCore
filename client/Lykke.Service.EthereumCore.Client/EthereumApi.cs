@@ -4,7 +4,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Lykke.EthereumCoreClient
+namespace Lykke.Service.EthereumCore.Client
 {
     using Microsoft.Rest;
     using Microsoft.Rest.Serialization;
