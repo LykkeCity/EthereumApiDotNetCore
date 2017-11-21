@@ -13,6 +13,9 @@ using Core.Repositories;
 using Services;
 using Newtonsoft.Json;
 using Services.New;
+using Services.HotWallet;
+using RabbitMQ;
+using Lykke.Job.EthereumCore.Contracts.Events;
 
 namespace EthereumJobs.Job
 {
@@ -30,6 +33,8 @@ namespace EthereumJobs.Job
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IHotWalletCashoutTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletCashoutRepository _hotWalletCashoutRepository;
+        private readonly IHotWalletService _hotWalletService;
+        private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
         private readonly IEthereumTransactionService _ethereumTransactionService;
 
         public HotWalletMonitoringTransactionJob(ILog log,
@@ -39,7 +44,9 @@ namespace EthereumJobs.Job
             IUserTransferWalletRepository userTransferWalletRepository,
             IEthereumTransactionService ethereumTransactionService,
             IHotWalletCashoutTransactionRepository hotWalletCashoutTransactionRepository,
-            IHotWalletCashoutRepository hotWalletCashoutRepository)
+            IHotWalletCashoutRepository hotWalletCashoutRepository,
+            IHotWalletService hotWalletService,
+            IRabbitQueuePublisher rabbitQueuePublisher)
         {
             _ethereumTransactionService = ethereumTransactionService;
             _transactionEventsService = transactionEventsService;
@@ -50,6 +57,8 @@ namespace EthereumJobs.Job
             _userTransferWalletRepository = userTransferWalletRepository;
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
+            _hotWalletService = hotWalletService;
+            _rabbitQueuePublisher = rabbitQueuePublisher;
         }
 
         [QueueTrigger(Constants.HotWalletCashoutTransactionMonitoringQueue, 100, true)]
@@ -132,6 +141,8 @@ namespace EthereumJobs.Job
 
         private async Task RepeatOperationTillWin(CoinTransactionMessage message)
         {
+            var cashout = await GetCashoutOperation(message?.TransactionHash, message?.OperationId);
+            await _hotWalletService.RetryCashoutAsync(cashout);
         }
 
         //return whether we have sent to rabbit or not
@@ -139,7 +150,19 @@ namespace EthereumJobs.Job
         {
             try
             {
-                
+                var cashout = await GetCashoutOperation(transactionHash, operationId);
+                if (cashout == null)
+                {
+                    return false;
+                }
+                HotWalletCashoutEvent @event = new HotWalletCashoutEvent(cashout.OperationId, 
+                    transactionHash,
+                    cashout.FromAddress, 
+                    cashout.ToAddress,
+                    cashout.Amount.ToString(),
+                    cashout.TokenAddress);
+
+                await _rabbitQueuePublisher.PublshEvent(@event);
                 return true;
             }
             catch (Exception e)

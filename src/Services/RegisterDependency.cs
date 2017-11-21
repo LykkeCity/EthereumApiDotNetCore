@@ -8,6 +8,7 @@ using Nethereum.RPC.TransactionManagers;
 using Nethereum.Web3;
 using Services.Coins;
 using Services.Erc20;
+using Services.HotWallet;
 using Services.New;
 using Services.PrivateWallet;
 using Services.Signature;
@@ -56,6 +57,7 @@ namespace Services
             services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
             services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
             services.AddSingleton<ISignatureService, SignatureService>();
+            services.AddSingleton<IHotWalletService, HotWalletService>();
 
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>

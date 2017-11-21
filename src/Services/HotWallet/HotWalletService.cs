@@ -58,6 +58,23 @@ namespace Services.HotWallet
 
         public async Task EnqueueCashoutAsync(IHotWalletCashout hotWalletCashout)
         {
+            if (hotWalletCashout == null)
+            {
+                return;
+            }
+
+            var existingCashout = await _hotWalletCashoutRepository.GetAsync(hotWalletCashout.OperationId);
+
+            if (existingCashout != null)
+            {
+                throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Operation with Id was enqueued before");
+            }
+
+            await RetryCashoutAsync(hotWalletCashout);
+        }
+
+        public async Task RetryCashoutAsync(IHotWalletCashout hotWalletCashout)
+        {
             HotWalletCashoutMessage message = new HotWalletCashoutMessage() { OperationId = hotWalletCashout.OperationId };
 
             await _hotWalletCashoutRepository.SaveAsync(hotWalletCashout);
@@ -80,6 +97,8 @@ namespace Services.HotWallet
                     $"operationId - {operationId}", 
                     "No cashout info for operation", 
                     DateTime.UtcNow);
+
+                return null;
             }
 
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
@@ -126,6 +145,7 @@ namespace Services.HotWallet
             }
 
             signedTransaction = await _signatureService.SignRawTransactionAsync(cashout.FromAddress, transactionForSigning);
+
             if (string.IsNullOrEmpty(signedTransaction))
             {
                 throw new ClientSideException(ExceptionType.WrongSign, "Wrong signature");
@@ -138,16 +158,17 @@ namespace Services.HotWallet
                 throw new Exception("Transaction was not sent");
             }
 
-            await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
-            {
-                OperationId = operationId,
-                TransactionHash = transactionHash
-            });
             CoinTransactionMessage message = new CoinTransactionMessage()
             {
                 OperationId = operationId,
                 TransactionHash = transactionHash
             };
+
+            await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
+            {
+                OperationId = operationId,
+                TransactionHash = transactionHash
+            });
             await _hotWalletCashoutTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
 
             return transactionHash;

@@ -12,20 +12,22 @@ namespace RabbitMQ
     public interface IRabbitQueuePublisher
     {
         Task PublshEvent(string rabbitEvent);
+
+        Task PublshEvent<T>(T rabbitEvent);
     }
 
     public class RabbitQueuePublisher : IRabbitQueuePublisher
     {
         private IMessageProducer<string> _publisher;
-        private readonly IMessageProducer<CoinAdapterCreationEvent> _coinCreationPublisher;
+        private readonly IMessageProducer<HotWalletCashoutEvent> _hotWalletPublisher;
         private readonly Dictionary<Type, MessageProducerWrapper> _messageProducerDictionary =
             new Dictionary<Type, MessageProducerWrapper>();
 
         public RabbitQueuePublisher(IMessageProducer<string> publisher,
-            IMessageProducer<CoinAdapterCreationEvent> coinCreationPublisher)
+            IMessageProducer<HotWalletCashoutEvent> hotWalletPublisher)
         {
             _publisher = publisher;
-            _coinCreationPublisher = coinCreationPublisher;
+            _hotWalletPublisher = hotWalletPublisher;
 
             #region String
 
@@ -34,10 +36,11 @@ namespace RabbitMQ
 
             #endregion
 
-            #region CoinAdapterCreationMessage
 
-            MessageProducerWrapper CoinAdapterCreationMessageWrapper = CreateWrapper(typeof(CoinAdapterCreationEvent), _coinCreationPublisher);
-            _messageProducerDictionary.Add(typeof(CoinAdapterCreationEvent), CoinAdapterCreationMessageWrapper);
+            #region HotWalletCashoutEvent
+
+            MessageProducerWrapper hotWalletCashoutEventWrapper = CreateWrapper(typeof(HotWalletCashoutEvent), _hotWalletPublisher);
+            _messageProducerDictionary.Add(typeof(HotWalletCashoutEvent), hotWalletCashoutEventWrapper);
 
             #endregion
         }
@@ -45,6 +48,18 @@ namespace RabbitMQ
         public async Task PublshEvent(string rabbitEvent)
         {
             await _publisher.ProduceAsync(rabbitEvent);
+        }
+
+        public async Task PublshEvent<T>(T rabbitEvent)
+        {
+            _messageProducerDictionary.TryGetValue(typeof(T), out MessageProducerWrapper wrapper);
+
+            if (wrapper == null)
+            {
+                throw new Exception("Message is of unsupported type");
+            }
+
+            await wrapper.SendMessageAsync(rabbitEvent);
         }
 
         private MessageProducerWrapper CreateWrapper(Type type, object messageProducer)

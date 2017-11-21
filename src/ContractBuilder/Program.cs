@@ -76,16 +76,16 @@ namespace ContractBuilder
             //var stringKey = Encoding.Unicode.GetString(key);
             GetAllContractInJson();
             ServiceProvider = collection.BuildServiceProvider();
-
+            ServiceProvider.ActivateRequestInterceptor();
             //var lykkeSigningAPI = ServiceProvider.GetService<ILykkeSigningAPI>();
             //lykkeSigningAPI.ApiEthereumAddkeyPost(new AddKeyRequest()
             //{
             //    Key = "",
             //});
 
-            //var service = ServiceProvider.GetService<IErcInterfaceService>();
-            //service.Transfer("0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0", settings.EthereumMainAccount,
-            //    "0x6e95184c02c39369ee9449f85aee42badc6910fd", new System.Numerics.BigInteger(101)).Wait();
+            var service = ServiceProvider.GetService<IErcInterfaceService>();
+            service.Transfer("0xce2ef46ecc168226f33b6f6b8a56e90450d0d2c0", settings.EthereumCore.EthereumMainAccount,
+                "0x46Ea3e8d85A06cBBd8c6a491a09409f5B59BEa28", System.Numerics.BigInteger.Parse("1000000000000000000")).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
             //    string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
             //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
