@@ -8,6 +8,7 @@ namespace Services.HotWallet
 {
     public interface IHotWalletService
     {
+        Task RetryCashoutAsync(IHotWalletCashout hotWalletCashout);
         Task EnqueueCashoutAsync(IHotWalletCashout hotWalletCashout);
         Task<string> StartCashoutAsync(string operationId);
     }

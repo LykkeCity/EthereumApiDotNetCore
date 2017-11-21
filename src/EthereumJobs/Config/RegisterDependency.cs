@@ -45,7 +45,9 @@ namespace EthereumJobs.Config
             collection.AddSingleton<MonitoringOperationJob>();
             collection.AddSingleton<CashinIndexingJob>();
             collection.AddSingleton<CoinEventResubmittJob>();
-            
+            collection.AddSingleton<HotWalletCashoutJob>();
+            collection.AddSingleton<HotWalletMonitoringTransactionJob>();
+
             #endregion
         }
     }

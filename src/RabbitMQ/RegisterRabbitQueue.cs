@@ -27,7 +27,14 @@ namespace RabbitMQ
                 .SetLogger(logger)
                 .Start();
 
+            RabbitMqPublisher<HotWalletCashoutEvent> hotWalletCashoutEventPublisher = new RabbitMqPublisher<HotWalletCashoutEvent>(rabbitMqSettings)
+                .SetSerializer(new BytesSerializer<HotWalletCashoutEvent>())
+                .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey, $"{exchangeName}.hotwallet"))
+                .SetLogger(logger)
+                .Start();
+
             services.AddSingleton<IMessageProducer<string>>(publisher);
+            services.AddSingleton<IMessageProducer<HotWalletCashoutEvent>>(hotWalletCashoutEventPublisher);
             services.AddSingleton<IRabbitQueuePublisher, RabbitQueuePublisher>();
         }
     }
