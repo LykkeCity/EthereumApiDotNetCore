@@ -35,7 +35,7 @@ namespace Services.PrivateWallet
 
     public interface IErc20PrivateWalletService
     {
-        Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction);
+        Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction, bool useTxPool = false);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task ValidateInput(Erc20Transaction transaction);
         Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction);
@@ -72,12 +72,12 @@ namespace Services.PrivateWallet
 
         #region transfer
 
-        public async Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction)
+        public async Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction, bool useTxPool = false)
         {
             Contract contract          = GetContract(erc20Transaction.TokenAddress);
             Function transferFunction  = contract.GetFunction("transfer");
             string functionDataEncoded = transferFunction.GetData(erc20Transaction.ToAddress, erc20Transaction.TokenAmount);
-            BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress, false);
+            BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress, useTxPool);
             var transaction            = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
                  erc20Transaction.GasAmount, erc20Transaction.GasPrice, nonce, 0);
             string raw                 = transaction.GetRLPEncoded().ToHex();
