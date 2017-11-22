@@ -136,7 +136,7 @@ namespace AzureRepositories
 
             services.AddSingleton<IHotWalletCashoutTransactionRepository>(provider => new HotWalletCashoutTransactionRepository(
                 new AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>(settings.Db.DataConnString, 
-                Constants.StoragePrefix + Constants.HotWalletCashoutTable,
+                Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
                     provider.GetService<ILog>()),
                 new AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>(settings.Db.DataConnString, 
                 Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
