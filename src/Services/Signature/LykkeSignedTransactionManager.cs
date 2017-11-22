@@ -20,16 +20,16 @@ namespace Services.Signature
 {
     public class LykkeSignedTransactionManager : ITransactionManager
     {
-        private readonly IBaseSettings                               _baseSettings;
-        private readonly EthEstimateGas                              _estimateGas;
-        private readonly BigInteger                                  _maxGasPrice;
-        private readonly BigInteger                                  _minGasPrice;
-        private readonly INonceCalculator                            _nonceCalculator;
+        private readonly IBaseSettings _baseSettings;
+        private readonly EthEstimateGas _estimateGas;
+        private readonly BigInteger _maxGasPrice;
+        private readonly BigInteger _minGasPrice;
+        private readonly INonceCalculator _nonceCalculator;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
-        private readonly EthSendRawTransaction                       _sendRawTransaction;
-        private readonly ILykkeSigningAPI                            _signingApi;
-        private readonly ITransactionRouter                          _transactionRouter;
-        private readonly Web3                                        _web3;
+        private readonly EthSendRawTransaction _sendRawTransaction;
+        private readonly ILykkeSigningAPI _signingApi;
+        private readonly ITransactionRouter _transactionRouter;
+        private readonly Web3 _web3;
 
 
         public LykkeSignedTransactionManager(
@@ -39,17 +39,17 @@ namespace Services.Signature
             ITransactionRouter transactionRouter,
             Web3 web3)
         {
-            _baseSettings       = baseSettings;
-            _estimateGas        = new EthEstimateGas(web3.Client);
-            _maxGasPrice        = new BigInteger(_baseSettings.MaxGasPrice);
-            _minGasPrice        = new BigInteger(_baseSettings.MinGasPrice);
-            _nonceCalculator    = nonceCalculator;
-            _semaphores         = new ConcurrentDictionary<string, SemaphoreSlim>();
+            _baseSettings = baseSettings;
+            _estimateGas = new EthEstimateGas(web3.Client);
+            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
+            _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
+            _nonceCalculator = nonceCalculator;
+            _semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
             _sendRawTransaction = new EthSendRawTransaction(web3.Client);
-            _signingApi         = signingApi;
-            _transactionRouter  = transactionRouter;
-            _web3               = web3;
-            
+            _signingApi = signingApi;
+            _transactionRouter = transactionRouter;
+            _web3 = web3;
+
             Client = web3.Client;
         }
 
@@ -83,11 +83,11 @@ namespace Services.Signature
             {
                 throw new ArgumentNullException();
             }
-            
+
             return await SendTransactionAsync
             (
                 transaction.From,
-                transaction.To, 
+                transaction.To,
                 transaction.Data,
                 transaction.Value ?? new BigInteger(0),
                 transaction.GasPrice,
@@ -113,7 +113,7 @@ namespace Services.Signature
             from = from == Constants.AddressForRoundRobinTransactionSending
                  ? await _transactionRouter.GetNextSenderAddressAsync()
                  : from;
-        
+
             var semaphore = _semaphores.GetOrAdd(from, f => new SemaphoreSlim(1, 1));
 
             try
@@ -122,17 +122,17 @@ namespace Services.Signature
 
                 (gasPrice, gasValue) = await GetGasPriceAndValueAsync(gasPrice, gasValue);
 
-                var nonce        = await _nonceCalculator.GetNonceAsync(from, true);
-                var transaction  = new Nethereum.Signer.Transaction(to, value, nonce.Value, gasPrice.Value, gasValue.Value, data);
-                var signRequest  = new EthereumTransactionSignRequest
+                var nonce = await _nonceCalculator.GetNonceAsync(from, true);
+                var transaction = new Nethereum.Signer.Transaction(to, value, nonce.Value, gasPrice.Value, gasValue.Value, data);
+                var signRequest = new EthereumTransactionSignRequest
                 {
                     FromProperty = new AddressUtil().ConvertToChecksumAddress(from),
-                    Transaction  = transaction.GetRLPEncoded().ToHex()
+                    Transaction = transaction.GetRLPEncoded().ToHex()
                 };
-                
+
                 var signResponse = await _signingApi.ApiEthereumSignPostAsync(signRequest);
-                var txHash       = await _sendRawTransaction.SendRequestAsync(signResponse.SignedTransaction.EnsureHexPrefix());
-                
+                var txHash = await _sendRawTransaction.SendRequestAsync(signResponse.SignedTransaction.EnsureHexPrefix());
+
                 return txHash;
             }
             finally
@@ -143,7 +143,7 @@ namespace Services.Signature
 
         private async Task<(BigInteger? gasPrice, BigInteger? gasValue)> GetGasPriceAndValueAsync(BigInteger? gasPrice, BigInteger? gasValue)
         {
-            var currentGasPrice  = (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
+            var currentGasPrice = (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
             var selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
 
 
@@ -157,7 +157,7 @@ namespace Services.Signature
             }
 
 
-            gasPrice = gasPrice == null || gasPrice.Value == 0 ? selectedGasPrice                : gasPrice;
+            gasPrice = gasPrice == null || gasPrice.Value == 0 ? selectedGasPrice : gasPrice;
             gasValue = gasValue == null || gasValue.Value == 0 ? Constants.GasForCoinTransaction : gasValue;
 
             return (gasPrice, gasValue);

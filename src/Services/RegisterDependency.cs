@@ -53,7 +53,6 @@ namespace Services
             services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
             services.AddSingleton<IOwnerService, OwnerService>();
             services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
-            services.AddSingleton<IRoundRobinTransactionSender, RoundRobinTransactionSender>();
             services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
             services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
             services.AddSingleton<ISignatureService, SignatureService>();
@@ -96,14 +95,12 @@ namespace Services
             {
                 var baseSettings = provider.GetService<IBaseSettings>();
                 var web3 = provider.GetService<Web3>();
-                var signatureService = provider.GetService<ISignatureService>();
+                var signatureApi = provider.GetService<ILykkeSigningAPI>();
                 var nonceCalculator = provider.GetService<INonceCalculator>();
-                var roundRobinTransactionSender = provider.GetService<IRoundRobinTransactionSender>();
-                var transactionManager = new LykkeSignedTransactionManager(web3, 
-                    signatureService,
-                    baseSettings, 
-                    nonceCalculator,
-                    roundRobinTransactionSender);
+                var transactionRouter = provider.GetService<ITransactionRouter>();
+
+                var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3);
+
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;
