@@ -129,7 +129,7 @@ namespace Services.HotWallet
                     TokenAddress = cashout.TokenAddress,
                     TokenAmount = cashout.Amount,
                     Value = 0,
-                });
+                }, useTxPool: true);
             }
             //Erc20 transfer
             else
@@ -141,7 +141,7 @@ namespace Services.HotWallet
                     GasPrice = selectedGasPrice,
                     ToAddress = cashout.ToAddress,
                     Value = cashout.Amount
-                });
+                }, useTxPool:true);
             }
 
             signedTransaction = await _signatureService.SignRawTransactionAsync(cashout.FromAddress, transactionForSigning);

@@ -26,7 +26,7 @@ namespace Services.PrivateWallet
     public interface IPrivateWalletService
     {
         Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex);
-        Task<string> GetTransactionForSigning(EthTransaction ethTransaction);
+        Task<string> GetTransactionForSigning(EthTransaction ethTransaction, bool useTxPool = false);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task<bool> CheckTransactionSign(string from, string signedTrHex);
         Task ValidateInputAsync(EthTransaction transaction);
@@ -63,13 +63,13 @@ namespace Services.PrivateWallet
             _erc20Service                 = erc20Service;
         }
 
-        public async Task<string> GetTransactionForSigning(EthTransaction ethTransaction)
+        public async Task<string> GetTransactionForSigning(EthTransaction ethTransaction, bool useTxPool = false)
         {
             string from = ethTransaction.FromAddress;
 
             var gas      = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasAmount);
             var gasPrice = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasPrice);
-            var nonce    = await _nonceCalculator.GetNonceAsync(from, false);
+            var nonce    = await _nonceCalculator.GetNonceAsync(from, useTxPool);
             var to       = ethTransaction.ToAddress;
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);

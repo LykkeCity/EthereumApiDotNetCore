@@ -51,20 +51,13 @@ namespace EthereumJobs.Job
             {
                 await _hotWalletService.StartCashoutAsync(cashoutMessage.OperationId);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 await _log.WriteErrorAsync("HotWalletCashoutJob", "Execute", $"{cashoutMessage.OperationId}", exc);
                 cashoutMessage.LastError = exc.Message;
                 cashoutMessage.DequeueCount++;
-                if (cashoutMessage.DequeueCount < 6)
-                {
-                    context.MoveMessageToEnd(cashoutMessage.ToJson());
-                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
-                }
-                else
-                {
-                    context.MoveMessageToPoison(cashoutMessage.ToJson());
-                }
+                context.MoveMessageToEnd(cashoutMessage.ToJson());
+                context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
             }
         }
     }
