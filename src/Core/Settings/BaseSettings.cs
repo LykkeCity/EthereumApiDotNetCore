@@ -36,6 +36,7 @@ namespace Core.Settings
         EthereumContract TokenAdapterContract { get; set; }
         EthereumContract EthAdapterContract { get; set; }
         Dictionary<string, EthereumContract> CoinContracts { get; set; }
+        EthereumContract Erc20DepositContract { get; set; }
         string ERC20ABI { get; set; }
         string CoinAbi { get; set; }
         int MaxDequeueCount { get; set; }
@@ -61,6 +62,7 @@ namespace Core.Settings
         public EthereumContract TokenAdapterContract { get; set; }
         public EthereumContract EthAdapterContract { get; set; }
         public Dictionary<string, EthereumContract> CoinContracts { get; set; } = new Dictionary<string, EthereumContract>();
+        public EthereumContract Erc20DepositContract { get; set; }
 
         public string EthereumPrivateAccount { get; set; }
 
