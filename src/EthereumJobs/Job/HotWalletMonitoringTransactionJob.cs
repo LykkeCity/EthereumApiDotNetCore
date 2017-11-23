@@ -100,7 +100,7 @@ namespace EthereumJobs.Job
                 {
                     if (!coinTransaction.Error)
                     {
-                        bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
+                        bool sentToRabbit = await SendCompleteEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
 
                         if (sentToRabbit)
                         {
@@ -146,7 +146,7 @@ namespace EthereumJobs.Job
         }
 
         //return whether we have sent to rabbit or not
-        private async Task<bool> SendCompletedCoinEvent(string transactionHash, string operationId, bool success, QueueTriggeringContext context, CoinTransactionMessage transaction)
+        private async Task<bool> SendCompleteEvent(string transactionHash, string operationId, bool success, QueueTriggeringContext context, CoinTransactionMessage transaction)
         {
             try
             {
@@ -155,12 +155,13 @@ namespace EthereumJobs.Job
                 {
                     return false;
                 }
-                HotWalletCashoutEvent @event = new HotWalletCashoutEvent(cashout.OperationId, 
+                HotWalletEvent @event = new HotWalletEvent(cashout.OperationId, 
                     transactionHash,
                     cashout.FromAddress, 
                     cashout.ToAddress,
                     cashout.Amount.ToString(),
-                    cashout.TokenAddress);
+                    cashout.TokenAddress,
+                    Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashoutCompleted);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
                 return true;

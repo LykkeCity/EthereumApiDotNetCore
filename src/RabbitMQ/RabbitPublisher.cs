@@ -19,12 +19,12 @@ namespace RabbitMQ
     public class RabbitQueuePublisher : IRabbitQueuePublisher
     {
         private IMessageProducer<string> _publisher;
-        private readonly IMessageProducer<HotWalletCashoutEvent> _hotWalletPublisher;
+        private readonly IMessageProducer<HotWalletEvent> _hotWalletPublisher;
         private readonly Dictionary<Type, MessageProducerWrapper> _messageProducerDictionary =
             new Dictionary<Type, MessageProducerWrapper>();
 
         public RabbitQueuePublisher(IMessageProducer<string> publisher,
-            IMessageProducer<HotWalletCashoutEvent> hotWalletPublisher)
+            IMessageProducer<HotWalletEvent> hotWalletPublisher)
         {
             _publisher = publisher;
             _hotWalletPublisher = hotWalletPublisher;
@@ -39,8 +39,8 @@ namespace RabbitMQ
 
             #region HotWalletCashoutEvent
 
-            MessageProducerWrapper hotWalletCashoutEventWrapper = CreateWrapper(typeof(HotWalletCashoutEvent), _hotWalletPublisher);
-            _messageProducerDictionary.Add(typeof(HotWalletCashoutEvent), hotWalletCashoutEventWrapper);
+            MessageProducerWrapper hotWalletCashoutEventWrapper = CreateWrapper(typeof(HotWalletEvent), _hotWalletPublisher);
+            _messageProducerDictionary.Add(typeof(HotWalletEvent), hotWalletCashoutEventWrapper);
 
             #endregion
         }
