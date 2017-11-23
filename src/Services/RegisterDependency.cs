@@ -59,7 +59,7 @@ namespace Services
             services.AddSingleton<IHotWalletService, HotWalletService>();
             services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
             services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
-            services.AddSingleton<IErc20DepositContractQueueServiceFactory, IErc20DepositContractQueueServiceFactory>();
+            services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
 
 
             //Uses HttpClient Inside -> singleton

@@ -25,6 +25,7 @@ namespace EthereumJobs.Job
             try
             {
                 await _contractPoolService.ReplenishPool();
+                await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(Execute), "", "Pool have been replenished", DateTime.UtcNow);
             }
             catch (Exception e)
             {

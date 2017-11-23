@@ -31,7 +31,7 @@ namespace Services
                 while (currentCount < _settings.MaxContractPoolLength)
                 {
                     var tasks = Enumerable.Repeat(_contractService.CreateContract(), _settings.ContractsPerRequest);
-                    var trHashes = await Task.WhenAll(tasks);
+                    var trHashes = (await Task.WhenAll(tasks)).Where(x => !string.IsNullOrEmpty(x));
                     var contractAddresses = await _contractService.GetContractAddresses(trHashes);
 
                     await Task.WhenAll(contractAddresses.Select(pool.PushContractAddress));

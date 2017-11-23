@@ -44,6 +44,58 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiErc20depositsGet(this IEthereumApi operations, string userAddress = default(string))
+            {
+                return operations.ApiErc20depositsGetAsync(userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20depositsGetAsync(this IEthereumApi operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20depositsGetWithHttpMessagesAsync(userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiErc20depositsPost(this IEthereumApi operations, string userAddress = default(string))
+            {
+                return operations.ApiErc20depositsPostAsync(userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20depositsPostAsync(this IEthereumApi operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20depositsPostWithHttpMessagesAsync(userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='ercTransaction'>
             /// </param>
             public static object ApiErc20WalletGetTransactionPost(this IEthereumApi operations, PrivateWalletErc20Transaction ercTransaction = default(PrivateWalletErc20Transaction))
