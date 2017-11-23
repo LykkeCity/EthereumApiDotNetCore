@@ -14,6 +14,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Events
         public string Amount { get; private set; }
         public DateTime EventTime { get; private set; }
         public HotWalletEventType EventType { get; private set; }
+        public string TokenAddress { get; private set; }
 
         public HotWalletEvent(string operationId,
             string transactionHash,
@@ -30,6 +31,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Events
             Amount = amount;
             EventTime = DateTime.UtcNow;
             EventType = hotWalletEventType;
+            TokenAddress = tokenAddress;
         }
     }
 }
