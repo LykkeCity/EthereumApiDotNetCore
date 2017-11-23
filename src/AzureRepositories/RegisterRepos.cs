@@ -142,6 +142,11 @@ namespace AzureRepositories
                 Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
                     provider.GetService<ILog>())));
 
+            services.AddSingleton<IErc20DepositContractRepository>(provider => new Erc20DepositContractRepository(
+                new AzureTableStorage<Erc20DepositContractEntity>(settings.Db.DataConnString,
+                Constants.StoragePrefix + Constants.Erc20DepositContractTable,
+                provider.GetService<ILog>())));
+
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)

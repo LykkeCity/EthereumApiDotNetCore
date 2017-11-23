@@ -23,6 +23,7 @@ namespace Core
         public const string CashinCompletedEventsQueue = "cashin-completed-events-queue";
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
         public const string HotWalletCashoutTransactionMonitoringQueue = "hotwallet-cashout-transaction-monitoring-queue";
+        public const string Erc20DepositContractPoolQueue = "erc20-deposit-contract-pool-queue";
 
         /// <summary>
         /// Used to internal monitoring of refill transactions
@@ -59,6 +60,7 @@ namespace Core
         public const string CoinTableInedex = "CoinTableIndex";
         public const string HotWalletCashoutTable = "HotWalletCashout";
         public const string HotWalletCashoutTransactionTable = "HotWalletCashoutTransaction";
+        public const string Erc20DepositContractTable = "Erc20DepositContracts";
 
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
