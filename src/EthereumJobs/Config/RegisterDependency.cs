@@ -47,6 +47,8 @@ namespace EthereumJobs.Config
             collection.AddSingleton<CoinEventResubmittJob>();
             collection.AddSingleton<HotWalletCashoutJob>();
             collection.AddSingleton<HotWalletMonitoringTransactionJob>();
+            collection.AddSingleton<Erc20DepositContractPoolJob>();
+            collection.AddSingleton<Erc20DepositContractPoolRenewJob>();
 
             #endregion
         }
