@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.Log;
 using Core;
 using Core.Repositories;
 using Core.Settings;
@@ -12,18 +14,21 @@ namespace Services
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
         private readonly IBaseSettings _settings;
+        private readonly ILog _log;
 
 
         public Erc20DepositContractService(
             IErc20DepositContractRepository contractRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            IBaseSettings settings)
+            IBaseSettings settings,
+            ILog log)
         {
             _contractRepository = contractRepository;
             _contractService = contractService;
             _poolFactory = poolFactory;
             _settings = settings;
+            _log = log;
         }
 
 
@@ -39,10 +44,20 @@ namespace Services
 
         public async Task<string> CreateContract()
         {
-            var abi = _settings.Erc20DepositContract.Abi;
-            var byteCode = _settings.Erc20DepositContract.ByteCode;
+            try
+            {
+                var abi = _settings.Erc20DepositContract.Abi;
+                var byteCode = _settings.Erc20DepositContract.ByteCode;
+
+                return await _contractService.CreateContractWithoutBlockchainAcceptance(abi, byteCode);
+            }
+            catch (Exception e)
+            {
+                await _log.WriteErrorAsync(nameof(Erc20DepositContractService), nameof(CreateContract), "", e, DateTime.UtcNow);
+
+                return null;
+            }
             
-            return await _contractService.CreateContractWithoutBlockchainAcceptance(abi, byteCode);
         }
 
         public async Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes)
