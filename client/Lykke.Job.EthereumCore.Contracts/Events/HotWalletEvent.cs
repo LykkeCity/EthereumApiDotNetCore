@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Lykke.Job.EthereumCore.Contracts.Events
 {
-    public class HotWalletCashoutEvent
+    public class HotWalletEvent
     {
         public string OperationId { get; private set; }
         public string TransactionHash { get; private set; }
@@ -13,13 +13,15 @@ namespace Lykke.Job.EthereumCore.Contracts.Events
         public string ToAddress { get; private set; }
         public string Amount { get; private set; }
         public DateTime EventTime { get; private set; }
+        public HotWalletEventType EventType { get; private set; }
 
-        public HotWalletCashoutEvent(string operationId,
+        public HotWalletEvent(string operationId,
             string transactionHash,
             string fromAddress,
             string toAddress,
             string amount,
-            string tokenAddress)
+            string tokenAddress,
+            HotWalletEventType hotWalletEventType)
         {
             OperationId = operationId;
             TransactionHash = transactionHash;
@@ -27,6 +29,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Events
             ToAddress = toAddress;
             Amount = amount;
             EventTime = DateTime.UtcNow;
+            EventType = hotWalletEventType;
         }
     }
 }
