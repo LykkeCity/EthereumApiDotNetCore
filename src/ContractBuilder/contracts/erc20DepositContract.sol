@@ -25,6 +25,6 @@ contract Erc20DepositContract {
             return false;
         }
 
-        return erc20Contract.transferFrom(this, _to, balance);
+        return erc20Contract.transfer(_to, balance);
     }
 }
