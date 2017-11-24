@@ -212,7 +212,7 @@ namespace Services.HotWallet
             return transactionHash;
         }
 
-        public async Task RetryCashinAsync(string erc20TokenAddress, string contractAddress)
+        public async Task RemoveCashinLockAsync(string erc20TokenAddress, string contractAddress)
         {
             string userAddress = await _erc20DepositContractService.GetUserAddress(contractAddress);
             await UpdateUserTransferWallet(contractAddress, erc20TokenAddress, userAddress);

@@ -13,6 +13,6 @@ namespace Services.HotWallet
         Task<string> StartCashoutAsync(string operationId);
         Task SaveOperationAsync(IHotWalletOperation operation);
         Task<string> StartCashinAsync(IHotWalletOperation operation);
-        Task RetryCashinAsync(string erc20TokenAddress, string userAddress);
+        Task RemoveCashinLockAsync(string erc20TokenAddress, string userAddress);
     }
 }

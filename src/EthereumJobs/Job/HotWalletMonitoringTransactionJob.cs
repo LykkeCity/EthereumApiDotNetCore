@@ -142,7 +142,7 @@ namespace EthereumJobs.Job
                     break;
 
                 case HotWalletOperationType.Cashin:
-                    await _hotWalletService.RetryCashinAsync(operation.TokenAddress, operation.FromAddress);
+                    await _hotWalletService.RemoveCashinLockAsync(operation.TokenAddress, operation.FromAddress);
                     break;
 
                 default:
@@ -170,6 +170,7 @@ namespace EthereumJobs.Job
                         type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashoutCompleted;
                         break;
                     case HotWalletOperationType.Cashin:
+                        await _hotWalletService.RemoveCashinLockAsync(operation.TokenAddress, operation.FromAddress);
                         amount = (await _cashinEventRepository.GetAsync(transactionHash)).Amount;
                         type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashinCompleted;
                         break;
