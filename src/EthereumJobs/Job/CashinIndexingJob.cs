@@ -21,7 +21,7 @@ namespace EthereumJobs.Job
     {
         private readonly ILog _log;
         private readonly ICoinEventService _coinEventService;
-        private ICoinTransactionService _coinTransactionService;
+        private readonly ICoinTransactionService _coinTransactionService;
         private readonly IBaseSettings _settings;
         private readonly ICoinRepository _coinRepository;
         private readonly ITransactionEventsService _transactionEventsService;
@@ -41,7 +41,7 @@ namespace EthereumJobs.Job
         }
 
         [TimerTrigger("0.00:00:30")]
-        public async Task Execute()
+        public async Task ExecuteForAdapters()
         {
             try
             {
@@ -53,14 +53,26 @@ namespace EthereumJobs.Job
                             $"Coin adapter address{adapter.AdapterAddress}",
                             "Cashin Indexing has been started", DateTime.UtcNow);
 
-                        await _transactionEventsService.IndexCashinEvents(adapter.AdapterAddress, adapter.DeployedTransactionHash);
+                        await _transactionEventsService.IndexCashinEventsForAdapter(adapter.AdapterAddress, adapter.DeployedTransactionHash);
                     }
                 });
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync("MonitoringCoinTransactionJob", "Execute", "", ex);
-                return;
+                await _log.WriteErrorAsync(nameof(CashinIndexingJob), nameof(ExecuteForAdapters), "", ex);
+            }
+        }
+
+        [TimerTrigger("0.00:00:30")]
+        public async Task ExecuteForErc20Deposits()
+        {
+            try
+            {
+                await _transactionEventsService.IndexCashinEventsForErc20Deposits();
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CashinIndexingJob), nameof(ExecuteForAdapters), "", ex);
             }
         }
 

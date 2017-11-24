@@ -35,9 +35,8 @@ namespace EthereumJobs.Job
 
         public HotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
-            IBaseSettings settings, ISlackNotifier slackNotifier,
-            ITransactionEventsService transactionEventsService,
-            IUserTransferWalletRepository userTransferWalletRepository,
+            IBaseSettings settings,
+            ISlackNotifier slackNotifier,
             IEthereumTransactionService ethereumTransactionService,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IHotWalletOperationRepository hotWalletCashoutRepository,
@@ -45,12 +44,10 @@ namespace EthereumJobs.Job
             IRabbitQueuePublisher rabbitQueuePublisher)
         {
             _ethereumTransactionService = ethereumTransactionService;
-            _transactionEventsService = transactionEventsService;
             _settings = settings;
             _log = log;
             _coinTransactionService = coinTransactionService;
             _slackNotifier = slackNotifier;
-            _userTransferWalletRepository = userTransferWalletRepository;
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
             _hotWalletService = hotWalletService;
@@ -91,8 +88,7 @@ namespace EthereumJobs.Job
             }
             else
             {
-                if (coinTransaction != null &&
-                    coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
+                if (coinTransaction != null && coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
                     if (!coinTransaction.Error)
                     {
@@ -111,7 +107,6 @@ namespace EthereumJobs.Job
                     }
                     else
                     {
-                        IHotWalletOperation coinEvent = await GetOperationAsync(transaction.TransactionHash, transaction.OperationId);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error!");
                         await RepeatOperationTillWin(transaction);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. RETRY!");

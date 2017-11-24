@@ -12,6 +12,7 @@ namespace Core.Repositories
         string CoinAdapterAddress {get;set;}
         string TransactionHash { get; set; }
         string UserAddress { get; set; }
+        string ContractAddress { get; set; }
         string Amount { get; set; }
     }
 
@@ -20,6 +21,7 @@ namespace Core.Repositories
         public string CoinAdapterAddress { get; set; }
         public string TransactionHash { get; set; }
         public string UserAddress { get; set; }
+        public string ContractAddress { get; set; }
         public string Amount { get; set; }
     }
 
