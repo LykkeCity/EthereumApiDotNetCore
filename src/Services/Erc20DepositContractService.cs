@@ -111,6 +111,11 @@ namespace Services
 
             return trHash;
         }
+
+        public async Task<string> GetUserAddress(string contractAddress)
+        {
+            return (await _contractRepository.GetByContractAddress(contractAddress)).UserAddress;
+        }
     }
 
     public interface IErc20DepositContractService
@@ -122,6 +127,8 @@ namespace Services
         Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes);
 
         Task<string> GetContractAddress(string userAddress);
+
+        Task<string> GetUserAddress(string contractUser);
 
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
 

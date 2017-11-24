@@ -33,6 +33,7 @@ namespace Services.HotWallet
         private readonly ISignatureService _signatureService;
         private readonly IErc20DepositContractService _erc20DepositContractService;
         private readonly SettingsWrapper _settingsWrapper;
+        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
         public HotWalletService(IBaseSettings baseSettings,
             IQueueFactory queueFactory,
@@ -44,7 +45,8 @@ namespace Services.HotWallet
             Web3 web3,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IErc20DepositContractService erc20DepositContractService,
-            SettingsWrapper settingsWrapper)
+            SettingsWrapper settingsWrapper,
+            IUserTransferWalletRepository userTransferWalletRepository)
         {
             _hotWalletTransactionMonitoringQueue = queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
             _hotWalletCashoutQueue = queueFactory.Build(Constants.HotWalletCashoutQueue);
@@ -60,6 +62,7 @@ namespace Services.HotWallet
             _signatureService = signatureService;
             _erc20DepositContractService = erc20DepositContractService;
             _settingsWrapper = settingsWrapper;
+            _userTransferWalletRepository = userTransferWalletRepository;
         }
 
         public async Task EnqueueCashoutAsync(IHotWalletOperation hotWalletCashout)
@@ -210,9 +213,24 @@ namespace Services.HotWallet
             return transactionHash;
         }
 
-        public async Task RetryCashinAsync(IHotWalletOperation hotWalletCashout)
+        public async Task RetryCashinAsync(string erc20TokenAddress, string contractAddress)
         {
+            string userAddress = await _erc20DepositContractService.GetUserAddress(contractAddress);
+            await UpdateUserTransferWallet(contractAddress, erc20TokenAddress, userAddress);
+        }
 
+        private async Task UpdateUserTransferWallet(string contractAddress, string erc20TokenAddress, string userAddress)
+        {
+            string formattedAddress =
+                _userTransferWalletRepository.FormatAddressForErc20(contractAddress, erc20TokenAddress);
+
+            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+            {
+                LastBalance = "",
+                TransferContractAddress = formattedAddress,
+                UpdateDate = DateTime.UtcNow,
+                UserAddress = userAddress
+            });
         }
     }
 }
