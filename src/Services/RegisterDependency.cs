@@ -3,6 +3,7 @@ using Core.Notifiers;
 using Core.Settings;
 using EthereumSamuraiApiCaller;
 using LkeServices.Signature;
+using Lykke.Service.Assets.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.RPC.TransactionManagers;
 using Nethereum.Web3;
@@ -60,7 +61,7 @@ namespace Services
             services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
             services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
             services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
-
+            services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>(); 
 
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
@@ -108,6 +109,13 @@ namespace Services
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;
+            });
+
+            services.AddSingleton<IAssetsService>((provider) =>
+            {
+                var settings = provider.GetService<SettingsWrapper>();
+                
+                return new AssetsService(new Uri(settings.Assets.ServiceUrl));
             });
         }
 

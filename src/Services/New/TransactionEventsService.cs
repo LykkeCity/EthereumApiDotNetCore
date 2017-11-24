@@ -40,7 +40,7 @@ namespace Services.New
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
         private readonly SettingsWrapper _settingsWrapper;
-        private readonly EthereumSamuraiApi _indexerApi;
+        private readonly IEthereumSamuraiApi _indexerApi;
 
         public TransactionEventsService(Web3 web3,
             IBaseSettings baseSettings,
@@ -49,7 +49,7 @@ namespace Services.New
             IBlockSyncedRepository blockSyncedRepository,
             IQueueFactory queueFactory,
             SettingsWrapper settingsWrapper,
-            EthereumSamuraiApi indexerApi)
+            IEthereumSamuraiApi indexerApi)
         {
             _cashinEventRepository = cashinEventRepository;
             _coinRepository = coinRepository;
