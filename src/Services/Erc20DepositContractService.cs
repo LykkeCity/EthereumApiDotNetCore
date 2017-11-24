@@ -52,15 +52,21 @@ namespace Services
 
         public async Task<string> AssignContract(string userAddress)
         {
-            var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
-            var contractAddress = await pool.GetContractAddress();
+            var contractAddress = await GetContractAddress(userAddress);
 
-            await _contractRepository.AddOrReplace(new Erc20DepositContract()
+            if (string.IsNullOrEmpty(contractAddress))
             {
-                ContractAddress = contractAddress,
-                UserAddress = userAddress
-            });
+                var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
 
+                contractAddress = await pool.GetContractAddress();
+
+                await _contractRepository.AddOrReplace(new Erc20DepositContract
+                {
+                    ContractAddress = contractAddress,
+                    UserAddress     = userAddress
+                });
+            }
+            
             return contractAddress;
         }
 
