@@ -22,9 +22,9 @@ namespace Core
         public const string CoinEventResubmittQueue = "ethereum-coin-event-resubmitt-queue";
         public const string CashinCompletedEventsQueue = "cashin-completed-events-queue";
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
-        public const string HotWalletCashoutTransactionMonitoringQueue = "hotwallet-cashout-transaction-monitoring-queue";
+        public const string HotWalletTransactionMonitoringQueue = "hotwallet-transaction-monitoring-queue";
         public const string Erc20DepositContractPoolQueue = "erc20-deposit-contract-pool-queue";
-
+        public const string Erc20DepositCashinTransferQueue = "erc20-deposit-cashin-transfer-queue";
         /// <summary>
         /// Used to internal monitoring of refill transactions
         /// </summary>

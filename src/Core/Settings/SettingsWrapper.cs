@@ -8,5 +8,7 @@ namespace Core.Settings
     {
         public BaseSettings EthereumCore { get; set; }
         public SlackNotificationSettings SlackNotifications { get; set; }
+        public HotWalletSettings Ethereum { get; set; }
+        public AssetsServiceSettings Assets { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
             
-            await _hotWalletService.EnqueueCashoutAsync(new Core.Repositories.HotWalletCashout()
+            await _hotWalletService.EnqueueCashoutAsync(new Core.Repositories.HotWalletOperation()
             {
                 Amount = BigInteger.Parse(hotWalletCashout.Amount),
                 FromAddress = hotWalletCashout.FromAddress,

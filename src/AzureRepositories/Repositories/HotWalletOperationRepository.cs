@@ -11,7 +11,7 @@ using System.Numerics;
 
 namespace AzureRepositories.Repositories
 {
-    public class HotWalletCashoutEntity : TableEntity, IHotWalletCashout
+    public class HotWalletCashoutEntity : TableEntity, IHotWalletOperation
     {
         public const string Key = "HotWalletCashout";
 
@@ -41,8 +41,22 @@ namespace AzureRepositories.Repositories
         }
         public string AmountStr { get; set; }
         public string TokenAddress { get; set; }
+        public HotWalletOperationType OperationType
+        {
+            get
+            {
+                return (HotWalletOperationType)Enum.Parse(typeof(HotWalletOperationType), OperationTypeStr);
+            }
 
-        public static HotWalletCashoutEntity CreateEntity(IHotWalletCashout cashout)
+            set
+            {
+                OperationTypeStr = value.ToString();
+            }
+        }
+
+        public string OperationTypeStr { get; set; }
+
+        public static HotWalletCashoutEntity CreateEntity(IHotWalletOperation cashout)
         {
             return new HotWalletCashoutEntity()
             {
@@ -52,36 +66,37 @@ namespace AzureRepositories.Repositories
                 PartitionKey = Key,
                 ToAddress = cashout.ToAddress,
                 TokenAddress = cashout.TokenAddress,
+                OperationType = cashout.OperationType
             };
         }
     }
 
 
-    public class HotWalletCashoutRepository : IHotWalletCashoutRepository
+    public class HotWalletOperationRepository : IHotWalletOperationRepository
     {
         private readonly INoSQLTableStorage<HotWalletCashoutEntity> _table;
 
-        public HotWalletCashoutRepository(INoSQLTableStorage<HotWalletCashoutEntity> table)
+        public HotWalletOperationRepository(INoSQLTableStorage<HotWalletCashoutEntity> table)
         {
             _table = table;
         }
 
 
-        public async Task<IEnumerable<IHotWalletCashout>> GetAllAsync()
+        public async Task<IEnumerable<IHotWalletOperation>> GetAllAsync()
         {
             var all = await _table.GetDataAsync(HotWalletCashoutEntity.Key);
 
             return all;
         }
 
-        public async Task SaveAsync(IHotWalletCashout cashout)
+        public async Task SaveAsync(IHotWalletOperation cashout)
         {
             HotWalletCashoutEntity entity = HotWalletCashoutEntity.CreateEntity(cashout);
 
             await _table.InsertOrReplaceAsync(entity);
         }
 
-        public async Task<IHotWalletCashout> GetAsync(string operationId)
+        public async Task<IHotWalletOperation> GetAsync(string operationId)
         {
             var entity = await _table.GetDataAsync(HotWalletCashoutEntity.Key, operationId);
 

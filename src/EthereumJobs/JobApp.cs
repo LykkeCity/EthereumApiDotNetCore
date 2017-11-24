@@ -22,8 +22,9 @@ namespace EthereumJobs
         {
             var settings = GetSettings(configuration);
             IServiceCollection collection = new ServiceCollection();
-            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
+            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
+            collection.AddSingleton(settings);
             collection.AddTriggers(pool =>
             {
                 // default connection must be initialized

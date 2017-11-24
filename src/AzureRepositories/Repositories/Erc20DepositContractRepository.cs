@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AzureStorage;
 using Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
+using System;
 
 namespace AzureRepositories.Repositories
 {
@@ -18,27 +19,40 @@ namespace AzureRepositories.Repositories
         }
 
 
-        public async Task AddOrReplace(string contractAddress, string userAddress)
+        public async Task AddOrReplace(IErc20DepositContract depositContract)
         {
             await _table.InsertOrReplaceAsync(new Erc20DepositContractEntity
             {
-                ContractAddress = contractAddress,
+                ContractAddress = depositContract.ContractAddress,
                 PartitionKey = GetParitionKey(),
-                RowKey = GetRowKey(userAddress),
-                UserAddress = userAddress,
+                RowKey = GetRowKey(depositContract.UserAddress),
+                UserAddress = depositContract.UserAddress,
             });
         }
 
-        public async Task<string> Get(string userAddress)
+        public async Task<IErc20DepositContract> Get(string userAddress)
         {
-            return (await _table.GetDataAsync(GetParitionKey(), GetRowKey(userAddress)))?
-                .ContractAddress;
+            var entity = await _table.GetDataAsync(GetParitionKey(), GetRowKey(userAddress));
+
+            return entity;
         }
 
-        public async Task<IEnumerable<string>> GetAll()
+        public async Task<IEnumerable<IErc20DepositContract>> GetAll()
         {
-            return (await _table.GetDataAsync(GetParitionKey()))
-                .Select(x => x.ContractAddress);
+            var entities = await _table.GetDataAsync(GetParitionKey());
+
+            return entities;
+        }
+
+        public async Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction)
+        {
+            await _table.GetDataByChunksAsync(GetParitionKey(), async (items) =>
+            {
+                foreach (var item in items)
+                {
+                    await processAction(item);
+                }
+            });
         }
 
         private static string GetParitionKey()
@@ -48,7 +62,7 @@ namespace AzureRepositories.Repositories
             => userAddress;
     }
 
-    public class Erc20DepositContractEntity : TableEntity
+    public class Erc20DepositContractEntity : TableEntity, IErc20DepositContract
     {
         public string ContractAddress { get; set; }
 

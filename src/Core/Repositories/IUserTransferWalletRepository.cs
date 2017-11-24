@@ -28,6 +28,7 @@ namespace Core.Repositories
         Task ReplaceAsync(IUserTransferWallet wallet);
         Task DeleteAsync(string userAddress, string transferContractAddress);
         Task<IUserTransferWallet> GetUserContractAsync(string userAddress, string transferContractAddress);
+        string FormatAddressForErc20(string depositContractAddress, string erc20TokenAddress);
         Task<IEnumerable<IUserTransferWallet>> GetAllAsync();
     }
 }

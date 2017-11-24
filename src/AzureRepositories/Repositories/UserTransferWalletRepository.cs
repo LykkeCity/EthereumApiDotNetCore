@@ -57,6 +57,11 @@ namespace AzureRepositories.Repositories
             await _table.DeleteIfExistAsync(UserTransferWalletEntity.GenerateParitionKey(userAddress), transferContractAddress);
         }
 
+        public string FormatAddressForErc20(string depositContractAddress, string erc20TokenAddress)
+        {
+            return $"{erc20TokenAddress}_{depositContractAddress}";
+        }
+
         public async Task<IEnumerable<IUserTransferWallet>> GetAllAsync()
         {
             return await _table.GetDataAsync((x) => true);

@@ -19,30 +19,34 @@ namespace Services.HotWallet
 {
     public class HotWalletService : IHotWalletService
     {
-        private readonly IQueueExt _hotWalletCashoutTransactionMonitoringQueue;
+        private readonly IQueueExt _hotWalletTransactionMonitoringQueue;
         private readonly IQueueExt _hotWalletCashoutQueue;
         private readonly IBaseSettings _baseSettings;
-        private readonly IHotWalletCashoutRepository _hotWalletCashoutRepository;
+        private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
         private readonly IPrivateWalletService _privateWalletService;
         private readonly IErc20PrivateWalletService _erc20PrivateWalletService;
         private readonly ILog _log;
         private readonly Web3 _web3;
         private readonly BigInteger _maxGasPrice;
         private readonly BigInteger _minGasPrice;
-        private readonly IHotWalletCashoutTransactionRepository _hotWalletCashoutTransactionRepository;
+        private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly ISignatureService _signatureService;
+        private readonly IErc20DepositContractService _erc20DepositContractService;
+        private readonly SettingsWrapper _settingsWrapper;
 
         public HotWalletService(IBaseSettings baseSettings,
             IQueueFactory queueFactory,
-            IHotWalletCashoutRepository hotWalletCashoutRepository,
+            IHotWalletOperationRepository hotWalletCashoutRepository,
             IPrivateWalletService privateWalletService,
             IErc20PrivateWalletService erc20PrivateWalletService,
             ISignatureService signatureService,
             ILog log,
             Web3 web3,
-            IHotWalletCashoutTransactionRepository hotWalletCashoutTransactionRepository)
+            IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
+            IErc20DepositContractService erc20DepositContractService,
+            SettingsWrapper settingsWrapper)
         {
-            _hotWalletCashoutTransactionMonitoringQueue = queueFactory.Build(Constants.HotWalletCashoutTransactionMonitoringQueue);
+            _hotWalletTransactionMonitoringQueue = queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
             _hotWalletCashoutQueue = queueFactory.Build(Constants.HotWalletCashoutQueue);
             _baseSettings = baseSettings;//.HotWalletAddress
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
@@ -54,9 +58,11 @@ namespace Services.HotWallet
             _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _signatureService = signatureService;
+            _erc20DepositContractService = erc20DepositContractService;
+            _settingsWrapper = settingsWrapper;
         }
 
-        public async Task EnqueueCashoutAsync(IHotWalletCashout hotWalletCashout)
+        public async Task EnqueueCashoutAsync(IHotWalletOperation hotWalletCashout)
         {
             if (hotWalletCashout == null)
             {
@@ -70,10 +76,11 @@ namespace Services.HotWallet
                 throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Operation with Id was enqueued before");
             }
 
+            hotWalletCashout.OperationType = HotWalletOperationType.Cashout;
             await RetryCashoutAsync(hotWalletCashout);
         }
 
-        public async Task RetryCashoutAsync(IHotWalletCashout hotWalletCashout)
+        public async Task RetryCashoutAsync(IHotWalletOperation hotWalletCashout)
         {
             HotWalletCashoutMessage message = new HotWalletCashoutMessage() { OperationId = hotWalletCashout.OperationId };
 
@@ -88,14 +95,14 @@ namespace Services.HotWallet
         /// <returns>transaction hash</returns>
         public async Task<string> StartCashoutAsync(string operationId)
         {
-            IHotWalletCashout cashout = await _hotWalletCashoutRepository.GetAsync(operationId);
+            IHotWalletOperation cashout = await _hotWalletCashoutRepository.GetAsync(operationId);
 
-            if (cashout == null)
+            if (cashout == null || cashout.OperationType != HotWalletOperationType.Cashout)
             {
-                await _log.WriteWarningAsync(nameof(HotWalletService), 
-                    nameof(StartCashoutAsync), 
-                    $"operationId - {operationId}", 
-                    "No cashout info for operation", 
+                await _log.WriteWarningAsync(nameof(HotWalletService),
+                    nameof(StartCashoutAsync),
+                    $"operationId - {operationId}",
+                    "No cashout info for operation",
                     DateTime.UtcNow);
 
                 return null;
@@ -141,7 +148,7 @@ namespace Services.HotWallet
                     GasPrice = selectedGasPrice,
                     ToAddress = cashout.ToAddress,
                     Value = cashout.Amount
-                }, useTxPool:true);
+                }, useTxPool: true);
             }
 
             signedTransaction = await _signatureService.SignRawTransactionAsync(cashout.FromAddress, transactionForSigning);
@@ -169,9 +176,43 @@ namespace Services.HotWallet
                 OperationId = operationId,
                 TransactionHash = transactionHash
             });
-            await _hotWalletCashoutTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
+            await _hotWalletTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
 
             return transactionHash;
+        }
+
+        public async Task SaveOperationAsync(IHotWalletOperation operation)
+        {
+            await _hotWalletCashoutRepository.SaveAsync(operation);
+        }
+
+        public async Task<string> StartCashinAsync(IHotWalletOperation operation)
+        {
+            await SaveOperationAsync(operation);
+            var transactionHash = await _erc20DepositContractService.RecievePaymentFromDepositContract(operation.FromAddress,
+                operation.TokenAddress,
+                operation.ToAddress);
+
+            await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
+            {
+                OperationId = operation.OperationId,
+                TransactionHash = transactionHash
+            });
+
+            CoinTransactionMessage message = new CoinTransactionMessage()
+            {
+                OperationId = operation.OperationId,
+                TransactionHash = transactionHash
+            };
+
+            await _hotWalletTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
+
+            return transactionHash;
+        }
+
+        public async Task RetryCashinAsync(IHotWalletOperation hotWalletCashout)
+        {
+
         }
     }
 }

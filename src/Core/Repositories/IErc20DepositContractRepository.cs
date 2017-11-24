@@ -1,15 +1,31 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Core.Repositories
 {
+    public interface IErc20DepositContract
+    {
+        string UserAddress { get; set; }
+
+        string ContractAddress { get; set; }
+    }
+
+    public class Erc20DepositContract : IErc20DepositContract
+    {
+        public string UserAddress { get; set; }
+        public string ContractAddress { get; set; }
+    }
+
     public interface IErc20DepositContractRepository
     {
-        Task AddOrReplace(string contractAddress, string userAddress);
+        Task AddOrReplace(IErc20DepositContract depositContract);
 
-        Task<string> Get(string userAddress);
+        Task<IErc20DepositContract> Get(string userAddress);
 
-        Task<IEnumerable<string>> GetAll();
+        Task<IEnumerable<IErc20DepositContract>> GetAll();
+
+        Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
     }
 }

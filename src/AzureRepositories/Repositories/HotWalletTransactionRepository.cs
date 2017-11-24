@@ -13,7 +13,7 @@ namespace AzureRepositories.Repositories
 {
     #region Entities
 
-    public class HotWalletCashoutTransactionOpIdPartitionEntity : TableEntity, IHotWalletCashoutTransaction
+    public class HotWalletCashoutTransactionOpIdPartitionEntity : TableEntity, IHotWalletTransaction
     {
         public const string Key = "HotWalletCashoutTransactionOpId";
 
@@ -31,7 +31,7 @@ namespace AzureRepositories.Repositories
 
         public string TransactionHash { get; set; }
 
-        public static HotWalletCashoutTransactionOpIdPartitionEntity CreateEntity(IHotWalletCashoutTransaction transaction)
+        public static HotWalletCashoutTransactionOpIdPartitionEntity CreateEntity(IHotWalletTransaction transaction)
         {
             return new HotWalletCashoutTransactionOpIdPartitionEntity()
             {
@@ -42,7 +42,7 @@ namespace AzureRepositories.Repositories
         }
     }
 
-    public class HotWalletCashoutTransactionHashPartitionEntity : TableEntity, IHotWalletCashoutTransaction
+    public class HotWalletCashoutTransactionHashPartitionEntity : TableEntity, IHotWalletTransaction
     {
         public const string Key = "HotWalletCashoutTransactionHash";
 
@@ -60,7 +60,7 @@ namespace AzureRepositories.Repositories
             }
         }
 
-        public static HotWalletCashoutTransactionHashPartitionEntity CreateEntity(IHotWalletCashoutTransaction transaction)
+        public static HotWalletCashoutTransactionHashPartitionEntity CreateEntity(IHotWalletTransaction transaction)
         {
             return new HotWalletCashoutTransactionHashPartitionEntity()
             {
@@ -74,12 +74,12 @@ namespace AzureRepositories.Repositories
 
     #endregion
 
-    public class HotWalletCashoutTransactionRepository : IHotWalletCashoutTransactionRepository
+    public class HotWalletTransactionRepository : IHotWalletTransactionRepository
     {
         private readonly INoSQLTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity> _tableOpId;
         private readonly INoSQLTableStorage<HotWalletCashoutTransactionHashPartitionEntity> _tableTrHash;
 
-        public HotWalletCashoutTransactionRepository(INoSQLTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity> tableOpId,
+        public HotWalletTransactionRepository(INoSQLTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity> tableOpId,
             INoSQLTableStorage<HotWalletCashoutTransactionHashPartitionEntity> tableTrHash)
         {
             _tableOpId = tableOpId;
@@ -87,7 +87,7 @@ namespace AzureRepositories.Repositories
         }
 
 
-        public async Task SaveAsync(IHotWalletCashoutTransaction cashout)
+        public async Task SaveAsync(IHotWalletTransaction cashout)
         {
             HotWalletCashoutTransactionHashPartitionEntity entityHash = HotWalletCashoutTransactionHashPartitionEntity.CreateEntity(cashout);
             HotWalletCashoutTransactionOpIdPartitionEntity entityOpId = HotWalletCashoutTransactionOpIdPartitionEntity.CreateEntity(cashout);
@@ -96,14 +96,14 @@ namespace AzureRepositories.Repositories
             await _tableTrHash.InsertOrReplaceAsync(entityHash);
         }
 
-        public async Task<IHotWalletCashoutTransaction> GetByOperationIdAsync(string operationId)
+        public async Task<IHotWalletTransaction> GetByOperationIdAsync(string operationId)
         {
             var entity = await _tableOpId.GetDataAsync(HotWalletCashoutTransactionOpIdPartitionEntity.Key, operationId);
 
             return entity;
         }
 
-        public async Task<IHotWalletCashoutTransaction> GetByTransactionHashAsync(string transactionHash)
+        public async Task<IHotWalletTransaction> GetByTransactionHashAsync(string transactionHash)
         {
             var entity = await _tableOpId.GetDataAsync(HotWalletCashoutTransactionHashPartitionEntity.Key, transactionHash);
 
