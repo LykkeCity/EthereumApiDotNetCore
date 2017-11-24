@@ -34,8 +34,8 @@ namespace AzureRepositories.Repositories
             await _reversedTable.InsertOrReplaceAsync(new Erc20DepositContractReversedEntity
             {
                 ContractAddress = depositContract.ContractAddress,
-                PartitionKey = GetParitionKey(),
-                RowKey = GetRowKey(depositContract.UserAddress),
+                PartitionKey = GetReversedParitionKey(),
+                RowKey = GetRowKey(depositContract.ContractAddress),
                 UserAddress = depositContract.UserAddress,
             });
         }
