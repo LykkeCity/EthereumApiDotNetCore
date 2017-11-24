@@ -207,8 +207,7 @@ namespace Services.HotWallet
                 OperationId = operation.OperationId,
                 TransactionHash = transactionHash
             };
-
-            await _hotWalletTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
+            //await _hotWalletTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
 
             return transactionHash;
         }
