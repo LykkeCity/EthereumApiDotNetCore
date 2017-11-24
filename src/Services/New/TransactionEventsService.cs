@@ -98,8 +98,8 @@ namespace Services.New
                     (
                         new GetErc20TransferHistoryRequest
                         {
-                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress,
-                            BlockNumber = (long) lastSyncedBlock
+                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress?.ToLower(),
+                            BlockNumber = (long) lastSyncedBlock,
                         }
                     );
 
