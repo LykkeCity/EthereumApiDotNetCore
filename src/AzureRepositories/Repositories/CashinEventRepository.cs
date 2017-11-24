@@ -17,6 +17,7 @@ namespace AzureRepositories.Repositories
         public string TransactionHash { get { return this.RowKey; } set { RowKey = value; } }
         public string UserAddress { get; set; }
         public string Amount { get; set; }
+        public string ContractAddress { get; set; }
 
         public static string GetPartitionKey()
         {
