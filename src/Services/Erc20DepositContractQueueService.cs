@@ -24,6 +24,8 @@ namespace Services
             
             if (message != null)
             {
+                await _queue.FinishRawMessageAsync(message);
+
                 return message.AsString;
             }
             else
