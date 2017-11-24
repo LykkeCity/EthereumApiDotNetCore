@@ -11,8 +11,6 @@ using Core.Settings;
 using Core.Notifiers;
 using Core.Repositories;
 using Services;
-using Newtonsoft.Json;
-using Services.New;
 using Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
@@ -32,6 +30,8 @@ namespace EthereumJobs.Job
         private readonly IHotWalletService _hotWalletService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
         private readonly IEthereumTransactionService _ethereumTransactionService;
+        private readonly ICashinEventRepository _cashinEventRepository;
+
 
         public HotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
@@ -41,7 +41,8 @@ namespace EthereumJobs.Job
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IHotWalletOperationRepository hotWalletCashoutRepository,
             IHotWalletService hotWalletService,
-            IRabbitQueuePublisher rabbitQueuePublisher)
+            IRabbitQueuePublisher rabbitQueuePublisher,
+            ICashinEventRepository cashinEventRepository)
         {
             _ethereumTransactionService = ethereumTransactionService;
             _settings = settings;
@@ -52,6 +53,7 @@ namespace EthereumJobs.Job
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
             _hotWalletService = hotWalletService;
             _rabbitQueuePublisher = rabbitQueuePublisher;
+            _cashinEventRepository = cashinEventRepository;
         }
 
         [QueueTrigger(Constants.HotWalletTransactionMonitoringQueue, 100, true)]
@@ -159,14 +161,16 @@ namespace EthereumJobs.Job
                     return false;
                 }
 
+                string amount;
                 Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType type;
                 switch (operation.OperationType)
                 {
                     case HotWalletOperationType.Cashout:
+                        amount = operation.Amount.ToString();
                         type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashoutCompleted;
                         break;
                     case HotWalletOperationType.Cashin:
-                        //TODO Fill right amount for operation
+                        amount = (await _cashinEventRepository.GetAsync(transactionHash)).Amount;
                         type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashinCompleted;
                         break;
                     default:
@@ -176,7 +180,7 @@ namespace EthereumJobs.Job
                     transactionHash,
                     operation.FromAddress, 
                     operation.ToAddress,
-                    operation.Amount.ToString(),
+                    amount,
                     operation.TokenAddress,
                     type);
 
