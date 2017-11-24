@@ -25,12 +25,6 @@ namespace EthereumJobs.Job
         private readonly ICoinTransactionService _coinTransactionService;
         private readonly IBaseSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
-        private readonly ICoinEventService _coinEventService;
-        private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
-        private readonly IPendingOperationService _pendingOperationService;
-        private readonly ITransactionEventsService _transactionEventsService;
-        private readonly IEventTraceRepository _eventTraceRepository;
-        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
         private readonly IHotWalletService _hotWalletService;
@@ -39,9 +33,8 @@ namespace EthereumJobs.Job
 
         public HotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
-            IBaseSettings settings, ISlackNotifier slackNotifier,
-            ITransactionEventsService transactionEventsService,
-            IUserTransferWalletRepository userTransferWalletRepository,
+            IBaseSettings settings,
+            ISlackNotifier slackNotifier,
             IEthereumTransactionService ethereumTransactionService,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IHotWalletOperationRepository hotWalletCashoutRepository,
@@ -49,12 +42,10 @@ namespace EthereumJobs.Job
             IRabbitQueuePublisher rabbitQueuePublisher)
         {
             _ethereumTransactionService = ethereumTransactionService;
-            _transactionEventsService = transactionEventsService;
             _settings = settings;
             _log = log;
             _coinTransactionService = coinTransactionService;
             _slackNotifier = slackNotifier;
-            _userTransferWalletRepository = userTransferWalletRepository;
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
             _hotWalletService = hotWalletService;
@@ -95,8 +86,7 @@ namespace EthereumJobs.Job
             }
             else
             {
-                if (coinTransaction != null &&
-                    coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
+                if (coinTransaction != null && coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
                     if (!coinTransaction.Error)
                     {
@@ -115,7 +105,6 @@ namespace EthereumJobs.Job
                     }
                     else
                     {
-                        IHotWalletOperation coinEvent = await GetOperationAsync(transaction.TransactionHash, transaction.OperationId);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error!");
                         await RepeatOperationTillWin(transaction);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. RETRY!");

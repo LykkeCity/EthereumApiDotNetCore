@@ -10,32 +10,46 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
+using EthereumSamuraiApiCaller;
+using EthereumSamuraiApiCaller.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Services.Coins.Models;
 
 namespace Services.New
 {
     public interface ITransactionEventsService
     {
-        Task IndexCashinEvents(string coinAdapterAddress, string deployedTransactionHash);
+        Task IndexCashinEventsForAdapter(string coinAdapterAddress, string deployedTransactionHash);
+        Task IndexCashinEventsForErc20Deposits();
         Task MonitorNewEvents(string coinAdapterAddress);
         Task<ICashinEvent> GetCashinEvent(string transactionHash);
     }
 
     public class TransactionEventsService : ITransactionEventsService
     {
+        private const string Erc20HotWalletMarker = "ERC20_HOTWALLET";
+
+
         private readonly Web3 _web3;
         private readonly IBaseSettings _baseSettings;
         private readonly IQueueFactory _queueFactory;
         private readonly IQueueExt _cashinQueue;
+        private readonly IQueueExt _cointTransactionQueue;
         private readonly ICoinRepository _coinRepository;
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
+        private readonly SettingsWrapper _settingsWrapper;
+        private readonly EthereumSamuraiApi _indexerApi;
 
         public TransactionEventsService(Web3 web3,
             IBaseSettings baseSettings,
             ICoinRepository coinRepository,
             ICashinEventRepository cashinEventRepository,
             IBlockSyncedRepository blockSyncedRepository,
-            IQueueFactory queueFactory)
+            IQueueFactory queueFactory,
+            SettingsWrapper settingsWrapper,
+            EthereumSamuraiApi indexerApi)
         {
             _cashinEventRepository = cashinEventRepository;
             _coinRepository = coinRepository;
@@ -43,10 +57,13 @@ namespace Services.New
             _blockSyncedRepository = blockSyncedRepository;
             _baseSettings = baseSettings;
             _queueFactory = queueFactory;
+            _settingsWrapper = settingsWrapper;
+            _indexerApi = indexerApi;
             _cashinQueue = _queueFactory.Build(Constants.CashinCompletedEventsQueue);
+            _cointTransactionQueue = _queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
         }
 
-        public async Task IndexCashinEvents(string coinAdapterAddress, string deployedTransactionHash)
+        public async Task IndexCashinEventsForAdapter(string coinAdapterAddress, string deployedTransactionHash)
         {
             var lastBlock = await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
             var contract = _web3.Eth.GetContract(_baseSettings.CoinAbi, coinAdapterAddress);
@@ -62,6 +79,70 @@ namespace Services.New
                 BigInteger to = from + scanRange;
                 to = to < lastBlock ? to : lastBlock;
                 await IndexEventsInRange(coinAdapterAddress, coinCashInEvent, from, to);
+            }
+        }
+
+        public async Task IndexCashinEventsForErc20Deposits()
+        {
+            var indexerStatusResponse = await _indexerApi.ApiSystemIsAliveGetWithHttpMessagesAsync();
+            if (indexerStatusResponse.Response.IsSuccessStatusCode)
+            {
+                var responseContent = await indexerStatusResponse.Response.Content.ReadAsStringAsync();
+                var indexerStatus = JObject.Parse(responseContent);
+                var lastIndexedBlock = BigInteger.Parse(indexerStatus["blockchainTip"].Value<string>());
+                var lastSyncedBlock = await GetLastSyncedBlockNumber(Erc20HotWalletMarker);
+
+                while (++lastSyncedBlock <= lastIndexedBlock - _baseSettings.Level2TransactionConfirmation)
+                {
+                    var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync
+                    (
+                        new GetErc20TransferHistoryRequest
+                        {
+                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress,
+                            BlockNumber = (long) lastSyncedBlock
+                        }
+                    );
+
+                    switch (transfersResponse)
+                    {
+                        case IEnumerable<Erc20TransferHistoryResponse> transfers:
+
+                            foreach (var transfer in transfers)
+                            {
+                                var coinTransactionMessage = new CoinTransactionMessage
+                                {
+                                    TransactionHash = transfer.TransactionHash
+                                };
+
+                                await _cashinEventRepository.InsertAsync(new CashinEvent
+                                {
+                                    CoinAdapterAddress = Erc20HotWalletMarker,
+                                    Amount = transfer.TransferAmount,
+                                    TransactionHash = transfer.TransactionHash,
+                                    UserAddress = transfer.FromProperty,
+                                    ContractAddress = transfer.Contract
+                                });
+
+                                await _cointTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(coinTransactionMessage));
+                            }
+
+                            break;
+                        case ApiException exception:
+                            throw new Exception($"Ethereum indexer responded with error: {exception.Error.Message}");
+                        default:
+                            throw new Exception($"Ethereum indexer returned unexpected response");
+                    }
+
+                    await _blockSyncedRepository.InsertAsync(new BlockSynced
+                    {
+                        BlockNumber = lastSyncedBlock.ToString(),
+                        CoinAdapterAddress = Erc20HotWalletMarker
+                    });
+                }
+            }
+            else
+            {
+                throw new Exception("Can not obtain ethereum indexer status.");
             }
         }
 
