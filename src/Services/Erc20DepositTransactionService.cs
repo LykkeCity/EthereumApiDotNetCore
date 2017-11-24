@@ -49,7 +49,7 @@ namespace Services
         private readonly string _hotWalletAddress;
         private readonly IHotWalletService _hotWalletService;
 
-        public Erc20DepositTransactionService(Func<string, IQueueExt> queueFactory,
+        public Erc20DepositTransactionService(IQueueFactory queueFactory,
             ILog logger,
             IExchangeContractService coinContractService,
             IBaseSettings baseSettings,
@@ -68,7 +68,7 @@ namespace Services
             _eventTraceRepository = eventTraceRepository;
             _logger = logger;
             _baseSettings = baseSettings;
-            _queue = queueFactory(Constants.Erc20DepositCashinTransferQueue);
+            _queue = queueFactory.Build(Constants.Erc20DepositCashinTransferQueue);
             _erc20DepositContractService = erc20DepositContractService;
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;

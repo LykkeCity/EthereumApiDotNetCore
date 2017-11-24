@@ -45,7 +45,6 @@ namespace EthereumJobs.Job
         private readonly IAssetsService _assetsService;
         private readonly IErc20BalanceService _erc20BalanceService;
         private readonly IErc20DepositTransactionService _erc20DepositTransactionService;
-        private readonly IEthereumSamuraiApi _ethereumSamuraiApi;
 
         public Erc20DepositMonitoringContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -139,42 +138,45 @@ namespace EthereumJobs.Job
                         // null - means we ask for all balances on current address
                         var tokenBalances = await _erc20BalanceService.GetBalancesForAddress(item.ContractAddress, null);
 
-                        foreach (var tokenBalance in tokenBalances)
+                        if (tokenBalances != null)
                         {
-                            string tokenAddress = tokenBalance.Erc20TokenAddress?.ToLower();
-                            string formattedAddress =
-                            _userTransferWalletRepository.FormatAddressForErc20(item.ContractAddress, tokenAddress);
-                            IUserTransferWallet wallet =
-                            await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, formattedAddress);
-                            if (wallet == null ||
-                                string.IsNullOrEmpty(wallet.LastBalance) ||
-                                wallet.LastBalance == "0")
+                            foreach (var tokenBalance in tokenBalances)
                             {
-                                BigInteger balance = 
-                                await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, tokenAddress);
-
-                                if (balance > 0)
+                                string tokenAddress = tokenBalance.Erc20TokenAddress?.ToLower();
+                                string formattedAddress =
+                                _userTransferWalletRepository.FormatAddressForErc20(item.ContractAddress, tokenAddress);
+                                IUserTransferWallet wallet =
+                                await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, formattedAddress);
+                                if (wallet == null ||
+                                    string.IsNullOrEmpty(wallet.LastBalance) ||
+                                    wallet.LastBalance == "0")
                                 {
-                                    await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-                                    {
-                                        LastBalance = balance.ToString(),
-                                        TransferContractAddress = formattedAddress,
-                                        UserAddress = item.UserAddress,
-                                        UpdateDate = DateTime.UtcNow
-                                    });
+                                    BigInteger balance =
+                                    await _ercInterfaceService.GetBalanceForExternalTokenAsync(item.ContractAddress, tokenAddress);
 
-                                    await _erc20DepositTransactionService.PutContractTransferTransaction(new Erc20DepositContractTransaction()
+                                    if (balance > 0)
                                     {
-                                        Amount = balance.ToString(),
-                                        UserAddress = item.UserAddress,
-                                        TokenAddress = tokenAddress,
-                                        ContractAddress = item.ContractAddress,
-                                        CreateDt = DateTime.UtcNow,
-                                    });
+                                        await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
+                                        {
+                                            LastBalance = balance.ToString(),
+                                            TransferContractAddress = formattedAddress,
+                                            UserAddress = item.UserAddress,
+                                            UpdateDate = DateTime.UtcNow
+                                        });
 
-                                    await _logger.WriteInfoAsync(nameof(Erc20DepositMonitoringContracts),
-                                        nameof(Execute), "", $"Balance on transfer address - {item.ContractAddress} is {balance} (Tokens of {tokenBalance.Erc20TokenAddress})" +
-                                        $" transfer belongs to user {item.UserAddress}", DateTime.UtcNow);
+                                        await _erc20DepositTransactionService.PutContractTransferTransaction(new Erc20DepositContractTransaction()
+                                        {
+                                            Amount = balance.ToString(),
+                                            UserAddress = item.UserAddress,
+                                            TokenAddress = tokenAddress,
+                                            ContractAddress = item.ContractAddress,
+                                            CreateDt = DateTime.UtcNow,
+                                        });
+
+                                        await _logger.WriteInfoAsync(nameof(Erc20DepositMonitoringContracts),
+                                            nameof(Execute), "", $"Balance on transfer address - {item.ContractAddress} is {balance} (Tokens of {tokenBalance.Erc20TokenAddress})" +
+                                            $" transfer belongs to user {item.UserAddress}", DateTime.UtcNow);
+                                    }
                                 }
                             }
                         }
