@@ -88,7 +88,7 @@ namespace EthereumJobs.Job
             }
             else
             {
-                if (coinTransaction != null && coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
+                if (coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
                     if (!coinTransaction.Error)
                     {
