@@ -25,11 +25,7 @@ namespace EthereumJobs.Job
         private readonly ICoinTransactionService _coinTransactionService;
         private readonly IBaseSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
-        private readonly ICoinEventService _coinEventService;
-        private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
-        private readonly IPendingOperationService _pendingOperationService;
         private readonly ITransactionEventsService _transactionEventsService;
-        private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
@@ -149,13 +145,12 @@ namespace EthereumJobs.Job
                     break;
 
                 case HotWalletOperationType.Cashin:
-                    await _hotWalletService.RetryCashinAsync(operation);
+                    await _hotWalletService.RetryCashinAsync(operation.TokenAddress, operation.FromAddress);
                     break;
 
                 default:
                     return;
             }
-            
         }
 
         //return whether we have sent to rabbit or not
