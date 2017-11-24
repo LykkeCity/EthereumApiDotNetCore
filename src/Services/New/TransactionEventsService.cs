@@ -91,7 +91,7 @@ namespace Services.New
                 var indexerStatus = JObject.Parse(responseContent);
                 var lastIndexedBlock = BigInteger.Parse(indexerStatus["blockchainTip"].Value<string>());
                 var lastSyncedBlock = await GetLastSyncedBlockNumber(Erc20HotWalletMarker);
-
+                
                 while (++lastSyncedBlock <= lastIndexedBlock - _baseSettings.Level2TransactionConfirmation)
                 {
                     var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync

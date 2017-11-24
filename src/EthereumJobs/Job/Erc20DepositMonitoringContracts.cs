@@ -136,7 +136,7 @@ namespace EthereumJobs.Job
                     if (!string.IsNullOrEmpty(item.UserAddress))
                     {
                         // null - means we ask for all balances on current address
-                        var tokenBalances = await _erc20BalanceService.GetBalancesForAddress(item.ContractAddress, null);
+                        var tokenBalances = await _erc20BalanceService.GetBalancesForAddress(item.ContractAddress, new string[0]);
 
                         if (tokenBalances != null)
                         {
