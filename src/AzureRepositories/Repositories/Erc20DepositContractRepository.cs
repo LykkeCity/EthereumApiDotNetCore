@@ -11,11 +11,13 @@ namespace AzureRepositories.Repositories
     public class Erc20DepositContractRepository : IErc20DepositContractRepository
     {
         private readonly INoSQLTableStorage<Erc20DepositContractEntity> _table;
+        private readonly INoSQLTableStorage<Erc20DepositContractReversedEntity> _reversedTable;
 
-
-        public Erc20DepositContractRepository(INoSQLTableStorage<Erc20DepositContractEntity>table)
+        public Erc20DepositContractRepository(INoSQLTableStorage<Erc20DepositContractEntity>table, 
+            INoSQLTableStorage<Erc20DepositContractReversedEntity> reversedTable)
         {
             _table = table;
+            _reversedTable = reversedTable;
         }
 
 
@@ -28,11 +30,26 @@ namespace AzureRepositories.Repositories
                 RowKey = GetRowKey(depositContract.UserAddress),
                 UserAddress = depositContract.UserAddress,
             });
+
+            await _reversedTable.InsertOrReplaceAsync(new Erc20DepositContractReversedEntity
+            {
+                ContractAddress = depositContract.ContractAddress,
+                PartitionKey = GetParitionKey(),
+                RowKey = GetRowKey(depositContract.UserAddress),
+                UserAddress = depositContract.UserAddress,
+            });
         }
 
         public async Task<IErc20DepositContract> Get(string userAddress)
         {
             var entity = await _table.GetDataAsync(GetParitionKey(), GetRowKey(userAddress));
+
+            return entity;
+        }
+
+        public async Task<IErc20DepositContract> GetByContractAddress(string ContractAddress)
+        {
+            var entity = await _reversedTable.GetDataAsync(GetReversedParitionKey(), GetRowKey(ContractAddress));
 
             return entity;
         }
@@ -58,11 +75,21 @@ namespace AzureRepositories.Repositories
         private static string GetParitionKey()
             => "Erc20DepositContract";
 
+        private static string GetReversedParitionKey()
+            => "Erc20DepositContractReversed";
+
         private static string GetRowKey(string userAddress)
             => userAddress;
     }
 
     public class Erc20DepositContractEntity : TableEntity, IErc20DepositContract
+    {
+        public string ContractAddress { get; set; }
+
+        public string UserAddress { get; set; }
+    }
+
+    public class Erc20DepositContractReversedEntity : TableEntity, IErc20DepositContract
     {
         public string ContractAddress { get; set; }
 

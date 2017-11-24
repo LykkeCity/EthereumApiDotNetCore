@@ -145,7 +145,11 @@ namespace AzureRepositories
             services.AddSingleton<IErc20DepositContractRepository>(provider => new Erc20DepositContractRepository(
                 new AzureTableStorage<Erc20DepositContractEntity>(settings.Db.DataConnString,
                 Constants.StoragePrefix + Constants.Erc20DepositContractTable,
-                provider.GetService<ILog>())));
+                provider.GetService<ILog>()),
+                new AzureTableStorage<Erc20DepositContractReversedEntity>(settings.Db.DataConnString,
+                Constants.StoragePrefix + Constants.Erc20DepositContractTable,
+                provider.GetService<ILog>())
+                ));
 
         }
 

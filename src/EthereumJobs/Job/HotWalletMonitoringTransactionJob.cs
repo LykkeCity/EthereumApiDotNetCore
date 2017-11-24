@@ -138,13 +138,12 @@ namespace EthereumJobs.Job
                     break;
 
                 case HotWalletOperationType.Cashin:
-                    await _hotWalletService.RetryCashinAsync(operation);
+                    await _hotWalletService.RetryCashinAsync(operation.TokenAddress, operation.FromAddress);
                     break;
 
                 default:
                     return;
             }
-            
         }
 
         //return whether we have sent to rabbit or not

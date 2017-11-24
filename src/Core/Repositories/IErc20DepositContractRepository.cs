@@ -27,5 +27,7 @@ namespace Core.Repositories
         Task<IEnumerable<IErc20DepositContract>> GetAll();
 
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
+
+        Task<IErc20DepositContract> GetByContractAddress(string ContractAddress);
     }
 }

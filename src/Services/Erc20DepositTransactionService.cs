@@ -115,7 +115,8 @@ namespace Services
                 }
 
                 var opId = $"HotWalletCashin-{Guid.NewGuid().ToString()}";
-                await _hotWalletService.SaveOperationAsync(new HotWalletOperation()
+
+                var transactionHash = await _hotWalletService.StartCashinAsync(new HotWalletOperation()
                 {
                     Amount = balance,
                     FromAddress = contractAddress,
@@ -124,9 +125,6 @@ namespace Services
                     TokenAddress = tokenAddress,
                     OperationType = HotWalletOperationType.Cashin,
                 });
-                var transactionHash = await _erc20DepositContractService.RecievePaymentFromDepositContract(contractAddress,
-                    tokenAddress,
-                    _hotWalletAddress);
 
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {
