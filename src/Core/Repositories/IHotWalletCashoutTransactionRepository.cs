@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace Core.Repositories
 {
-    public interface IHotWalletCashoutTransaction
+    public interface IHotWalletTransaction
     {
         string OperationId { get; set; }
         string TransactionHash { get; set; }
     }
 
-    public class HotWalletCashoutTransaction : IHotWalletCashoutTransaction
+    public class HotWalletCashoutTransaction : IHotWalletTransaction
     {
         public string OperationId { get; set; }
         public string TransactionHash { get; set; }
     }
 
-    public interface IHotWalletCashoutTransactionRepository
+    public interface IHotWalletTransactionRepository
     {
-        Task SaveAsync(IHotWalletCashoutTransaction cashoutTransaction);
-        Task<IHotWalletCashoutTransaction> GetByOperationIdAsync(string operationId);
-        Task<IHotWalletCashoutTransaction> GetByTransactionHashAsync(string transactionHash);
+        Task SaveAsync(IHotWalletTransaction cashoutTransaction);
+        Task<IHotWalletTransaction> GetByOperationIdAsync(string operationId);
+        Task<IHotWalletTransaction> GetByTransactionHashAsync(string transactionHash);
     }
 }

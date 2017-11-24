@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lykke.Service.Assets.Client" Version="2.1.0.13-beta" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />

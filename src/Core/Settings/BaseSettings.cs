@@ -147,5 +147,15 @@ namespace Core.Settings
         public string ConnectionString { get; set; }
         public string QueueName { get; set; }
     }
+
+    public class AssetsServiceSettings
+    {
+        public string ServiceUrl {get;set;}
+    }
+
+    public class HotWalletSettings
+    {
+        public string HotwalletAddress { get; set; }
+    }
 }
 //0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06

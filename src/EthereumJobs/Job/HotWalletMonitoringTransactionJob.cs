@@ -31,8 +31,8 @@ namespace EthereumJobs.Job
         private readonly ITransactionEventsService _transactionEventsService;
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
-        private readonly IHotWalletCashoutTransactionRepository _hotWalletCashoutTransactionRepository;
-        private readonly IHotWalletCashoutRepository _hotWalletCashoutRepository;
+        private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
+        private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
         private readonly IHotWalletService _hotWalletService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
         private readonly IEthereumTransactionService _ethereumTransactionService;
@@ -43,8 +43,8 @@ namespace EthereumJobs.Job
             ITransactionEventsService transactionEventsService,
             IUserTransferWalletRepository userTransferWalletRepository,
             IEthereumTransactionService ethereumTransactionService,
-            IHotWalletCashoutTransactionRepository hotWalletCashoutTransactionRepository,
-            IHotWalletCashoutRepository hotWalletCashoutRepository,
+            IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
+            IHotWalletOperationRepository hotWalletCashoutRepository,
             IHotWalletService hotWalletService,
             IRabbitQueuePublisher rabbitQueuePublisher)
         {
@@ -61,7 +61,7 @@ namespace EthereumJobs.Job
             _rabbitQueuePublisher = rabbitQueuePublisher;
         }
 
-        [QueueTrigger(Constants.HotWalletCashoutTransactionMonitoringQueue, 100, true)]
+        [QueueTrigger(Constants.HotWalletTransactionMonitoringQueue, 100, true)]
         public async Task Execute(CoinTransactionMessage transaction, QueueTriggeringContext context)
         {
             ICoinTransaction coinTransaction = null;
@@ -115,7 +115,7 @@ namespace EthereumJobs.Job
                     }
                     else
                     {
-                        IHotWalletCashout coinEvent = await GetCashoutOperation(transaction.TransactionHash, transaction.OperationId);
+                        IHotWalletOperation coinEvent = await GetOperationAsync(transaction.TransactionHash, transaction.OperationId);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error!");
                         await RepeatOperationTillWin(transaction);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. RETRY!");
@@ -130,7 +130,7 @@ namespace EthereumJobs.Job
             }
         }
 
-        private async Task<IHotWalletCashout> GetCashoutOperation(string trHash, string operationId)
+        private async Task<IHotWalletOperation> GetOperationAsync(string trHash, string operationId)
         {
             var cashoutTransaction = await _hotWalletCashoutTransactionRepository.GetByTransactionHashAsync(trHash) ??
                 await _hotWalletCashoutTransactionRepository.GetByOperationIdAsync(operationId);
@@ -141,8 +141,21 @@ namespace EthereumJobs.Job
 
         private async Task RepeatOperationTillWin(CoinTransactionMessage message)
         {
-            var cashout = await GetCashoutOperation(message?.TransactionHash, message?.OperationId);
-            await _hotWalletService.RetryCashoutAsync(cashout);
+            var operation = await GetOperationAsync(message?.TransactionHash, message?.OperationId);
+            switch (operation.OperationType)
+            {
+                case HotWalletOperationType.Cashout:
+                    await _hotWalletService.RetryCashoutAsync(operation);
+                    break;
+
+                case HotWalletOperationType.Cashin:
+                    await _hotWalletService.RetryCashinAsync(operation);
+                    break;
+
+                default:
+                    return;
+            }
+            
         }
 
         //return whether we have sent to rabbit or not
@@ -150,18 +163,32 @@ namespace EthereumJobs.Job
         {
             try
             {
-                var cashout = await GetCashoutOperation(transactionHash, operationId);
-                if (cashout == null)
+                var operation = await GetOperationAsync(transactionHash, operationId);
+                if (operation == null)
                 {
                     return false;
                 }
-                HotWalletEvent @event = new HotWalletEvent(cashout.OperationId, 
+
+                Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType type;
+                switch (operation.OperationType)
+                {
+                    case HotWalletOperationType.Cashout:
+                        type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashoutCompleted;
+                        break;
+                    case HotWalletOperationType.Cashin:
+                        //TODO Fill right amount for operation
+                        type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashinCompleted;
+                        break;
+                    default:
+                        return false;
+                }
+                HotWalletEvent @event = new HotWalletEvent(operation.OperationId, 
                     transactionHash,
-                    cashout.FromAddress, 
-                    cashout.ToAddress,
-                    cashout.Amount.ToString(),
-                    cashout.TokenAddress,
-                    Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashoutCompleted);
+                    operation.FromAddress, 
+                    operation.ToAddress,
+                    operation.Amount.ToString(),
+                    operation.TokenAddress,
+                    type);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
                 return true;
