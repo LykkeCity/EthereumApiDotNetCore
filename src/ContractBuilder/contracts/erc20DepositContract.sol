@@ -12,6 +12,10 @@ contract Erc20DepositContract {
         }
     }
 
+	function() public payable {
+		throw;
+	}
+
     function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
         
         ERC20Interface erc20Contract = ERC20Interface(_tokenAddress);
