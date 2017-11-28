@@ -61,7 +61,8 @@ namespace Services
             services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
             services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
             services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
-            services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>(); 
+            services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
+            services.AddSingleton<ITransactionRouter, TransactionRouter>();
 
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
