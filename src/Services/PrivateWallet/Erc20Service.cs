@@ -120,8 +120,8 @@ namespace Services.PrivateWallet
         {
             await _transactionValidationService.ValidateInputForSignedAsync(fromAddress, signedTransaction);
             Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
-            string erc20Address                      = transaction.ReceiveAddress.ToHexCompact().EnsureHexPrefix();
-            string erc20InvocationData               = transaction.Data.ToHexCompact().EnsureHexPrefix();
+            string erc20Address                      = transaction.ReceiveAddress.ToHex().EnsureHexPrefix();
+            string erc20InvocationData               = transaction.Data.ToHex().EnsureHexPrefix();
             
             if (! await _transactionValidationService.IsTransactionErc20Transfer(signedTransaction))
             {
