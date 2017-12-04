@@ -70,7 +70,7 @@ namespace Service.UnitTests.Jobs
             };
 
             _pendingOperationService.Setup(x => x.GetOperationAsync(pendingOperation.OperationId)).Returns(Task.FromResult(pendingOperation));
-            _transferContractService.Setup(x => x.GetBalanceOnAdapter(pendingOperation.CoinAdapterAddress, pendingOperation.FromAddress))
+            _transferContractService.Setup(x => x.GetBalanceOnAdapter(pendingOperation.CoinAdapterAddress, pendingOperation.FromAddress, true))
                 .Returns(Task.FromResult(new BigInteger(0)));
             _coinEventService.Setup(x => x.PublishEvent(It.IsAny<ICoinEvent>(), It.IsAny<bool>())).Returns(Task.FromResult(0)).Verifiable();
 
@@ -107,7 +107,7 @@ namespace Service.UnitTests.Jobs
             };
 
             _pendingOperationService.Setup(x => x.GetOperationAsync(pendingOperation.OperationId)).Returns(Task.FromResult(pendingOperation));
-            _transferContractService.Setup(x => x.GetBalanceOnAdapter(pendingOperation.CoinAdapterAddress, pendingOperation.FromAddress))
+            _transferContractService.Setup(x => x.GetBalanceOnAdapter(pendingOperation.CoinAdapterAddress, pendingOperation.FromAddress, true))
                 .Returns(Task.FromResult(new BigInteger(1000000000000000001)));
             _coinEventService.Setup(x => x.PublishEvent(It.IsAny<ICoinEvent>(), It.IsAny<bool>())).Returns(Task.FromResult(0)).Verifiable();
             _exchangeContractService.Setup(x => x.Transfer(Guid.Parse(operationId), pendingOperation.CoinAdapterAddress,

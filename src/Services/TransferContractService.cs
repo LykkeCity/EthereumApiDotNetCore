@@ -5,6 +5,7 @@ using Core.Settings;
 using Core.Utils;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Services
 
         Task<string> RecievePaymentFromTransferContract(string transferContractAddress, string coinAdapterAddress);
 
-        Task<BigInteger> GetBalanceOnAdapter(string coinAddress, string clientAddress);
+        Task<BigInteger> GetBalanceOnAdapter(string coinAddress, string clientAddress, bool checkInPendingBlock = false);
         Task<BigInteger> GetBalance(string transferContractAddress);
 
         Task<string> GetTransferAddressUser(string adapterAddress, string transferContractAddress);
@@ -257,7 +258,7 @@ namespace Services
             return coin;
         }
 
-        public async Task<BigInteger> GetBalanceOnAdapter(string adapterAddress, string clientAddress)
+        public async Task<BigInteger> GetBalanceOnAdapter(string adapterAddress, string clientAddress, bool checkInPendingBlock = false)
         {
             var coinAFromDb = await _coinRepository.GetCoinByAddress(adapterAddress);
             if (coinAFromDb == null)
@@ -269,7 +270,8 @@ namespace Services
             var contract = _web3.Eth.GetContract(abi, coinAFromDb.AdapterAddress);
             var balance = contract.GetFunction("balanceOf");
 
-            return await balance.CallAsync<BigInteger>(clientAddress);
+            return checkInPendingBlock ? await balance.CallAsync<BigInteger>(BlockParameter.CreatePending(), clientAddress) :
+                await balance.CallAsync<BigInteger>(clientAddress);
         }
 
         public async Task<BigInteger> GetBalance(string transferContractAddress)
