@@ -51,12 +51,12 @@ namespace EthereumJobs.Job
 
                 if (transaction.DequeueCount >= 5)
                 {
-                    context.MoveMessageToPoison();
+                    context.MoveMessageToPoison(transaction.ToJson());
                 }
                 else
                 {
                     transaction.DequeueCount++;
-                    context.MoveMessageToEnd();
+                    context.MoveMessageToEnd(transaction.ToJson());
                     context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
                 }
                 await _logger.WriteErrorAsync(nameof(Erc20DepositMonitoringCashinTransactions), "Execute", "", ex);
