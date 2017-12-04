@@ -14,6 +14,7 @@ using Nethereum.Web3;
 using System.Numerics;
 using Core.Exceptions;
 using Services.Coins.Models;
+using Common;
 
 namespace Services.HotWallet
 {
@@ -127,7 +128,8 @@ namespace Services.HotWallet
             string signedTransaction = null;
             string transactionHash = null;
             bool isErc20Transfer = !string.IsNullOrEmpty(cashout.TokenAddress);
-            //Eth transfer
+
+            //Erc20 transfer
             if (isErc20Transfer)
             {
                 transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new BusinessModels.PrivateWallet.Erc20Transaction()
@@ -141,7 +143,7 @@ namespace Services.HotWallet
                     Value = 0,
                 }, useTxPool: true);
             }
-            //Erc20 transfer
+            //Eth transfer
             else
             {
                 transactionForSigning = await _privateWalletService.GetTransactionForSigning(new BusinessModels.PrivateWallet.EthTransaction()
@@ -160,6 +162,15 @@ namespace Services.HotWallet
             {
                 throw new ClientSideException(ExceptionType.WrongSign, "Wrong signature");
             }
+
+            var transactionExecutionCosts =
+                await _privateWalletService.EstimateTransactionExecutionCost(cashout.FromAddress, signedTransaction);
+
+            if (!transactionExecutionCosts.IsAllowed)
+            {
+                throw new Exception($"Transaction will not be successfull {cashout.ToJson()}");
+            }
+
             transactionHash = isErc20Transfer ? await _erc20PrivateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction) :
                 await _privateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction);
 
@@ -207,7 +218,6 @@ namespace Services.HotWallet
                 OperationId = operation.OperationId,
                 TransactionHash = transactionHash
             };
-            //await _hotWalletTransactionMonitoringQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
 
             return transactionHash;
         }

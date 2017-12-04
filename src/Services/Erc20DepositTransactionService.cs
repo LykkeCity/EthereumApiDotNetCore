@@ -115,16 +115,26 @@ namespace Services
                 }
 
                 var opId = $"HotWalletCashin-{Guid.NewGuid().ToString()}";
+                string transactionHash = null; 
 
-                var transactionHash = await _hotWalletService.StartCashinAsync(new HotWalletOperation()
+                try
                 {
-                    Amount = balance,
-                    FromAddress = contractAddress,
-                    OperationId = opId,
-                    ToAddress = _hotWalletAddress,
-                    TokenAddress = tokenAddress,
-                    OperationType = HotWalletOperationType.Cashin,
-                });
+                    transactionHash = await _hotWalletService.StartCashinAsync(new HotWalletOperation()
+                    {
+                        Amount = balance,
+                        FromAddress = contractAddress,
+                        OperationId = opId,
+                        ToAddress = _hotWalletAddress,
+                        TokenAddress = tokenAddress,
+                        OperationType = HotWalletOperationType.Cashin,
+                    });
+                }
+                catch (Exception exc)
+                {
+                    await UpdateUserTransferWallet(contractTransferTr);
+
+                    return;
+                }
 
                 await _userPaymentHistoryRepository.SaveAsync(new UserPaymentHistory()
                 {

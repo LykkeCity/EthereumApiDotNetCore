@@ -44,6 +44,8 @@ namespace EthereumJobs.Job
         {
             if (cashoutMessage == null || string.IsNullOrEmpty(cashoutMessage.OperationId))
             {
+                await _log.WriteWarningAsync(nameof(HotWalletCashoutJob), "Execute", "", "message is empty");
+
                 return;
             }
 
@@ -53,7 +55,7 @@ namespace EthereumJobs.Job
             }
             catch (Exception exc)
             {
-                await _log.WriteErrorAsync("HotWalletCashoutJob", "Execute", $"{cashoutMessage.OperationId}", exc);
+                await _log.WriteErrorAsync(nameof(HotWalletCashoutJob), "Execute", $"{cashoutMessage.OperationId}", exc);
                 cashoutMessage.LastError = exc.Message;
                 cashoutMessage.DequeueCount++;
                 context.MoveMessageToEnd(cashoutMessage.ToJson());

@@ -123,6 +123,7 @@ namespace EthereumJobs.Job
 
         private async Task<IHotWalletOperation> GetOperationAsync(string trHash, string operationId)
         {
+            operationId = operationId ?? "";
             var cashoutTransaction = await _hotWalletCashoutTransactionRepository.GetByTransactionHashAsync(trHash) ??
                 await _hotWalletCashoutTransactionRepository.GetByOperationIdAsync(operationId);
             var cashout = await _hotWalletCashoutRepository.GetAsync(cashoutTransaction?.OperationId);
