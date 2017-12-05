@@ -15,23 +15,39 @@ namespace RabbitMQ
         public static void RegisterRabbitQueue(this IServiceCollection services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
         {
             string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
-            RabbitMqPublisherSettings rabbitMqSettings = new RabbitMqPublisherSettings
+            string connectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}";
+
+            #region Default
+
+            RabbitMqPublisherSettings rabbitMqDefaultSettings = new RabbitMqPublisherSettings
             {
-                ConnectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}",
+                ConnectionString = connectionString,
                 ExchangeName = exchangeName
             };
 
-            RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqSettings)
+            RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
                 .SetSerializer(new BytesSerializer())
                 .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey))
                 .SetLogger(logger)
                 .Start();
 
-            RabbitMqPublisher<HotWalletEvent> hotWalletCashoutEventPublisher = new RabbitMqPublisher<HotWalletEvent>(rabbitMqSettings)
+            #endregion
+
+            #region Hotwallet
+
+            RabbitMqPublisherSettings rabbitMqHotwalletSettings = new RabbitMqPublisherSettings
+            {
+                ConnectionString = connectionString,
+                ExchangeName = $"{exchangeName}.hotwallet"
+            };
+
+            RabbitMqPublisher<HotWalletEvent> hotWalletCashoutEventPublisher = new RabbitMqPublisher<HotWalletEvent>(rabbitMqHotwalletSettings)
                 .SetSerializer(new BytesSerializer<HotWalletEvent>())
-                .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey, $"{exchangeName}.hotwallet"))
+                .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey))
                 .SetLogger(logger)
                 .Start();
+
+            #endregion
 
             services.AddSingleton<IMessageProducer<string>>(publisher);
             services.AddSingleton<IMessageProducer<HotWalletEvent>>(hotWalletCashoutEventPublisher);
