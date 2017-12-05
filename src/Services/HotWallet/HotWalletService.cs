@@ -15,6 +15,8 @@ using System.Numerics;
 using Core.Exceptions;
 using Services.Coins.Models;
 using Common;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Services.HotWallet
 {
@@ -35,6 +37,7 @@ namespace Services.HotWallet
         private readonly IErc20DepositContractService _erc20DepositContractService;
         private readonly SettingsWrapper _settingsWrapper;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
+        private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
 
         public HotWalletService(IBaseSettings baseSettings,
             IQueueFactory queueFactory,
@@ -64,6 +67,7 @@ namespace Services.HotWallet
             _erc20DepositContractService = erc20DepositContractService;
             _settingsWrapper = settingsWrapper;
             _userTransferWalletRepository = userTransferWalletRepository;
+            _semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
         }
 
         public async Task EnqueueCashoutAsync(IHotWalletOperation hotWalletCashout)
@@ -128,51 +132,60 @@ namespace Services.HotWallet
             string signedTransaction = null;
             string transactionHash = null;
             bool isErc20Transfer = !string.IsNullOrEmpty(cashout.TokenAddress);
+            SemaphoreSlim semaphore = _semaphores.GetOrAdd(cashout.FromAddress, f => new SemaphoreSlim(1, 1));
 
-            //Erc20 transfer
-            if (isErc20Transfer)
+            try
             {
-                transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new BusinessModels.PrivateWallet.Erc20Transaction()
+                await semaphore.WaitAsync();
+                //Erc20 transfer
+                if (isErc20Transfer)
                 {
-                    FromAddress = cashout.FromAddress,
-                    GasAmount = Constants.GasForCoinTransaction,
-                    GasPrice = selectedGasPrice,
-                    ToAddress = cashout.ToAddress,
-                    TokenAddress = cashout.TokenAddress,
-                    TokenAmount = cashout.Amount,
-                    Value = 0,
-                }, useTxPool: true);
-            }
-            //Eth transfer
-            else
-            {
-                transactionForSigning = await _privateWalletService.GetTransactionForSigning(new BusinessModels.PrivateWallet.EthTransaction()
+                    transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new BusinessModels.PrivateWallet.Erc20Transaction()
+                    {
+                        FromAddress = cashout.FromAddress,
+                        GasAmount = Constants.GasForCoinTransaction,
+                        GasPrice = selectedGasPrice,
+                        ToAddress = cashout.ToAddress,
+                        TokenAddress = cashout.TokenAddress,
+                        TokenAmount = cashout.Amount,
+                        Value = 0,
+                    }, useTxPool: true);
+                }
+                //Eth transfer
+                else
                 {
-                    FromAddress = cashout.FromAddress,
-                    GasAmount = Constants.GasForCoinTransaction,
-                    GasPrice = selectedGasPrice,
-                    ToAddress = cashout.ToAddress,
-                    Value = cashout.Amount
-                }, useTxPool: true);
+                    transactionForSigning = await _privateWalletService.GetTransactionForSigning(new BusinessModels.PrivateWallet.EthTransaction()
+                    {
+                        FromAddress = cashout.FromAddress,
+                        GasAmount = Constants.GasForCoinTransaction,
+                        GasPrice = selectedGasPrice,
+                        ToAddress = cashout.ToAddress,
+                        Value = cashout.Amount
+                    }, useTxPool: true);
+                }
+
+                signedTransaction = await _signatureService.SignRawTransactionAsync(cashout.FromAddress, transactionForSigning);
+
+                if (string.IsNullOrEmpty(signedTransaction))
+                {
+                    throw new ClientSideException(ExceptionType.WrongSign, "Wrong signature");
+                }
+
+                var transactionExecutionCosts =
+                    await _privateWalletService.EstimateTransactionExecutionCost(cashout.FromAddress, signedTransaction);
+
+                if (!transactionExecutionCosts.IsAllowed)
+                {
+                    throw new Exception($"Transaction will not be successfull {cashout.ToJson()}");
+                }
+
+                transactionHash = isErc20Transfer ? await _erc20PrivateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction) :
+                    await _privateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction);
             }
-
-            signedTransaction = await _signatureService.SignRawTransactionAsync(cashout.FromAddress, transactionForSigning);
-
-            if (string.IsNullOrEmpty(signedTransaction))
+            finally
             {
-                throw new ClientSideException(ExceptionType.WrongSign, "Wrong signature");
+                semaphore.Release();
             }
-
-            var transactionExecutionCosts =
-                await _privateWalletService.EstimateTransactionExecutionCost(cashout.FromAddress, signedTransaction);
-
-            if (!transactionExecutionCosts.IsAllowed)
-            {
-                throw new Exception($"Transaction will not be successfull {cashout.ToJson()}");
-            }
-
-            transactionHash = isErc20Transfer ? await _erc20PrivateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction) :
-                await _privateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction);
 
             if (string.IsNullOrEmpty(transactionHash))
             {
