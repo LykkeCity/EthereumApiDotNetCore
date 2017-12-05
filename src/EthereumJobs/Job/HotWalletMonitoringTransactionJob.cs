@@ -23,8 +23,6 @@ namespace EthereumJobs.Job
         private readonly ICoinTransactionService _coinTransactionService;
         private readonly IBaseSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
-        private readonly ITransactionEventsService _transactionEventsService;
-        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
         private readonly IHotWalletService _hotWalletService;
