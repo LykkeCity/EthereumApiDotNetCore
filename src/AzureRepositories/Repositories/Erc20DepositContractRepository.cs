@@ -40,6 +40,11 @@ namespace AzureRepositories.Repositories
             });
         }
 
+        public async Task<bool> Contains(string contractAddress)
+        {
+            return await _table.GetDataAsync(GetReversedParitionKey(), GetRowKey(contractAddress)) != null;
+        }
+
         public async Task<IErc20DepositContract> Get(string userAddress)
         {
             var entity = await _table.GetDataAsync(GetParitionKey(), GetRowKey(userAddress));
@@ -47,9 +52,9 @@ namespace AzureRepositories.Repositories
             return entity;
         }
 
-        public async Task<IErc20DepositContract> GetByContractAddress(string ContractAddress)
+        public async Task<IErc20DepositContract> GetByContractAddress(string contractAddress)
         {
-            var entity = await _reversedTable.GetDataAsync(GetReversedParitionKey(), GetRowKey(ContractAddress));
+            var entity = await _reversedTable.GetDataAsync(GetReversedParitionKey(), GetRowKey(contractAddress));
 
             return entity;
         }
