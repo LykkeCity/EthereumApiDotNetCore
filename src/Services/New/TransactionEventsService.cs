@@ -41,6 +41,7 @@ namespace Services.New
         private readonly IBlockSyncedRepository _blockSyncedRepository;
         private readonly SettingsWrapper _settingsWrapper;
         private readonly IEthereumSamuraiApi _indexerApi;
+        private readonly IErc20DepositContractRepository _depositContractRepository;
 
         public TransactionEventsService(Web3 web3,
             IBaseSettings baseSettings,
@@ -49,7 +50,8 @@ namespace Services.New
             IBlockSyncedRepository blockSyncedRepository,
             IQueueFactory queueFactory,
             SettingsWrapper settingsWrapper,
-            IEthereumSamuraiApi indexerApi)
+            IEthereumSamuraiApi indexerApi,
+            IErc20DepositContractRepository depositContractRepository)
         {
             _cashinEventRepository = cashinEventRepository;
             _coinRepository = coinRepository;
@@ -59,6 +61,7 @@ namespace Services.New
             _queueFactory = queueFactory;
             _settingsWrapper = settingsWrapper;
             _indexerApi = indexerApi;
+            _depositContractRepository = depositContractRepository;
             _cashinQueue = _queueFactory.Build(Constants.CashinCompletedEventsQueue);
             _cointTransactionQueue = _queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
         }
@@ -109,6 +112,12 @@ namespace Services.New
 
                             foreach (var transfer in transfers)
                             {
+                                // Ignore transfers from not deposit contract addresses
+                                if (!await _depositContractRepository.Contains(transfer.FromProperty))
+                                {
+                                    continue;
+                                }
+
                                 var coinTransactionMessage = new CoinTransactionMessage
                                 {
                                     TransactionHash = transfer.TransactionHash

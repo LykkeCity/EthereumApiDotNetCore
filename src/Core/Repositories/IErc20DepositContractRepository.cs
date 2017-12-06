@@ -22,12 +22,14 @@ namespace Core.Repositories
     {
         Task AddOrReplace(IErc20DepositContract depositContract);
 
+        Task<bool> Contains(string contractAddress);
+
         Task<IErc20DepositContract> Get(string userAddress);
 
         Task<IEnumerable<IErc20DepositContract>> GetAll();
 
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
 
-        Task<IErc20DepositContract> GetByContractAddress(string ContractAddress);
+        Task<IErc20DepositContract> GetByContractAddress(string contractAddress);
     }
 }
