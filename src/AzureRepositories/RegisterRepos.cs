@@ -151,6 +151,9 @@ namespace AzureRepositories
                 provider.GetService<ILog>())
                 ));
 
+            services.AddSingleton<IGasPriceRepository>(provider => new GasPriceRepository(
+                new AzureTableStorage<GasPriceEntity>(settings.Db.DataConnString, Constants.StoragePrefix + Constants.GasPriceTable,
+                    provider.GetService<ILog>())));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection services, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)

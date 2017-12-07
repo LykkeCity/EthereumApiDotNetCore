@@ -460,6 +460,51 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            public static GasPriceModel ApiGasPriceGet(this IEthereumApi operations)
+            {
+                return operations.ApiGasPriceGetAsync().GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<GasPriceModel> ApiGasPriceGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiGasPriceGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            public static void ApiGasPricePost(this IEthereumApi operations, GasPriceModel model = default(GasPriceModel))
+            {
+                operations.ApiGasPricePostAsync(model).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task ApiGasPricePostAsync(this IEthereumApi operations, GasPriceModel model = default(GasPriceModel), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.ApiGasPricePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='model'>
             /// </param>
             public static object ApiHashCalculateAndGetIdPost(this IEthereumApi operations, BaseCoinRequestParametersModel model = default(BaseCoinRequestParametersModel))

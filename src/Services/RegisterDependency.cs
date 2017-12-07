@@ -16,6 +16,7 @@ using Services.Signature;
 using Services.Transactions;
 using SigningServiceApiCaller;
 using System;
+using Core.Repositories;
 
 namespace Services
 {
@@ -63,6 +64,7 @@ namespace Services
             services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
             services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
             services.AddSingleton<ITransactionRouter, TransactionRouter>();
+            services.AddSingleton<IGasPriceService, GasPriceService>();
 
             //Uses HttpClient Inside -> singleton
             services.AddSingleton<ILykkeSigningAPI>((provider) =>
@@ -104,8 +106,9 @@ namespace Services
                 var signatureApi = provider.GetService<ILykkeSigningAPI>();
                 var nonceCalculator = provider.GetService<INonceCalculator>();
                 var transactionRouter = provider.GetService<ITransactionRouter>();
+                var gasPriceRepository = provider.GetService<IGasPriceRepository>();
 
-                var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3);
+                var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3, gasPriceRepository);
 
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 

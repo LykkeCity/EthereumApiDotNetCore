@@ -30,14 +30,13 @@ namespace Services.HotWallet
         private readonly IErc20PrivateWalletService _erc20PrivateWalletService;
         private readonly ILog _log;
         private readonly Web3 _web3;
-        private readonly BigInteger _maxGasPrice;
-        private readonly BigInteger _minGasPrice;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly ISignatureService _signatureService;
         private readonly IErc20DepositContractService _erc20DepositContractService;
         private readonly SettingsWrapper _settingsWrapper;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
+        private readonly IGasPriceRepository _gasPriceRepository;
 
         public HotWalletService(IBaseSettings baseSettings,
             IQueueFactory queueFactory,
@@ -50,7 +49,8 @@ namespace Services.HotWallet
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IErc20DepositContractService erc20DepositContractService,
             SettingsWrapper settingsWrapper,
-            IUserTransferWalletRepository userTransferWalletRepository)
+            IUserTransferWalletRepository userTransferWalletRepository,
+            IGasPriceRepository gasPriceRepository)
         {
             _hotWalletTransactionMonitoringQueue = queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
             _hotWalletCashoutQueue = queueFactory.Build(Constants.HotWalletCashoutQueue);
@@ -60,14 +60,13 @@ namespace Services.HotWallet
             _erc20PrivateWalletService = erc20PrivateWalletService;
             _log = log;
             _web3 = web3;
-            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
-            _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _signatureService = signatureService;
             _erc20DepositContractService = erc20DepositContractService;
             _settingsWrapper = settingsWrapper;
             _userTransferWalletRepository = userTransferWalletRepository;
             _semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
+            _gasPriceRepository = gasPriceRepository;
         }
 
         public async Task EnqueueCashoutAsync(IHotWalletOperation hotWalletCashout)
@@ -116,16 +115,17 @@ namespace Services.HotWallet
                 return null;
             }
 
+            var gasPrice = await _gasPriceRepository.GetAsync();
             var currentGasPriceHex = await _web3.Eth.GasPrice.SendRequestAsync();
             var currentGasPrice = currentGasPriceHex.Value;
             BigInteger selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
-            if (selectedGasPrice > _maxGasPrice)
+            if (selectedGasPrice > gasPrice.Max)
             {
-                selectedGasPrice = _maxGasPrice;
+                selectedGasPrice = gasPrice.Max;
             }
-            else if (selectedGasPrice < _minGasPrice)
+            else if (selectedGasPrice < gasPrice.Min)
             {
-                selectedGasPrice = _minGasPrice;
+                selectedGasPrice = gasPrice.Min;
             }
 
             string transactionForSigning = null;
