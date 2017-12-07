@@ -76,7 +76,7 @@ namespace EthereumJobs.Job
                     return;
                 }
 
-                if (_hotWalletAddress == operation.FromAddress 
+                if (_hotWalletAddress == operation.FromAddress.ToLower() 
                     && opMessage.DequeueCount == 0)
                 {
                     opMessage.DequeueCount++;
