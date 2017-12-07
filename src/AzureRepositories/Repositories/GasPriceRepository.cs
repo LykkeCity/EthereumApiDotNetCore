@@ -35,8 +35,8 @@ namespace AzureRepositories.Repositories
             {
                 return new GasPrice
                 {
-                    Max = 50000000000,
-                    Min = 30000000000
+                    Max = 120000000000,
+                    Min = 100000000000
                 };
             }
         }
