@@ -159,7 +159,7 @@ namespace TransactionResubmit
                 OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
                 newMessage.DequeueCount = 0;
                 queue.PutRawMessageAsync(message.AsString).Wait();
-                queuePoison.FinishRawMessageAsync(message);
+                queuePoison.FinishRawMessageAsync(message).Wait();
             }
         }
 
