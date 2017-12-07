@@ -204,6 +204,24 @@ namespace Lykke.Service.EthereumCore.Client
         /// </param>
         Task<HttpOperationResponse<BalanceModel>> ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGetWithHttpMessagesAsync(string externalTokenAddress, string ownerAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<GasPriceModel>> ApiGasPriceGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='model'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiGasPricePostWithHttpMessagesAsync(GasPriceModel model = default(GasPriceModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='model'>
         /// </param>
         /// <param name='customHeaders'>

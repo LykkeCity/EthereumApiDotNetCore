@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Core;
+using Core.Repositories;
 using Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
@@ -22,14 +23,13 @@ namespace Services.Signature
     {
         private readonly IBaseSettings _baseSettings;
         private readonly EthEstimateGas _estimateGas;
-        private readonly BigInteger _maxGasPrice;
-        private readonly BigInteger _minGasPrice;
         private readonly INonceCalculator _nonceCalculator;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
         private readonly EthSendRawTransaction _sendRawTransaction;
         private readonly ILykkeSigningAPI _signingApi;
         private readonly ITransactionRouter _transactionRouter;
         private readonly Web3 _web3;
+        private readonly IGasPriceRepository _gasPriceRepository;
 
 
         public LykkeSignedTransactionManager(
@@ -37,18 +37,18 @@ namespace Services.Signature
             INonceCalculator nonceCalculator,
             ILykkeSigningAPI signingApi,
             ITransactionRouter transactionRouter,
-            Web3 web3)
+            Web3 web3,
+            IGasPriceRepository gasPriceRepository)
         {
             _baseSettings = baseSettings;
             _estimateGas = new EthEstimateGas(web3.Client);
-            _maxGasPrice = new BigInteger(_baseSettings.MaxGasPrice);
-            _minGasPrice = new BigInteger(_baseSettings.MinGasPrice);
             _nonceCalculator = nonceCalculator;
             _semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
             _sendRawTransaction = new EthSendRawTransaction(web3.Client);
             _signingApi = signingApi;
             _transactionRouter = transactionRouter;
             _web3 = web3;
+            _gasPriceRepository = gasPriceRepository;
 
             Client = web3.Client;
         }
@@ -143,17 +143,18 @@ namespace Services.Signature
 
         private async Task<(BigInteger? gasPrice, BigInteger? gasValue)> GetGasPriceAndValueAsync(BigInteger? gasPrice, BigInteger? gasValue)
         {
+            var gasPriceSetting = await _gasPriceRepository.GetAsync();
             var currentGasPrice = (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
             var selectedGasPrice = currentGasPrice * _baseSettings.GasPricePercentage / 100;
 
 
-            if (selectedGasPrice > _maxGasPrice)
+            if (selectedGasPrice > gasPriceSetting.Max)
             {
-                selectedGasPrice = _maxGasPrice;
+                selectedGasPrice = gasPriceSetting.Max;
             }
-            else if (selectedGasPrice < _minGasPrice)
+            else if (selectedGasPrice < gasPriceSetting.Min)
             {
-                selectedGasPrice = _minGasPrice;
+                selectedGasPrice = gasPriceSetting.Min;
             }
 
 

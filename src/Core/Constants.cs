@@ -94,6 +94,7 @@ namespace Core
         public const string NonceCacheTable = "NonceCache";
         public const string UserAssignmentFailTable = "UserAssignmentFail";
         public const string OperationResubmittTable = "OperationResubmitt";
+        public const string GasPriceTable = "GasPrice";
 
         public const string OwnerTable = "Owner";
         public static BigInteger DefaultTransactionGas = 21000;
