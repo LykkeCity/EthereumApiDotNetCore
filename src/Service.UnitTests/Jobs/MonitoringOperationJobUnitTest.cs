@@ -134,7 +134,8 @@ namespace Service.UnitTests.Jobs
                 _coinEventService.Object,
                 _transferContractService.Object,
                 _eventTraceRepository.Object,
-                _queueFactory.Object
+                _queueFactory.Object,
+                null
                 );
         }
     }

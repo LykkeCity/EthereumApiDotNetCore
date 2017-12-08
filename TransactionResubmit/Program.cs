@@ -68,6 +68,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 8 to RESUBMIT all cashin coin events");
             Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
+            Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
             var command = "";
 
             do
@@ -105,6 +106,9 @@ namespace TransactionResubmit
                     case "10":
                         MoveFromPoisonToProcessing();
                         break;
+                    case "11":
+                        MoveFromPendingAndPoisonToProcessing();
+                        break;
                     default:
                         break;
                 }
@@ -112,6 +116,51 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void MoveFromPendingAndPoisonToProcessing()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                MoveToPendingOperationQueue(Constants.PendingOperationsQueue);
+
+                Console.WriteLine("Pendin processed");
+                Console.WriteLine("Waiting for poison");
+
+                MoveToPendingOperationQueue(Constants.PendingOperationsQueue + "-poison");
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        private static void MoveToPendingOperationQueue(string fromQueue)
+        {
+            var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+            var queuePoison = queueFactory.Build(fromQueue);
+            var queue = queueFactory.Build(Constants.PendingOperationsQueue);
+            var count = queuePoison.Count().Result;
+            for (int i = 0; i < count; i++)
+            {
+                var message = queuePoison.GetRawMessageAsync().Result;
+
+                OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
+                newMessage.DequeueCount = 0;
+                queue.PutRawMessageAsync(message.AsString).Wait();
+                queuePoison.FinishRawMessageAsync(message).Wait();
+            }
         }
 
         private static void MoveFromPoisonToProcessing()

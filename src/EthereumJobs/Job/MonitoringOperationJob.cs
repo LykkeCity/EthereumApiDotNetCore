@@ -30,6 +30,8 @@ namespace EthereumJobs.Job
         private readonly ITransferContractService _transferContractService;
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IQueueExt _coinEventResubmittQueue;
+        private readonly SettingsWrapper _settingsWrapper;
+        private readonly string _hotWalletAddress;
 
         public MonitoringOperationJob(
             ILog log,
@@ -39,7 +41,8 @@ namespace EthereumJobs.Job
             ICoinEventService coinEventService,
             ITransferContractService transferContractService, 
             IEventTraceRepository eventTraceRepository,
-            IQueueFactory queueFactory)
+            IQueueFactory queueFactory,
+            SettingsWrapper settingsWrapper)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;
@@ -49,6 +52,8 @@ namespace EthereumJobs.Job
             _coinEventService = coinEventService;
             _transferContractService = transferContractService;
             _coinEventResubmittQueue = queueFactory.Build(Constants.CoinEventResubmittQueue);
+            _settingsWrapper = settingsWrapper;
+            _hotWalletAddress = _settingsWrapper.Ethereum.HotwalletAddress.ToLower();
         }
 
         [QueueTrigger(Constants.PendingOperationsQueue, 100, true)]
@@ -70,6 +75,17 @@ namespace EthereumJobs.Job
 
                     return;
                 }
+
+                if (_hotWalletAddress == operation.FromAddress.ToLower() 
+                    && opMessage.DequeueCount == 0)
+                {
+                    opMessage.DequeueCount++;
+                    context.MoveMessageToEnd(opMessage.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+
+                    return;
+                }
+
                 var guid = Guid.Parse(operation.OperationId);
                 var amount = BigInteger.Parse(operation.Amount);
 
