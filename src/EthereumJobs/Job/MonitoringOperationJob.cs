@@ -76,7 +76,10 @@ namespace EthereumJobs.Job
                 BigInteger resultAmount;
                 string transactionHash = null;
                 CoinEventType? eventType = null;
-                BigInteger currentBalance = await _transferContractService.GetBalanceOnAdapter(operation.CoinAdapterAddress, operation.FromAddress);
+                BigInteger currentBalance = await _transferContractService.GetBalanceOnAdapter(
+                    operation.CoinAdapterAddress, 
+                    operation.FromAddress,
+                    checkInPendingBlock: true);
 
                 switch (operation.OperationType)
                 {
