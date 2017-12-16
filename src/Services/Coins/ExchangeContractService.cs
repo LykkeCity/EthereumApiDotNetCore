@@ -254,7 +254,7 @@ namespace Services.Coins
 
             var convertedId = EthUtils.GuidToBigInteger(id);
             var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                    new HexBigInteger(Constants.HalfGasLimit), new HexBigInteger(0),
+                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray().FixByteOrder(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
             await CreatePendingTransaction(coinAddress, from, transactionHash);
@@ -290,7 +290,7 @@ namespace Services.Coins
             var transferFunction = contract.GetFunction("transferWithChange");
             var convertedId = EthUtils.GuidToBigInteger(id);
             var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                    new HexBigInteger(Constants.HalfGasLimit), new HexBigInteger(0),
+                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, change,
                     signFrom.HexToByteArray().FixByteOrder(), signTo.HexToByteArray().FixByteOrder(), new byte[0]);
             var difference = (amount - change);
