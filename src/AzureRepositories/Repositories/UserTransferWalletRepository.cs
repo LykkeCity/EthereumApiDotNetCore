@@ -31,12 +31,14 @@ namespace AzureRepositories.Repositories
 
         public static UserTransferWalletEntity Create(IUserTransferWallet userTransferWallet)
         {
+            var userAddress = userTransferWallet.UserAddress.ToLower();
+
             return new UserTransferWalletEntity
             {
-                PartitionKey = GenerateParitionKey(userTransferWallet.UserAddress),
+                PartitionKey = GenerateParitionKey(userAddress),
                 RowKey = userTransferWallet.TransferContractAddress,
                 UpdateDate = userTransferWallet.UpdateDate,
-                UserAddress = userTransferWallet.UserAddress.ToLower(),
+                UserAddress = userAddress,
                 TransferContractAddress = userTransferWallet.TransferContractAddress,
                 LastBalance = userTransferWallet.LastBalance
             };
@@ -54,7 +56,8 @@ namespace AzureRepositories.Repositories
 
         public async Task DeleteAsync(string userAddress, string transferContractAddress)
         {
-            await _table.DeleteIfExistAsync(UserTransferWalletEntity.GenerateParitionKey(userAddress), transferContractAddress);
+            string lowerUserAddress = userAddress.ToLower();
+            await _table.DeleteIfExistAsync(UserTransferWalletEntity.GenerateParitionKey(lowerUserAddress), transferContractAddress);
         }
 
         public string FormatAddressForErc20(string depositContractAddress, string erc20TokenAddress)
