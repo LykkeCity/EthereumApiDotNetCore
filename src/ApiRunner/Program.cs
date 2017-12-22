@@ -22,6 +22,7 @@ namespace ApiRunner
                .UseContentRoot(Directory.GetCurrentDirectory())
                .UseIISIntegration()
                .UseStartup<Startup>()
+               .UseApplicationInsights()
                .Build();
 
             Console.WriteLine($"Web Server is running ");
