@@ -9,7 +9,6 @@ namespace EthereumApi.Models
 {
     public class CashoutModel : BaseCoinRequestModel
     { 
-        [Required]
         public string Sign { get; set; }
     }
 }
