@@ -24,6 +24,7 @@ namespace Services.New
         Task IndexCashinEventsForErc20Deposits();
         Task MonitorNewEvents(string coinAdapterAddress);
         Task<ICashinEvent> GetCashinEvent(string transactionHash);
+        Task IndexEventsForTransaction(string coinAdapterAddress, string trHash);
     }
 
     public class TransactionEventsService : ITransactionEventsService
@@ -94,7 +95,7 @@ namespace Services.New
                 var indexerStatus = JObject.Parse(responseContent);
                 var lastIndexedBlock = BigInteger.Parse(indexerStatus["blockchainTip"].Value<string>());
                 var lastSyncedBlock = await GetLastSyncedBlockNumber(Erc20HotWalletMarker);
-                
+
                 while (++lastSyncedBlock <= lastIndexedBlock - _baseSettings.Level2TransactionConfirmation)
                 {
                     var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync
@@ -102,7 +103,7 @@ namespace Services.New
                         new GetErc20TransferHistoryRequest
                         {
                             AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress?.ToLower(),
-                            BlockNumber = (long) lastSyncedBlock,
+                            BlockNumber = (long)lastSyncedBlock,
                         }
                     );
 
@@ -175,6 +176,34 @@ namespace Services.New
             ICashinEvent @event = await _cashinEventRepository.GetAsync(transactionHash);
 
             return @event;
+        }
+
+        public async Task IndexEventsForTransaction(string coinAdapterAddress, string trHash)
+        {
+            var contract = _web3.Eth.GetContract(_baseSettings.CoinAbi, coinAdapterAddress);
+            var coinCashInEvent = contract.GetEvent("CoinCashIn");
+            var transaction = await _web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(trHash);
+            var fromBlock = new Nethereum.RPC.Eth.DTOs.BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(transaction.BlockNumber));
+            var toBlock = new Nethereum.RPC.Eth.DTOs.BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(transaction.BlockNumber.Value + 1));
+            var filter = await coinCashInEvent.CreateFilterBlockRangeAsync(fromBlock, toBlock);
+            var filterByCaller = await coinCashInEvent.GetAllChanges<CoinCashinEvent>(filter);
+
+            filterByCaller.ForEach(async @event =>
+            {
+                string transactionHash = @event.Log.TransactionHash;
+                CoinEventCashinCompletedMessage cashinTransactionMessage = new CoinEventCashinCompletedMessage()
+                {
+                    TransactionHash = transactionHash
+                };
+
+                await _cashinEventRepository.InsertAsync(new CashinEvent()
+                {
+                    CoinAdapterAddress = coinAdapterAddress,
+                    Amount = @event.Event.Amount.ToString(),
+                    TransactionHash = transactionHash,
+                    UserAddress = @event.Event.Caller
+                });
+            });
         }
 
         private async Task<BigInteger> GetLastSyncedBlockNumber(string coinAdapterAddress)
