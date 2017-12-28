@@ -180,6 +180,7 @@ namespace EthereumJobs.Job
                         ICashinEvent cashinEvent = await _transactionEventsService.GetCashinEvent(transactionHash);
                         if (cashinEvent == null)
                         {
+                            await _transactionEventsService.IndexEventsForTransaction(coinEvent.ContractAddress, transactionHash);
                             SendMessageToTheQueueEnd(context, transaction, 100);
 
                             return false;
