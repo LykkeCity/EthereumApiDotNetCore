@@ -1,5 +1,6 @@
-﻿using Core.Repositories;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.RabbitMQ;
 using Nethereum.Web3;
 using RabbitMQ;
 using System;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface ICoinEventPublisher
     {

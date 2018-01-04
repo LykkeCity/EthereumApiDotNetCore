@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.MonitoringServiceApiCaller;
 using System.Reflection;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class MonitoringJob
     {

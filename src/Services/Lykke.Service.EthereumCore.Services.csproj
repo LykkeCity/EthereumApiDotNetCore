@@ -2,21 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>Services</AssemblyName>
+    <AssemblyName>Lykke.Service.EthereumCore.Services</AssemblyName>
     <PackageId>Services</PackageId>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RootNamespace>Lykke.Service.EthereumCore.Services</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
+    <ProjectReference Include="..\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
     <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
-    <ProjectReference Include="..\Models\BusinessModels.csproj" />
-    <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
+    <ProjectReference Include="..\Models\Lykke.Service.EthereumCore.BusinessModels.csproj" />
+    <ProjectReference Include="..\RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
     <ProjectReference Include="..\SigningServiceApiCaller\SigningServiceApiCaller.csproj" />
   </ItemGroup>
 

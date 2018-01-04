@@ -1,13 +1,13 @@
 ﻿using Common.Log;
-using Core;
-using Core.Notifiers;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public class TransferContractPoolService
     {

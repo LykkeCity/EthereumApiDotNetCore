@@ -1,14 +1,15 @@
-﻿using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
-using Services;
-using AzureRepositories;
-using EthereumJobs.Job;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.AzureRepositories;
+using Lykke.Job.EthereumCore.Job;
 using Lykke.JobTriggers.Abstractions;
-using AzureRepositories.Notifiers;
+using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
 using Common.Log;
 using RabbitMQ;
+using Lykke.Service.RabbitMQ;
 
-namespace EthereumJobs.Config
+namespace Lykke.Job.EthereumCore.Config
 {
     public static class RegisterDependency
     {

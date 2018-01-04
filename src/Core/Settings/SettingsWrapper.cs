@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Settings
+namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public class SettingsWrapper
     {

@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 using Lykke.JobTriggers.Triggers.Bindings;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     //Cashin
     public class TransferTransactionQueueJob

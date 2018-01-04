@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IWeb3
     {

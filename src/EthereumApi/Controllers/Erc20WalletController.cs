@@ -1,13 +1,13 @@
-﻿using BusinessModels;
-using BusinessModels.PrivateWallet;
+﻿using Lykke.Service.EthereumCore.BusinessModels;
+using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Common.Log;
-using Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models;
 using EthereumApi.Models.Models;
 using EthereumApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

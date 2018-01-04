@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Signature
+namespace Lykke.Service.EthereumCore.Services.Signature
 {
     public interface ISignatureService
     {

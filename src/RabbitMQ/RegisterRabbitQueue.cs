@@ -1,6 +1,6 @@
 ﻿using Common;
 using Common.Log;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.RabbitMqBroker.Publisher;
 using Lykke.RabbitMqBroker.Subscriber;
@@ -8,11 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System;
 
-namespace RabbitMQ
+namespace Lykke.Service.RabbitMQ
 {
     public static class RegisterRabbitQueueEx
     {
-        public static void RegisterRabbitQueue(this IServiceCollection services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
+        public static void RegisterRabbitQueue(this IServiceCollection Services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
         {
             string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
             string connectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}";
@@ -49,9 +49,9 @@ namespace RabbitMQ
 
             #endregion
 
-            services.AddSingleton<IMessageProducer<string>>(publisher);
-            services.AddSingleton<IMessageProducer<HotWalletEvent>>(hotWalletCashoutEventPublisher);
-            services.AddSingleton<IRabbitQueuePublisher, RabbitQueuePublisher>();
+            Services.AddSingleton<IMessageProducer<string>>(publisher);
+            Services.AddSingleton<IMessageProducer<HotWalletEvent>>(hotWalletCashoutEventPublisher);
+            Services.AddSingleton<IRabbitQueuePublisher, RabbitQueuePublisher>();
         }
     }
 

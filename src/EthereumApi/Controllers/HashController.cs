@@ -1,18 +1,18 @@
 ﻿using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using System.Numerics;
 using System;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Nethereum.Hex.HexConvertors.Extensions;
 using EthereumApi.Utils;
 using Newtonsoft.Json;
-using Core.Common;
+using Lykke.Service.EthereumCore.Core.Common;
 using Nethereum.Util;
 
 namespace EthereumApi.Controllers

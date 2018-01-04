@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Exceptions
+namespace Lykke.Service.EthereumCore.Core.Exceptions
 {
 
     public class ClientSideException : Exception

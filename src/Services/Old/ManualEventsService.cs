@@ -2,12 +2,12 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core;
+//using Lykke.Service.EthereumCore.Core;
 //using Newtonsoft.Json;
 //using Common.Log;
 //using AzureStorage.Queue;
 
-//namespace Services
+//namespace Lykke.Service.EthereumCore.Services
 //{
 //    public interface IManualEventsService
 //    {

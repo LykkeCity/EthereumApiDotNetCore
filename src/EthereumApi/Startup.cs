@@ -1,14 +1,14 @@
 ﻿using System;
-using AzureRepositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.AzureRepositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using RabbitMQ;
+using Lykke.Service.RabbitMQ;
 
 namespace EthereumApi
 {
@@ -30,27 +30,27 @@ namespace EthereumApi
         public IConfigurationRoot Configuration { get; }
         public static IServiceProvider ServiceProvider { get; private set; }
 
-        // This method gets called by the runtime. Use this method to add services to the container
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        // This method gets called by the runtime. Use this method to add Lykke.Service.EthereumCore.Services to the container
+        public IServiceProvider ConfigureServices(IServiceCollection Services)
         {
             var settings = GetSettings(Configuration);
-            services.AddSingleton<IBaseSettings>(settings.EthereumCore);
+            Services.AddSingleton<IBaseSettings>(settings.EthereumCore);
 
-            services.AddSingleton(settings);
+            Services.AddSingleton(settings);
 
-            services.RegisterAzureLogs(settings.EthereumCore, "Api");
-            services.RegisterAzureStorages(settings.EthereumCore, settings.SlackNotifications);
-            services.RegisterAzureQueues(settings.EthereumCore, settings.SlackNotifications);
-            services.RegisterServices();
+            Services.RegisterAzureLogs(settings.EthereumCore, "Api");
+            Services.RegisterAzureStorages(settings.EthereumCore, settings.SlackNotifications);
+            Services.RegisterAzureQueues(settings.EthereumCore, settings.SlackNotifications);
+            Services.RegisterServices();
 
-            ServiceProvider = services.BuildServiceProvider();
-            services.RegisterRabbitQueue(settings.EthereumCore, ServiceProvider.GetService<ILog>());
+            ServiceProvider = Services.BuildServiceProvider();
+            Services.RegisterRabbitQueue(settings.EthereumCore, ServiceProvider.GetService<ILog>());
 
-            var builder = services.AddMvc();
+            var builder = Services.AddMvc();
 
             builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(ServiceProvider.GetService<ILog>())); });
 
-            services.AddSwaggerGen(c =>
+            Services.AddSwaggerGen(c =>
             {
                 c.SingleApiVersion(new Swashbuckle.Swagger.Model.Info
                 {
@@ -59,7 +59,7 @@ namespace EthereumApi
                 });
             });
 
-            ServiceProvider = services.BuildServiceProvider();
+            ServiceProvider = Services.BuildServiceProvider();
             ServiceProvider.ActivateRequestInterceptor();
             return ServiceProvider;
         }

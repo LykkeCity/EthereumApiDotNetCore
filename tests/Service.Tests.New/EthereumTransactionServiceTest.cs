@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Tests;
 using Microsoft.Extensions.DependencyInjection;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using System.Threading.Tasks;
 
 namespace Service.Tests

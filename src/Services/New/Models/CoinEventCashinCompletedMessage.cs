@@ -1,9 +1,9 @@
-﻿using Core.Utils;
+﻿using Lykke.Service.EthereumCore.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.New.Models
+namespace Lykke.Service.EthereumCore.Services.New.Models
 {
     public class CoinEventCashinCompletedMessage : QueueMessageBase
     {

@@ -1,12 +1,12 @@
-﻿using BusinessModels;
-using Core.Exceptions;
+﻿using Lykke.Service.EthereumCore.BusinessModels;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models;
 using EthereumApi.Models.Indexer;
 using EthereumApi.Models.Models;
 using EthereumApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +59,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            BusinessModels.AddressTransaction request = new BusinessModels.AddressTransaction()
+            Lykke.Service.EthereumCore.BusinessModels.AddressTransaction request = new Lykke.Service.EthereumCore.BusinessModels.AddressTransaction()
             {
                 Address = addressTransactions.Address,
                 Count = addressTransactions.Count,

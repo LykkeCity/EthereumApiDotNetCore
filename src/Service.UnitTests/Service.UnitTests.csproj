@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EthereumJobs\EthereumJobs.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\EthereumJobs\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

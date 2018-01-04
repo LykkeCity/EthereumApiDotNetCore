@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace BusinessModels.Erc20
+namespace Lykke.Service.EthereumCore.BusinessModels.Erc20
 {
     public class AddressTokenBalance
     {

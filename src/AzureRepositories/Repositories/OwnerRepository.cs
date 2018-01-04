@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;
 using AzureStorage.Tables.Templates.Index;
 
-namespace AzureRepositories.Repositories
+namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
     public class OwnerEntity : TableEntity, IOwner
     {

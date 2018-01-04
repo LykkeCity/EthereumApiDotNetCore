@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Settings;
-using Services.New;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Services.New;
 
-namespace Services.Signature
+namespace Lykke.Service.EthereumCore.Services.Signature
 {
     public class TransactionRouter : ITransactionRouter, IDisposable
     {

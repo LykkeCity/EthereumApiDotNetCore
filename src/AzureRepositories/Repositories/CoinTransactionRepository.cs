@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;
 
-namespace AzureRepositories.Repositories
+namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
 
     public class CoinTransactionEntity : TableEntity, ICoinTransaction

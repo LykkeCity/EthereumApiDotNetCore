@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

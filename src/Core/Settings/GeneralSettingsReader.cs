@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net.Http;
 
-namespace Core.Settings
+namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public static class GeneralSettingsReader
     {

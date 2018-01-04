@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Repositories
+namespace Lykke.Service.EthereumCore.Core.Repositories
 {
     public interface IEventTrace
     {

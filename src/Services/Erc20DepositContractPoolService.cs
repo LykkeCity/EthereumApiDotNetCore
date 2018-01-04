@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Settings;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public class Erc20DepositContractPoolService : IErc20DepositContractPoolService
     {

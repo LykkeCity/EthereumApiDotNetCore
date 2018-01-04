@@ -1,8 +1,8 @@
-﻿using Core;
-using Core.Exceptions;
-using Core.Repositories;
-using Core.Settings;
-using Core.Utils;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Utils;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface ITransferContractService
     {

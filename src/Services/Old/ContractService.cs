@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Core;
-using Core.ContractEvents;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.ContractEvents;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IContractService
     {

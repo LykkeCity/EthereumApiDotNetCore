@@ -7,7 +7,7 @@ using Common;
 using Nethereum.ABI.Encoders;
 using Nethereum.Hex.HexConvertors.Extensions;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
     public static class EthUtils
     {

@@ -1,15 +1,15 @@
 ﻿
 using System.Threading.Tasks;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core.Repositories;
-using Services;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services;
 using System;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class PingContractsJob
     {

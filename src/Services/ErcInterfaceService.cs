@@ -1,4 +1,4 @@
-﻿using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.ABI;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     /*
     pragma solidity ^0.4.4;

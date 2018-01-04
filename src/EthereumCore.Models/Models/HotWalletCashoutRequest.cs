@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Lykke.Service.EthereumCore.Core;
 using EthereumApi.Models.Attributes;
 using System;
 using System.Collections.Generic;

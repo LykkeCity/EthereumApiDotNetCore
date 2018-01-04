@@ -1,13 +1,13 @@
 ﻿//using System;
 //using System.Collections.Generic;
 //using System.Threading.Tasks;
-//using Core.ContractEvents;
-//using Core.Repositories;
-//using EthereumJobs.Job;
+//using Lykke.Service.EthereumCore.Core.ContractEvents;
+//using Lykke.Service.EthereumCore.Core.Repositories;
+//using Lykke.Job.EthereumCore.Job;
 //using Microsoft.Extensions.DependencyInjection;
 //using Moq;
 //using NUnit.Framework;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using Common.Log;
 
 //namespace Tests.JobTests

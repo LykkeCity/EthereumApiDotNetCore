@@ -5,11 +5,11 @@
 //using NUnit.Framework;
 //using Microsoft.Extensions.DependencyInjection;
 //using Nethereum.Web3;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using System.Diagnostics;
-//using Core;
-//using Core.Settings;
-//using EthereumJobs.Job;
+//using Lykke.Service.EthereumCore.Core;
+//using Lykke.Service.EthereumCore.Core.Settings;
+//using Lykke.Job.EthereumCore.Job;
 //using Microsoft.WindowsAzure.Storage.Queue;
 //using Nethereum.Hex.HexTypes;
 //using Nethereum.RPC.Eth.DTOs;

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.JobTriggers.Triggers.Bindings;
-using Core.Settings;
-using Core.Notifiers;
-using Core.Repositories;
-using Services;
-using Services.HotWallet;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
+using Lykke.Service.RabbitMQ;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class HotWalletMonitoringTransactionJob
     {

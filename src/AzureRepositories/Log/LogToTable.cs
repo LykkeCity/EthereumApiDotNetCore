@@ -3,7 +3,7 @@ using Common.Log;
 using System;
 using System.Threading.Tasks;
 
-namespace AzureRepositories.Log
+namespace Lykke.Service.EthereumCore.AzureRepositories.Log
 {
 	public class LogToTable : ILog
 	{

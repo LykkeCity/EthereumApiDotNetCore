@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using Tests;
 using Microsoft.Extensions.DependencyInjection;
 using SigningServiceApiCaller;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using System.Numerics;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System.Diagnostics;
 using LkeServices.Signature;
 using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
-using Core.Settings;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Repositories;
 
 namespace Service.Tests.BugReproduction
 {

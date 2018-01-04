@@ -1,7 +1,7 @@
-﻿using Core;
-using Core.Exceptions;
-using Core.Repositories;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -12,15 +12,15 @@ using AzureStorage.Queue;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using Nethereum.Util;
-using Core.Utils;
+using Lykke.Service.EthereumCore.Core.Utils;
 using SigningServiceApiCaller.Models;
 using SigningServiceApiCaller;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 using Newtonsoft.Json;
 using Common.Log;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IPendingOperationService
     {

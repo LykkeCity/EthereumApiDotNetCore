@@ -1,8 +1,8 @@
-﻿using BusinessModels;
-using BusinessModels.PrivateWallet;
-using Core;
-using Core.Exceptions;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.BusinessModels;
+using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
@@ -10,15 +10,15 @@ using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
-using Services.Signature;
-using Services.Transactions;
+using Lykke.Service.EthereumCore.Services.Signature;
+using Lykke.Service.EthereumCore.Services.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.PrivateWallet
+namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
     /*
     contract ERC20Interface {

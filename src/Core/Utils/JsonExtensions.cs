@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
 	public static class JsonExtensions
 	{

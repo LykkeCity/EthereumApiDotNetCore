@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Nethereum.Web3;
 
 namespace EthereumApi.Controllers

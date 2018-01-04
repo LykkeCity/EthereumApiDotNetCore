@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Core
+namespace Lykke.Service.EthereumCore.Core
 {
     public class Constants
     {
@@ -36,12 +36,12 @@ namespace Core
         public const string TransactionMonitoringQueue = "ethereum-transaction-monitor-queue";
 
         /// <summary>
-        /// Used to notify external services about coin transactions
+        /// Used to notify external Lykke.Service.EthereumCore.Services about coin transactions
         /// </summary>
         public const string CoinTransactionQueue = "ethereum-coin-transaction-queue";
 
         /// <summary>
-        /// Used to notify external services about events in coin contracts
+        /// Used to notify external Lykke.Service.EthereumCore.Services about events in coin contracts
         /// </summary>
         public const string CoinEventQueue = "ethereum-coin-event-queue";
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
     public class QueueMessageBase
     {

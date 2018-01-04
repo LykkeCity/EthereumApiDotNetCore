@@ -3,21 +3,21 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
-using Core;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.JobTriggers.Triggers.Bindings;
-using Services;
-using Services.Coins;
-using Services.New.Models;
-using Core.Exceptions;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.Coins;
+using Lykke.Service.EthereumCore.Services.New.Models;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using AzureStorage.Queue;
 using System.Linq;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class CoinEventResubmittJob
     {

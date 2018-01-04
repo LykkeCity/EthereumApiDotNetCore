@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RabbitMQ
+namespace Lykke.Service.RabbitMQ
 {
     public class BytesSerializer : IRabbitMqSerializer<string>
     {

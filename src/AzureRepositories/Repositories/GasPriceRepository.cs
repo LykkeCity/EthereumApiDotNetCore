@@ -1,10 +1,10 @@
 ﻿using System.Numerics;
 using System.Threading.Tasks;
 using AzureStorage;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace AzureRepositories.Repositories
+namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
     public class GasPriceRepository : IGasPriceRepository
     {

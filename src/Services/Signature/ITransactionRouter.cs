@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Services.Signature
+namespace Lykke.Service.EthereumCore.Services.Signature
 {
     public interface ITransactionRouter
     {

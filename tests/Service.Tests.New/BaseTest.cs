@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 using AzureStorage.Queue;

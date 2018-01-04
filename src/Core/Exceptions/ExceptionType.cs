@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Exceptions
+namespace Lykke.Service.EthereumCore.Core.Exceptions
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ExceptionType

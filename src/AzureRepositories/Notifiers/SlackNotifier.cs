@@ -1,6 +1,6 @@
 ﻿using AzureStorage.Queue;
-using Core;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.JobTriggers.Abstractions;
 using Newtonsoft.Json;
 using System;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AzureRepositories.Notifiers
+namespace Lykke.Service.EthereumCore.AzureRepositories.Notifiers
 {
     public class SlackNotifier : ISlackNotifier, IPoisionQueueNotifier
     {

@@ -1,14 +1,14 @@
 ﻿using AzureStorage.Queue;
-using Core;
-using Core.Exceptions;
-using Core.Notifiers;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface ITransferContractQueueServiceFactory
     {

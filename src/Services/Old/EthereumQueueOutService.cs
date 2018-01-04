@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 using Newtonsoft.Json;
 using AzureStorage.Queue;
 using Common.Log;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IEthereumQueueOutService
     {

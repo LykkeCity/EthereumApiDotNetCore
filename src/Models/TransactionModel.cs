@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BusinessModels
+namespace Lykke.Service.EthereumCore.BusinessModels
 {
     public class TransactionModel
     {

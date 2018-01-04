@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Settings;
-using EthereumJobs;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Job.EthereumCore;
 using Microsoft.Extensions.DependencyInjection;
-using EthereumJobs.Config;
+using Lykke.Job.EthereumCore.Config;
 using Microsoft.Extensions.Configuration;
 
 namespace JobRunner
@@ -16,7 +16,7 @@ namespace JobRunner
         public static void Main(string[] args)
         {
             Console.Clear();
-            Console.Title = "Ethereum Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+            Console.Title = "Ethereum Lykke.Service.EthereumCore.Core Job - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
 
             try
             {

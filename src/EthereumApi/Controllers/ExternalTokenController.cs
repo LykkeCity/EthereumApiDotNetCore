@@ -4,14 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Services;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using EthereumApiSelfHosted.Models;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using System.Numerics;
 
 namespace EthereumApi.Controllers

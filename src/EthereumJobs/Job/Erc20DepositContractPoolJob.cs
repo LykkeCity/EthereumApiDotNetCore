@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class Erc20DepositContractPoolJob
     {

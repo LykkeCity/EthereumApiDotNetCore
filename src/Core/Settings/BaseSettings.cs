@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Common;
 
-namespace Core.Settings
+namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public interface IBaseSettings
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Common
+namespace Lykke.Service.EthereumCore.Core.Common
 {
     public class IdCheckResult
     {

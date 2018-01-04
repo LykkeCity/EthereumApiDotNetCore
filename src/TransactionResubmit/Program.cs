@@ -1,24 +1,25 @@
-﻿using AzureRepositories;
+﻿using Lykke.Service.EthereumCore.AzureRepositories;
 using Common.Log;
-using Core;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using Newtonsoft.Json;
 using RabbitMQ;
-using Services;
-using Services.Coins;
-using Services.Coins.Models;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Lykke.Service.RabbitMQ;
 
 namespace TransactionResubmit
 {

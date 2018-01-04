@@ -2,11 +2,11 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core.Exceptions;
-//using Core.Repositories;
+//using Lykke.Service.EthereumCore.Core.Exceptions;
+//using Lykke.Service.EthereumCore.Core.Repositories;
 //using NUnit.Framework.Internal;
 //using NUnit.Framework;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using Microsoft.Extensions.DependencyInjection;
 
 //namespace Tests

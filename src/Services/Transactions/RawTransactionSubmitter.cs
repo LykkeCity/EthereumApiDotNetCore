@@ -1,12 +1,12 @@
-﻿using Core.Exceptions;
+﻿using Lykke.Service.EthereumCore.Core.Exceptions;
 using Nethereum.RPC.Eth.Transactions;
-using Services.Signature;
+using Lykke.Service.EthereumCore.Services.Signature;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Transactions
+namespace Lykke.Service.EthereumCore.Services.Transactions
 {
     public interface IRawTransactionSubmitter
     {

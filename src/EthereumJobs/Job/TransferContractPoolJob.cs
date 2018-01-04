@@ -1,16 +1,16 @@
 ﻿using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Web3;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System.Numerics;
 using System;
 using System.Collections.Generic;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class TransferContractPoolJob
     {

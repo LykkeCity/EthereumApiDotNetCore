@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Tests;
 using Microsoft.Extensions.DependencyInjection;
 using SigningServiceApiCaller;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using System.Numerics;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System.Diagnostics;

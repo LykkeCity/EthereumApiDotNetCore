@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Common.Log;
 
-namespace AzureRepositories.Log
+namespace Lykke.Service.EthereumCore.AzureRepositories.Log
 {
     public class LogToTableAndConsole : ILog
     {

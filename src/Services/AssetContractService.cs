@@ -1,6 +1,6 @@
-﻿using Core.Exceptions;
-using Core.Repositories;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public class AssetContractService
     {
@@ -22,7 +22,6 @@ namespace Services
         public AssetContractService(IBaseSettings settings,
             IContractService contractService,
             ICoinRepository coinRepository,
-            IEthereumContractRepository ethereumContractRepository,
             IErcInterfaceService ercInterfaceService, 
             Web3 web3, 
             ITransferContractService transferContractService)

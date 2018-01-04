@@ -4,12 +4,12 @@ using System.Net;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models.Models;
 using EthereumApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 
 namespace EthereumApi.Controllers
 {

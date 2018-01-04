@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AzureStorage.Queue;
-using Core.Exceptions;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public class Erc20DepositContractQueueService : IErc20DepositContractQueueService
     {
@@ -30,7 +30,7 @@ namespace Services
             }
             else
             {
-                await _slackNotifier.ErrorAsync("Ethereum Core Service! Erc20 deposit contract pool is empty!");
+                await _slackNotifier.ErrorAsync("Ethereum Lykke.Service.EthereumCore.Core Service! Erc20 deposit contract pool is empty!");
 
                 throw new ClientSideException(ExceptionType.ContractPoolEmpty, "Erc20 deposit contract pool is empty!");
             }

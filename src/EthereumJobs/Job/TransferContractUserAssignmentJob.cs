@@ -1,17 +1,17 @@
 ﻿using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Web3;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System.Numerics;
 using System;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 using Lykke.JobTriggers.Triggers.Bindings;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class TransferContractUserAssignmentJob { 
         private readonly ILog _logger;

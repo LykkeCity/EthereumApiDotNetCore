@@ -2,16 +2,16 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core;
-//using Core.Repositories;
-//using Core.Settings;
+//using Lykke.Service.EthereumCore.Core;
+//using Lykke.Service.EthereumCore.Core.Repositories;
+//using Lykke.Service.EthereumCore.Core.Settings;
 //using Microsoft.WindowsAzure.Storage.Queue;
 //using Newtonsoft.Json;
-//using Services.Coins;
+//using Lykke.Service.EthereumCore.Services.Coins;
 //using AzureStorage.Queue;
 //using Common.Log;
 
-//namespace Services
+//namespace Lykke.Service.EthereumCore.Services
 //{
 //    public class ContractTransferTransaction
 //    {

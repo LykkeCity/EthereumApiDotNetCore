@@ -1,8 +1,8 @@
-﻿using Core;
-using Core.Repositories;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Web3;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 
-namespace Services.New
+namespace Lykke.Service.EthereumCore.Services.New
 {
     public interface ITransactionEventsService
     {

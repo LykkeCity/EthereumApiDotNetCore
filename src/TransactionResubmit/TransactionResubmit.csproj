@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
     <ProjectReference Include="..\EthereumCore.Models\EthereumApi.Models.csproj" />
-    <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

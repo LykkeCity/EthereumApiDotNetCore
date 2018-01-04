@@ -1,16 +1,16 @@
-﻿using Core;
-using Core.Exceptions;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
-using Services.Signature;
+using Lykke.Service.EthereumCore.Services.Signature;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Transactions
+namespace Lykke.Service.EthereumCore.Services.Transactions
 {
     public interface ITransactionValidationService
     {

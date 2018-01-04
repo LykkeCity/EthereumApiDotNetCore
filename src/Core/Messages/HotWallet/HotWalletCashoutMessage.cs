@@ -1,9 +1,9 @@
-﻿using Core.Utils;
+﻿using Lykke.Service.EthereumCore.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Messages.HotWallet
+namespace Lykke.Service.EthereumCore.Core.Messages.HotWallet
 {
     public class HotWalletCashoutMessage : QueueMessageBase
     {

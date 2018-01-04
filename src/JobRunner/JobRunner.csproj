@@ -15,8 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\EthereumJobs\EthereumJobs.csproj" />
+    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\EthereumJobs\Lykke.Job.EthereumCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

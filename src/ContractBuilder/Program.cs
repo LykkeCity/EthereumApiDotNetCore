@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Nethereum.Web3;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.Text;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using AzureRepositories;
+using Lykke.Service.EthereumCore.AzureRepositories;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins;
 using RabbitMQ;
 using Common.Log;
-using Services.New;
-//using Core.Repositories;
-using Core;
+using Lykke.Service.EthereumCore.Services.New;
+//using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core;
 using EthereumApi.Models;
 using System.Numerics;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
-using EthereumJobs.Job;
-using EthereumContract = Core.Settings.EthereumContract;
+using Lykke.Job.EthereumCore.Job;
+using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
+using Lykke.Service.RabbitMQ;
 
 namespace ContractBuilder
 {
@@ -66,7 +67,7 @@ namespace ContractBuilder
             ServiceProvider = collection.BuildServiceProvider();
             RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.EthereumCore, ServiceProvider.GetService<ILog>());
             RegisterDependency.RegisterServices(collection);
-            EthereumJobs.Config.RegisterDependency.RegisterJobs(collection);
+            Lykke.Job.EthereumCore.Config.RegisterDependency.RegisterJobs(collection);
             //var web3 = ServiceProvider.GetService<Web3>();
             //web3.Eth.GetBalance.SendRequestAsync("");
             // web3.Eth.Transactions.SendTransaction.SendRequestAsync(new Nethereum.RPC.Eth.DTOs.TransactionInput()
@@ -380,7 +381,7 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("MainExchange.bin");
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
 
-                settings.EthereumCore.MainExchangeContract = new Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
                 SaveSettings(settings);
@@ -420,7 +421,7 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("MainExchangeMultipleOwners.bin");
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
                 IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
-                settings.EthereumCore.MainExchangeContract = new Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
                 SaveSettings(settings);
@@ -466,7 +467,7 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("MainExchangeNM.bin");
                 string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
 
-                settings.EthereumCore.MainExchangeContract = new Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
+                settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
                 SaveSettings(settings);
@@ -500,7 +501,7 @@ namespace ContractBuilder
                     addressUtil.ConvertToChecksumAddress(model.FromAddress), addressUtil.ConvertToChecksumAddress(model.ToAddress), amount, model.Sign);
 
                 Console.WriteLine($"OperationId - {operationId}");
-                await job.ProcessOperation(new Services.New.Models.OperationHashMatchMessage()
+                await job.ProcessOperation(new Lykke.Service.EthereumCore.Services.New.Models.OperationHashMatchMessage()
                 {
                     OperationId = operationId,
                 },null, exchangeContractService.TransferWithoutSignCheck);

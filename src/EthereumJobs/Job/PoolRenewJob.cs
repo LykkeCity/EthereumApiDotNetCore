@@ -1,15 +1,15 @@
 ﻿using Common.Log;
-using Core;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class PoolRenewJob
     {

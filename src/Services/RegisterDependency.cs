@@ -1,73 +1,73 @@
-﻿using AzureRepositories.Notifiers;
-using Core.Notifiers;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Settings;
 using EthereumSamuraiApiCaller;
 using LkeServices.Signature;
 using Lykke.Service.Assets.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Nethereum.RPC.TransactionManagers;
 using Nethereum.Web3;
-using Services.Coins;
-using Services.Erc20;
-using Services.HotWallet;
-using Services.New;
-using Services.PrivateWallet;
-using Services.Signature;
-using Services.Transactions;
+using Lykke.Service.EthereumCore.Services.Coins;
+using Lykke.Service.EthereumCore.Services.Erc20;
+using Lykke.Service.EthereumCore.Services.HotWallet;
+using Lykke.Service.EthereumCore.Services.New;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.Signature;
+using Lykke.Service.EthereumCore.Services.Transactions;
 using SigningServiceApiCaller;
 using System;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public static class RegisterDependency
     {
-        public static void RegisterServices(this IServiceCollection services)
+        public static void RegisterServices(this IServiceCollection Services)
         {
-            services.AddTransient<IContractService, ContractService>();
-            services.AddTransient<IPaymentService, PaymentService>();
-            services.AddTransient<IEthereumQueueOutService, EthereumQueueOutService>();
-            services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
-            services.AddTransient<IExchangeContractService, ExchangeContractService>();
-            services.AddTransient<ICoinTransactionService, CoinTransactionService>();
-            services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
-            services.AddTransient<AssetContractService>();
-            services.AddTransient<TransferContractService>();
-            services.AddTransient<ExternalTokenService>();
-            services.AddTransient<TransferContractPoolService>();
-            services.AddTransient<ITransferContractQueueService, TransferContractQueueService>();
-            services.AddTransient<ITransferContractQueueServiceFactory, TransferContractQueueServiceFactory>();
-            services.AddTransient<ITransferContractService, TransferContractService>();
-            services.AddTransient<TransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
-            services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            services.AddTransient<ISlackNotifier, SlackNotifier>();
-            services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
-            services.AddTransient<ICoinEventService, CoinEventService>();
-            services.AddSingleton<IHashCalculator, HashCalculator>();
-            services.AddSingleton<IPendingOperationService, PendingOperationService>();
-            services.AddSingleton<ITransactionEventsService, TransactionEventsService>();
-            services.AddSingleton<INonceCalculator, NonceCalculator>();
-            services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
-            services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
-            services.AddSingleton<ISignatureChecker, SignatureChecker>();
-            services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
-            services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
-            services.AddSingleton<IOwnerService, OwnerService>();
-            services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
-            services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
-            services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
-            services.AddSingleton<ISignatureService, SignatureService>();
-            services.AddSingleton<IHotWalletService, HotWalletService>();
-            services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
-            services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
-            services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
-            services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
-            services.AddSingleton<ITransactionRouter, TransactionRouter>();
-            services.AddSingleton<IGasPriceService, GasPriceService>();
+            Services.AddTransient<IContractService, ContractService>();
+            Services.AddTransient<IPaymentService, PaymentService>();
+            Services.AddTransient<IEthereumQueueOutService, EthereumQueueOutService>();
+            Services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
+            Services.AddTransient<IExchangeContractService, ExchangeContractService>();
+            Services.AddTransient<ICoinTransactionService, CoinTransactionService>();
+            Services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
+            Services.AddTransient<AssetContractService>();
+            Services.AddTransient<TransferContractService>();
+            Services.AddTransient<ExternalTokenService>();
+            Services.AddTransient<TransferContractPoolService>();
+            Services.AddTransient<ITransferContractQueueService, TransferContractQueueService>();
+            Services.AddTransient<ITransferContractQueueServiceFactory, TransferContractQueueServiceFactory>();
+            Services.AddTransient<ITransferContractService, TransferContractService>();
+            Services.AddTransient<TransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
+            Services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
+            Services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
+            Services.AddTransient<ISlackNotifier, SlackNotifier>();
+            Services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
+            Services.AddTransient<ICoinEventService, CoinEventService>();
+            Services.AddSingleton<IHashCalculator, HashCalculator>();
+            Services.AddSingleton<IPendingOperationService, PendingOperationService>();
+            Services.AddSingleton<ITransactionEventsService, TransactionEventsService>();
+            Services.AddSingleton<INonceCalculator, NonceCalculator>();
+            Services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
+            Services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
+            Services.AddSingleton<ISignatureChecker, SignatureChecker>();
+            Services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
+            Services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
+            Services.AddSingleton<IOwnerService, OwnerService>();
+            Services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
+            Services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
+            Services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
+            Services.AddSingleton<ISignatureService, SignatureService>();
+            Services.AddSingleton<IHotWalletService, HotWalletService>();
+            Services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
+            Services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
+            Services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
+            Services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
+            Services.AddSingleton<ITransactionRouter, TransactionRouter>();
+            Services.AddSingleton<IGasPriceService, GasPriceService>();
 
             //Uses HttpClient Inside -> singleton
-            services.AddSingleton<ILykkeSigningAPI>((provider) =>
+            Services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
                 var lykkeSigningAPI = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl
                     , UriKind.Absolute));
@@ -75,7 +75,7 @@ namespace Services
                 return lykkeSigningAPI;
             });
 
-            services.AddSingleton<IEthereumSamuraiApi>((provider) =>
+            Services.AddSingleton<IEthereumSamuraiApi>((provider) =>
             {
                 var ethereumSamuraiApi = new EthereumSamuraiApi(new Uri(provider.GetService<IBaseSettings>().EthereumSamuraiUrl
                     , UriKind.Absolute));
@@ -83,7 +83,7 @@ namespace Services
                 return ethereumSamuraiApi;
             });
 
-            services.AddSingleton<Web3>((provider) =>
+            Services.AddSingleton<Web3>((provider) =>
             {
                 var baseSettings = provider.GetService<IBaseSettings>();
                 var web3 = new Web3(baseSettings.EthereumUrl);
@@ -91,7 +91,7 @@ namespace Services
                 return web3;
             });
 
-            services.AddSingleton<IWeb3>((provider) =>
+            Services.AddSingleton<IWeb3>((provider) =>
             {
                 var web3 = provider.GetService<Web3>();
 
@@ -99,7 +99,7 @@ namespace Services
             });
 
 
-            services.AddSingleton<ITransactionManager>(provider =>
+            Services.AddSingleton<ITransactionManager>(provider =>
             {
                 var baseSettings = provider.GetService<IBaseSettings>();
                 var web3 = provider.GetService<Web3>();
@@ -116,7 +116,7 @@ namespace Services
                 return transactionManager;
             });
 
-            services.AddSingleton<IAssetsService>((provider) =>
+            Services.AddSingleton<IAssetsService>((provider) =>
             {
                 var settings = provider.GetService<SettingsWrapper>();
                 

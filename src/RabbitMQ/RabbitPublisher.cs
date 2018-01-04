@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RabbitMQ
+namespace Lykke.Service.RabbitMQ
 {
     public interface IRabbitQueuePublisher
     {

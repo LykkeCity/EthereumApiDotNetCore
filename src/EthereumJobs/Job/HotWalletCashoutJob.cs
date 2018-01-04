@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.JobTriggers.Triggers.Bindings;
-using Core.Settings;
-using Core.Notifiers;
-using Core.Repositories;
-using Services;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.New.Models;
 using System.Numerics;
-using Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using AzureStorage.Queue;
 using Newtonsoft.Json;
-using Services.HotWallet;
-using Core.Messages.HotWallet;
+using Lykke.Service.EthereumCore.Services.HotWallet;
+using Lykke.Service.EthereumCore.Core.Messages.HotWallet;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class HotWalletCashoutJob
     {

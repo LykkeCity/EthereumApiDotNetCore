@@ -1,9 +1,9 @@
-﻿using Core.Exceptions;
+﻿using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumApi.Models.Models;
 using EthereumApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.HotWallet;
+using Lykke.Service.EthereumCore.Services.HotWallet;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -39,7 +39,7 @@ namespace EthereumApi.Controllers
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
             
-            await _hotWalletService.EnqueueCashoutAsync(new Core.Repositories.HotWalletOperation()
+            await _hotWalletService.EnqueueCashoutAsync(new Lykke.Service.EthereumCore.Core.Repositories.HotWalletOperation()
             {
                 Amount = BigInteger.Parse(hotWalletCashout.Amount),
                 FromAddress = hotWalletCashout.FromAddress,

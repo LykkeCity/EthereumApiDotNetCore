@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Services.New.Models
+namespace Lykke.Service.EthereumCore.Services.New.Models
 {
     public class CoinCashinEvent
     {

@@ -3,7 +3,7 @@
 //using Microsoft.AspNetCore.Http;
 //using Microsoft.Extensions.Logging;
 //using Common.Log;
-//using Core.Exceptions;
+//using Lykke.Service.EthereumCore.Core.Exceptions;
 //using Microsoft.AspNetCore.Builder;
 
 //namespace EthereumApi.Middleware

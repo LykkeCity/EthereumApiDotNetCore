@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace AzureRepositories.Log
+namespace Lykke.Service.EthereumCore.AzureRepositories.Log
 {
 	public class LogEntity : TableEntity
 	{

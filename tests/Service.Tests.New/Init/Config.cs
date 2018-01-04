@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
-using Core.Settings;
-using EthereumJobs.Config;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Job.EthereumCore.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
 
 // ReSharper disable once CheckNamespace
@@ -82,7 +82,7 @@ namespace Tests
             public Dictionary<string, TestContract> CoinContracts { get; set; }
         }
 
-        public class TestContract : Core.Settings.EthereumContract
+        public class TestContract : Lykke.Service.EthereumCore.Core.Settings.EthereumContract
         {
             public int Multiplier { get; set; }
             public bool Payable { get; set; }

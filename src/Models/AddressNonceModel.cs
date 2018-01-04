@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace BusinessModels
+namespace Lykke.Service.EthereumCore.BusinessModels
 {
     public class AddressNonceModel
     {

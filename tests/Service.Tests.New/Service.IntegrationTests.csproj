@@ -15,10 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AzureRepositories\AzureRepositories.csproj" />
-    <ProjectReference Include="..\..\src\Core\Core.csproj" />
-    <ProjectReference Include="..\..\src\EthereumJobs\EthereumJobs.csproj" />
-    <ProjectReference Include="..\..\src\Services\Services.csproj" />
+    <ProjectReference Include="..\..\src\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\..\src\Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\..\src\EthereumJobs\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\..\src\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,12 +1,12 @@
-﻿using Core;
-using Core.Repositories;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.New
+namespace Lykke.Service.EthereumCore.Services.New
 {
     public interface IOwnerService
     {

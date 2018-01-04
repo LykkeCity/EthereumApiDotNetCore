@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
     public static class Utils
     {

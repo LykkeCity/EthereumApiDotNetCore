@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 
 namespace EthereumApi.Models.Models
 {

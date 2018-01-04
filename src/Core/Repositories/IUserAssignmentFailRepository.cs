@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Core.Repositories
+namespace Lykke.Service.EthereumCore.Core.Repositories
 {
     public interface IUserAssignmentFail
     {

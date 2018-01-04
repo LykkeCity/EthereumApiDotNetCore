@@ -1,16 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Tests;
-using Core.Utils;
+using Lykke.Service.EthereumCore.Core.Utils;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System.Numerics;
 using Nethereum.Util;
 using System.Linq;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using System.Threading.Tasks;
 
 namespace Service.Tests

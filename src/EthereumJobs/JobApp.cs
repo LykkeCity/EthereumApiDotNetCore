@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core.Settings;
-using EthereumJobs.Job;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Job.EthereumCore.Job;
 using Microsoft.Extensions.DependencyInjection;
-using EthereumJobs.Config;
+using Lykke.Job.EthereumCore.Config;
 using Microsoft.Extensions.Configuration;
 using Lykke.JobTriggers.Triggers;
 using System.Reflection;
 using System.Threading;
 using System.Runtime.Loader;
 using Lykke.JobTriggers.Extenstions;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 
-namespace EthereumJobs
+namespace Lykke.Job.EthereumCore
 {
     public class JobApp
     {
@@ -36,8 +36,8 @@ namespace EthereumJobs
             Services = collection.BuildServiceProvider();
             Services.ActivateRequestInterceptor();
             // restore contract payment events after service shutdown
-            //await Task.Run(() => Services.GetService<ProcessManualEvents>().Start());
-            //await Task.Run(() => Services.GetService<CatchOldUserContractEvents>().Start());
+            //await Task.Run(() => Lykke.Service.EthereumCore.Services.GetService<ProcessManualEvents>().Start());
+            //await Task.Run(() => Lykke.Service.EthereumCore.Services.GetService<CatchOldUserContractEvents>().Start());
 
             Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 

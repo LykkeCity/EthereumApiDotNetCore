@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
 	public class Encryption
 	{

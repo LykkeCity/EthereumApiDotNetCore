@@ -1,20 +1,20 @@
 ﻿using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Web3;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System.Numerics;
 using System;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 using Nethereum.Util;
 using AzureStorage.Queue;
 using Newtonsoft.Json;
-using Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class MonitoringTransferContracts
     {

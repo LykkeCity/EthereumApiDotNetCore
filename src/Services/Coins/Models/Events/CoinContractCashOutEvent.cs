@@ -2,7 +2,7 @@
 using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 
-namespace Services.Coins.Models.Events
+namespace Lykke.Service.EthereumCore.Services.Coins.Models.Events
 {
     public class CoinContractCashOutEvent
     {

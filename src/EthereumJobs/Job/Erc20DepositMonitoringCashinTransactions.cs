@@ -1,18 +1,18 @@
 ﻿using System.Threading.Tasks;
-using Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Web3;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System.Numerics;
 using System;
 using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.JobTriggers.Triggers.Bindings;
-using Core;
-using Services.HotWallet;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Services.HotWallet;
 
-namespace EthereumJobs.Job
+namespace Lykke.Job.EthereumCore.Job
 {
     public class Erc20DepositMonitoringCashinTransactions
     {

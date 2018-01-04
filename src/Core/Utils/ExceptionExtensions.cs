@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Core.Utils
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
     public static class ExceptionExtensions
     {

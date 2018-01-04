@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using EthereumApiSelfHosted.Models;
 using Microsoft.AspNetCore.Mvc;
-using Services;
+using Lykke.Service.EthereumCore.Services;
 
 namespace EthereumApi.Controllers
 {

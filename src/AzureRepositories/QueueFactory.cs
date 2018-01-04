@@ -1,12 +1,12 @@
 ﻿using AzureStorage.Queue;
-using Core;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AzureRepositories
+namespace Lykke.Service.EthereumCore.AzureRepositories
 {
     public class QueueFactory : IQueueFactory
     {

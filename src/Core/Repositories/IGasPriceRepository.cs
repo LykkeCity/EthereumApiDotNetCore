@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Core.Repositories
+namespace Lykke.Service.EthereumCore.Core.Repositories
 {
     public interface IGasPrice
     {

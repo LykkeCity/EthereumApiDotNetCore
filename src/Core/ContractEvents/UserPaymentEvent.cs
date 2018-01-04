@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 
-namespace Core.ContractEvents
+namespace Lykke.Service.EthereumCore.Core.ContractEvents
 {
 	public class UserPaymentEvent
 	{

@@ -1,5 +1,5 @@
 ﻿using System;
 
-namespace Core.Exceptions
+namespace Lykke.Service.EthereumCore.Core.Exceptions
 {
 }

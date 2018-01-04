@@ -1,7 +1,7 @@
-﻿using Core;
-using Core.Notifiers;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public class Erc20DepositContractQueueServiceFactory : IErc20DepositContractQueueServiceFactory
     {
