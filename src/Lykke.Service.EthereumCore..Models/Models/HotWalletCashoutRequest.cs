@@ -1,12 +1,12 @@
 ﻿using Lykke.Service.EthereumCore.Core;
-using EthereumApi.Models.Attributes;
+using Lykke.Service.EthereumCore.Models.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace EthereumApi.Models.Models
+namespace Lykke.Service.EthereumCore.Models.Models
 {
     [DataContract]
     public class HotWalletCashoutRequest

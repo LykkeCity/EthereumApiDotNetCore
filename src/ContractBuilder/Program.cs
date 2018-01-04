@@ -20,7 +20,7 @@ using Common.Log;
 using Lykke.Service.EthereumCore.Services.New;
 //using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core;
-using EthereumApi.Models;
+using Lykke.Service.EthereumCore.Models;
 using System.Numerics;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
@@ -623,7 +623,7 @@ namespace ContractBuilder
             }
         }
 
-        static SettingsWrapper GetCurrentSettingsFromUrl()
+        static AppSettings GetCurrentSettingsFromUrl()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -633,12 +633,12 @@ namespace ContractBuilder
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
             var connString = configuration.GetConnectionString("ConnectionString");
-            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connString);
+            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(connString);
 
             return settings;
         }
 
-        static SettingsWrapper GetCurrentSettings()
+        static AppSettings GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -649,12 +649,12 @@ namespace ContractBuilder
             var configuration = builder.Build();
             var connString = configuration.GetConnectionString("ConnectionString");
             var path = GetSettingsPath();
-            var settings = GeneralSettingsReader.ReadGeneralSettingsLocal<SettingsWrapper>(path);
+            var settings = GeneralSettingsReader.ReadGeneralSettingsLocal<AppSettings>(path);
 
             return settings;
         }
 
-        static void SaveSettings(SettingsWrapper settings)
+        static void SaveSettings(AppSettings settings)
         {
             File.WriteAllText(GetSettingsPath(), JsonConvert.SerializeObject(settings, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }

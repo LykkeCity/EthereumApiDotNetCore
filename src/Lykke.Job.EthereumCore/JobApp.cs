@@ -64,7 +64,7 @@ namespace Lykke.Job.EthereumCore
             end.Set();
         }
 
-        static SettingsWrapper GetSettings(IConfigurationRoot configuration)
+        static AppSettings GetSettings(IConfigurationRoot configuration)
         {
             var connectionString = configuration.GetConnectionString("ConnectionString");
             if (string.IsNullOrEmpty(connectionString))
@@ -72,7 +72,7 @@ namespace Lykke.Job.EthereumCore
                 throw new Exception("Please, provide connection string");
             }
 
-            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(connectionString);
+            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(connectionString);
 
             return settings;
         }

@@ -118,7 +118,7 @@ namespace Lykke.Service.EthereumCore.Services
 
             Services.AddSingleton<IAssetsService>((provider) =>
             {
-                var settings = provider.GetService<SettingsWrapper>();
+                var settings = provider.GetService<AppSettings>();
                 
                 return new AssetsService(new Uri(settings.Assets.ServiceUrl));
             });

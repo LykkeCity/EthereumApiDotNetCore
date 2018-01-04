@@ -40,7 +40,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly ICoinRepository _coinRepository;
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
-        private readonly SettingsWrapper _settingsWrapper;
+        private readonly AppSettings _settingsWrapper;
         private readonly IEthereumSamuraiApi _indexerApi;
         private readonly IErc20DepositContractRepository _depositContractRepository;
 
@@ -50,7 +50,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             ICashinEventRepository cashinEventRepository,
             IBlockSyncedRepository blockSyncedRepository,
             IQueueFactory queueFactory,
-            SettingsWrapper settingsWrapper,
+            AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
             IErc20DepositContractRepository depositContractRepository)
         {

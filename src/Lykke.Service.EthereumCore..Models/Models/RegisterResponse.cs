@@ -1,4 +1,4 @@
-﻿namespace EthereumApiSelfHosted.Models
+﻿namespace Lykke.Service.EthereumCoreSelfHosted.Models
 {
     public class RegisterResponse
     {

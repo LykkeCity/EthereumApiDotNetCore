@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using EthereumApiSelfHosted.Models;
+using Lykke.Service.EthereumCoreSelfHosted.Models;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api/erc20deposits")]
     [Produces("application/json")]

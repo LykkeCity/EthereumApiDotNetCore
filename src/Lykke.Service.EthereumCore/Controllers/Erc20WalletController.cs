@@ -2,9 +2,9 @@
 using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using EthereumApi.Models;
-using EthereumApi.Models.Models;
-using EthereumApi.Utils;
+using Lykke.Service.EthereumCore.Models;
+using Lykke.Service.EthereumCore.Models.Models;
+using Lykke.Service.EthereumCore.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
@@ -14,7 +14,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api/erc20Wallet")]
     [Produces("application/json")]

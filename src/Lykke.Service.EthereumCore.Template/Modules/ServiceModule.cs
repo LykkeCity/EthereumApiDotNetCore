@@ -32,19 +32,19 @@ namespace Lykke.Service.EthereumCore.Modules
             //      .As<IQuotesPublisher>()
             //      .WithParameter(TypedParameter.From(_settings.CurrentValue.QuotesPublication))
 
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
+            //builder.RegisterInstance(_log)
+            //    .As<ILog>()
+            //    .SingleInstance();
 
-            builder.RegisterType<HealthService>()
-                .As<IHealthService>()
-                .SingleInstance();
+            //builder.RegisterType<HealthService>()
+            //    .As<IHealthService>()
+            //    .SingleInstance();
 
-            builder.RegisterType<StartupManager>()
-                .As<IStartupManager>();
+            //builder.RegisterType<StartupManager>()
+            //    .As<IStartupManager>();
 
-            builder.RegisterType<ShutdownManager>()
-                .As<IShutdownManager>();
+            //builder.RegisterType<ShutdownManager>()
+            //    .As<IShutdownManager>();
 
             // TODO: Add your dependencies here
 

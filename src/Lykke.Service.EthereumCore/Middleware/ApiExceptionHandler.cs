@@ -6,7 +6,7 @@
 //using Lykke.Service.EthereumCore.Core.Exceptions;
 //using Microsoft.AspNetCore.Builder;
 
-//namespace EthereumApi.Middleware
+//namespace Lykke.Service.EthereumCore.Middleware
 //{
 
 //    public sealed class ApiExceptionHandler

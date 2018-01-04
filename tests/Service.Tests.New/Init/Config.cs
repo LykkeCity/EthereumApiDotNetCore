@@ -21,7 +21,7 @@ namespace Tests
         public static IServiceProvider Services { get; set; }
         public static ILog Logger => Services.GetService<ILog>();
 
-        private SettingsWrapper ReadSettings()
+        private AppSettings ReadSettings()
         {
             try
             {
@@ -31,7 +31,8 @@ namespace Tests
 
                     return null;
                 }
-                SettingsWrapper settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(url);
+
+                AppSettings settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(url);
 
                 return settings;
             }

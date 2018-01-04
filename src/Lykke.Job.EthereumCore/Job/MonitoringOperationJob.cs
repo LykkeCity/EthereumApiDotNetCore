@@ -30,7 +30,7 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly ITransferContractService _transferContractService;
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly IQueueExt _coinEventResubmittQueue;
-        private readonly SettingsWrapper _settingsWrapper;
+        private readonly AppSettings _settingsWrapper;
         private readonly string _hotWalletAddress;
 
         public MonitoringOperationJob(
@@ -42,7 +42,7 @@ namespace Lykke.Job.EthereumCore.Job
             ITransferContractService transferContractService, 
             IEventTraceRepository eventTraceRepository,
             IQueueFactory queueFactory,
-            SettingsWrapper settingsWrapper)
+            AppSettings settingsWrapper)
         {
             _eventTraceRepository = eventTraceRepository;
             _exchangeContractService = exchangeContractService;

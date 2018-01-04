@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EthereumApi.Utils
+namespace Lykke.Service.EthereumCore.Utils
 {
     public static class ModelStateHelper
     {

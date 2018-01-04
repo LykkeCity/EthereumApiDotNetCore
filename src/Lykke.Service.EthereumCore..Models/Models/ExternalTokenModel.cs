@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace EthereumApiSelfHosted.Models
+namespace Lykke.Service.EthereumCoreSelfHosted.Models
 {
     [DataContract]
     public class ExternalTokenModel

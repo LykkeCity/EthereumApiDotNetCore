@@ -593,7 +593,7 @@ namespace TransactionResubmit
             Console.WriteLine();
         }
 
-        static SettingsWrapper GetCurrentSettings()
+        static AppSettings GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -602,7 +602,7 @@ namespace TransactionResubmit
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
-            var settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(configuration.GetConnectionString("ConnectionString"));
+            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(configuration.GetConnectionString("ConnectionString"));
 
             return settings;
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace EthereumApi.Models.Attributes
+namespace Lykke.Service.EthereumCore.Models.Attributes
 {
     [AttributeUsage(AttributeTargets.Property |
   AttributeTargets.Field, AllowMultiple = false)]

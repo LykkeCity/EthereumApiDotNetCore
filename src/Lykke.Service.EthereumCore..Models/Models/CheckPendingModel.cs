@@ -1,10 +1,10 @@
-﻿using EthereumApi.Models.Attributes;
+﻿using Lykke.Service.EthereumCore.Models.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace EthereumApi.Models
+namespace Lykke.Service.EthereumCore.Models
 {
     public class CheckPendingModel 
     {

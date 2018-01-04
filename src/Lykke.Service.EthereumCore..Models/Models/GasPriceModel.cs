@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Lykke.Service.EthereumCore.Core;
 
-namespace EthereumApi.Models.Models
+namespace Lykke.Service.EthereumCore.Models.Models
 {
     public class GasPriceModel
     {

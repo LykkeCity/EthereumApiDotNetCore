@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EthereumApi.Models
+namespace Lykke.Service.EthereumCore.Models
 {
     public class CheckSignResponse
     {

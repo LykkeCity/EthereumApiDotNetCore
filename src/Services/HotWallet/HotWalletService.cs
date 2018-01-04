@@ -33,7 +33,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly ISignatureService _signatureService;
         private readonly IErc20DepositContractService _erc20DepositContractService;
-        private readonly SettingsWrapper _settingsWrapper;
+        private readonly AppSettings _settingsWrapper;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
         private readonly IGasPriceRepository _gasPriceRepository;
@@ -48,7 +48,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
             Web3 web3,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IErc20DepositContractService erc20DepositContractService,
-            SettingsWrapper settingsWrapper,
+            AppSettings settingsWrapper,
             IUserTransferWalletRepository userTransferWalletRepository,
             IGasPriceRepository gasPriceRepository)
         {

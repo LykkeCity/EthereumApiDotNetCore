@@ -1,10 +1,10 @@
-﻿using EthereumApi.Models.Models;
+﻿using Lykke.Service.EthereumCore.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace EthereumApi.Models.Indexer
+namespace Lykke.Service.EthereumCore.Models.Indexer
 {
     [DataContract]
     public class FilteredTransactionsResponse

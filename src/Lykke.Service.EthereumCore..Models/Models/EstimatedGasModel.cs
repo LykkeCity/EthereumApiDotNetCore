@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace EthereumApi.Models
+namespace Lykke.Service.EthereumCore.Models
 {
     [DataContract]
     public class EstimatedGasModel

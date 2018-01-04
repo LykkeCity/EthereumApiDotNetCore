@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace EthereumApi.Utils
+namespace Lykke.Service.EthereumCore.Utils
 {
     public static class TimeoutPolicy
     {

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using EthereumApi.Models;
+using Lykke.Service.EthereumCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
@@ -10,12 +10,12 @@ using System.Numerics;
 using System;
 using Lykke.Service.EthereumCore.Services;
 using Nethereum.Hex.HexConvertors.Extensions;
-using EthereumApi.Utils;
+using Lykke.Service.EthereumCore.Utils;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Core.Common;
 using Nethereum.Util;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api/hash")]
     [Produces("application/json")]

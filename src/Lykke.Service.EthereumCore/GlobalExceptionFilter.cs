@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Common.Log;
 
-namespace EthereumApi
+namespace Lykke.Service.EthereumCore
 {
     public class GlobalExceptionFilter : IExceptionFilter, IDisposable
     {

@@ -3,30 +3,60 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using EthereumApi;
+using Lykke.Service.EthereumCore;
+using Lykke.Service.EthereumCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace ApiRunner
 {
-    public class Program
+    internal sealed class Program
     {
-        public static void Main(string[] args)
+        public static string EnvInfo => Environment.GetEnvironmentVariable("ENV_INFO");
+
+        public static async Task Main(string[] args)
         {
-            Console.Title = "Ethereum Self-hosted API - Ver. " + Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+            Console.WriteLine($"{PlatformServices.Default.Application.ApplicationName} version {PlatformServices.Default.Application.ApplicationVersion}");
+#if DEBUG
+            Console.WriteLine("Is DEBUG");
+#else
+            Console.WriteLine("Is RELEASE");
+#endif           
+            Console.WriteLine($"ENV_INFO: {EnvInfo}");
 
-            var host = new WebHostBuilder()
-               .UseKestrel()
-               .UseContentRoot(Directory.GetCurrentDirectory())
-               .UseIISIntegration()
-               .UseStartup<Startup>()
-               .UseApplicationInsights()
-               .Build();
+            try
+            {
+                var host = new WebHostBuilder()
+                    .UseKestrel()
+                    .UseUrls("http://*:5000")
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseStartup<Startup>()
+                    .UseApplicationInsights()
+                    .Build();
 
-            Console.WriteLine($"Web Server is running ");
-            Console.WriteLine("Utc time: " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+                await host.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Fatal error:");
+                Console.WriteLine(ex);
 
-            host.Run();
+                // Lets devops to see startup error in console between restarts in the Kubernetes
+                var delay = TimeSpan.FromMinutes(1);
+
+                Console.WriteLine();
+                Console.WriteLine($"Process will be terminated in {delay}. Press any key to terminate immediately.");
+
+                await Task.WhenAny(
+                               Task.Delay(delay),
+                               Task.Run(() =>
+                               {
+                                   Console.ReadKey(true);
+                               }));
+            }
+
+            Console.WriteLine("Terminated");
         }
     }
 }

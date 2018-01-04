@@ -5,13 +5,13 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using EthereumApi.Models.Models;
-using EthereumApi.Utils;
+using Lykke.Service.EthereumCore.Models.Models;
+using Lykke.Service.EthereumCore.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api/gas-price")]
     [Produces("application/json")]

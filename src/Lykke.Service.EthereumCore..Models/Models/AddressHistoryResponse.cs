@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace EthereumApi.Models.Models
+namespace Lykke.Service.EthereumCore.Models.Models
 {
     [DataContract]
     public class FilteredAddressHistoryResponse

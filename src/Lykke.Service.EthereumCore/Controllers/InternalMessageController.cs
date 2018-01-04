@@ -1,9 +1,9 @@
 ﻿using Lykke.Service.EthereumCore.BusinessModels;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using EthereumApi.Models;
-using EthereumApi.Models.Indexer;
-using EthereumApi.Models.Models;
-using EthereumApi.Utils;
+using Lykke.Service.EthereumCore.Models;
+using Lykke.Service.EthereumCore.Models.Indexer;
+using Lykke.Service.EthereumCore.Models.Models;
+using Lykke.Service.EthereumCore.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
@@ -13,8 +13,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api/internalMessages")]
     [Produces("application/json")]
@@ -52,7 +53,7 @@ namespace EthereumApi.Controllers
         [ProducesResponseType(typeof(FilteredInternalMessagessResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public async Task<IActionResult> GetInternalMessages([FromBody]EthereumApi.Models.Models.AddressTransactions addressTransactions)
+        public async Task<IActionResult> GetInternalMessages([FromBody]AddressTransactions addressTransactions)
         {
             if (!ModelState.IsValid)
             {

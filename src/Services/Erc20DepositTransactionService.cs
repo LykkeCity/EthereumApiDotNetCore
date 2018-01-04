@@ -62,7 +62,7 @@ namespace Lykke.Service.EthereumCore.Services
             ICoinEventService coinEventService,
             IEventTraceRepository eventTraceRepository,
             IErcInterfaceService ercInterfaceService,
-            SettingsWrapper settingsWrapper,
+            AppSettings settingsWrapper,
             IHotWalletService hotWalletService)
         {
             _eventTraceRepository = eventTraceRepository;

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services;
 using Nethereum.Web3;
 
-namespace EthereumApi.Controllers
+namespace Lykke.Service.EthereumCore.Controllers
 {
     [Route("api")]
     [Produces("application/json")]

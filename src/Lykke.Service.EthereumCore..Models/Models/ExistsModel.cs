@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EthereumApi.Models
+namespace Lykke.Service.EthereumCore.Models
 {
     public class ExistsModel
     {

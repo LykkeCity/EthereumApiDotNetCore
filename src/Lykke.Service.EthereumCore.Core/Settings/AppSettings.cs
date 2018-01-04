@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lykke.Service.EthereumCore.Core.Settings
 {
-    public class SettingsWrapper
+    public class AppSettings
     {
         public BaseSettings EthereumCore { get; set; }
         public SlackNotificationSettings SlackNotifications { get; set; }
