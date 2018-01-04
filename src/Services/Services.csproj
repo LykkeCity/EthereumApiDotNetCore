@@ -12,9 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj" />
-    <ProjectReference Include="..\..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
+    <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
     <ProjectReference Include="..\Models\BusinessModels.csproj" />
     <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
     <ProjectReference Include="..\SigningServiceApiCaller\SigningServiceApiCaller.csproj" />

@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AzureRepositories\AzureRepositories.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\EthereumCore.Models\EthereumApi.Models.csproj" />
-    <ProjectReference Include="..\src\AzureRepositories\AzureRepositories.csproj" />
-    <ProjectReference Include="..\src\Core\Core.csproj" />
-    <ProjectReference Include="..\src\RabbitMQ\RabbitMQ.csproj" />
-    <ProjectReference Include="..\src\Services\Services.csproj" />
+    <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
