@@ -10,13 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
-    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+    <Folder Include="Utils\" />
+    <Folder Include="Validation\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Utils\" />
-    <Folder Include="Validation\" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
 </Project>

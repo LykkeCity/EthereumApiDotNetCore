@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Job.EthereumCore;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Job.EthereumCore.Config;

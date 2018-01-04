@@ -2,7 +2,6 @@
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.RabbitMQ;
 using Nethereum.Web3;
-using RabbitMQ;
 using System;
 using System.Collections.Generic;
 using System.Linq;

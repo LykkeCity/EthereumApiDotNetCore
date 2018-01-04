@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Job.EthereumCore.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lykke.Service.EthereumCore.Services;
 using Common.Log;
+using Lykke.Job.EthereumCore.Config;
+using Lykke.Service.EthereumCore.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Tests

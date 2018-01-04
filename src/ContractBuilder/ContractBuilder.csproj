@@ -71,14 +71,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
-    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
-    <ProjectReference Include="..\EthereumCore.Models\EthereumApi.Models.csproj" />
-    <ProjectReference Include="..\EthereumJobs\Lykke.Job.EthereumCore.csproj" />
-    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
@@ -87,6 +79,15 @@
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore..Models\EthereumApi.Models.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties generalsettings_3template_1json__JSONSchema="http://json.schemastore.org/contribute" /></VisualStudio></ProjectExtensions>

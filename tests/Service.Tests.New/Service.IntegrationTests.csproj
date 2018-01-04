@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
-    <ProjectReference Include="..\..\src\Core\Lykke.Service.EthereumCore.Core.csproj" />
-    <ProjectReference Include="..\..\src\EthereumJobs\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\..\src\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj" />
     <ProjectReference Include="..\..\src\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 

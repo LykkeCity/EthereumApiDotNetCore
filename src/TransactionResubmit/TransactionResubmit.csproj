@@ -17,10 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
-    <ProjectReference Include="..\Core\Lykke.Service.EthereumCore.Core.csproj" />
-    <ProjectReference Include="..\EthereumCore.Models\EthereumApi.Models.csproj" />
-    <ProjectReference Include="..\RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Service.EthereumCore.Client\Lykke.Service.EthereumCore.Client.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
     <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 

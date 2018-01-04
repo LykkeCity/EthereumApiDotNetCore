@@ -3,7 +3,6 @@ using Common.Log;
 using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Job.EthereumCore.Job;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Job.EthereumCore.Job;
 
 namespace Service.UnitTests.Jobs
 {
