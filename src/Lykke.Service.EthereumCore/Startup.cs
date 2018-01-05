@@ -83,7 +83,7 @@ namespace Lykke.Service.EthereumCore
                     app.UseDeveloperExceptionPage();
                 }
 
-                app.UseLykkeMiddleware("EthereumCore", ex => new { Message = "Technical problem" });
+                //app.UseLykkeMiddleware("EthereumCore", ex => new { Message = "Technical problem" });
 
                 app.UseMvc();
                 app.UseSwagger(c =>

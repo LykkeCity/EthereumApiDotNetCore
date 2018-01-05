@@ -72,7 +72,8 @@ namespace Tests
             //var testSetting = ReadTestSettings();
             Assert.IsNotNull(settings, "Please, provide generalsettings.json file");
 
-            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
+            //TODO:Fix
+            //collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
             Services = collection.BuildServiceProvider();
             Services.ActivateRequestInterceptor();

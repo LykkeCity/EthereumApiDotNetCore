@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
+using Lykke.Service.EthereumCore.AzureRepositories;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +26,8 @@ namespace Lykke.Service.EthereumCore.Modules
             _services = new ServiceCollection();
         }
 
+        public ServiceProvider ServiceProvider { get; private set; }
+
         protected override void Load(ContainerBuilder builder)
         {
             // TODO: Do not register entire settings in container, pass necessary settings to services which requires them
@@ -31,16 +35,17 @@ namespace Lykke.Service.EthereumCore.Modules
             //  builder.RegisterType<QuotesPublisher>()
             //      .As<IQuotesPublisher>()
             //      .WithParameter(TypedParameter.From(_settings.CurrentValue.QuotesPublication))
-
-            builder.RegisterInstance<IBaseSettings>(_settings.CurrentValue.EthereumCore);
-            builder.RegisterInstance(_settings);
+            var nesetdBaseSettings = _settings.Nested(x => x.EthereumCore);
+            var nesetdSlackSettings = _settings.Nested(x => x.SlackNotifications);
+            _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
+            _services.AddSingleton(_settings.CurrentValue);
             //builder.RegisterAzureLogs(settings.EthereumCore, "Api");
-            builder.RegisterAzureStorages(settings.EthereumCore, settings.SlackNotifications);
-            builder.RegisterAzureQueues(settings.EthereumCore, settings.SlackNotifications);
-            builder.RegisterServices();
+            _services.RegisterAzureStorages(nesetdBaseSettings, nesetdSlackSettings);
+            _services.RegisterAzureQueues(nesetdBaseSettings, nesetdSlackSettings);
+            _services.RegisterServices();
 
-            ServiceProvider = Services.BuildServiceProvider();
-            Services.RegisterRabbitQueue(,);
+            ServiceProvider = _services.BuildServiceProvider();
+            _services.RegisterRabbitQueue(nesetdBaseSettings.Nested(x => x.RabbitMq), _log);
 
             #region Services
 

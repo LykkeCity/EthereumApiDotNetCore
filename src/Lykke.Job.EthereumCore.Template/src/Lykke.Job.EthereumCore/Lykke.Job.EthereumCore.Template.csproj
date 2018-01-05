@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.Common" Version="3.0.0" />
+    <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.0.16" />
+    <!-- #if azurequeuesub -->
+    <PackageReference Include="Lykke.JobTriggers" Version="1.1.19" />
+    <!-- #endif -->
+    <PackageReference Include="Lykke.Logs" Version="3.2.1" />
+    <!-- #if rabbitpub -->
+    <PackageReference Include="Lykke.RabbitMq.Azure" Version="3.1.0" />
+    <!-- #endif -->
+    <!-- #if rabbitpub || rabbitsub -->
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="3.0.3" />
+    <!-- #endif -->
+    <PackageReference Include="Lykke.SettingsReader" Version="1.0.42" />
+    <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="1.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Job.EthereumCore.AzureRepositories\Lykke.Job.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Job.EthereumCore.Core\Lykke.Job.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Job.EthereumCore.Services\Lykke.Job.EthereumCore.Services.csproj" />
+  </ItemGroup>
+</Project>

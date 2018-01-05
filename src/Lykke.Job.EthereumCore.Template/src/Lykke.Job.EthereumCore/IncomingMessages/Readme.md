@@ -1,0 +1,1 @@
+﻿Place incoming azure queue's and rabbitmq's messages here, which is not provided by sender via nuget package

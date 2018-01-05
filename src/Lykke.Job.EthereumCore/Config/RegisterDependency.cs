@@ -8,25 +8,29 @@ using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
 using Common.Log;
 using RabbitMQ;
 using Lykke.Service.RabbitMQ;
+using Lykke.SettingsReader;
 
 namespace Lykke.Job.EthereumCore.Config
 {
     public static class RegisterDependency
     {
-        public static void InitJobDependencies(this IServiceCollection collection, IBaseSettings settings, ISlackNotificationSettings slackNotificationSettings)
+        public static void InitJobDependencies(this IServiceCollection collection, 
+            IReloadingManager<BaseSettings> settings, 
+            IReloadingManager<SlackNotificationSettings> slackNotificationSettings,
+            ILog log)
         {
             collection.AddSingleton(settings);
 
-            collection.RegisterAzureLogs(settings, "Job");
+            //collection.RegisterAzureLogs(settings, "Job");
             collection.RegisterAzureStorages(settings, slackNotificationSettings);
             collection.RegisterAzureQueues(settings, slackNotificationSettings);
 
             collection.RegisterServices();
-            var provider = collection.BuildServiceProvider();
+            //var provider = collection.BuildServiceProvider();
 
-            collection.RegisterRabbitQueue(settings, provider.GetService<ILog>());
+            collection.RegisterRabbitQueue(settings.Nested(x => x.RabbitMq), log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
-            collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.MonitoringServiceUrl));
+            collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.CurrentValue.MonitoringServiceUrl));
             RegisterJobs(collection);
         }
 

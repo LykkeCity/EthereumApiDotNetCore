@@ -7,15 +7,17 @@ using Lykke.RabbitMqBroker.Subscriber;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System;
+using Lykke.SettingsReader;
 
 namespace Lykke.Service.RabbitMQ
 {
     public static class RegisterRabbitQueueEx
     {
-        public static void RegisterRabbitQueue(this IServiceCollection Services, IBaseSettings settings, ILog logger, string exchangePrefix = "")
+        public static void RegisterRabbitQueue(this IServiceCollection Services, IReloadingManager<RabbitMq> settings, ILog logger, string exchangePrefix = "")
         {
-            string exchangeName = exchangePrefix + settings.RabbitMq.ExchangeEthereumCore;
-            string connectionString = $"amqp://{settings.RabbitMq.Username}:{settings.RabbitMq.Password}@{settings.RabbitMq.Host}:{settings.RabbitMq.Port}";
+            var rabbitSettings = settings.CurrentValue;
+            string exchangeName = exchangePrefix + rabbitSettings.ExchangeEthereumCore;
+            string connectionString = $"amqp://{rabbitSettings.Username}:{rabbitSettings.Password}@{rabbitSettings.Host}:{rabbitSettings.Port}";
 
             #region Default
 
@@ -27,7 +29,7 @@ namespace Lykke.Service.RabbitMQ
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
                 .SetSerializer(new BytesSerializer())
-                .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey))
+                .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
                 .SetLogger(logger)
                 .Start();
 
@@ -43,7 +45,7 @@ namespace Lykke.Service.RabbitMQ
 
             RabbitMqPublisher<HotWalletEvent> hotWalletCashoutEventPublisher = new RabbitMqPublisher<HotWalletEvent>(rabbitMqHotwalletSettings)
                 .SetSerializer(new BytesSerializer<HotWalletEvent>())
-                .SetPublishStrategy(new PublishStrategy(settings.RabbitMq.RoutingKey))
+                .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
                 .SetLogger(logger)
                 .Start();
 

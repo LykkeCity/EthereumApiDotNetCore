@@ -14,67 +14,62 @@ using Lykke.Service.EthereumCore.Services;
 
 namespace Lykke.Job.EthereumCore
 {
-    public class JobApp
-    {
-        public IServiceProvider Services { get; set; }
+    //public class JobApp
+    //{
+    //    public IServiceProvider Services { get; set; }
 
-        public async void Run(IConfigurationRoot configuration)
-        {
-            var settings = GetSettings(configuration);
-            IServiceCollection collection = new ServiceCollection();
+    //    public async void Run(IConfigurationRoot configuration)
+    //    {
+    //        var settings = GetSettings(configuration);
+    //        IServiceCollection collection = new ServiceCollection();
 
-            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
-            collection.AddSingleton(settings);
-            collection.AddTriggers(pool =>
-            {
-                // default connection must be initialized
-                pool.AddDefaultConnection(settings.EthereumCore.Db.DataConnString);
-                //// you can add additional connection strings and then specify it in QueueTriggerAttribute 
-                //pool.AddConnection("custom", additionalConnectionString);
-            });
+    //        collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
+    //        collection.AddSingleton(settings);
+    //        collection.AddTriggers(pool =>
+    //        {
+    //            // default connection must be initialized
+    //            pool.AddDefaultConnection(settings.EthereumCore.Db.DataConnString);
+    //        });
 
-            Services = collection.BuildServiceProvider();
-            Services.ActivateRequestInterceptor();
-            // restore contract payment events after service shutdown
-            //await Task.Run(() => Lykke.Service.EthereumCore.Services.GetService<ProcessManualEvents>().Start());
-            //await Task.Run(() => Lykke.Service.EthereumCore.Services.GetService<CatchOldUserContractEvents>().Start());
+    //        Services = collection.BuildServiceProvider();
+    //        Services.ActivateRequestInterceptor();
 
-            Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
+    //        Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
-            RunJobs();
-        }
+    //        RunJobs();
+    //    }
 
-        public void RunJobs()
-        {
-            var triggerHost = new TriggerHost(Services);
+    //    public void RunJobs()
+    //    {
+    //        var triggerHost = new TriggerHost(Services);
 
-            triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);
+    //        triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);
 
-            var end = new ManualResetEvent(false);
+    //        var end = new ManualResetEvent(false);
 
-            AssemblyLoadContext.Default.Unloading += ctx =>
-            {
-                Console.WriteLine("SIGTERM recieved");
-                triggerHost.Cancel();
+    //        AssemblyLoadContext.Default.Unloading += ctx =>
+    //        {
+    //            Console.WriteLine("SIGTERM recieved");
+    //            triggerHost.Cancel();
 
-                end.WaitOne();
-            };
+    //            end.WaitOne();
+    //        };
 
-            triggerHost.Start().Wait();
-            end.Set();
-        }
+    //        triggerHost.Start().Wait();
+    //        end.Set();
+    //    }
 
-        static AppSettings GetSettings(IConfigurationRoot configuration)
-        {
-            var connectionString = configuration.GetConnectionString("ConnectionString");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new Exception("Please, provide connection string");
-            }
+    //    static AppSettings GetSettings(IConfigurationRoot configuration)
+    //    {
+    //        var connectionString = configuration.GetConnectionString("ConnectionString");
+    //        if (string.IsNullOrEmpty(connectionString))
+    //        {
+    //            throw new Exception("Please, provide connection string");
+    //        }
 
-            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(connectionString);
+    //        var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(connectionString);
 
-            return settings;
-        }
-    }
+    //        return settings;
+    //    }
+    //}
 }

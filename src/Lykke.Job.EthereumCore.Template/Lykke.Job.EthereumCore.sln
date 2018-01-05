@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore", "src\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj", "{5566FD3E-0DB6-4BF3-A98D-4A1181B3E02C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore.Core", "src\Lykke.Job.EthereumCore.Core\Lykke.Job.EthereumCore.Core.csproj", "{0415D4B4-5275-4B5C-AFD5-644572CD91CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Infrastructure", "1. Infrastructure", "{68994F01-8220-4B7C-9AB8-14E137C44AE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Repositories", "2. Repositories", "{AA5ECC48-14C3-4BE7-AF0C-D59FCA2742C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{AB790991-CEB2-44A5-9C0C-A2D26DB86D41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore.Services", "src\Lykke.Job.EthereumCore.Services\Lykke.Job.EthereumCore.Services.csproj", "{D42134F9-A73E-4890-966D-746FE732934E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore.AzureRepositories", "src\Lykke.Job.EthereumCore.AzureRepositories\Lykke.Job.EthereumCore.AzureRepositories.csproj", "{1322B569-1032-4276-B86E-69F8BE3DC1F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore.Tests", "tests\Lykke.Job.EthereumCore.Tests\Lykke.Job.EthereumCore.Tests.csproj", "{AAC9F450-14D7-4482-BC12-7C55006864E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Contract", "4. Contract", "{579F7EFC-B394-4D2B-9F42-C1A4293F5C2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Job.EthereumCore.Contract", "contract\Lykke.Job.EthereumCore.Contract\Lykke.Job.EthereumCore.Contract.csproj", "{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5566FD3E-0DB6-4BF3-A98D-4A1181B3E02C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5566FD3E-0DB6-4BF3-A98D-4A1181B3E02C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5566FD3E-0DB6-4BF3-A98D-4A1181B3E02C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5566FD3E-0DB6-4BF3-A98D-4A1181B3E02C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0415D4B4-5275-4B5C-AFD5-644572CD91CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0415D4B4-5275-4B5C-AFD5-644572CD91CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0415D4B4-5275-4B5C-AFD5-644572CD91CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0415D4B4-5275-4B5C-AFD5-644572CD91CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D42134F9-A73E-4890-966D-746FE732934E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D42134F9-A73E-4890-966D-746FE732934E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D42134F9-A73E-4890-966D-746FE732934E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D42134F9-A73E-4890-966D-746FE732934E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1322B569-1032-4276-B86E-69F8BE3DC1F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1322B569-1032-4276-B86E-69F8BE3DC1F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1322B569-1032-4276-B86E-69F8BE3DC1F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1322B569-1032-4276-B86E-69F8BE3DC1F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAC9F450-14D7-4482-BC12-7C55006864E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAC9F450-14D7-4482-BC12-7C55006864E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAC9F450-14D7-4482-BC12-7C55006864E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAC9F450-14D7-4482-BC12-7C55006864E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0415D4B4-5275-4B5C-AFD5-644572CD91CD} = {68994F01-8220-4B7C-9AB8-14E137C44AE5}
+		{D42134F9-A73E-4890-966D-746FE732934E} = {68994F01-8220-4B7C-9AB8-14E137C44AE5}
+		{1322B569-1032-4276-B86E-69F8BE3DC1F7} = {AA5ECC48-14C3-4BE7-AF0C-D59FCA2742C2}
+		{AAC9F450-14D7-4482-BC12-7C55006864E2} = {AB790991-CEB2-44A5-9C0C-A2D26DB86D41}
+		{58FEDF76-9CC9-4B3B-877F-0795CE7C50F9} = {579F7EFC-B394-4D2B-9F42-C1A4293F5C2B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2419990-C093-4EE2-AFE9-80857ECBB147}
+	EndGlobalSection
+EndGlobal
