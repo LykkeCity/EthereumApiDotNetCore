@@ -10,6 +10,11 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="Repositories\IPendingTransactionRepository.cs" />
   </ItemGroup>
@@ -19,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Lykke.AzureStorage" Version="1.2.21" />
     <PackageReference Include="Lykke.Common" Version="1.1.69" />
     <PackageReference Include="Lykke.JobTriggers" Version="1.1.11" />

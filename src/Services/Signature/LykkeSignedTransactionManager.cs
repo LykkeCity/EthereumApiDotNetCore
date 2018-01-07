@@ -9,9 +9,11 @@ using Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
+using Nethereum.RPC.Accounts;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.RPC.TransactionManagers;
+using Nethereum.RPC.TransactionReceipts;
 using Nethereum.Util;
 using Nethereum.Web3;
 using SigningServiceApiCaller;
@@ -60,6 +62,9 @@ namespace Services.Signature
 
         public BigInteger DefaultGas { get; set; }
 
+        public IAccount Account => throw new NotImplementedException();
+
+        public ITransactionReceiptService TransactionReceiptService { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public async Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
         {

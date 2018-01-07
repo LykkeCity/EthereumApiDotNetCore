@@ -17,13 +17,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.0" />
-    <PackageReference Include="Nethereum.Geth" Version="2.0.0-rc6-2" />
-    <PackageReference Include="Nethereum.RPC" Version="2.0.0-rc6-2" />
-    <PackageReference Include="Nethereum.Signer" Version="2.0.0-rc6-2" />
-    <PackageReference Include="Nethereum.Web3" Version="2.0.0-rc6-2" />
+    <PackageReference Include="Nethereum.Geth" Version="2.2.3" />
+    <PackageReference Include="Nethereum.RPC" Version="2.2.3" />
+    <PackageReference Include="Nethereum.Signer" Version="2.2.3" />
+    <PackageReference Include="Nethereum.Web3" Version="2.2.3" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
     <PackageReference Include="Lykke.Common" Version="1.1.69" />
     <PackageReference Include="Lykke.AzureStorage" Version="1.2.21" />
