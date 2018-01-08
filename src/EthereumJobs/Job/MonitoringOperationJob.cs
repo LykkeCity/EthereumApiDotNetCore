@@ -16,7 +16,7 @@ using System.Numerics;
 using Core.Exceptions;
 using AzureStorage.Queue;
 using Newtonsoft.Json;
-using EdjCase.JsonRpc.Client;
+using Nethereum.JsonRpc.Client;
 
 namespace EthereumJobs.Job
 {
@@ -150,7 +150,7 @@ namespace EthereumJobs.Job
 
                 return;
             }
-            catch (RpcClientException exc)
+            catch (RpcResponseException exc)
             {
                 await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "RpcException", exc);
                 opMessage.LastError = exc.Message;

@@ -6,6 +6,8 @@ using Core.Settings;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using Core;
+using Nethereum.Hex.HexTypes;
+using System.Numerics;
 
 namespace Services
 {
@@ -19,12 +21,14 @@ namespace Services
     public class EthereumTransactionService : IEthereumTransactionService
     {
         private readonly IBaseSettings _settings;
+        private readonly HexBigInteger _failedStatus;
         private readonly Web3 _client;
 
         public EthereumTransactionService(IBaseSettings settings, Web3 client)
         {
             _client = client;
             _settings = settings;
+            _failedStatus = new HexBigInteger(BigInteger.Zero);
         }
 
         // Do not use with private wallets
@@ -35,7 +39,13 @@ namespace Services
             if (receipt == null)
                 return false;
 
-            if (receipt.GasUsed.Value != new Nethereum.Hex.HexTypes.HexBigInteger(gasSended).Value)
+            Transaction transaction = await _client.Eth.Transactions.GetTransactionByHash.SendRequestAsync(hash);
+
+            if (receipt.Status != null && 
+                receipt.Status.Value == _failedStatus.Value)
+                return false;
+
+            if (receipt.GasUsed.Value != gasSended)
                 return true;
 
             return false;

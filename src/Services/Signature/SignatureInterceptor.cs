@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EdjCase.JsonRpc.Core;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
@@ -21,11 +20,6 @@ namespace LkeServices.Signature
             _transactionManager = transactionManager;
         }
 
-        public RpcResponse BuildResponse(object results, string route = null)
-        {
-            return new RpcResponse(route, JToken.FromObject(results));
-        }
-
         #region RC-6
 
         public override async Task<object> InterceptSendRequestAsync<T>(
@@ -36,7 +30,7 @@ namespace LkeServices.Signature
             {
                 TransactionInput transaction = (TransactionInput)request.RawParameters[0];
                 var response = await SignAndSendTransaction(transaction, route);
-                return response.Result.ToObject<T>();
+                return response;
             }
 
             return await interceptedSendRequestAsync(request, route).ConfigureAwait(false);
@@ -64,7 +58,7 @@ namespace LkeServices.Signature
             {
                 TransactionInput transaction = (TransactionInput)paramList[0];
                 var response = await SignAndSendTransaction(transaction, route);
-                return response.Result.ToObject<T>();
+                return response;
             }
 
             return await interceptedSendRequestAsync(method, route, paramList).ConfigureAwait(false);
@@ -86,9 +80,9 @@ namespace LkeServices.Signature
 
         #endregion
 
-        private async Task<RpcResponse> SignAndSendTransaction(TransactionInput transaction, string route)
+        private async Task<string> SignAndSendTransaction(TransactionInput transaction, string route)
         {
-            return BuildResponse(await _transactionManager.SendTransactionAsync(transaction).ConfigureAwait(false), route);
+            return await _transactionManager.SendTransactionAsync(transaction).ConfigureAwait(false);
         }
     }
 }

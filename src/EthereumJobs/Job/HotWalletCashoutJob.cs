@@ -16,7 +16,6 @@ using System.Numerics;
 using Core.Exceptions;
 using AzureStorage.Queue;
 using Newtonsoft.Json;
-using EdjCase.JsonRpc.Client;
 using Services.HotWallet;
 using Core.Messages.HotWallet;
 

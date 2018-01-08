@@ -6,7 +6,6 @@ using Common.Log;
 using Core;
 using Core.Repositories;
 using Core.Settings;
-using EdjCase.JsonRpc.Client;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Services;

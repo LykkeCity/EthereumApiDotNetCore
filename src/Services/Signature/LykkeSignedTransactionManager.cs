@@ -9,11 +9,14 @@ using Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
+using Nethereum.RPC.Accounts;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.RPC.TransactionManagers;
+using Nethereum.RPC.TransactionReceipts;
 using Nethereum.Util;
 using Nethereum.Web3;
+using Nethereum.Web3.Accounts;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
 
@@ -60,6 +63,24 @@ namespace Services.Signature
 
         public BigInteger DefaultGas { get; set; }
 
+        public IAccount Account => throw new NotImplementedException();
+
+        private ITransactionReceiptService _transactionReceiptService;
+        public ITransactionReceiptService TransactionReceiptService
+        {
+            get
+            {
+                if (_transactionReceiptService == null) return TransactionReceiptServiceFactory.GetDefaultransactionReceiptService(this);
+                return _transactionReceiptService;
+            }
+            set
+            {
+                _transactionReceiptService = value;
+            }
+        }
+
+        IAccount ITransactionManager.Account => throw new NotImplementedException();
+
 
         public async Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
         {
@@ -72,6 +93,11 @@ namespace Services.Signature
             {
                 throw new ArgumentNullException(nameof(callInput));
             }
+
+            var (gasPrice, gasValue) = await GetGasPriceAndValueAsync(callInput.GasPrice ?? BigInteger.Zero, callInput.Gas ?? BigInteger.Zero);
+
+            callInput.Gas = new HexBigInteger(gasValue.Value);
+            callInput.GasPrice = new HexBigInteger(gasPrice.Value);
 
             return await _estimateGas.SendRequestAsync(callInput);
         }
@@ -90,8 +116,8 @@ namespace Services.Signature
                 transaction.To,
                 transaction.Data,
                 transaction.Value ?? new BigInteger(0),
-                transaction.GasPrice,
-                transaction.Gas
+                transaction.GasPrice ?? new BigInteger(0),
+                transaction.Gas ?? new BigInteger(0)
             );
         }
 
@@ -158,8 +184,8 @@ namespace Services.Signature
             }
 
 
-            gasPrice = gasPrice == null || gasPrice.Value == 0 ? selectedGasPrice : gasPrice;
-            gasValue = gasValue == null || gasValue.Value == 0 ? Constants.GasForCoinTransaction : gasValue;
+            gasPrice = selectedGasPrice;
+            gasValue = gasValue == null || gasValue.Value == 0 || gasValue.Value == 21000 ? Constants.GasForCoinTransaction : gasValue;
 
             return (gasPrice, gasValue);
         }
