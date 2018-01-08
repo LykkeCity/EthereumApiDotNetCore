@@ -110,6 +110,7 @@ namespace Services
 
                 var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3, gasPriceRepository);
 
+                web3.TransactionManager = transactionManager;
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
 
                 return transactionManager;

@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Services;
 using Moq;
 using Nethereum.JsonRpc.Client;
-using EdjCase.JsonRpc.Core;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using BusinessModels;
