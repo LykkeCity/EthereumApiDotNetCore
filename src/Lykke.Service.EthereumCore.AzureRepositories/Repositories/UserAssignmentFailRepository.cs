@@ -26,6 +26,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 
         public int FailCount { get; set; }
         public bool CanBeRestoredInternally { get; set; }
+        public bool? NotifiedInSlack { get; set; }
 
         public static UserAssignmentFailEntity Create(IUserAssignmentFail userAssignmentFail)
         {
@@ -34,7 +35,8 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
                 CanBeRestoredInternally = userAssignmentFail.CanBeRestoredInternally,
                 FailCount = userAssignmentFail.FailCount,
                 ContractAddress = userAssignmentFail.ContractAddress,
-                PartitionKey = GetPartition()
+                PartitionKey = GetPartition(),
+                NotifiedInSlack = userAssignmentFail.NotifiedInSlack
             };
         }
     }

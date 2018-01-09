@@ -10,6 +10,7 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         string ContractAddress { get; set; }
         int FailCount { get; set; }
         bool CanBeRestoredInternally { get; set; }
+        bool? NotifiedInSlack { get; set; }
     }
 
     public class UserAssignmentFail : IUserAssignmentFail
@@ -17,6 +18,7 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         public string ContractAddress { get; set; }
         public int FailCount { get; set; }
         public bool CanBeRestoredInternally { get; set; }
+        public bool? NotifiedInSlack { get; set; }
     }
 
     public interface IUserAssignmentFailRepository

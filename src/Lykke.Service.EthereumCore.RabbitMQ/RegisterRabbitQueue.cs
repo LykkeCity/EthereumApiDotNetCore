@@ -21,10 +21,13 @@ namespace Lykke.Service.RabbitMQ
 
             #region Default
 
-            RabbitMqPublisherSettings rabbitMqDefaultSettings = new RabbitMqPublisherSettings
+            RabbitMqSubscriptionSettings rabbitMqDefaultSettings = new RabbitMqSubscriptionSettings
             {
                 ConnectionString = connectionString,
-                ExchangeName = exchangeName
+                ExchangeName = exchangeName,
+                DeadLetterExchangeName = $"{exchangeName}.dlx",
+                RoutingKey = "",
+                IsDurable = true
             };
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
@@ -37,10 +40,14 @@ namespace Lykke.Service.RabbitMQ
 
             #region Hotwallet
 
-            RabbitMqPublisherSettings rabbitMqHotwalletSettings = new RabbitMqPublisherSettings
+            RabbitMqSubscriptionSettings rabbitMqHotwalletSettings = new RabbitMqSubscriptionSettings
             {
                 ConnectionString = connectionString,
-                ExchangeName = $"{exchangeName}.hotwallet"
+                ExchangeName = $"{exchangeName}.hotwallet",
+                DeadLetterExchangeName = $"{exchangeName}.hotwallet.dlx",
+                RoutingKey = "",
+                IsDurable = true
+
             };
 
             RabbitMqPublisher<HotWalletEvent> hotWalletCashoutEventPublisher = new RabbitMqPublisher<HotWalletEvent>(rabbitMqHotwalletSettings)
@@ -68,12 +75,12 @@ namespace Lykke.Service.RabbitMQ
             _exchangeName = exchangeName;
         }
 
-        public void Configure(RabbitMqPublisherSettings settings, IModel channel)
+        public void Configure(RabbitMqSubscriptionSettings settings, IModel channel)
         {
             channel.ExchangeDeclare(exchange: _exchangeName ?? settings.ExchangeName, type: ExchangeType.Fanout, durable: true);
         }
 
-        public void Publish(RabbitMqPublisherSettings settings, IModel channel, byte[] body)
+        public void Publish(RabbitMqSubscriptionSettings settings, IModel channel, byte[] body)
         {
             channel.BasicPublish(exchange: _exchangeName ?? settings.ExchangeName,
                       routingKey: _queue,//remove

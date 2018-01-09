@@ -2,7 +2,11 @@
   "profiles": {
     "ApiRunner": {
       "commandName": "Project",
-      "commandLineArgs": "-port=8099"
+      "commandLineArgs": "-port=8099",
+      "environmentVariables": {
+        "SettingsUrl": "http://settings.lykke-settings.svc.cluster.local/1687fa55-3336-4cb0-8a6b-13fe8fb7d062-da917f97-92b4-4509-8b61-b57bae2d5430_EthereumCoreService",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

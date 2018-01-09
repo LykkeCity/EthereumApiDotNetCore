@@ -18,7 +18,7 @@ namespace Lykke.Job.EthereumCore.Job
 {
     public class MonitoringTransferContracts
     {
-        private const int _attempsBeforeReassign = 20;
+        private const int _attempsBeforeReassign = 25;
         private readonly ILog _logger;
         private readonly IPaymentService _paymentService;
         private readonly ITransferContractRepository _transferContractsRepository;
@@ -144,6 +144,7 @@ namespace Lykke.Job.EthereumCore.Job
                 {
                     CanBeRestoredInternally = canBeRestoredInternally,
                     ContractAddress = contractAddress,
+                    NotifiedInSlack = false,
                     FailCount = 0
                 };
             }
@@ -164,8 +165,13 @@ namespace Lykke.Job.EthereumCore.Job
                 }
                 else
                 {
-                    await _slackNotifier.ErrorAsync($"TransferAddress - {contractAddress}, UserAddress - {userAddress}, " +
+                    if (userAssignmentFail.NotifiedInSlack.HasValue &&
+                        !userAssignmentFail.NotifiedInSlack.Value)
+                    {
+                        await _slackNotifier.ErrorAsync($"TransferAddress - {contractAddress}, UserAddress - {userAddress}, " +
                         $"CoinAdapter Address - {coinAdapter} can't be restored internally");
+                        await _userAssignmentFailRepository.SaveAsync(userAssignmentFail);
+                    }
 
                     return;
                 }

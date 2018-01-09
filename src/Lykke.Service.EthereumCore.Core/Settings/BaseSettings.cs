@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Common;
+using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public interface IBaseSettings
     {
-        string EthereumPrivateAccount { get; set; }
         string EthereumMainAccount { get; set; }
         string EthereumMainAccountPassword { get; set; }
 
@@ -26,17 +26,16 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         int Level2TransactionConfirmation { get; set; }
         int Level3TransactionConfirmation { get; set; }
 
+        [Optional]
         EthereumContract MainContract { get; set; }
-        EthereumContract UserContract { get; set; }
         EthereumContract MainExchangeContract { get; set; }
-        EthereumContract TokenTransferContract { get; set; }
-        EthereumContract EthTransferContract { get; set; }
-        EthereumContract EmissiveTokenContract { get; set; }
-        EthereumContract NonEmissiveTokenContract { get; set; }
-        EthereumContract TokenAdapterContract { get; set; }
-        EthereumContract EthAdapterContract { get; set; }
-        Dictionary<string, EthereumContract> CoinContracts { get; set; }
-        EthereumContract Erc20DepositContract { get; set; }
+        EthereumContractBase TokenTransferContract { get; set; }
+        EthereumContractBase EthTransferContract { get; set; }
+        EthereumContractBase EmissiveTokenContract { get; set; }
+        EthereumContractBase NonEmissiveTokenContract { get; set; }
+        EthereumContractBase TokenAdapterContract { get; set; }
+        EthereumContractBase EthAdapterContract { get; set; }
+        EthereumContractBase Erc20DepositContract { get; set; }
         string ERC20ABI { get; set; }
         string CoinAbi { get; set; }
         int MaxDequeueCount { get; set; }
@@ -50,23 +49,19 @@ namespace Lykke.Service.EthereumCore.Core.Settings
 
     public class BaseSettings : IBaseSettings
     {
-        public EthereumContract EmissiveTokenContract { get; set; }
-        public EthereumContract NonEmissiveTokenContract { get; set; }
+        public EthereumContractBase EmissiveTokenContract { get; set; }
+        public EthereumContractBase NonEmissiveTokenContract { get; set; }
+        [Optional]
         public EthereumContract MainContract { get; set; }
-        public EthereumContract UserContract { get; set; }
         public EthereumContract MainExchangeContract { get; set; }
-        public EthereumContract TokenTransferContract { get; set; }
-        public EthereumContract EthTransferContract { get; set; }
-        public EthereumContract TokenAdapterContract { get; set; }
-        public EthereumContract EthAdapterContract { get; set; }
-        public Dictionary<string, EthereumContract> CoinContracts { get; set; } = new Dictionary<string, EthereumContract>();
-        public EthereumContract Erc20DepositContract { get; set; }
-
-        public string EthereumPrivateAccount { get; set; }
+        public EthereumContractBase TokenTransferContract { get; set; }
+        public EthereumContractBase EthTransferContract { get; set; }
+        public EthereumContractBase TokenAdapterContract { get; set; }
+        public EthereumContractBase EthAdapterContract { get; set; }
+        public EthereumContractBase Erc20DepositContract { get; set; }
 
         public string EthereumMainAccount { get; set; }
         public string EthereumMainAccountPassword { get; set; }
-        public string EthereumEthCoinContract { get; set; }
 
         /// <summary>
         /// Ethereum geth URL
@@ -74,36 +69,60 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public string EthereumUrl { get; set; }
         public string SignatureProviderUrl { get; set; }
 
+        [Optional]
         public string EthCoin { get; set; } = "Eth";
 
         public DbSettings Db { get; set; }
 
+        [Optional]
         public int MinContractPoolLength { get; set; } = 100;
+
+        [Optional]
         public int MaxContractPoolLength { get; set; } = 200;
+
+        [Optional]
         public int ContractsPerRequest { get; set; } = 50;
+
+        [Optional]
         public decimal MainAccountMinBalance { get; set; } = 1.0m;
 
+        [Optional]
         public int Level1TransactionConfirmation { get; set; } = 2;
+
+        [Optional]
         public int Level2TransactionConfirmation { get; set; } = 20;
+
+        [Optional]
         public int Level3TransactionConfirmation { get; set; } = 100;
-        public string EthereumContractBlobName { get; set; }
+
         public string ERC20ABI { get; set; }
 
         public string CoinAbi { get; set; }
+        [Optional]
         public int MaxDequeueCount { get; set; } = 1000;
+
+        [Optional]
         public int MaxQueueDelay { get; set; } = 5000;
+
+        [Optional]
         public int BroadcastMonitoringPeriodSeconds { get; set; } = 600;
         public RabbitMq RabbitMq { get; set; }
         public string MonitoringServiceUrl { get; set; }
+
+        [Optional]
         public int GasPricePercentage { get; set; } = 100;
         public string EthereumSamuraiUrl { get; set; }
     }
 
-    public class EthereumContract
+    public class EthereumContractBase
     {
-        public string Address { get; set; }
         public string Abi { get; set; }
         public string ByteCode { get; set; }
+    }
+
+    public class EthereumContract : EthereumContractBase
+    {
+        public string Address { get; set; }
     }
 
     public class RabbitMq
@@ -146,6 +165,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
 
     public class AssetsServiceSettings
     {
+        [Lykke.SettingsReader.Attributes.HttpCheck("api/isalive")]
         public string ServiceUrl {get;set;}
     }
 
