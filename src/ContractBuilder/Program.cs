@@ -27,6 +27,7 @@ using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
+using Lykke.SettingsReader;
 
 namespace ContractBuilder
 {
@@ -58,14 +59,13 @@ namespace ContractBuilder
 
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             collection.AddSingleton(settings);
-            collection.AddSingleton<IBaseSettings>(settings.EthereumCore);
-            collection.AddSingleton<ISlackNotificationSettings>(settings.SlackNotifications);
+            collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
+            collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
 
-            RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
-            RegisterReposExt.RegisterAzureQueues(collection, settings.EthereumCore, settings.SlackNotifications);
-            RegisterReposExt.RegisterAzureStorages(collection, settings.EthereumCore, settings.SlackNotifications);
+            RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
+            RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
             ServiceProvider = collection.BuildServiceProvider();
-            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.EthereumCore, ServiceProvider.GetService<ILog>());
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
             RegisterDependency.RegisterServices(collection);
             Lykke.Job.EthereumCore.Config.RegisterDependency.RegisterJobs(collection);
             //var web3 = ServiceProvider.GetService<Web3>();
@@ -140,7 +140,7 @@ namespace ContractBuilder
             //0xb63ac4f94006cbbfe58a1d651e173c56dc74a45e4d1141ac57fc51a0d4202e95
 
             var service = ServiceProvider.GetService<IErcInterfaceService>();
-            service.Transfer("0x5adbf411faf2595698d80b7f93d570dd16d7f4b2", settings.EthereumCore.EthereumMainAccount,
+            service.Transfer("0x5adbf411faf2595698d80b7f93d570dd16d7f4b2", settings.CurrentValue.EthereumCore.EthereumMainAccount,
                 "0xae4d8b0c887508750ddb6b32752a82431941e2e7", System.Numerics.BigInteger.Parse("10000000000000000000")).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
             //    string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
@@ -181,7 +181,7 @@ namespace ContractBuilder
                         DeployMainExchangeContract().Wait();
                         break;
                     case "3":
-                        DeployCoinContract().Wait();
+                        //DeployCoinContract().Wait();
                         break;
                     case "4":
                         DeployTokenTransferContract().Wait();
@@ -320,45 +320,6 @@ namespace ContractBuilder
                 settings.EthereumCore.MainContract.Address = contractAddress;
 
                 Console.WriteLine("New contract: " + contractAddress);
-
-                SaveSettings(settings);
-
-                Console.WriteLine("Contract address stored in generalsettings.json file");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Action failed!");
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        static async Task DeployCoinContract()
-        {
-            string name, path;
-            do
-            {
-                Console.WriteLine("Enter coin name:");
-                name = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(name));
-            do
-            {
-                Console.WriteLine("Enter coin file name:");
-                path = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(path) || !File.Exists(GetFilePath(path + ".abi")));
-
-            Console.WriteLine("Begin coin contract deployment process");
-            try
-            {
-                var abi = GetFileContent(path + ".abi");
-                var bytecode = GetFileContent(path + ".bin");
-                var settings = GetCurrentSettings();
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumCore.MainExchangeContract.Address);
-                if (settings.EthereumCore.CoinContracts == null)
-                    settings.EthereumCore.CoinContracts = new Dictionary<string, EthereumContract>();
-
-                settings.EthereumCore.CoinContracts[name] = new EthereumContract { Address = contractAddress, Abi = abi };
-
-                Console.WriteLine("New coin contract: " + contractAddress);
 
                 SaveSettings(settings);
 
@@ -623,7 +584,7 @@ namespace ContractBuilder
             }
         }
 
-        static AppSettings GetCurrentSettingsFromUrl()
+        static IReloadingManager<AppSettings> GetCurrentSettingsFromUrl()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -633,7 +594,7 @@ namespace ContractBuilder
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
             var connString = configuration.GetConnectionString("ConnectionString");
-            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(connString);
+            var settings = configuration.LoadSettings<AppSettings>();
 
             return settings;
         }
@@ -652,6 +613,11 @@ namespace ContractBuilder
             var settings = GeneralSettingsReader.ReadGeneralSettingsLocal<AppSettings>(path);
 
             return settings;
+        }
+
+        static void SaveSettings(IReloadingManager<AppSettings> settings)
+        {
+            File.WriteAllText(GetSettingsPath(), JsonConvert.SerializeObject(settings.CurrentValue, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
 
         static void SaveSettings(AppSettings settings)

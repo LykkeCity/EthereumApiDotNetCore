@@ -20,6 +20,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.RabbitMQ;
+using Lykke.SettingsReader;
 
 namespace TransactionResubmit
 {
@@ -36,14 +37,14 @@ namespace TransactionResubmit
             var settings = GetCurrentSettings();
 
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-            collection.AddSingleton<IBaseSettings>(settings.EthereumCore);
-            collection.AddSingleton<ISlackNotificationSettings>(settings.SlackNotifications);
+            collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
+            collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
 
-            RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
-            RegisterReposExt.RegisterAzureQueues(collection, settings.EthereumCore, settings.SlackNotifications);
-            RegisterReposExt.RegisterAzureStorages(collection, settings.EthereumCore, settings.SlackNotifications);
+            //RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
+            RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
+            RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
             ServiceProvider = collection.BuildServiceProvider();
-            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.EthereumCore, ServiceProvider.GetService<ILog>());
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
             RegisterDependency.RegisterServices(collection);
             ServiceProvider = collection.BuildServiceProvider();
 
@@ -593,7 +594,7 @@ namespace TransactionResubmit
             Console.WriteLine();
         }
 
-        static AppSettings GetCurrentSettings()
+        static IReloadingManager<AppSettings> GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
@@ -602,7 +603,7 @@ namespace TransactionResubmit
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
-            var settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(configuration.GetConnectionString("ConnectionString"));
+            var settings = configuration.LoadSettings<AppSettings>();
 
             return settings;
         }
