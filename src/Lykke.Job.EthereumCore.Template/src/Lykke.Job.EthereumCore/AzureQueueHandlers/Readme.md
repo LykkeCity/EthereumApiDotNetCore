@@ -1,1 +1,0 @@
-﻿Place your azure queue's handlers here

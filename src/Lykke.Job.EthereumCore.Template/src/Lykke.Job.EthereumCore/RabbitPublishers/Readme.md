@@ -1,1 +1,0 @@
-﻿Place your rabbitmq publishers here
