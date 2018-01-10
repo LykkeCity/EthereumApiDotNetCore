@@ -21,6 +21,7 @@ using Lykke.Common.ApiLibrary.Middleware;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using Lykke.Service.EthereumCore;
+using Nethereum.RPC.TransactionManagers;
 
 namespace Lykke.Service.EthereumCore
 {
@@ -115,6 +116,9 @@ namespace Lykke.Service.EthereumCore
                 // NOTE: Service not yet recieve and process requests here
 
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
+
+                //Rewrite request Interceptor
+                ApplicationContainer.Resolve<ITransactionManager>();
 
                 await Log.WriteMonitorAsync("", "", "Started");
             }

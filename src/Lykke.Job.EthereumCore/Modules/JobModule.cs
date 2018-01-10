@@ -14,7 +14,7 @@ namespace Lykke.Job.EthereumCore.Modules
 {
     public class JobModule : Module
     {
-        private readonly IReloadingManager<AppSettings> _dbSettingsManager;
+        private readonly IReloadingManager<AppSettings> _settings;
         private readonly ILog _log;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
@@ -22,30 +22,26 @@ namespace Lykke.Job.EthereumCore.Modules
         public JobModule(IReloadingManager<AppSettings> dbSettingsManager, ILog log)
         {
             _log = log;
-            _dbSettingsManager = dbSettingsManager;
+            _settings = dbSettingsManager;
 
             _services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            // NOTE: Do not register entire settings in container, pass necessary settings to services which requires them
-            // ex:
-            // builder.RegisterType<QuotesPublisher>()
-            //  .As<IQuotesPublisher>()
-            //  .WithParameter(TypedParameter.From(_settings.Rabbit.ConnectionString))
+            var nesetdBaseSettings = _settings.Nested(x => x.EthereumCore);
+            var nesetdSlackSettings = _settings.Nested(x => x.SlackNotifications);
+            _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
+            _services.AddSingleton(_settings.CurrentValue);
+            _services.AddSingleton(_settings);
+            _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
 
             Lykke.Job.EthereumCore.Config.RegisterDependency.InitJobDependencies(_services,
-                    _dbSettingsManager.Nested(x => x.EthereumCore),
-                    _dbSettingsManager.Nested(x => x.SlackNotifications),
+                    _settings.Nested(x => x.EthereumCore),
+                    _settings.Nested(x => x.SlackNotifications),
                     _log);
-            _services.AddSingleton(_dbSettingsManager.CurrentValue);
-            _services.AddTriggers(pool =>
-            {
-                // default connection must be initialized
-                pool.AddDefaultConnection(_dbSettingsManager.CurrentValue.EthereumCore.Db.DataConnString);
-            });
-
+            _services.AddSingleton(_settings.CurrentValue);
+           
             Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
             builder.RegisterInstance(_log)
@@ -78,7 +74,7 @@ namespace Lykke.Job.EthereumCore.Modules
             builder.AddTriggers(
                 pool =>
                 {
-                    pool.AddDefaultConnection(_dbSettingsManager.CurrentValue.EthereumCore.Db.DataConnString);
+                    pool.AddDefaultConnection(_settings.Nested(x => x.EthereumCore.Db.DataConnString));
                 });
         }
     }

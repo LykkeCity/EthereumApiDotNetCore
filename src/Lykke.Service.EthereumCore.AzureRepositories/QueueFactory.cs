@@ -11,9 +11,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 {
     public class QueueFactory : IQueueFactory
     {
-        private readonly IReloadingManager<IBaseSettings> _settings;
+        private readonly IReloadingManager<BaseSettings> _settings;
 
-        public QueueFactory(IReloadingManager<IBaseSettings> settings)
+        public QueueFactory(IReloadingManager<BaseSettings> settings)
         {
             _settings = settings;
         }

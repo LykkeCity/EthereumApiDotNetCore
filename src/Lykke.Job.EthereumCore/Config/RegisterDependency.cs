@@ -21,14 +21,10 @@ namespace Lykke.Job.EthereumCore.Config
         {
             collection.AddSingleton(settings);
 
-            //collection.RegisterAzureLogs(settings, "Job");
             collection.RegisterAzureStorages(settings, slackNotificationSettings);
             collection.RegisterAzureQueues(settings, slackNotificationSettings);
-
             collection.RegisterServices();
-            //var provider = collection.BuildServiceProvider();
-
-            collection.RegisterRabbitQueue(settings.Nested(x => x.RabbitMq), log);
+            collection.RegisterRabbitQueue(settings, log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.CurrentValue.MonitoringServiceUrl));
             RegisterJobs(collection);

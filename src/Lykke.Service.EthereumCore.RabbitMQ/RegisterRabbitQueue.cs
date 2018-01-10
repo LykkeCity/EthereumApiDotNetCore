@@ -8,14 +8,20 @@ using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System;
 using Lykke.SettingsReader;
+using Lykke.RabbitMq.Azure;
+using AzureStorage.Blob;
 
 namespace Lykke.Service.RabbitMQ
 {
     public static class RegisterRabbitQueueEx
     {
-        public static void RegisterRabbitQueue(this IServiceCollection Services, IReloadingManager<RabbitMq> settings, ILog logger, string exchangePrefix = "")
+        public static void RegisterRabbitQueue(this IServiceCollection Services, 
+            IReloadingManager<Lykke.Service.EthereumCore.Core.Settings.BaseSettings> settings,
+            ILog logger, 
+            string exchangePrefix = "")
         {
-            var rabbitSettings = settings.CurrentValue;
+            var queueRepository = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMQ");
+            var rabbitSettings = settings.CurrentValue.RabbitMq;
             string exchangeName = exchangePrefix + rabbitSettings.ExchangeEthereumCore;
             string connectionString = $"amqp://{rabbitSettings.Username}:{rabbitSettings.Password}@{rabbitSettings.Host}:{rabbitSettings.Port}";
 
@@ -26,14 +32,15 @@ namespace Lykke.Service.RabbitMQ
                 ConnectionString = connectionString,
                 ExchangeName = exchangeName,
                 DeadLetterExchangeName = $"{exchangeName}.dlx",
-                RoutingKey = "",
-                IsDurable = true
+                RoutingKey = ""
+//                IsDurable = true
             };
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
                 .SetSerializer(new BytesSerializer())
                 .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
                 .SetLogger(logger)
+                .SetQueueRepository(queueRepository)
                 .Start();
 
             #endregion
@@ -45,8 +52,8 @@ namespace Lykke.Service.RabbitMQ
                 ConnectionString = connectionString,
                 ExchangeName = $"{exchangeName}.hotwallet",
                 DeadLetterExchangeName = $"{exchangeName}.hotwallet.dlx",
-                RoutingKey = "",
-                IsDurable = true
+                RoutingKey = ""
+//                IsDurable = true
 
             };
 
@@ -54,6 +61,7 @@ namespace Lykke.Service.RabbitMQ
                 .SetSerializer(new BytesSerializer<HotWalletEvent>())
                 .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
                 .SetLogger(logger)
+                .SetQueueRepository(queueRepository)
                 .Start();
 
             #endregion

@@ -18,6 +18,8 @@ using Lykke.Job.EthereumCore.Models;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Logs;
 using Lykke.SlackNotification.AzureQueue;
+using System.Reflection;
+using Nethereum.RPC.TransactionManagers;
 
 namespace Lykke.Job.EthereumCore
 {
@@ -119,9 +121,13 @@ namespace Lykke.Job.EthereumCore
 
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
-                _triggerHost = new TriggerHost(new AutofacServiceProvider(ApplicationContainer));
+                //Rewrite request Interceptor
+                ApplicationContainer.Resolve<ITransactionManager>(); 
 
+                _triggerHost = new TriggerHost(new AutofacServiceProvider(ApplicationContainer));
+                _triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);
                 _triggerHostTask = _triggerHost.Start();
+
                 await Log.WriteMonitorAsync("", "", "Started");
             }
             catch (Exception ex)
