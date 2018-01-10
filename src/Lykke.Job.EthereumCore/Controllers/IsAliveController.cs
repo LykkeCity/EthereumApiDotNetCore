@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Net;
-using Lykke.Job.EthereumCore.Models;
+using System.Threading.Tasks;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.EthereumCore.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Lykke.Job.EthereumCore.Controllers
 {
-    // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
     [Route("api/[controller]")]
     public class IsAliveController : Controller
     {
@@ -26,9 +26,9 @@ namespace Lykke.Job.EthereumCore.Controllers
         [SwaggerOperation("IsAlive")]
         [ProducesResponseType(typeof(IsAliveResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var healthViloationMessage = _healthService.GetHealthViolationMessage();
+            var healthViloationMessage = await _healthService.GetHealthViolationMessage();
             if (healthViloationMessage != null)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorResponse
@@ -36,6 +36,8 @@ namespace Lykke.Job.EthereumCore.Controllers
                     ErrorMessage = $"Job is unhealthy: {healthViloationMessage}"
                 });
             }
+
+            var healthIssues = await _healthService.GetHealthIssues();
 
             // NOTE: Feel free to extend IsAliveResponse, to display job-specific indicators
             return Ok(new IsAliveResponse
@@ -47,7 +49,7 @@ namespace Lykke.Job.EthereumCore.Controllers
 #else
                 IsDebug = false,
 #endif
-                IssueIndicators = _healthService.GetHealthIssues()
+                IssueIndicators = healthIssues
                     .Select(i => new IsAliveResponse.IssueIndicator
                     {
                         Type = i.Type,

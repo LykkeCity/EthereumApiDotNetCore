@@ -14,12 +14,12 @@ using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Job.EthereumCore.Modules;
 using Lykke.Common.ApiLibrary.Middleware;
-using Lykke.Job.EthereumCore.Models;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Logs;
 using Lykke.SlackNotification.AzureQueue;
 using System.Reflection;
 using Nethereum.RPC.TransactionManagers;
+using Lykke.Common.Api.Contract.Responses;
 
 namespace Lykke.Job.EthereumCore
 {

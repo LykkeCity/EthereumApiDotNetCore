@@ -34,7 +34,6 @@ namespace Lykke.Job.EthereumCore.Config
         {
             #region NewJobs
 
-            collection.AddSingleton<MonitoringJob>();
             collection.AddSingleton<MonitoringCoinTransactionJob>();
             collection.AddSingleton<MonitoringTransferContracts>();
             collection.AddSingleton<MonitoringTransferTransactions>();
