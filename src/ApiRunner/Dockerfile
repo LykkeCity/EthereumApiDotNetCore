@@ -3,7 +3,6 @@ ENTRYPOINT ["dotnet", "ApiRunner.dll"]
 ARG source=.
 WORKDIR /app
 COPY $source .
-COPY /runtimes/debian-x64/native/libuv.so /app
 
 EXPOSE 5000/tcp
 
