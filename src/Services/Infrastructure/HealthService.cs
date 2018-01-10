@@ -54,6 +54,10 @@ namespace Lykke.Service.EthereumCore.Services
                     errorMsg.AppendLine($"{item.Message}");
                 }
             }
+            catch (TaskCanceledException e)
+            {
+                errorMsg.AppendLine($"Timeout happened within {delayTime} seconds");
+            }
             catch (Exception e)
             {
                 errorMsg.AppendLine(e.Message);
