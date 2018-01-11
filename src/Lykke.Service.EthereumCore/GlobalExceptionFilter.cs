@@ -32,9 +32,14 @@ namespace Lykke.Service.EthereumCore
                 type = clientSideException.ExceptionType;
                 httpCode = 400;
                 message = clientSideException.Message;
+                _logger.WriteWarningAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception).Wait();
+            }
+            else
+            {
+                _logger.WriteErrorAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception).Wait();
             }
 
-            _logger.WriteErrorAsync("ApiException", "EthereumApi", $"Controller: {controller}, action: {action}", context.Exception);
+            
 
             ex = new ApiException
             {
