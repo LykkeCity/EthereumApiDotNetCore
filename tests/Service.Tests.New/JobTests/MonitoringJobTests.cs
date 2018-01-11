@@ -2,8 +2,8 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core.Repositories;
-//using EthereumJobs.Job;
+//using Lykke.Service.EthereumCore.Core.Repositories;
+//using Lykke.Job.EthereumCore.Job;
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using Microsoft.Extensions.DependencyInjection;
 

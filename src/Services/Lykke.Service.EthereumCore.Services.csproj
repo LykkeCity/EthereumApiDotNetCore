@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.Service.EthereumCore.Services</AssemblyName>
+    <PackageId>Services</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RootNamespace>Lykke.Service.EthereumCore.Services</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj" />
+    <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.BusinessModels\Lykke.Service.EthereumCore.BusinessModels.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\SigningServiceApiCaller\SigningServiceApiCaller.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.Service.Assets.Client" Version="2.1.0.120" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+
+</Project>

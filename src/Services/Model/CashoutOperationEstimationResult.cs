@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Services.Model
+namespace Lykke.Service.EthereumCore.Services.Model
 {
     public class OperationEstimationResult
     {

@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
-using Core.Settings;
-using EthereumJobs.Config;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Services;
 using Common.Log;
+using Lykke.Job.EthereumCore.Config;
+using Lykke.Service.EthereumCore.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Tests
@@ -21,7 +21,7 @@ namespace Tests
         public static IServiceProvider Services { get; set; }
         public static ILog Logger => Services.GetService<ILog>();
 
-        private SettingsWrapper ReadSettings()
+        private AppSettings ReadSettings()
         {
             try
             {
@@ -31,7 +31,8 @@ namespace Tests
 
                     return null;
                 }
-                SettingsWrapper settings = GeneralSettingsReader.ReadGeneralSettings<SettingsWrapper>(url);
+
+                AppSettings settings = GeneralSettingsReader.ReadGeneralSettings<AppSettings>(url);
 
                 return settings;
             }
@@ -71,7 +72,8 @@ namespace Tests
             //var testSetting = ReadTestSettings();
             Assert.IsNotNull(settings, "Please, provide generalsettings.json file");
 
-            collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
+            //TODO:Fix
+            //collection.InitJobDependencies(settings.EthereumCore, settings.SlackNotifications);
 
             Services = collection.BuildServiceProvider();
             Services.ActivateRequestInterceptor();
@@ -82,7 +84,7 @@ namespace Tests
             public Dictionary<string, TestContract> CoinContracts { get; set; }
         }
 
-        public class TestContract : Core.Settings.EthereumContract
+        public class TestContract : Lykke.Service.EthereumCore.Core.Settings.EthereumContract
         {
             public int Multiplier { get; set; }
             public bool Payable { get; set; }

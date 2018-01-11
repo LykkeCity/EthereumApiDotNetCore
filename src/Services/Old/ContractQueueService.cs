@@ -1,12 +1,12 @@
 ﻿//using System;
 //using System.Threading.Tasks;
-//using Core;
-//using Core.Exceptions;
-//using Core.Repositories;
+//using Lykke.Service.EthereumCore.Core;
+//using Lykke.Service.EthereumCore.Core.Exceptions;
+//using Lykke.Service.EthereumCore.Core.Repositories;
 //using AzureStorage.Queue;
 //using Common.Log;
 
-//namespace Services
+//namespace Lykke.Service.EthereumCore.Services
 //{
 //    public interface IContractQueueService
 //    {

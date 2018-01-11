@@ -1,28 +1,28 @@
 ﻿//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using Services.PrivateWallet;
-//using Services.Signature;
+//using Lykke.Service.EthereumCore.Services.PrivateWallet;
+//using Lykke.Service.EthereumCore.Services.Signature;
 //using System;
 //using System.Collections.Generic;
 //using System.Text;
 //using Microsoft.Extensions.DependencyInjection;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using Moq;
 //using Nethereum.JsonRpc.Client;
 //using EdjCase.JsonRpc.Core;
 //using Newtonsoft.Json.Linq;
 //using System.Threading.Tasks;
-//using BusinessModels;
+//using Lykke.Service.EthereumCore.BusinessModels;
 //using Nethereum.Hex.HexConvertors.Extensions;
 //using Service.UnitTests.Mocks;
 //using Nethereum.Hex.HexTypes;
 //using Nethereum.Signer;
-//using Core.Exceptions;
-//using BusinessModels.PrivateWallet;
+//using Lykke.Service.EthereumCore.Core.Exceptions;
+//using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 //using System.Diagnostics;
 //using Nethereum.RPC.Eth;
 //using System.Numerics;
 //using Nethereum.RPC.Eth.DTOs;
-//using Services.Transactions;
+//using Lykke.Service.EthereumCore.Services.Transactions;
 
 //namespace Service.UnitTests.PrivateWallet
 //{

@@ -1,0 +1,162 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runners", "Runners", "{45765D82-186C-4CA6-A7B0-8B60052EFFCF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{21D365DA-2401-4130-A7CC-19562FB73511}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F14E63D3-95A7-41D1-AC63-50C754B05179}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD56D78E-6078-4A3E-BA8B-4D38D8F80976}"
+	ProjectSection(SolutionItems) = preProject
+		ToDo.txt = ToDo.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.Services", "src\Services\Lykke.Service.EthereumCore.Services.csproj", "{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobRunner", "src\JobRunner\JobRunner.csproj", "{292E5EBA-B062-471D-A1A4-55CF23A17BF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiRunner", "src\ApiRunner\ApiRunner.csproj", "{8A91856A-2D0F-4A68-9FA7-065C18684948}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractBuilder", "src\ContractBuilder\ContractBuilder.csproj", "{807E3C31-ED7E-4757-9052-5CA5A73A1CDF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningServiceApiCaller", "src\SigningServiceApiCaller\SigningServiceApiCaller.csproj", "{24D89393-3AA8-48F2-9BF4-DBE862220FBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "src\TestRunner\TestRunner.csproj", "{F6A39A57-2559-41F4-8212-6AB257ADB45A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.IntegrationTests", "tests\Service.Tests.New\Service.IntegrationTests.csproj", "{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.UnitTests", "src\Service.UnitTests\Service.UnitTests.csproj", "{F5BE99AE-133C-4CAE-8163-504F746C6CE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{7092F3CC-1E8F-4E12-8323-DEF5488CC18C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore.Contracts", "client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj", "{CCC87573-1C68-457A-B105-9DBFF82C2A7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.Client", "client\Lykke.Service.EthereumCore.Client\Lykke.Service.EthereumCore.Client.csproj", "{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionResubmit", "src\TransactionResubmit\TransactionResubmit.csproj", "{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumSamuraiApiCaller", "src\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj", "{E2D9F126-4058-4177-AD63-BDF94633C7EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumApi.Models", "src\Lykke.Service.EthereumCore..Models\EthereumApi.Models.csproj", "{393D498F-64B4-453C-BEA9-959C77501ADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore", "src\Lykke.Service.EthereumCore\Lykke.Service.EthereumCore.csproj", "{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.EthereumCore", "src\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj", "{8570744C-A404-4E0A-B310-63FC046073F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.AzureRepositories", "src\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj", "{74311118-E71D-4CE0-AD7C-69E1B25EA695}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.BusinessModels", "src\Lykke.Service.EthereumCore.BusinessModels\Lykke.Service.EthereumCore.BusinessModels.csproj", "{A4B21B75-14E6-4FAC-85D9-EE7953D924C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.Core", "src\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj", "{03B4361D-3B44-4E19-982E-835D56E64ED5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.RabbitMQ", "src\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj", "{94D09F25-27DB-420E-846F-14730A1263C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{292E5EBA-B062-471D-A1A4-55CF23A17BF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{292E5EBA-B062-471D-A1A4-55CF23A17BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{292E5EBA-B062-471D-A1A4-55CF23A17BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{292E5EBA-B062-471D-A1A4-55CF23A17BF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A91856A-2D0F-4A68-9FA7-065C18684948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A91856A-2D0F-4A68-9FA7-065C18684948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A91856A-2D0F-4A68-9FA7-065C18684948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A91856A-2D0F-4A68-9FA7-065C18684948}.Release|Any CPU.Build.0 = Release|Any CPU
+		{807E3C31-ED7E-4757-9052-5CA5A73A1CDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{807E3C31-ED7E-4757-9052-5CA5A73A1CDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{807E3C31-ED7E-4757-9052-5CA5A73A1CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{807E3C31-ED7E-4757-9052-5CA5A73A1CDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393D498F-64B4-453C-BEA9-959C77501ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{393D498F-64B4-453C-BEA9-959C77501ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{393D498F-64B4-453C-BEA9-959C77501ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{393D498F-64B4-453C-BEA9-959C77501ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8570744C-A404-4E0A-B310-63FC046073F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8570744C-A404-4E0A-B310-63FC046073F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8570744C-A404-4E0A-B310-63FC046073F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8570744C-A404-4E0A-B310-63FC046073F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74311118-E71D-4CE0-AD7C-69E1B25EA695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74311118-E71D-4CE0-AD7C-69E1B25EA695}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74311118-E71D-4CE0-AD7C-69E1B25EA695}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74311118-E71D-4CE0-AD7C-69E1B25EA695}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03B4361D-3B44-4E19-982E-835D56E64ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B4361D-3B44-4E19-982E-835D56E64ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03B4361D-3B44-4E19-982E-835D56E64ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03B4361D-3B44-4E19-982E-835D56E64ED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94D09F25-27DB-420E-846F-14730A1263C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94D09F25-27DB-420E-846F-14730A1263C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94D09F25-27DB-420E-846F-14730A1263C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94D09F25-27DB-420E-846F-14730A1263C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D3F96C68-C8EE-4C59-A299-DE33FEE4586C} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{292E5EBA-B062-471D-A1A4-55CF23A17BF2} = {45765D82-186C-4CA6-A7B0-8B60052EFFCF}
+		{8A91856A-2D0F-4A68-9FA7-065C18684948} = {45765D82-186C-4CA6-A7B0-8B60052EFFCF}
+		{24D89393-3AA8-48F2-9BF4-DBE862220FBF} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{F6A39A57-2559-41F4-8212-6AB257ADB45A} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
+		{FB1DD4F4-9B04-4A3F-BBE0-C7CABB99E94D} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
+		{F5BE99AE-133C-4CAE-8163-504F746C6CE5} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
+		{CCC87573-1C68-457A-B105-9DBFF82C2A7B} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
+		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
+		{E2D9F126-4058-4177-AD63-BDF94633C7EB} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{74311118-E71D-4CE0-AD7C-69E1B25EA695} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{03B4361D-3B44-4E19-982E-835D56E64ED5} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{94D09F25-27DB-420E-846F-14730A1263C4} = {21D365DA-2401-4130-A7CC-19562FB73511}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}
+	EndGlobalSection
+EndGlobal

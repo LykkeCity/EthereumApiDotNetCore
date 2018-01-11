@@ -1,10 +1,10 @@
-﻿using Core.Repositories;
+﻿using Lykke.Service.EthereumCore.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.HotWallet
+namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
     public interface IHotWalletService
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Common;
-using Core.Utils;
+using Lykke.Service.EthereumCore.Core.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

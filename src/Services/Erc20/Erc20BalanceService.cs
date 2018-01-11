@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using BusinessModels.Erc20;
+using Lykke.Service.EthereumCore.BusinessModels.Erc20;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
 
-namespace Services.Erc20
+namespace Lykke.Service.EthereumCore.Services.Erc20
 {
     public interface IErc20BalanceService
     {

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
-using Core;
+using Lykke.Service.EthereumCore.Core;
 using Nethereum.Hex.HexTypes;
 using System.Numerics;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IEthereumTransactionService
     {

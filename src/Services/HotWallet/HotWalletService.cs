@@ -1,24 +1,24 @@
-﻿using Core;
+﻿using Lykke.Service.EthereumCore.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
-using Core.Settings;
-using Core.Repositories;
-using Core.Messages.HotWallet;
-using Services.PrivateWallet;
-using Services.Signature;
+using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Messages.HotWallet;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.Signature;
 using Common.Log;
 using Nethereum.Web3;
 using System.Numerics;
-using Core.Exceptions;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Common;
 using System.Threading;
 using System.Collections.Concurrent;
 
-namespace Services.HotWallet
+namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
     public class HotWalletService : IHotWalletService
     {
@@ -33,7 +33,7 @@ namespace Services.HotWallet
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly ISignatureService _signatureService;
         private readonly IErc20DepositContractService _erc20DepositContractService;
-        private readonly SettingsWrapper _settingsWrapper;
+        private readonly AppSettings _settingsWrapper;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
         private readonly IGasPriceRepository _gasPriceRepository;
@@ -48,7 +48,7 @@ namespace Services.HotWallet
             Web3 web3,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
             IErc20DepositContractService erc20DepositContractService,
-            SettingsWrapper settingsWrapper,
+            AppSettings settingsWrapper,
             IUserTransferWalletRepository userTransferWalletRepository,
             IGasPriceRepository gasPriceRepository)
         {
@@ -140,7 +140,7 @@ namespace Services.HotWallet
                 //Erc20 transfer
                 if (isErc20Transfer)
                 {
-                    transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new BusinessModels.PrivateWallet.Erc20Transaction()
+                    transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.Erc20Transaction()
                     {
                         FromAddress = cashout.FromAddress,
                         GasAmount = Constants.GasForCoinTransaction,
@@ -154,7 +154,7 @@ namespace Services.HotWallet
                 //Eth transfer
                 else
                 {
-                    transactionForSigning = await _privateWalletService.GetTransactionForSigning(new BusinessModels.PrivateWallet.EthTransaction()
+                    transactionForSigning = await _privateWalletService.GetTransactionForSigning(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.EthTransaction()
                     {
                         FromAddress = cashout.FromAddress,
                         GasAmount = Constants.GasForCoinTransaction,

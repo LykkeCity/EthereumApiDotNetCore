@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.Utils
+namespace Lykke.Service.EthereumCore.Services.Utils
 {
     public static class DateUtils
     {

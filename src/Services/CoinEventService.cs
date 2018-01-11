@@ -1,11 +1,11 @@
-﻿using Core.Repositories;
-using Services.Coins;
+﻿using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services.Coins;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface ICoinEventService
     {

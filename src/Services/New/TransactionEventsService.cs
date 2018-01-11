@@ -1,8 +1,8 @@
-﻿using Core;
-using Core.Repositories;
-using Core.Settings;
+﻿using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Web3;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 
-namespace Services.New
+namespace Lykke.Service.EthereumCore.Services.New
 {
     public interface ITransactionEventsService
     {
@@ -40,7 +40,7 @@ namespace Services.New
         private readonly ICoinRepository _coinRepository;
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
-        private readonly SettingsWrapper _settingsWrapper;
+        private readonly AppSettings _settingsWrapper;
         private readonly IEthereumSamuraiApi _indexerApi;
         private readonly IErc20DepositContractRepository _depositContractRepository;
 
@@ -50,7 +50,7 @@ namespace Services.New
             ICashinEventRepository cashinEventRepository,
             IBlockSyncedRepository blockSyncedRepository,
             IQueueFactory queueFactory,
-            SettingsWrapper settingsWrapper,
+            AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
             IErc20DepositContractRepository depositContractRepository)
         {

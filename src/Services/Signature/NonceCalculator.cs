@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Nethereum.JsonRpc.Client;
 using Newtonsoft.Json.Linq;
 
-namespace Services.Signature
+namespace Lykke.Service.EthereumCore.Services.Signature
 {
     public class NonceCalculator : INonceCalculator
     {

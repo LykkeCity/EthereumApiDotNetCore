@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
-using Core;
-using Core.ContractEvents;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.ContractEvents;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Common.Log;
 using Nethereum.Util;
 using Nethereum.RPC.Eth.DTOs;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IPaymentService
     {

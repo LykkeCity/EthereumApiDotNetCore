@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Newtonsoft.Json;
-using Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Common.Log;
 using AzureStorage.Queue;
 
-namespace Services.Coins
+namespace Lykke.Service.EthereumCore.Services.Coins
 {
     public interface ICoinTransactionService
     {

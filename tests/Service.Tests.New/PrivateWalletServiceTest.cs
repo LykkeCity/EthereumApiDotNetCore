@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Text;
 using Tests;
 using Microsoft.Extensions.DependencyInjection;
-using Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using System.Threading.Tasks;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System.Diagnostics;
 using Nethereum.Signer;
-using BusinessModels;
+using Lykke.Service.EthereumCore.BusinessModels;
 using Nethereum.Web3;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth;
 using Nethereum.RPC.Eth.DTOs;
-using BusinessModels.PrivateWallet;
-using Services.Model;
-using Services.Transactions;
+using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.Model;
+using Lykke.Service.EthereumCore.Services.Transactions;
 
 namespace Service.Tests
 {

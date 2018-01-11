@@ -6,7 +6,7 @@
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using Microsoft.Extensions.DependencyInjection;
 //using Nethereum.RPC.Eth.DTOs;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 
 //namespace Tests
 //{

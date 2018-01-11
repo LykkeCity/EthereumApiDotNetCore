@@ -2,7 +2,7 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using AzureRepositories.Repositories;
+//using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
 //using Microsoft.WindowsAzure.Storage.Table;
 //using AzureStorage.Tables;
 

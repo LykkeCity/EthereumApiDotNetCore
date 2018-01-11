@@ -2,13 +2,13 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core;
-//using EthereumJobs.Job;
+//using Lykke.Service.EthereumCore.Core;
+//using Lykke.Job.EthereumCore.Job;
 //using NUnit.Framework;
 //using Tests;
 //using Microsoft.Extensions.DependencyInjection;
 //using Newtonsoft.Json;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using AzureStorage.Queue;
 
 //namespace Tests.JobTests

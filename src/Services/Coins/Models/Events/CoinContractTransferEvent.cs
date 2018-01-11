@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 
-namespace Services.Coins.Models.Events
+namespace Lykke.Service.EthereumCore.Services.Coins.Models.Events
 {
 	public class CoinContractTransferEvent
 	{

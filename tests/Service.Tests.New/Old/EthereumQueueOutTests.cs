@@ -2,11 +2,11 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using Core;
+//using Lykke.Service.EthereumCore.Core;
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using Microsoft.Extensions.DependencyInjection;
 //using Newtonsoft.Json;
-//using Services;
+//using Lykke.Service.EthereumCore.Services;
 //using AzureStorage.Queue;
 
 //namespace Tests

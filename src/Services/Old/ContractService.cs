@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Core;
-using Core.ContractEvents;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.ContractEvents;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
-using Services.New.Models;
+using Lykke.Service.EthereumCore.Services.New.Models;
 
-namespace Services
+namespace Lykke.Service.EthereumCore.Services
 {
     public interface IContractService
     {
@@ -23,7 +23,6 @@ namespace Services
         Task<HexBigInteger> GetFilterEventForUserContractPayment();
         Task<HexBigInteger> CreateFilterEventForUserContractPayment();
         Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter);
-        Task<string[]> GenerateUserContracts(int count = 10);
         Task<BigInteger> GetCurrentBlock();
         Task<List<T>> GetEvents<T>(string address, string abi, string eventName, HexBigInteger filter) where T : new();
         Task<HexBigInteger> CreateFilter(string address, string abi, string eventName);
@@ -171,47 +170,6 @@ namespace Services
         public async Task<UserPaymentEvent[]> GetNewPaymentEvents(HexBigInteger filter)
         {
             return (await GetEvents<UserPaymentEvent>(_settings.MainContract.Address, _settings.MainContract.Abi, Constants.UserPaymentEvent, filter)).ToArray();
-        }
-
-        public async Task<string[]> GenerateUserContracts(int count = 10)
-        {
-            var transactionHashList = new List<string>();
-
-            // sends <count> contracts
-            for (var i = 0; i < count; i++)
-            {
-                // deploy contract (pass mainContractAddress to contract contructor)
-                var transactionHash =
-                    await
-                        _web3.Eth.DeployContract.SendRequestAsync(_settings.UserContract.Abi, _settings.UserContract.ByteCode,
-                            _settings.EthereumMainAccount, new HexBigInteger(500000), _settings.MainContract.Address);
-
-                transactionHashList.Add(transactionHash);
-            }
-
-            // wait for all <count> contracts transactions
-            var contractList = new List<string>();
-            for (var i = 0; i < count; i++)
-            {
-                // get contract transaction
-                TransactionReceipt receipt;
-                while ((receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHashList[i])) == null)
-                {
-                    await Task.Delay(100);
-                }
-
-                // check if contract byte code is deployed
-                var code = await _web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
-
-                if (string.IsNullOrWhiteSpace(code) || code == "0x")
-                {
-                    throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
-                }
-
-                contractList.Add(receipt.ContractAddress);
-            }
-
-            return contractList.ToArray();
         }
 
         public async Task<BigInteger> GetCurrentBlock()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.New.Models
+namespace Lykke.Service.EthereumCore.Services.New.Models
 {
     public class ContractDeploymentInfo
     {

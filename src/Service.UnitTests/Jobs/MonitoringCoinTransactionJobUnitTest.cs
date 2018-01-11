@@ -1,20 +1,20 @@
-﻿using AzureRepositories.Repositories;
+﻿using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
 using Common.Log;
-using Core.Notifiers;
-using Core.Repositories;
-using Core.Settings;
-using EthereumJobs.Job;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Services;
-using Services.Coins;
-using Services.Coins.Models;
-using Services.New;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.New;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Job.EthereumCore.Job;
 
 namespace Service.UnitTests.Jobs
 {

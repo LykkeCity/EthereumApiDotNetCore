@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Lykke.Service.EthereumCore.BusinessModels
+{
+    public class ErcAddressHistoryModel : AddressHistoryModel
+    {
+        public string ContractAddress { get; set; }
+    }
+
+    public class AddressHistoryModel
+    {
+        public ulong BlockNumber { get; set; }
+
+        public string Value { get; set; }
+
+        public string TransactionHash { get; set; }
+
+        public string From { get; set; }
+
+        public string To { get; set; }
+
+        public uint BlockTimestamp { get; set; }
+
+        public DateTime BlockTimeUtc { get; set; }
+
+        public bool HasError { get; set; }
+
+        public int TransactionIndexInBlock { get; set; }
+
+        public int MessageIndex { get; set; }
+
+        public string GasUsed { get; set; }
+
+        public string GasPrice { get; set; }
+    }
+}

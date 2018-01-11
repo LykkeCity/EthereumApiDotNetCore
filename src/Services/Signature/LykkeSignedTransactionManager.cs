@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using Core;
-using Core.Repositories;
-using Core.Settings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
@@ -20,7 +20,7 @@ using Nethereum.Web3.Accounts;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
 
-namespace Services.Signature
+namespace Lykke.Service.EthereumCore.Services.Signature
 {
     public class LykkeSignedTransactionManager : ITransactionManager
     {

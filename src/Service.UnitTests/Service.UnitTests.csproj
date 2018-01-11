@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="DeepCloner" Version="0.10.1" />
-    <PackageReference Include="Lykke.JobTriggers" Version="1.1.11" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+    <PackageReference Include="Lykke.JobTriggers" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Moq" Version="4.7.63" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.1.11" />
@@ -15,8 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EthereumJobs\EthereumJobs.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore\Lykke.Service.EthereumCore.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

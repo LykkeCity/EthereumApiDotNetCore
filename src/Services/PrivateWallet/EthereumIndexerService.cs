@@ -1,5 +1,5 @@
-﻿using BusinessModels;
-using Core.Exceptions;
+﻿using Lykke.Service.EthereumCore.BusinessModels;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
@@ -7,8 +7,8 @@ using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
-using Services.Signature;
-using Services.Utils;
+using Lykke.Service.EthereumCore.Services.Signature;
+using Lykke.Service.EthereumCore.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.PrivateWallet
+namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
     public interface IEthereumIndexerService
     {
