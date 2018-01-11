@@ -19,7 +19,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             IReloadingManager<BaseSettings> settings,
             IReloadingManager<SlackNotificationSettings> slackNotificationSettings)
         {
-            var dataReloadingManager = settings.Nested(x => x.Db.DataConnString);
+            var dataReloadingManager = settings.ConnectionString(x => x.Db.DataConnString);
             Services.AddSingleton<IPendingTransactionsRepository>(provider => new PendingTransactionsRepository(
                 AzureTableStorage<PendingTransactionEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.PendingTransactions,
                     provider.GetService<ILog>()),
