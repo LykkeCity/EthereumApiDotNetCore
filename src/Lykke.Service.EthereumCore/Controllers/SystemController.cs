@@ -16,35 +16,6 @@ using System.Linq;
 
 namespace Lykke.Service.EthereumCore.Controllers
 {
-    //[Route("api")]
-    //[Produces("application/json")]
-    //public class SystemController : Controller
-    //{
-    //    private readonly IHealthService _healthService;
-
-    //    public SystemController(IHealthService healthService)
-    //    {
-    //        _healthService = healthService;
-    //    }
-
-    //    [Route("isalive")]
-    //    [HttpGet]
-    //    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-    //    public async Task<IActionResult> NewClient()
-    //    {
-    //        var indicators = await _healthService.GetHealthIssues();
-
-    //        IDictionary<string, object> result = new ExpandoObject();
-
-    //        foreach (var item in indicators)
-    //        {
-    //            result[item.Type] = item.Value;
-    //        }
-
-    //        return Ok(result);
-    //    }
-    //}
-
     [Route("api/[controller]")]
     public class IsAliveController : Controller
     {

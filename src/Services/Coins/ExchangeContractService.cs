@@ -307,23 +307,6 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             return transactionHash;
         }
 
-        //public async Task<string> CashinOverTransferContract(Guid id, string coin, string receiver, decimal amount)
-        //{
-        //    var coinDb = await _coinRepository.GetCoin(coin);
-        //    if (!coinDb.BlockchainDepositEnabled)
-        //    {
-        //        throw new ClientSideException(ExceptionType.WrongParams, "Coin must be payable");
-        //    }
-        //    var contract = _web3.Eth.GetContract(_settings.TokenTransferContract.Abi, _settings.TokenTransferContract.Address);
-        //    var cashin = contract.GetFunction("cashin");
-
-        //    var blockchainAmount = amount.ToBlockchainAmount(coinDb.Multiplier);
-        //    var convertedId = EthUtils.GuidToBigInteger(id);
-        //    var tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
-        //                new HexBigInteger(0), convertedId, coinDb.AdapterAddress, receiver, blockchainAmount, Constants.GasForCoinTransaction, new byte[0]);
-        //    return tr;
-        //}
-
         public async Task<string> PingMainExchangeContract()
         {
             if (_settings.MainExchangeContract == null)

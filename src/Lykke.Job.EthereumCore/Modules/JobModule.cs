@@ -74,7 +74,7 @@ namespace Lykke.Job.EthereumCore.Modules
             builder.AddTriggers(
                 pool =>
                 {
-                    pool.AddDefaultConnection(_settings.Nested(x => x.EthereumCore.Db.DataConnString));
+                    pool.AddDefaultConnection(_settings.ConnectionString(x => x.EthereumCore.Db.DataConnString));
                 });
         }
     }

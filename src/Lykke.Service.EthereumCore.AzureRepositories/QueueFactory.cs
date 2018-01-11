@@ -20,7 +20,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
         public IQueueExt Build(string queueName = "default-queue-name")
         {
-            return AzureQueueExt.Create(_settings.Nested(x => x.Db.DataConnString), Constants.StoragePrefix + queueName);
+            return AzureQueueExt.Create(_settings.ConnectionString(x => x.Db.DataConnString), Constants.StoragePrefix + queueName);
         }
     }
 }

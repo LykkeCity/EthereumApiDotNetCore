@@ -67,7 +67,6 @@ namespace Lykke.Service.EthereumCore.Services
             var currentGasPriceHex = isNodeAvailable ? await currentGasPriceHexTask :
                 new Nethereum.Hex.HexTypes.HexBigInteger(System.Numerics.BigInteger.Zero);
 
-            issues.Add("QueueCount", "0");
             issues.Add("BlockNumber", block.ToString());
             issues.Add("Version", Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion);
             issues.Add("CurrentGasPrice", currentGasPriceHex.Value.ToString());

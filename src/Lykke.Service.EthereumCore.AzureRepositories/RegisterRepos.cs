@@ -1,5 +1,4 @@
 ﻿using System;
-using Lykke.Service.EthereumCore.AzureRepositories.Log;
 using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
@@ -16,20 +15,6 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 {
     public static class RegisterReposExt
     {
-        //public static void RegisterAzureLogs(this IServiceCollection Services, IReloadingManager<IBaseSettings> settings, string logPrefix)
-        //{
-        //    var logsReloadingManager = settings.Nested(x => x.Db.LogsConnString);
-        //    var logToTable = new LogToTable(
-        //        AzureTableStorage<LogEntity>.Create(logsReloadingManager, Constants.StoragePrefix + logPrefix + "Error", null),
-        //        AzureTableStorage<LogEntity>.Create(logsReloadingManager, Constants.StoragePrefix + logPrefix + "Warning", null),
-        //        AzureTableStorage<LogEntity>.Create(logsReloadingManager, Constants.StoragePrefix + logPrefix + "Info", null));
-
-        //    Services.AddSingleton(logToTable);
-        //    Services.AddTransient<LogToConsole>();
-
-        //    Services.AddTransient<ILog, LogToTableAndConsole>();
-        //}
-
         public static void RegisterAzureStorages(this IServiceCollection Services,
             IReloadingManager<BaseSettings> settings,
             IReloadingManager<SlackNotificationSettings> slackNotificationSettings)
@@ -163,8 +148,8 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             IReloadingManager<BaseSettings> settings, 
             IReloadingManager<SlackNotificationSettings> slackNotificationManager)
         {
-            var dataReloadingManager = settings.Nested(x => x.Db.DataConnString);
-            var slackReloadManager = slackNotificationManager.Nested(x => x.AzureQueue.ConnectionString);
+            var dataReloadingManager = settings.ConnectionString(x => x.Db.DataConnString);
+            var slackReloadManager = slackNotificationManager.ConnectionString(x => x.AzureQueue.ConnectionString);
             var queueName = slackNotificationManager.CurrentValue.AzureQueue.QueueName;
 
             Services.AddTransient<IQueueFactory, QueueFactory>();
