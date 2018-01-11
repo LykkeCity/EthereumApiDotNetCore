@@ -15,6 +15,7 @@
 *.suo
 *.tmp
 *.user
+*.lock.json
 
 # Well-known infrastructure folders
 /packages/
@@ -43,11 +44,25 @@ _UpgradeReport_Files/
 [Dd]esktop.ini
 [Tt]humbs.db
 
+#ncrunch
+*.*crunch*
+_NCrunch_*
+
+#publish profiles
+*publish.ps1
+*.pubxml
+*.psm1
+
 #some test
 .vs
 /deploy
 /build
 /settings
+node_modules
+**/launchSettings.json
+**/appsettings.*.json
+
+UseDevelopmentStorage=true
 
 #include compiled contracts
 !/src/EthereumContractBuilder/contracts/bin/
