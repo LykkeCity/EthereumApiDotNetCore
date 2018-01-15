@@ -163,7 +163,9 @@ namespace Service.UnitTests.Jobs
                 _transactionEventsService.Object,
                 _eventTraceRepository.Object,
                 _userTransferWalletRepository.Object,
-                _ethereumTransactionService.Object);
+                _ethereumTransactionService.Object,
+                null,
+                null);
         }
     }
 }

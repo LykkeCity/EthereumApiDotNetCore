@@ -7,7 +7,10 @@ using System.Text;
 namespace Lykke.Service.EthereumCore.Models.Attributes
 {
     [AttributeUsage(AttributeTargets.Property |
-  AttributeTargets.Field, AllowMultiple = false)]
+                    AttributeTargets.Field |
+                    AttributeTargets.Parameter
+        , AllowMultiple = false)]
+
     sealed public class EthereumAddressAttribute : ValidationAttribute
     {
         private readonly bool _allowsEmpty;

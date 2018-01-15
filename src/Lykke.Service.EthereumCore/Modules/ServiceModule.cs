@@ -4,6 +4,7 @@ using Common.Log;
 using Lykke.Service.EthereumCore.AzureRepositories;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Utils;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
@@ -30,6 +31,11 @@ namespace Lykke.Service.EthereumCore.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            if (_settings.CurrentValue.ChaosKitty != null)
+            {
+                //For the dark gods
+                ChaosKitty.StateOfChaos = _settings.CurrentValue.ChaosKitty.StateOfChaos;
+            }
             // TODO: Do not register entire settings in container, pass necessary settings to services which requires them
             // ex:
             //  builder.RegisterType<QuotesPublisher>()

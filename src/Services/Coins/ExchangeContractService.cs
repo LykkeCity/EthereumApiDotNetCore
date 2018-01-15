@@ -70,6 +70,8 @@ namespace Lykke.Service.EthereumCore.Services.Coins
         private readonly IPendingTransactionsRepository _pendingTransactionsRepository;
         private readonly ITransferContractService _transferContractService;
         private readonly AddressUtil _addressUtil;
+        private readonly IBlackListAddressesRepository _blackListAddressesRepository;
+        private readonly IWhiteListAddressesRepository _whiteListAddressesRepository;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
@@ -80,7 +82,9 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             ICoinEventService coinEventService,
             IHashCalculator hashCalculator,
             IPendingTransactionsRepository pendingTransactionsRepository,
-            ITransferContractService transferContractService)
+            ITransferContractService transferContractService,
+            IBlackListAddressesRepository blackListAddressesRepository,
+            IWhiteListAddressesRepository whiteListAddressesRepository)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -95,6 +99,8 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             _pendingTransactionsRepository = pendingTransactionsRepository;
             _transferContractService = transferContractService;
             _addressUtil = new AddressUtil();
+            _blackListAddressesRepository = blackListAddressesRepository;
+            _whiteListAddressesRepository = whiteListAddressesRepository;
         }
 
         public bool IsValidAddress(string address)
@@ -119,6 +125,28 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
         public async Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
         {
+            var blackListedAddress = await _blackListAddressesRepository.GetAsync(toAddress);
+            var whiteListedAddress = await _whiteListAddressesRepository.GetAsync(toAddress);
+
+            if (blackListedAddress != null && whiteListedAddress == null)
+            {
+                return new OperationEstimationResult()
+                {
+                    GasAmount = Constants.GasForCoinTransaction,
+                    IsAllowed = false
+                };
+            }
+
+            //It is ok.
+            if (ChaosKitty.MeowButLogically())
+            {
+                return new OperationEstimationResult()
+                {
+                    GasAmount = 50000,
+                    IsAllowed = true
+                };
+            }
+
             var coinAFromDb = await GetCoinWithCheck(coinAdapterAddress);
 
             if (string.IsNullOrEmpty(sign))

@@ -30,6 +30,8 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly TimeSpan _broadcastMonitoringPeriodSeconds;
+        private readonly IBlackListAddressesRepository _blackListAddressesRepository;
+        private readonly IWhiteListAddressesRepository _whiteListAddressesRepository;
 
         public MonitoringCoinTransactionJob(ILog log, ICoinTransactionService coinTransactionService,
             IBaseSettings settings, ISlackNotifier slackNotifier, ICoinEventService coinEventService,
@@ -38,7 +40,9 @@ namespace Lykke.Job.EthereumCore.Job
             ITransactionEventsService transactionEventsService,
             IEventTraceRepository eventTraceRepository,
             IUserTransferWalletRepository userTransferWalletRepository,
-            IEthereumTransactionService ethereumTransactionService)
+            IEthereumTransactionService ethereumTransactionService,
+            IBlackListAddressesRepository blackListAddressesRepository,
+            IWhiteListAddressesRepository whiteListAddressesRepository)
         {
             _ethereumTransactionService = ethereumTransactionService;
             _transactionEventsService = transactionEventsService;
@@ -52,6 +56,8 @@ namespace Lykke.Job.EthereumCore.Job
             _eventTraceRepository = eventTraceRepository;
             _userTransferWalletRepository = userTransferWalletRepository;
             _broadcastMonitoringPeriodSeconds = TimeSpan.FromSeconds(_settings.BroadcastMonitoringPeriodSeconds);
+            _blackListAddressesRepository = blackListAddressesRepository;
+            _whiteListAddressesRepository = whiteListAddressesRepository;
         }
 
         [QueueTrigger(Constants.TransactionMonitoringQueue, 100, true)]
@@ -80,7 +86,7 @@ namespace Lykke.Job.EthereumCore.Job
                 return;
             }
 
-            if ((coinTransaction == null || coinTransaction.Error || coinTransaction.ConfirmationLevel == 0) && 
+            if ((coinTransaction == null || coinTransaction.Error || coinTransaction.ConfirmationLevel == 0) &&
                 (DateTime.UtcNow - transaction.PutDateTime > _broadcastMonitoringPeriodSeconds))
             {
                 await RepeatOperationTillWin(transaction);
@@ -110,10 +116,17 @@ namespace Lykke.Job.EthereumCore.Job
                     {
                         ICoinEvent coinEvent = await GetCoinEvent(transaction.TransactionHash, transaction.OperationId, true);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has an Error!({coinEvent.CoinEventType})");
-                        if (coinEvent.CoinEventType == CoinEventType.CashoutStarted || 
-                            coinEvent.CoinEventType == CoinEventType.CashoutCompleted)
+                        if (coinEvent.CoinEventType == CoinEventType.CashoutStarted ||
+                            coinEvent.CoinEventType == CoinEventType.CashoutCompleted ||
+                            coinEvent.CoinEventType == CoinEventType.CashoutFailed)
                         {
-                            //Drop cashout operation;
+                            //SEND FAILED CASHOUTS EVENTS HERE AND FILL Black LIST
+                            await _blackListAddressesRepository.SaveAsync(new BlackListAddress()
+                            {
+                                Address = coinEvent.ToAddress
+                            });
+                            await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, false, context, transaction);
+
                             return;
                         }
                         else
@@ -198,6 +211,12 @@ namespace Lykke.Job.EthereumCore.Job
                         break;
                     default: break;
                 }
+
+                if (coinEvent.CoinEventType == CoinEventType.CashoutCompleted && !success)
+                {
+                    coinEvent.CoinEventType = CoinEventType.CashoutFailed;
+                }
+
                 await _coinEventService.PublishEvent(coinEvent, putInProcessingQueue: false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
                 await _pendingOperationService.MatchHashToOpId(transactionHash, coinEvent.OperationId);
