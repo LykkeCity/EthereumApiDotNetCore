@@ -117,7 +117,6 @@ namespace Lykke.Job.EthereumCore.Job
                         ICoinEvent coinEvent = await GetCoinEvent(transaction.TransactionHash, transaction.OperationId, true);
                         await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has an Error!({coinEvent.CoinEventType})");
                         if (coinEvent.CoinEventType == CoinEventType.CashoutStarted ||
-                            coinEvent.CoinEventType == CoinEventType.CashoutCompleted ||
                             coinEvent.CoinEventType == CoinEventType.CashoutFailed)
                         {
                             //SEND FAILED CASHOUTS EVENTS HERE AND FILL Black LIST
