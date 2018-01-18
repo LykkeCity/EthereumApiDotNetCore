@@ -61,6 +61,9 @@ namespace Lykke.Service.EthereumCore.Core
         public const string HotWalletCashoutTable = "HotWalletCashout";
         public const string HotWalletCashoutTransactionTable = "HotWalletCashoutTransaction";
         public const string Erc20DepositContractTable = "Erc20DepositContracts";
+        public const string BlackListAddressTable = "BlackListAddresses";
+        public const string WhiteListAddressesTable = "WhiteListAddresses";
+        public const string AddressStatisticsTable = "AddressStatistics";
 
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;

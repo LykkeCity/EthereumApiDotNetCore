@@ -28,7 +28,7 @@ namespace Lykke.Service.EthereumCore.Models.Models
         public string Amount { get; set; }
 
         [DataMember]
-        [EthereumAddress(allowsEmpty: true)]
+        [EthereumAddress]
         public string TokenAddress { get; set; }
     }
 

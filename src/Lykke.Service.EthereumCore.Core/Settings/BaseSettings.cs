@@ -173,5 +173,10 @@ namespace Lykke.Service.EthereumCore.Core.Settings
     {
         public string HotwalletAddress { get; set; }
     }
+
+    public class ChaosSettings
+    {
+        public double StateOfChaos { get; set; }
+    }
 }
 //0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06

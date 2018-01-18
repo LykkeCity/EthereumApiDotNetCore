@@ -11,6 +11,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Enums
         CashoutStarted,
         CashoutCompleted,
         TransferStarted,
-        TransferCompleted
+        TransferCompleted,
+        CashoutFailed
     }
 }

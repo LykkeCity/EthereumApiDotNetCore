@@ -30,7 +30,8 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         CashoutStarted,
         CashoutCompleted,
         TransferStarted,
-        TransferCompleted
+        TransferCompleted,
+        CashoutFailed
     }
 
     public class CoinEvent : ICoinEvent

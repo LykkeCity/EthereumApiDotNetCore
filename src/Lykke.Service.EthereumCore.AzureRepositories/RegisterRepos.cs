@@ -142,6 +142,18 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             Services.AddSingleton<IGasPriceRepository>(provider => new GasPriceRepository(
                 AzureTableStorage<GasPriceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.GasPriceTable,
                     provider.GetService<ILog>())));
+
+            Services.AddSingleton<IBlackListAddressesRepository>(provider => new BlackListAddressesRepository(
+                AzureTableStorage<BlackListAddressEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlackListAddressTable,
+                    provider.GetService<ILog>())));
+
+            Services.AddSingleton<IAddressStatisticsRepository>(provider => new AddressStatisticsRepository(
+                AzureTableStorage<AddressStatisticsEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.AddressStatisticsTable,
+                    provider.GetService<ILog>())));
+
+            Services.AddSingleton<IWhiteListAddressesRepository>(provider => new WhiteListAddressesRepository(
+                AzureTableStorage<WhiteListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.WhiteListAddressesTable,
+                    provider.GetService<ILog>())));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection Services, 
