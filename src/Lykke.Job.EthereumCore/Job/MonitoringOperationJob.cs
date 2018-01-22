@@ -22,6 +22,7 @@ namespace Lykke.Job.EthereumCore.Job
 {
     public class MonitoringOperationJob
     {
+        private const int _veryLongDequeueCount = 15000;
         private readonly ILog _log;
         private readonly IBaseSettings _settings;
         private readonly IPendingOperationService _pendingOperationService;
@@ -36,10 +37,10 @@ namespace Lykke.Job.EthereumCore.Job
         public MonitoringOperationJob(
             ILog log,
             IBaseSettings settings,
-            IPendingOperationService pendingOperationService, 
+            IPendingOperationService pendingOperationService,
             IExchangeContractService exchangeContractService,
             ICoinEventService coinEventService,
-            ITransferContractService transferContractService, 
+            ITransferContractService transferContractService,
             IEventTraceRepository eventTraceRepository,
             IQueueFactory queueFactory,
             AppSettings settingsWrapper)
@@ -60,10 +61,9 @@ namespace Lykke.Job.EthereumCore.Job
         public async Task Execute(OperationHashMatchMessage opMessage, QueueTriggeringContext context)
         {
             await ProcessOperation(opMessage, context, _exchangeContractService.Transfer);
-            
         }
 
-        public async Task ProcessOperation(OperationHashMatchMessage opMessage, QueueTriggeringContext context, 
+        public async Task ProcessOperation(OperationHashMatchMessage opMessage, QueueTriggeringContext context,
             Func<Guid, string, string, string, BigInteger, string, Task<string>> transferDelegate)
         {
             try
@@ -76,12 +76,10 @@ namespace Lykke.Job.EthereumCore.Job
                     return;
                 }
 
-                if (_hotWalletAddress == operation.FromAddress.ToLower() 
+                if (_hotWalletAddress == operation.FromAddress.ToLower()
                     && opMessage.DequeueCount == 0)
                 {
-                    opMessage.DequeueCount++;
-                    context.MoveMessageToEnd(opMessage.ToJson());
-                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+                    MoveMessageToQueueEnd(opMessage, context);
 
                     return;
                 }
@@ -93,7 +91,7 @@ namespace Lykke.Job.EthereumCore.Job
                 string transactionHash = null;
                 CoinEventType? eventType = null;
                 BigInteger currentBalance = await _transferContractService.GetBalanceOnAdapter(
-                    operation.CoinAdapterAddress, 
+                    operation.CoinAdapterAddress,
                     operation.FromAddress,
                     checkInPendingBlock: true);
 
@@ -126,8 +124,18 @@ namespace Lykke.Job.EthereumCore.Job
                             operation.ToAddress, amount, operation.SignFrom, change, operation.SignTo);
                         break;
                     default:
-                        await _log.WriteWarningAsync("MonitoringOperationJob", "Execute", $"Can't find right operation type for {opMessage.OperationId}", "");
+                        await _log.WriteWarningAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), $"Can't find right operation type for {opMessage.OperationId}", "");
                         break;
+                }
+
+                if (transactionHash == null && _hotWalletAddress == operation.ToAddress?.ToLower()
+                    && opMessage.DequeueCount == _veryLongDequeueCount)
+                {
+                    //Get rid of garbage;
+                    await _log.WriteWarningAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), $"Get rid of {opMessage.OperationId} in {Constants.PendingOperationsQueue}");
+                    context.MoveMessageToPoison(opMessage.ToJson());
+
+                    return;
                 }
 
                 if (transactionHash != null && eventType != null)
@@ -152,43 +160,32 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (RpcResponseException exc)
             {
-                await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "RpcException", exc);
+                await _log.WriteErrorAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), $"OperationId: [{ opMessage.OperationId}] - RpcException", exc);
                 opMessage.LastError = exc.Message;
-                opMessage.DequeueCount++;
-                if (opMessage.DequeueCount < 6)
-                {
-                    context.MoveMessageToEnd(opMessage.ToJson());
-                    context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
-                }
-                else
-                {
-                    context.MoveMessageToPoison(opMessage.ToJson());
-                }
-
-                return;
             }
             catch (Exception ex)
             {
                 if (ex.Message != opMessage.LastError)
-                    await _log.WriteWarningAsync("MonitoringOperationJob", "Execute", $"OperationId: [{opMessage.OperationId}]", "");
+                    await _log.WriteWarningAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), $"OperationId: [{opMessage.OperationId}]", "");
 
                 opMessage.LastError = ex.Message;
-                opMessage.DequeueCount++;
-                context.MoveMessageToPoison(opMessage.ToJson());
 
-                await _log.WriteErrorAsync("MonitoringOperationJob", "Execute", "", ex);
-
-                return;
+                await _log.WriteErrorAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), "", ex);
             }
 
-            opMessage.DequeueCount++;
-            context.MoveMessageToEnd(opMessage.ToJson());
-            context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
+            MoveMessageToQueueEnd(opMessage, context);
         }
 
         private bool CheckBalance(BigInteger currentBalance, BigInteger amount)
         {
             return currentBalance >= amount;
+        }
+
+        private void MoveMessageToQueueEnd(OperationHashMatchMessage opMessage, QueueTriggeringContext context)
+        {
+            opMessage.DequeueCount++;
+            context.MoveMessageToEnd(opMessage.ToJson());
+            context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, 200);
         }
     }
 }
