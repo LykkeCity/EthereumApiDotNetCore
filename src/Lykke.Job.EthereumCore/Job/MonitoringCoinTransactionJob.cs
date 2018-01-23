@@ -13,6 +13,7 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Services;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.New;
+using System.Linq;
 
 namespace Lykke.Job.EthereumCore.Job
 {
@@ -99,7 +100,12 @@ namespace Lykke.Job.EthereumCore.Job
                 {
                     if (!coinTransaction.Error)
                     {
-                        bool sentToRabbit = await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
+                        bool sentToRabbit = await SendCompletedCoinEvent(
+                            transaction.TransactionHash, 
+                            transaction.OperationId, 
+                            true, 
+                            context, 
+                            transaction);
 
                         if (sentToRabbit)
                         {
@@ -211,10 +217,42 @@ namespace Lykke.Job.EthereumCore.Job
                     default: break;
                 }
 
+                #region FailedCashout
+
                 if (coinEvent.CoinEventType == CoinEventType.CashoutCompleted && !success)
                 {
                     coinEvent.CoinEventType = CoinEventType.CashoutFailed;
+                    await _coinEventService.InsertAsync(coinEvent);
+                    SendMessageToTheQueueEnd(context, transaction, 200, "Put Failed cashout in the end of the queue");
+
+                    return false;
                 }
+
+                if (coinEvent.CoinEventType == CoinEventType.CashoutFailed && !success)
+                {
+                    var historycal = await _pendingOperationService.GetHistoricalAsync(operationId);
+
+                    if (historycal != null && historycal.Count() != 0)
+                    {
+                        foreach (var match in historycal)
+                        {
+                            if (!string.IsNullOrEmpty(match.TransactionHash) &&
+                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction))
+                            {
+                                var @event = await _coinEventService.GetCoinEvent(match.TransactionHash);
+                                if (@event != null && @event.TransactionHash.ToLower() == match.TransactionHash.ToLower())
+                                {
+                                    await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {coinEvent.TransactionHash} [{coinEvent.OperationId}]" +
+                                        $" ({coinEvent.CoinEventType}). Previously was successfully transfered");
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                #endregion
 
                 await _coinEventService.PublishEvent(coinEvent, putInProcessingQueue: false);
                 await _pendingTransactionsRepository.Delete(transactionHash);
