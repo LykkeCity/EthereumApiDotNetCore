@@ -87,7 +87,7 @@ namespace Lykke.Job.EthereumCore.Job
                 return;
             }
 
-            if ((coinTransaction == null || coinTransaction.Error || coinTransaction.ConfirmationLevel == 0) &&
+            if ((coinTransaction == null || coinTransaction.ConfirmationLevel == 0) &&
                 (DateTime.UtcNow - transaction.PutDateTime > _broadcastMonitoringPeriodSeconds))
             {
                 await RepeatOperationTillWin(transaction);
@@ -125,12 +125,20 @@ namespace Lykke.Job.EthereumCore.Job
                         if (coinEvent.CoinEventType == CoinEventType.CashoutStarted ||
                             coinEvent.CoinEventType == CoinEventType.CashoutFailed)
                         {
-                            //SEND FAILED CASHOUTS EVENTS HERE AND FILL Black LIST
-                            await _blackListAddressesRepository.SaveAsync(new BlackListAddress()
+                            if (coinTransaction.ConfirmationLevel >= 2)
                             {
-                                Address = coinEvent.ToAddress
-                            });
-                            await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, false, context, transaction);
+                                //SEND FAILED CASHOUTS EVENTS HERE AND FILL Black LIST
+                                await _blackListAddressesRepository.SaveAsync(new BlackListAddress()
+                                {
+                                    Address = coinEvent.ToAddress
+                                });
+
+                                await SendCompletedCoinEvent(transaction.TransactionHash, transaction.OperationId, false, context, transaction);
+                            }
+                            else
+                            {
+                                SendMessageToTheQueueEnd(context, transaction, 200, "Did not recieve confirmation level 3 yet");
+                            }
 
                             return;
                         }
@@ -273,9 +281,8 @@ namespace Lykke.Job.EthereumCore.Job
         {
             var pendingOp = await _pendingOperationService.GetOperationByHashAsync(transactionHash);
             string opIdToSearch = pendingOp?.OperationId ?? operationId;
-            var coinEvent = !string.IsNullOrEmpty(opIdToSearch) ?
-                await _coinEventService.GetCoinEventById(opIdToSearch) : await _coinEventService.GetCoinEvent(transactionHash);
-            coinEvent = coinEvent ?? await _coinEventService.GetCoinEvent(transactionHash);
+            var coinEvent = await _coinEventService.GetCoinEvent(transactionHash);
+            coinEvent = coinEvent ?? await _coinEventService.GetCoinEventById(opIdToSearch);
             coinEvent.Success = success;
             coinEvent.TransactionHash = transactionHash;
 
