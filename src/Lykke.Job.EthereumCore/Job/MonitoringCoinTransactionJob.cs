@@ -240,7 +240,7 @@ namespace Lykke.Job.EthereumCore.Job
                 {
                     var historycal = await _pendingOperationService.GetHistoricalAsync(operationId);
 
-                    if (historycal != null && historycal.Count() != 0)
+                    if (historycal != null)
                     {
                         foreach (var match in historycal)
                         {

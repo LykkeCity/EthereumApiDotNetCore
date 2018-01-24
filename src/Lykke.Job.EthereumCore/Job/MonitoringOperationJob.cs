@@ -129,7 +129,7 @@ namespace Lykke.Job.EthereumCore.Job
                 }
 
                 if (transactionHash == null && _hotWalletAddress == operation.ToAddress?.ToLower()
-                    && opMessage.DequeueCount == _veryLongDequeueCount)
+                    && opMessage.DequeueCount >= _veryLongDequeueCount)
                 {
                     //Get rid of garbage;
                     await _log.WriteWarningAsync(nameof(MonitoringOperationJob), nameof(ProcessOperation), $"Get rid of {opMessage.OperationId} in {Constants.PendingOperationsQueue}");
