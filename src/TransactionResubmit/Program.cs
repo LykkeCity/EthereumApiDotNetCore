@@ -59,7 +59,8 @@ namespace TransactionResubmit
             {
                 Console.WriteLine($"Rpc does not work at all! {e.Message}");
             }
-                Console.WriteLine($"Type 0 to exit");
+
+            Console.WriteLine($"Type 0 to exit");
             Console.WriteLine($"Type 1 to SHOW pending Transactions");
             Console.WriteLine($"Type 2 to REPEAT all operation without hash");
             Console.WriteLine($"Type 3 to CHECK pending operations");
@@ -207,6 +208,83 @@ namespace TransactionResubmit
             }
         }
 
+        private static void ResendCashoutFromHotwallet()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var hotWalletSettings = ServiceProvider.GetService<HotWalletSettings>();
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
+                var pendingOperationRepo = ServiceProvider.GetService<IPendingOperationRepository>();
+                var queuePending = queueFactory.Build(Constants.PendingOperationsQueue);
+
+                var currentDate = DateTime.UtcNow;
+                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId)
+                 && (currentDate - x.EventTime) > TimeSpan.FromDays(1)
+                 && (x.CoinEventType == CoinEventType.CashoutStarted || 
+                     x.CoinEventType == CoinEventType.CashoutCompleted || 
+                     x.CoinEventType == CoinEventType.CashoutFailed))
+                .ToLookup(x => x.OperationId);
+
+                pendingOperationRepo.ProcessAllAsync(async (operations) =>
+                {
+                    foreach (var operation in operations)
+                    {
+                        bool cashoutIsCompleted = false;
+                        Console.WriteLine($"Operation {operation.OperationId} is {operation.OperationType}");
+                        if (operation.OperationType != OperationTypes.Cashout)
+                        {
+                            Console.WriteLine("Skipping!");
+                        }
+
+                        Console.WriteLine("Checking cashout");
+                        var cashouts = events[operation.OperationId];
+                        cashoutIsCompleted = cashouts != null ?
+                        cashouts.Any(x => x.CoinEventType == CoinEventType.CashoutCompleted) : false;
+
+                        Console.WriteLine($"Cashout is in {cashoutIsCompleted} state");
+                        if (!cashoutIsCompleted)
+                        {
+                            Console.WriteLine("Resending CASHOUT");
+                            await RetryPolicy.ExecuteAsync(async () =>
+                            {
+                                await queuePending.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new OperationHashMatchMessage()
+                                {
+                                    OperationId = operation.OperationId,
+                                    LastError = "Failed cashout retry",
+                                    PutDateTime = DateTime.UtcNow
+                                }));
+                            }, 3, 100);
+
+                            Console.WriteLine("Cashout is rewritten");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cashout is ok skipping");
+                        }
+                    }
+                    Console.WriteLine();
+                }).Wait();
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error Processing " +e.Message + " " + e.StackTrace);
+            }
+        }
+
+
         private static void MoveToPendingOperationQueue(string fromQueue)
         {
             var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
@@ -331,7 +409,8 @@ namespace TransactionResubmit
                                 TransactionHash = @event.TransactionHash,
                                 OperationId = "",
                                 LastError = "FROM_CONSOLE_CASHIN",
-                                PutDateTime = DateTime.UtcNow })).Wait();
+                                PutDateTime = DateTime.UtcNow
+                            })).Wait();
                         }
                     }
                 }
@@ -426,7 +505,7 @@ namespace TransactionResubmit
                                     }
                                 }
                             }
-                            
+
                         }
                     }
 
