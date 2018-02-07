@@ -25,6 +25,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
+using Lykke.Service.EthereumCore.Services.New;
 
 namespace TransactionResubmit
 {
@@ -37,6 +38,9 @@ namespace TransactionResubmit
             var log = new LogToConsole();
             ContainerBuilder builder = new ContainerBuilder();
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            collection.AddSingleton(settings);
+            collection.AddSingleton(settings.Nested(x => x.EthereumCore));
+            collection.AddSingleton(settings.CurrentValue);
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
             collection.RegisterServices();
@@ -72,6 +76,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
+            Console.WriteLine($"Type 15 to PUT missing erc20 cashin in queue");
             Console.WriteLine($"Type 20 to init starting point for lykkepay indexing");
             var command = "";
 
@@ -113,6 +118,10 @@ namespace TransactionResubmit
                     case "11":
                         MoveFromPendingAndPoisonToProcessing();
                         break;
+                    case "15":
+                        FixErc20Cashins();
+                        break;
+
                     case "20":
                         InitIndexStartForLykkePay();
                         break;
@@ -125,6 +134,37 @@ namespace TransactionResubmit
             Console.WriteLine("Exited");
         }
 
+        private static void FixErc20Cashins()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+
+                Console.WriteLine("Enter blocknumber to retry cashins");
+                BigInteger blockNumber;
+                while (!BigInteger.TryParse(Console.ReadLine(), out blockNumber))
+                {
+                    Console.WriteLine("Type one more time");
+                };
+                //2507153
+                //2552291
+                ITransactionEventsService transactionService = ServiceProvider.GetService<ITransactionEventsService>();
+
+                transactionService.RestartIndexedEventsForBlock(blockNumber).Wait();
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error processing");
+            }
+        }
         private static void InitIndexStartForLykkePay()
         {
             try
@@ -745,6 +785,5 @@ namespace TransactionResubmit
 
             return settings;
         }
-
     }
 }

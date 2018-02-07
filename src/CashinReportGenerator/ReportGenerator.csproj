@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="6.0.2" />
+    <PackageReference Include="Lykke.AzureStorage" Version="3.2.0" />
+    <PackageReference Include="Lykke.Common" Version="4.4.1" />
+    <PackageReference Include="Lykke.SettingsReader" Version="1.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Job.EthereumCore.Contracts\Lykke.Job.EthereumCore.Contracts.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Service.EthereumCore.Client\Lykke.Service.EthereumCore.Client.csproj" />
+    <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
+    <ProjectReference Include="..\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.BusinessModels\Lykke.Service.EthereumCore.BusinessModels.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore\Lykke.Service.EthereumCore.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

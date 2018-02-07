@@ -28,6 +28,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         Task<ICashinEvent> GetCashinEvent(string transactionHash);
         Task IndexEventsForTransaction(string coinAdapterAddress, string trHash);
         Task<BigInteger?> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
+        Task RestartIndexedEventsForBlock(BigInteger blockNumber);
     }
 
     public class TransactionEventsService : ITransactionEventsService
@@ -136,50 +137,7 @@ namespace Lykke.Service.EthereumCore.Services.New
 
                 while (++lastSyncedBlock <= lastIndexedBlock - _baseSettings.Level2TransactionConfirmation)
                 {
-                    var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync
-                    (
-                        new GetErc20TransferHistoryRequest
-                        {
-                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress?.ToLower(),
-                            BlockNumber = (long)lastSyncedBlock,
-                        }
-                    );
-
-                    switch (transfersResponse)
-                    {
-                        case IEnumerable<Erc20TransferHistoryResponse> transfers:
-
-                            foreach (var transfer in transfers)
-                            {
-                                // Ignore transfers from not deposit contract addresses
-                                if (!await _depositContractService.ContainsAsync(transfer.FromProperty))
-                                {
-                                    continue;
-                                }
-
-                                var coinTransactionMessage = new CoinTransactionMessage
-                                {
-                                    TransactionHash = transfer.TransactionHash
-                                };
-
-                                await _cashinEventRepository.InsertAsync(new CashinEvent
-                                {
-                                    CoinAdapterAddress = Erc20HotWalletMarker,
-                                    Amount = transfer.TransferAmount,
-                                    TransactionHash = transfer.TransactionHash,
-                                    UserAddress = transfer.FromProperty,
-                                    ContractAddress = transfer.Contract
-                                });
-
-                                await _cointTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(coinTransactionMessage));
-                            }
-
-                            break;
-                        case ApiException exception:
-                            throw new Exception($"Ethereum indexer responded with error: {exception.Error.Message}");
-                        default:
-                            throw new Exception($"Ethereum indexer returned unexpected response");
-                    }
+                    await RestartIndexedEventsForBlock(lastSyncedBlock);
 
                     await _blockSyncedRepository.InsertAsync(new BlockSynced
                     {
@@ -280,6 +238,54 @@ namespace Lykke.Service.EthereumCore.Services.New
             });
 
             await _blockSyncedRepository.InsertAsync(new BlockSynced() { BlockNumber = to.ToString(), CoinAdapterAddress = coinAdapterAddress });
+        }
+
+        public async Task RestartIndexedEventsForBlock(BigInteger blockNumber)
+        {
+            var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync
+                    (
+                        new GetErc20TransferHistoryRequest
+                        {
+                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress?.ToLower(),
+                            BlockNumber = (long)blockNumber,
+                        }
+                    );
+
+            switch (transfersResponse)
+            {
+                case IEnumerable<Erc20TransferHistoryResponse> transfers:
+
+                    foreach (var transfer in transfers)
+                    {
+                        // Ignore transfers from not deposit contract addresses
+                        if (!await _depositContractRepository.Contains(transfer.FromProperty))
+                        {
+                            continue;
+                        }
+
+                        var coinTransactionMessage = new CoinTransactionMessage
+                        {
+                            TransactionHash = transfer.TransactionHash
+                        };
+
+                        await _cashinEventRepository.InsertAsync(new CashinEvent
+                        {
+                            CoinAdapterAddress = Erc20HotWalletMarker,
+                            Amount = transfer.TransferAmount,
+                            TransactionHash = transfer.TransactionHash,
+                            UserAddress = transfer.FromProperty,
+                            ContractAddress = transfer.Contract
+                        });
+
+                        await _cointTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(coinTransactionMessage));
+                    }
+
+                    break;
+                case ApiException exception:
+                    throw new Exception($"Ethereum indexer responded with error: {exception.Error.Message}");
+                default:
+                    throw new Exception($"Ethereum indexer returned unexpected response");
+            }
         }
     }
 }
