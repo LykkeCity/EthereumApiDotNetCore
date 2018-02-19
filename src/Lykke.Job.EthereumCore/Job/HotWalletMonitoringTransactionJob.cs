@@ -15,6 +15,7 @@ using Lykke.Service.EthereumCore.Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Service.RabbitMQ;
+using Lykke.Service.EthereumCore.Services.New;
 
 namespace Lykke.Job.EthereumCore.Job
 {
@@ -28,6 +29,7 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
         private readonly IHotWalletService _hotWalletService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
+        private readonly ITransactionEventsService _transactionEventsService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly ICashinEventRepository _cashinEventRepository;
 
@@ -41,8 +43,10 @@ namespace Lykke.Job.EthereumCore.Job
             IHotWalletOperationRepository hotWalletCashoutRepository,
             IHotWalletService hotWalletService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            ICashinEventRepository cashinEventRepository)
+            ICashinEventRepository cashinEventRepository,
+            ITransactionEventsService transactionEventsService)
         {
+            _transactionEventsService = transactionEventsService;
             _ethereumTransactionService = ethereumTransactionService;
             _settings = settings;
             _log = log;
@@ -171,7 +175,24 @@ namespace Lykke.Job.EthereumCore.Job
                         break;
                     case HotWalletOperationType.Cashin:
                         await _hotWalletService.RemoveCashinLockAsync(operation.TokenAddress, operation.FromAddress);
-                        amount = (await _cashinEventRepository.GetAsync(transactionHash)).Amount;
+                        var cashinEvent = await _cashinEventRepository.GetAsync(transactionHash);
+                        if (cashinEvent == null)
+                        {
+                            var transferedTokens = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
+                            if (transferedTokens == null || transferedTokens == 0)
+                            {
+                                //Not yet indexed
+                                SendMessageToTheQueueEnd(context, transaction, 5000);
+                                return false;
+                            }
+
+                            amount = transferedTokens.ToString();
+                        }
+                        else
+                        {
+                            amount = cashinEvent.Amount;
+                        }
+
                         type = Lykke.Job.EthereumCore.Contracts.Enums.HotWalletEventType.CashinCompleted;
                         break;
                     default:

@@ -13,6 +13,7 @@ using Common.Log;
 using System.Numerics;
 using Lykke.Service.EthereumCore.Core.Utils;
 using Lykke.Service.EthereumCore.Services.HotWallet;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -48,6 +49,7 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly IEventTraceRepository _eventTraceRepository;
         private readonly string _hotWalletAddress;
         private readonly IHotWalletService _hotWalletService;
+        private readonly IQueueExt _cointTransactionQueue;
 
         public Erc20DepositTransactionService(IQueueFactory queueFactory,
             ILog logger,
@@ -79,6 +81,7 @@ namespace Lykke.Service.EthereumCore.Services
             _ercInterfaceService = ercInterfaceService;
             _hotWalletAddress = settingsWrapper.Ethereum.HotwalletAddress;
             _hotWalletService = hotWalletService;
+            _cointTransactionQueue = queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
         }
 
         public async Task PutContractTransferTransaction(Erc20DepositContractTransaction tr)
@@ -128,9 +131,13 @@ namespace Lykke.Service.EthereumCore.Services
                         TokenAddress = tokenAddress,
                         OperationType = HotWalletOperationType.Cashin,
                     });
+
+                    await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = transactionHash }));
                 }
                 catch (Exception exc)
                 {
+                    await _logger.WriteErrorAsync(nameof(Erc20DepositTransactionService), nameof(TransferToCoinContract),
+                            $"{contractTransferTr.ToJson()}", exc);
                     await UpdateUserTransferWallet(contractTransferTr);
 
                     return;

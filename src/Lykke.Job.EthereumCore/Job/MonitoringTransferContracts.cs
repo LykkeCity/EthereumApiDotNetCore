@@ -82,7 +82,6 @@ namespace Lykke.Job.EthereumCore.Job
                         if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
                         {
                             await UpdateUserAssignmentFail(item.ContractAddress, item.UserAddress, item.CoinAdapterAddress);
-                            await _logger.WriteWarningAsync("MonitoringTransferContracts", "Executr", $"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{ item.CoinAdapterAddress}, trHash: { item.AssignmentHash})", "", DateTime.UtcNow);
 
                             throw new Exception($"User assignment was not completed for {item.UserAddress} (coinAdaptertrHash::{item.CoinAdapterAddress}, trHash: {item.AssignmentHash})");
                         }
