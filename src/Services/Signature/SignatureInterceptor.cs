@@ -33,7 +33,10 @@ namespace LkeServices.Signature
                 return response;
             }
 
-            return await interceptedSendRequestAsync(request, route).ConfigureAwait(false);
+            return await CheckForUnknownTransaction(async () => 
+            {
+                return await interceptedSendRequestAsync(request, route).ConfigureAwait(false);
+            });
         }
 
         public override async Task InterceptSendRequestAsync(
@@ -83,6 +86,28 @@ namespace LkeServices.Signature
         private async Task<string> SignAndSendTransaction(TransactionInput transaction, string route)
         {
             return await _transactionManager.SendTransactionAsync(transaction).ConfigureAwait(false);
+        }
+
+        public async Task<object> CheckForUnknownTransaction(Func<Task<object>> func)
+        {
+            try
+            {
+                return await func();
+            }
+            catch (Nethereum.JsonRpc.Client.RpcResponseException rpcException) 
+            {
+                var rpcError = rpcException?.RpcError;
+                if (rpcError != null && 
+                    rpcError.Code == -32000 &&
+                    rpcError.Message == "unknown transaction")
+                    return null;
+
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }
