@@ -72,12 +72,13 @@ namespace Lykke.Service.EthereumCore.Services.Transactions
 
         public async Task ThrowOnExistingHashAsync(string trHash)
         {
-            bool transactionInPool = await _ethereumTransactionService.IsTransactionInPool(trHash);
+            var hashWithPrefix = trHash.EnsureHexPrefix();
+            bool transactionInPool = await _ethereumTransactionService.IsTransactionInPool(hashWithPrefix);
             TransactionReceipt reciept = await _ethereumTransactionService.GetTransactionReceipt(trHash);
 
             if (transactionInPool || reciept != null)
             {
-                throw new ClientSideException(ExceptionType.TransactionExists, $"Transaction with hash {trHash} already exists");
+                throw new ClientSideException(ExceptionType.TransactionExists, $"Transaction with hash {hashWithPrefix} already exists");
             }
         }
 
