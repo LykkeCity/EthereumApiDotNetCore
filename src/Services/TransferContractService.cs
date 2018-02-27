@@ -232,7 +232,7 @@ namespace Lykke.Service.EthereumCore.Services
                 byteCode = _settings.TokenTransferContract.ByteCode;
             }
 
-            string transferContractAddress = await _contractService.CreateContract(abi, byteCode, coinAdapterAddress);
+            string transferContractAddress = await _contractService.CreateContract(abi, byteCode, 2000000, coinAdapterAddress);
 
             await _transferContractRepository.SaveAsync(new TransferContract()
             {

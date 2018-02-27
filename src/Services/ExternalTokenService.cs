@@ -60,7 +60,7 @@ namespace Lykke.Service.EthereumCore.Services
             }
 
             string contractAddress = await _contractService.CreateContract(abi,
-                byteCode, @params.ToArray());
+                byteCode, 2000000, @params.ToArray());
 
             IExternalToken externalToken = new ExternalToken()
             {

@@ -93,6 +93,8 @@ namespace Lykke.Service.EthereumCore.Services
         {
             try
             {
+                var tokenAddress = contractTransferTr.TokenAddress;
+                var contractAddress = contractTransferTr.ContractAddress;
                 var userAddress = contractTransferTr.UserAddress;
 
                 if (string.IsNullOrEmpty(userAddress) || userAddress == Constants.EmptyEthereumAddress)
@@ -104,15 +106,22 @@ namespace Lykke.Service.EthereumCore.Services
                     return;
                 }
 
-                var tokenAddress = contractTransferTr.TokenAddress;
-                var contractAddress = await _erc20DepositContractService.GetContractAddress(contractTransferTr.UserAddress);
-                var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(contractTransferTr.ContractAddress, contractTransferTr.TokenAddress);
+                if (string.IsNullOrEmpty(contractAddress) || contractAddress == Constants.EmptyEthereumAddress)
+                {
+                    await UpdateUserTransferWallet(contractTransferTr);
+                    await _logger.WriteInfoAsync("TransferContractTransactionService", "TransferToCoinContract", "",
+                        $"Can't cashin: there is no contract address in message{contractTransferTr?.ToJson()}", DateTime.UtcNow);
+
+                    return;
+                }
+
+                var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(contractAddress, contractTransferTr.TokenAddress);
 
                 if (balance == 0)
                 {
                     await UpdateUserTransferWallet(contractTransferTr);
                     await _logger.WriteInfoAsync("TransferContractTransactionService", "TransferToCoinContract", "",
-                        $"Can't cashin: there is no funds on the transfer contract {contractTransferTr.ContractAddress}", DateTime.UtcNow);
+                        $"Can't cashin: there is no funds on the transfer contract {contractAddress}", DateTime.UtcNow);
 
                     return;
                 }

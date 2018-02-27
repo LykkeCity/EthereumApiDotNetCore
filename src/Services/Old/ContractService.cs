@@ -18,7 +18,7 @@ namespace Lykke.Service.EthereumCore.Services
     {
         Task<IEnumerable<string>> GetContractsAddresses(IEnumerable<string> transactionHashes);
         Task<string> CreateContractWithoutBlockchainAcceptance(string abi, string bytecode, params object[] constructorParams);
-        Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams);
+        Task<string> CreateContract(string abi, string bytecode, ulong gas = 2000000, params object[] constructorParams);
         Task<ContractDeploymentInfo> CreateContractWithDeploymentInfo(string abi, string bytecode, params object[] constructorParams);
         Task<HexBigInteger> GetFilterEventForUserContractPayment();
         Task<HexBigInteger> CreateFilterEventForUserContractPayment();
@@ -68,10 +68,10 @@ namespace Lykke.Service.EthereumCore.Services
             };
         }
 
-        public async Task<string> CreateContract(string abi, string bytecode, params object[] constructorParams)
+        public async Task<string> CreateContract(string abi, string bytecode, ulong gas = 2000000, params object[] constructorParams)
         {
             // deploy contract
-            var transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(2000000), constructorParams);
+            var transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, bytecode, _settings.EthereumMainAccount, new HexBigInteger(gas), constructorParams);
 
             // get contract transaction
             TransactionReceipt receipt;

@@ -18,7 +18,8 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         public string ContractAddress { get; set; }
     }
 
-    public interface IErc20DepositContractRepository
+    [Obsolete]
+    public interface IErc20DepositContractRepositoryOld
     {
         Task AddOrReplace(IErc20DepositContract depositContract);
 
@@ -31,5 +32,9 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
 
         Task<IErc20DepositContract> GetByContractAddress(string contractAddress);
+    }
+
+    public interface IErc223DepositContractRepository : IErc20DepositContractRepositoryOld
+    {
     }
 }

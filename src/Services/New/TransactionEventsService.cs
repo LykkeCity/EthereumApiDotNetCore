@@ -45,7 +45,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly IBlockSyncedRepository _blockSyncedRepository;
         private readonly AppSettings _settingsWrapper;
         private readonly IEthereumSamuraiApi _indexerApi;
-        private readonly IErc20DepositContractRepository _depositContractRepository;
+        private readonly IErc20DepositContractService _depositContractService;
 
         public TransactionEventsService(Web3 web3,
             IBaseSettings baseSettings,
@@ -55,7 +55,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             IQueueFactory queueFactory,
             AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
-            IErc20DepositContractRepository depositContractRepository,
+            IErc20DepositContractService depositContractService,
             IEthereumIndexerService ethereumIndexerService)
         {
             _cashinEventRepository = cashinEventRepository;
@@ -66,7 +66,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             _queueFactory = queueFactory;
             _settingsWrapper = settingsWrapper;
             _indexerApi = indexerApi;
-            _depositContractRepository = depositContractRepository;
+            _depositContractService = depositContractService;
             _cashinQueue = _queueFactory.Build(Constants.CashinCompletedEventsQueue);
             _cointTransactionQueue = _queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
             _ethereumIndexerService = ethereumIndexerService;
@@ -151,7 +151,7 @@ namespace Lykke.Service.EthereumCore.Services.New
                             foreach (var transfer in transfers)
                             {
                                 // Ignore transfers from not deposit contract addresses
-                                if (!await _depositContractRepository.Contains(transfer.FromProperty))
+                                if (!await _depositContractService.ContainsAsync(transfer.FromProperty))
                                 {
                                     continue;
                                 }
