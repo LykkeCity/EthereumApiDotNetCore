@@ -27,4 +27,9 @@ contract Erc20DepositContract {
 
         return erc20Contract.transfer(_to, balance);
     }
+
+    //Add compatibility for erc223 contract reciever
+    function tokenFallback(address _from, uint _value, bytes _data) public pure returns(bool ok) {
+        return true;
+    }
 }

@@ -8,7 +8,7 @@ using System;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
-    public class Erc20DepositContractRepository : IErc20DepositContractRepository
+    public class Erc20DepositContractRepository : IErc223DepositContractRepository
     {
         private readonly INoSQLTableStorage<Erc20DepositContractEntity> _table;
         private readonly INoSQLTableStorage<Erc20DepositContractReversedEntity> _reversedTable;

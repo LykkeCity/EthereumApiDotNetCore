@@ -10,6 +10,7 @@ namespace EthereumSamuraiApiCaller
     using Microsoft.Rest.Serialization;
     using Models;
     using Newtonsoft.Json;
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Net;
@@ -1785,73 +1786,96 @@ namespace EthereumSamuraiApiCaller
             }
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/System/isAlive").ToString();
-            // Create HTTP transport objects
-            var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
-            _httpRequest.Method = new HttpMethod("GET");
-            _httpRequest.RequestUri = new System.Uri(_url);
-            // Set Headers
+            string[] urls = new[] { "api/System/isAlive", "api/IsAlive" };
+            var counter = 0;
+            HttpOperationResponse _result = null;
+            Exception storedException = null;
 
-
-            if (customHeaders != null)
+            do
             {
-                foreach(var _header in customHeaders)
+                try
                 {
-                    if (_httpRequest.Headers.Contains(_header.Key))
+                    var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), urls[counter]).ToString();
+                    // Create HTTP transport objects
+                    var _httpRequest = new HttpRequestMessage();
+                    HttpResponseMessage _httpResponse = null;
+                    _httpRequest.Method = new HttpMethod("GET");
+                    _httpRequest.RequestUri = new System.Uri(_url);
+                    // Set Headers
+
+
+                    if (customHeaders != null)
                     {
-                        _httpRequest.Headers.Remove(_header.Key);
+                        foreach (var _header in customHeaders)
+                        {
+                            if (_httpRequest.Headers.Contains(_header.Key))
+                            {
+                                _httpRequest.Headers.Remove(_header.Key);
+                            }
+                            _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
+                        }
                     }
-                    _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
+
+                    // Serialize Request
+                    string _requestContent = null;
+                    // Send Request
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
+                    }
+                    cancellationToken.ThrowIfCancellationRequested();
+                    _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
+                    }
+                    HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                    cancellationToken.ThrowIfCancellationRequested();
+                    string _responseContent = null;
+                    if ((int)_statusCode != 200)
+                    {
+                        var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                        if (_httpResponse.Content != null)
+                        {
+                            _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _responseContent = string.Empty;
+                        }
+                        ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                        ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                        if (_shouldTrace)
+                        {
+                            ServiceClientTracing.Error(_invocationId, ex);
+                        }
+                        _httpRequest.Dispose();
+                        if (_httpResponse != null)
+                        {
+                            _httpResponse.Dispose();
+                        }
+                        throw ex;
+                    }
+                    // Create Result
+                    _result = new HttpOperationResponse();
+                    _result.Request = _httpRequest;
+                    _result.Response = _httpResponse;
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Exit(_invocationId, _result);
+                    }
                 }
+                catch (Exception e)
+                {
+                    storedException = e;
+                }
+            } while (_result == null && counter++ <urls.Length);
+
+            if (_result == null && storedException != null)
+            {
+                throw storedException;
             }
 
-            // Serialize Request
-            string _requestContent = null;
-            // Send Request
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-            }
-            cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 200)
-            {
-                var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-                else {
-                    _responseContent = string.Empty;
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.Error(_invocationId, ex);
-                }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
-                {
-                    _httpResponse.Dispose();
-                }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationResponse();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.Exit(_invocationId, _result);
-            }
             return _result;
         }
 

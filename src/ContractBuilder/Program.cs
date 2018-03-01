@@ -28,6 +28,8 @@ using Lykke.Job.EthereumCore.Job;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
+using Nethereum.Hex.HexTypes;
+using Nethereum.Contracts;
 
 namespace ContractBuilder
 {
@@ -61,6 +63,10 @@ namespace ContractBuilder
             collection.AddSingleton(settings);
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
+            collection.AddSingleton(settings.Nested(x => x.EthereumCore));
+            collection.AddSingleton(settings.CurrentValue);
+            var consoleLogger = new LogToConsole();
+            collection.AddSingleton<ILog>(consoleLogger);
 
             RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
             RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
@@ -85,11 +91,52 @@ namespace ContractBuilder
             //    Key = "",
             //});
 
-            var eventService = ServiceProvider.GetService<ITransactionEventsService>();
-            eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce", "0x512867d36f1d6ee43f2056a7c41606133bce514fbc8e911c1834eeae80800ceb").Wait();
+            //var eventService = ServiceProvider.GetService<ITransactionEventsService>();
+            //eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce",
+            //    "0x512867d36f1d6ee43f2056a7c41606133bce514fbc8e911c1834eeae80800ceb").Wait();
 
 
+            #region DBE TOKEN
 
+            //string tokenAddress;
+            //string depositAddress;
+            //Contract contract;
+
+            //var web3 = ServiceProvider.GetService<IWeb3>();
+            //{
+            //    var abi = GetFileContent("Erc20DepositContract.abi");
+            //    var bytecode = GetFileContent("Erc20DepositContract.bin");
+            //    depositAddress =
+            //        ServiceProvider.GetService<IContractService>()
+            //        .CreateContract(abi, bytecode, 4000000)
+            //        .Result;
+            //}
+            //{
+
+
+            //    var abi = GetFileContent("debtoken.abi");
+            //    var bytecode = GetFileContent("debtoken.bin");
+            //    tokenAddress =
+            //        ServiceProvider.GetService<IContractService>()
+            //        .CreateContract(abi, bytecode, 4000000)
+            //        .Result;
+            //    contract = web3.Eth.GetContract(abi, tokenAddress);
+            //}
+
+            //{
+            //    var unfreezeFunc = contract.GetFunction("unfreeze");
+            //    var transactionHash = unfreezeFunc.SendTransactionAsync(settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //                new HexBigInteger(BigInteger.Parse("200000")), new HexBigInteger(0)).Result;
+            //}
+
+            //{
+            //    var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+            //    var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+            //}
+
+
+            #endregion
 
             #region StatusExamples
             //var service = ServiceProvider.GetService<ICoinTransactionService>();
@@ -289,7 +336,7 @@ namespace ContractBuilder
                 var abi = GetFileContent($"{transferName}.abi");
                 var bytecode = GetFileContent($"{transferName}.bin");
 
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, clientAddress);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, 2000000, clientAddress);
                 settings.EthereumCore.TokenTransferContract = new EthereumContract
                 {
                     Address = contractAddress,
@@ -568,7 +615,7 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("BCAPToken.abi");
                 var bytecode = GetFileContent("BCAPToken.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, settings.EthereumCore.EthereumMainAccount);
+                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, 2000000, settings.EthereumCore.EthereumMainAccount);
 
                 settings.EthereumCore.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New BCAP Token: " + contractAddress);

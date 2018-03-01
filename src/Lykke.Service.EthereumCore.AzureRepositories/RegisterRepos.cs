@@ -130,12 +130,21 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
                 Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
                     provider.GetService<ILog>())));
 
-            Services.AddSingleton<IErc20DepositContractRepository>(provider => new Erc20DepositContractRepository(
+            Services.AddSingleton<IErc20DepositContractRepositoryOld>(provider => new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc20DepositContractTable,
                 provider.GetService<ILog>()),
                 AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc20DepositContractTable,
+                provider.GetService<ILog>())
+                ));
+
+            Services.AddSingleton<IErc223DepositContractRepository>(provider => new Erc20DepositContractRepository(
+                AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
+                Constants.StoragePrefix + Constants.Erc223DepositContractTable,
+                provider.GetService<ILog>()),
+                AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
+                Constants.StoragePrefix + Constants.Erc223DepositContractTable,
                 provider.GetService<ILog>())
                 ));
 

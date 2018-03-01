@@ -26,7 +26,8 @@ namespace Lykke.Service.EthereumCore.Services
     }
              */
 
-        private readonly IErc20DepositContractRepository _contractRepository;
+        private readonly IErc20DepositContractRepositoryOld _oldContractRepository;
+        private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
         private readonly IBaseSettings _settings;
@@ -34,13 +35,15 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly IWeb3 _web3;
 
         public Erc20DepositContractService(
-            IErc20DepositContractRepository contractRepository,
+            IErc20DepositContractRepositoryOld oldContractRepository,
+            IErc223DepositContractRepository contractRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings,
             ILog log,
             IWeb3 web3)
         {
+            _oldContractRepository = oldContractRepository;
             _contractRepository = contractRepository;
             _contractService = contractService;
             _poolFactory = poolFactory;
@@ -63,10 +66,10 @@ namespace Lykke.Service.EthereumCore.Services
                 await _contractRepository.AddOrReplace(new Erc20DepositContract
                 {
                     ContractAddress = contractAddress,
-                    UserAddress     = userAddress
+                    UserAddress = userAddress
                 });
             }
-            
+
             return contractAddress;
         }
 
@@ -95,12 +98,22 @@ namespace Lykke.Service.EthereumCore.Services
 
         public async Task<string> GetContractAddress(string userAddress)
         {
-            return (await _contractRepository.Get(userAddress))?.ContractAddress;
+            var contract = await _contractRepository.Get(userAddress);
+
+            return contract?.ContractAddress;
         }
 
         public async Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction)
         {
             await _contractRepository.ProcessAllAsync(processAction);
+            await _oldContractRepository.ProcessAllAsync(processAction);
+        }
+
+        public async Task<bool> ContainsAsync(string address)
+        {
+            var contains = await _contractRepository.Contains(address) || await _oldContractRepository.Contains(address);
+
+            return contains;
         }
 
         /// <param name="depositContractAddress"></param>
@@ -128,7 +141,10 @@ namespace Lykke.Service.EthereumCore.Services
 
         public async Task<string> GetUserAddress(string contractAddress)
         {
-            return (await _contractRepository.GetByContractAddress(contractAddress)).UserAddress;
+            var contract = (await _contractRepository.GetByContractAddress(contractAddress)) ??
+                (await _oldContractRepository.GetByContractAddress(contractAddress));
+
+            return contract.UserAddress;
         }
     }
 
@@ -148,5 +164,7 @@ namespace Lykke.Service.EthereumCore.Services
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress);
+
+        Task<bool> ContainsAsync(string address);
     }
 }

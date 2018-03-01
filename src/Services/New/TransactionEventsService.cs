@@ -15,6 +15,7 @@ using EthereumSamuraiApiCaller.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
@@ -25,6 +26,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         Task MonitorNewEvents(string coinAdapterAddress);
         Task<ICashinEvent> GetCashinEvent(string transactionHash);
         Task IndexEventsForTransaction(string coinAdapterAddress, string trHash);
+        Task<BigInteger?> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
     }
 
     public class TransactionEventsService : ITransactionEventsService
@@ -37,12 +39,13 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly IQueueFactory _queueFactory;
         private readonly IQueueExt _cashinQueue;
         private readonly IQueueExt _cointTransactionQueue;
+        private readonly IEthereumIndexerService _ethereumIndexerService;
         private readonly ICoinRepository _coinRepository;
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
         private readonly AppSettings _settingsWrapper;
         private readonly IEthereumSamuraiApi _indexerApi;
-        private readonly IErc20DepositContractRepository _depositContractRepository;
+        private readonly IErc20DepositContractService _depositContractService;
 
         public TransactionEventsService(Web3 web3,
             IBaseSettings baseSettings,
@@ -52,7 +55,8 @@ namespace Lykke.Service.EthereumCore.Services.New
             IQueueFactory queueFactory,
             AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
-            IErc20DepositContractRepository depositContractRepository)
+            IErc20DepositContractService depositContractService,
+            IEthereumIndexerService ethereumIndexerService)
         {
             _cashinEventRepository = cashinEventRepository;
             _coinRepository = coinRepository;
@@ -62,9 +66,10 @@ namespace Lykke.Service.EthereumCore.Services.New
             _queueFactory = queueFactory;
             _settingsWrapper = settingsWrapper;
             _indexerApi = indexerApi;
-            _depositContractRepository = depositContractRepository;
+            _depositContractService = depositContractService;
             _cashinQueue = _queueFactory.Build(Constants.CashinCompletedEventsQueue);
             _cointTransactionQueue = _queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
+            _ethereumIndexerService = ethereumIndexerService;
         }
 
         public async Task IndexCashinEventsForAdapter(string coinAdapterAddress, string deployedTransactionHash)
@@ -84,6 +89,38 @@ namespace Lykke.Service.EthereumCore.Services.New
                 to = to < lastBlock ? to : lastBlock;
                 await IndexEventsInRange(coinAdapterAddress, coinCashInEvent, from, to);
             }
+        }
+
+        public async Task<BigInteger?> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash)
+        {
+            BigInteger result = 0;
+            var transaction = await _ethereumIndexerService.GetTransactionAsync(transactionHash);
+
+            if (transaction == null)
+                return null;
+
+            if (transaction.ErcTransfer != null)
+            {
+                //only one transfer could appear in deposit transaction
+                foreach (var item in transaction.ErcTransfer)
+                {
+                    if (item.To?.ToLower() != _settingsWrapper.Ethereum.HotwalletAddress?.ToLower())
+                        continue;
+
+                    await _cashinEventRepository.InsertAsync(new CashinEvent
+                    {
+                        CoinAdapterAddress = Erc20HotWalletMarker,
+                        Amount = item.Value,
+                        TransactionHash = item.TransactionHash,
+                        UserAddress = item.From,
+                        ContractAddress = item.ContractAddress
+                    });
+
+                    BigInteger.TryParse(item.Value, out result);
+                }
+            }
+
+            return result;
         }
 
         public async Task IndexCashinEventsForErc20Deposits()
@@ -114,7 +151,7 @@ namespace Lykke.Service.EthereumCore.Services.New
                             foreach (var transfer in transfers)
                             {
                                 // Ignore transfers from not deposit contract addresses
-                                if (!await _depositContractRepository.Contains(transfer.FromProperty))
+                                if (!await _depositContractService.ContainsAsync(transfer.FromProperty))
                                 {
                                     continue;
                                 }
