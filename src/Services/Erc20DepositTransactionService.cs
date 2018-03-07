@@ -141,7 +141,7 @@ namespace Lykke.Service.EthereumCore.Services
                         OperationType = HotWalletOperationType.Cashin,
                     });
 
-                    await _queue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = transactionHash }));
+                    await _cointTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = transactionHash }));
                 }
                 catch (Exception exc)
                 {
