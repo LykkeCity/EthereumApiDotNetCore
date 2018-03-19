@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Lykke.Common.Api.Contract.Responses;
@@ -44,6 +45,7 @@ namespace Lykke.Job.EthereumCore.Controllers
             {
                 Name = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationName,
                 Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion,
+                Env = Environment.GetEnvironmentVariable("ENV_INFO"),
 #if DEBUG
                 IsDebug = true,
 #else
