@@ -258,7 +258,7 @@ namespace Lykke.Service.EthereumCore.Services.New
                     foreach (var transfer in transfers)
                     {
                         // Ignore transfers from not deposit contract addresses
-                        if (!await _depositContractRepository.Contains(transfer.FromProperty))
+                        if (!await _depositContractService.ContainsAsync(transfer.FromProperty))
                         {
                             continue;
                         }
