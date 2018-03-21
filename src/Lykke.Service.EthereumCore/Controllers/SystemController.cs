@@ -52,6 +52,7 @@ namespace Lykke.Service.EthereumCore.Controllers
             {
                 Name = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationName,
                 Version = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion,
+                Env = Environment.GetEnvironmentVariable("ENV_INFO"),
 #if DEBUG
                 IsDebug = true,
 #else
