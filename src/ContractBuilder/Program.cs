@@ -24,6 +24,7 @@ using Lykke.Service.EthereumCore.Models;
 using System.Numerics;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
@@ -179,6 +180,29 @@ namespace ContractBuilder
             }
 
             #endregion
+
+            #region IATA Coin
+
+            string tokenAddress;
+            Contract contract;
+
+            var web3 = ServiceProvider.GetService<IWeb3>();
+            {
+                var abi = GetFileContent("Invoice.abi");
+                var bytecode = GetFileContent("Invoice.bin");
+                string invoiceId = "1";
+                BigInteger amount = 1000000000;
+                BigInteger dueDate = (long)(DateTime.UtcNow + TimeSpan.FromDays(5)).ToUnixTime();
+                string allowedTokenAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
+                string merchantAirlinesWalletAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
+                tokenAddress =
+                    ServiceProvider.GetService<IContractService>()
+                    .CreateContract(abi, bytecode, 4000000,invoiceId, amount, dueDate, allowedTokenAddress, merchantAirlinesWalletAddress)
+                    .Result;
+            }
+
+            #endregion
+
 
             #region DBE TOKEN
 
