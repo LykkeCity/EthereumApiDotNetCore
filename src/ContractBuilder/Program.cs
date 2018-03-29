@@ -29,9 +29,12 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
 using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.Core.Utils;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Nethereum.ABI.Encoders;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
@@ -48,6 +51,13 @@ namespace ContractBuilder
         [Parameter("string", "_value", 2, false)]
         public string Value { get; set; }
     }
+
+    public class InvoiceStatusResult
+    {
+        [Parameter("uint", "status", 1, false)]
+        public int Status { get; set; }
+    }
+
     public class Program
     {
         public static IContainer ServiceProvider { get; set; }
@@ -183,11 +193,122 @@ namespace ContractBuilder
 
             #region IATA Coin
 
-            string tokenAddress;
-            Contract contract;
+            #region InvoiceMaster
 
-            var web3 = ServiceProvider.GetService<IWeb3>();
             {
+                string contractAddress;
+                Contract contract;
+                var web3 = ServiceProvider.GetService<IWeb3>();
+                var abi = GetFileContent("InvoiceMaster.abi");
+                var bytecode = GetFileContent("InvoiceMaster.bin");
+                string allowedTokenAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
+                string merchantAirlinesWalletAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
+
+                contractAddress = //"0xc4b1984cedd8f60eede973dd4b0720b6c77187e0";
+                   ServiceProvider.GetService<IContractService>()
+                      .CreateContract(abi, bytecode, 4000000)
+                      .Result;
+
+                contract = web3.Eth.GetContract(abi, contractAddress);
+                var createInvoiceFunc = contract.GetFunction("createInvoice");
+                var tokenFallbackFunc = contract.GetFunction("tokenFallback");
+                var getInvoiceStatusFunc = contract.GetFunction("getInvoiceStatus");
+                var bytesToBytes16Func = contract.GetFunction("bytesToBytes16");
+                var bytesToUintFunc = contract.GetFunction("bytesToUint");
+                //enum InvoiceStatus {UNPAID,PAID,OVERDUE,LATE_PAYMENT,PARTIALLY_PAID}
+                {//Paid +
+                    var date = DateTime.UtcNow + TimeSpan.FromDays(5);
+                    BigInteger dueDate = (long)(date.ToUnixTime() / 1000);
+                    var invoiceId = Guid.NewGuid();
+                    var convertedId = EthUtils.GuidToBigInteger(invoiceId);
+                    BigInteger invoiceAmount = 1000000000000;
+                    HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
+                    var convertedArray = convertedIdHex.ToHexByteArray();
+                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
+                    //var encodedBytes = encoder.Encode(invoiceAmount);
+                    var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
+                    var result1 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                    var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount,
+                        convertedArray).Result;
+                    var result2 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                }
+
+                {//Partially_Paid +
+                    var date = DateTime.UtcNow + TimeSpan.FromDays(5);
+                    BigInteger dueDate = (long)(date.ToUnixTime() / 1000);
+                    var invoiceId = Guid.NewGuid();
+                    var convertedId = EthUtils.GuidToBigInteger(invoiceId);
+                    BigInteger invoiceAmount = 1000000000000;
+                    HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
+                    var convertedArray = convertedIdHex.ToHexByteArray();
+                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
+                    //var encodedBytes = encoder.Encode(invoiceAmount);
+                    var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
+                    var result1 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                    var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount / 2,
+                        convertedArray).Result;
+                    var result5 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                }
+
+                {//OverDue -
+                    var date = DateTime.UtcNow - TimeSpan.FromDays(1);
+                    BigInteger dueDate = (long)(date.ToUnixTime() / 1000);
+                    var invoiceId = Guid.NewGuid();
+                    var convertedId = EthUtils.GuidToBigInteger(invoiceId);
+                    BigInteger invoiceAmount = 1000000000000;
+                    HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
+                    var convertedArray = convertedIdHex.ToHexByteArray();
+                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
+                    //var encodedBytes = encoder.Encode(invoiceAmount);
+                    var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
+                    var result3 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                }
+
+                {//LatePayment
+                    var date = DateTime.UtcNow - TimeSpan.FromDays(1);
+                    BigInteger dueDate = (long)(date.ToUnixTime() / 1000);
+                    var invoiceId = Guid.NewGuid();
+                    var convertedId = EthUtils.GuidToBigInteger(invoiceId);
+                    BigInteger invoiceAmount = 1000000000000;
+                    HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
+                    var convertedArray = convertedIdHex.ToHexByteArray();
+                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
+                    //var encodedBytes = encoder.Encode(invoiceAmount);
+                    var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
+                    var result3 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                    var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount,
+                        convertedArray).Result;
+                    var result5 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
+                }
+            }
+
+            #endregion
+
+
+            #region InstanceInvoice
+
+            {
+                string tokenAddress;
+                Contract contract;
+                var web3 = ServiceProvider.GetService<IWeb3>();
                 var abi = GetFileContent("Invoice.abi");
                 var bytecode = GetFileContent("Invoice.bin");
                 string invoiceId = "1";
@@ -195,11 +316,14 @@ namespace ContractBuilder
                 BigInteger dueDate = (long)(DateTime.UtcNow + TimeSpan.FromDays(5)).ToUnixTime();
                 string allowedTokenAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
                 string merchantAirlinesWalletAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
+
                 tokenAddress =
                     ServiceProvider.GetService<IContractService>()
-                    .CreateContract(abi, bytecode, 4000000,invoiceId, amount, dueDate, allowedTokenAddress, merchantAirlinesWalletAddress)
+                    .CreateContract(abi, bytecode, 4000000, invoiceId, amount, dueDate, allowedTokenAddress, merchantAirlinesWalletAddress)
                     .Result;
             }
+
+            #endregion
 
             #endregion
 

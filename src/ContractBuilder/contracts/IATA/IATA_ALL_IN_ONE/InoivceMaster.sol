@@ -1,64 +1,113 @@
 pragma solidity ^0.4.21;
 
-import "././erc20Contract.sol";
+import "../erc20Contract.sol";
 
-/* @title Invoice smartcontract */
-contract Invoice {
+/* @title InvoiceMaster smartcontract */
+contract InvoiceMaster {
+
+    event InvoiceCreated(address indexed caller, uint indexed invoiceId, uint dueDateUnix, uint invoiceAmount);
+    event PaymentDetected(address indexed caller, uint indexed invoiceId, uint payedAmount);
+
+    struct Invoice {
+        uint128 invoiceId;//Guid in external system
+        uint invoiceAmount;
+        address tokenAddress;
+        address merchantWalletAddress;
+        uint dueDateUnixTime;
+        uint lastPaymentDateUnixTime;
+        uint payedAmount;
+        bool isValid;
+    }
 
     //Possible Invoice statuses
     enum InvoiceStatus {UNPAID,PAID,OVERDUE,LATE_PAYMENT,PARTIALLY_PAID}
 
     address _owner;
-    string _invoiceId; 
-    address _allowedTokenAddress;
-    uint _dueDate;
-    uint _lastPaymentDate;
-    uint _amount;
-    address _merchantAirlinesWalletAddress;
+    mapping (uint128 => Invoice) public registeredInvoices;
 
     modifier onlyOwner { 
         if (msg.sender == _owner) _; 
     }
 
-    /**@dev Invoice smartcontract constructor
-        * @param invoiceId Invoice Id in external system.
-        * @param amount The amount in specific token.
-        * @param dueDate Unix timestamp of the latest acceptable date.
-        * @param allowedTokenAddress Address of erc223 compatible token, currency of the current invoice.(The token should be erc223 compatible)
-        * @param merchantAirlinesWalletAddress Address of the merchants private wallet, which accepts an invoice payment.
-    */
-    function Invoice(string invoiceId, uint amount, uint dueDate, address allowedTokenAddress, address merchantAirlinesWalletAddress) public {
+    function InvoiceMaster() public {
         _owner = msg.sender;
-        _invoiceId = invoiceId;
-        _dueDate = dueDate;
-        _allowedTokenAddress = allowedTokenAddress;
-        _amount = amount;
-        _merchantAirlinesWalletAddress = merchantAirlinesWalletAddress;
-        _lastPaymentDate = 0;
     }
 
-    /**@dev Function for erc223 compatibility. It sets the last payment date.
-    */
-    function tokenFallback(address _from, uint _value, bytes _data) public returns(bool ok) {
-        address tokenAddress = msg.sender;
-        if (tokenAddress != _allowedTokenAddress || _value == 0){
+    function() public payable {
+        revert();
+    }
+
+    function createInvoice(uint128 invoiceId, uint invoiceAmount, address tokenAddress, address merchantWalletAddress, uint dueDateUnixTime) onlyOwner public {
+        if (registeredInvoices[invoiceId].isValid){
             revert();
         }
 
-        _lastPaymentDate = block.timestamp;
+        Invoice memory invoice = Invoice(invoiceId, invoiceAmount, tokenAddress, merchantWalletAddress, dueDateUnixTime, 0, 0, true);
+
+        registeredInvoices[invoice.invoiceId] = invoice;
+        emit InvoiceCreated(msg.sender, invoiceId, dueDateUnixTime, invoiceAmount);
+    }  
+
+    function tokenFallback(address _from, uint _value, bytes _data) public returns(bool ok) {
+        address tokenAddress = msg.sender;
+        bytes16 data16 = bytesToBytes16(_data);
+        uint128 invoiceId = uint128(data16);
+        Invoice memory invoice = registeredInvoices[invoiceId];
+        
+        if (!invoice.isValid){
+            revert();
+        }
+
+        if (tokenAddress != invoice.tokenAddress || _value == 0){
+            revert();
+        }
+
+        invoice.lastPaymentDateUnixTime = block.timestamp;
+        invoice.payedAmount += _value;
+
+        registeredInvoices[invoiceId] = invoice;
+        emit PaymentDetected(tokenAddress, invoiceId, _value);
 
         return true;
     }
 
-    /**@dev returns actual InvoiceStatus
-        * @return status The calculated current status.
-    */
-    function getInvoiceStatus() public view returns (InvoiceStatus status){
-        ERC20Interface erc20Contract = ERC20Interface(_allowedTokenAddress);
-        uint balance = erc20Contract.balanceOf(this);
-        bool isOverdue = (_dueDate - _lastPaymentDate) < 0;
+    function isInvoiceCreated(uint128 invoiceId) public view returns (bool created){
+        Invoice memory invoice = registeredInvoices[invoiceId];
 
-        if (_amount >= balance){
+        return invoice.isValid;
+    }
+
+    function getInvoiceInfo(uint128 invoiceId) public view returns (uint lastPaymentDateUnixTime, uint dueDateUnix, uint payedAmount, address merchantWalletAddress){
+        Invoice memory invoice = registeredInvoices[invoiceId];
+
+        if (!invoice.isValid){
+            revert();
+        }
+
+        return (invoice.lastPaymentDateUnixTime, invoice.dueDateUnixTime, invoice.payedAmount, invoice.merchantWalletAddress);
+    }
+
+    function getInvoiceStatus(uint128 invoiceId) public view returns (InvoiceStatus status){
+        Invoice memory invoice = registeredInvoices[invoiceId];
+
+        if (!invoice.isValid){
+            revert();
+        }
+
+        uint amount = invoice.invoiceAmount;
+        uint balance = invoice.payedAmount;
+        uint lastPaymentDate = 0;
+        uint dueDate = invoice.dueDateUnixTime;
+        
+        if (invoice.lastPaymentDateUnixTime == 0){
+            lastPaymentDate = now;                
+        } else{
+            lastPaymentDate = invoice.lastPaymentDateUnixTime;
+        }
+       
+        bool isOverdue = dueDate < lastPaymentDate;
+
+        if (amount <= balance){
             if (!isOverdue){
                 return InvoiceStatus.PAID;
             } else{
@@ -74,7 +123,7 @@ contract Invoice {
             }
         }
 
-        if (_amount < balance){
+        if (amount > balance){
             if (!isOverdue){
                 return InvoiceStatus.PARTIALLY_PAID;
             } else{
@@ -83,17 +132,71 @@ contract Invoice {
         }  
     }
 
-    /**@dev Transfers tokens from this invoice smart contract to the merchants address. Initiated by contract owner. 
-        *@returns success Indicator wheter or not transfer was succesful. 
-    */
-    function transferAllTokens() onlyOwner public returns (bool success) {
-        ERC20Interface erc20Contract = ERC20Interface(_allowedTokenAddress);
+    function isOverdue(uint128 invoiceId) public view returns (uint dateUnix, bool isOverdueResult, InvoiceStatus statusResult, uint dateUnixDiff){
+        Invoice memory invoice = registeredInvoices[invoiceId];
+
+        if (!invoice.isValid){
+            revert();
+        }
+        uint lastPaymentDate = 0;
+        uint balance = invoice.payedAmount;
+        uint dueDate = invoice.dueDateUnixTime;
+        InvoiceStatus status = InvoiceStatus.UNPAID;
+        if (invoice.lastPaymentDateUnixTime == 0){
+            lastPaymentDate = now;                
+        } else{
+            lastPaymentDate = invoice.lastPaymentDateUnixTime;
+        }
+        uint diff = dueDate - lastPaymentDate;
+        bool isOverdue = diff < 0;
+
+        if (balance == 0){
+            if (!isOverdue){
+                status = InvoiceStatus.UNPAID;
+            } else{
+                status = InvoiceStatus.OVERDUE;
+            }
+        }
+
+        return (lastPaymentDate, isOverdue, status, diff);
+    }
+
+    function getCurrentDate() public view returns (uint dateTimeUnix){
+        return now;
+    }
+
+
+    function transferAllTokens(uint128 invoiceId) onlyOwner public returns (bool success) {
+        Invoice memory invoice = registeredInvoices[invoiceId];
+
+        if (!invoice.isValid){
+            revert();
+        }
+
+        ERC20Interface erc20Contract = ERC20Interface(invoice.tokenAddress);
         uint balance = erc20Contract.balanceOf(this); 
 
-        if (balance <= 0) {
+        if (balance <= invoice.payedAmount) {
             return false;
         }
 
-        return erc20Contract.transfer(_merchantAirlinesWalletAddress, balance);
+        return erc20Contract.transfer(invoice.merchantWalletAddress, invoice.payedAmount);
+    }
+
+    function bytesToBytes16(bytes b) public pure returns (bytes16) {
+        bytes16 out;
+
+        for (uint i = 0; i < 16; i++) {
+            out |= bytes16(b[i] & 0xFF) >> (i * 8);
+        }
+
+        return out;
+    }
+
+    function bytesToUint(bytes b) public pure returns (uint128) {
+        bytes16 data16 = bytesToBytes16(b);
+        uint128 invoiceId = uint128(data16);
+
+        return invoiceId;
     }
 }   
