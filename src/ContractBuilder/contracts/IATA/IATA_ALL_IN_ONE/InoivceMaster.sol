@@ -132,40 +132,6 @@ contract InvoiceMaster {
         }  
     }
 
-    function isOverdue(uint128 invoiceId) public view returns (uint dateUnix, bool isOverdueResult, InvoiceStatus statusResult, uint dateUnixDiff){
-        Invoice memory invoice = registeredInvoices[invoiceId];
-
-        if (!invoice.isValid){
-            revert();
-        }
-        uint lastPaymentDate = 0;
-        uint balance = invoice.payedAmount;
-        uint dueDate = invoice.dueDateUnixTime;
-        InvoiceStatus status = InvoiceStatus.UNPAID;
-        if (invoice.lastPaymentDateUnixTime == 0){
-            lastPaymentDate = now;                
-        } else{
-            lastPaymentDate = invoice.lastPaymentDateUnixTime;
-        }
-        uint diff = dueDate - lastPaymentDate;
-        bool isOverdue = diff < 0;
-
-        if (balance == 0){
-            if (!isOverdue){
-                status = InvoiceStatus.UNPAID;
-            } else{
-                status = InvoiceStatus.OVERDUE;
-            }
-        }
-
-        return (lastPaymentDate, isOverdue, status, diff);
-    }
-
-    function getCurrentDate() public view returns (uint dateTimeUnix){
-        return now;
-    }
-
-
     function transferAllTokens(uint128 invoiceId) onlyOwner public returns (bool success) {
         Invoice memory invoice = registeredInvoices[invoiceId];
 
@@ -191,12 +157,5 @@ contract InvoiceMaster {
         }
 
         return out;
-    }
-
-    function bytesToUint(bytes b) public pure returns (uint128) {
-        bytes16 data16 = bytesToBytes16(b);
-        uint128 invoiceId = uint128(data16);
-
-        return invoiceId;
     }
 }   
