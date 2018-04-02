@@ -19,11 +19,20 @@ contract InvoiceMaster {
         bool isValid;
     }
 
+    struct InvoiceInfo {
+        uint128 invoiceId;//Guid in external system
+        string merchantId;
+        string clientId;
+        string paymentDescription;
+        bool isValid;
+    }
+
     //Possible Invoice statuses
     enum InvoiceStatus {UNPAID,PAID,OVERDUE,LATE_PAYMENT,PARTIALLY_PAID}
 
     address _owner;
     mapping (uint128 => Invoice) public registeredInvoices;
+    mapping (uint128 => InvoiceInfo) public invoiceInfoMapping;
 
     modifier onlyOwner { 
         if (msg.sender == _owner) _; 
@@ -37,14 +46,16 @@ contract InvoiceMaster {
         revert();
     }
 
-    function createInvoice(uint128 invoiceId, uint invoiceAmount, address tokenAddress, address merchantWalletAddress, uint dueDateUnixTime) onlyOwner public {
+    function createInvoice(uint128 invoiceId, uint invoiceAmount, address tokenAddress, address merchantWalletAddress, uint dueDateUnixTime, string merchantId, string clientId, string paymentDescription) onlyOwner public {
         if (registeredInvoices[invoiceId].isValid){
             revert();
         }
 
         Invoice memory invoice = Invoice(invoiceId, invoiceAmount, tokenAddress, merchantWalletAddress, dueDateUnixTime, 0, 0, true);
+        InvoiceInfo memory invoiceInfo = InvoiceInfo(invoiceId, merchantId, clientId, paymentDescription, true);
 
         registeredInvoices[invoice.invoiceId] = invoice;
+        invoiceInfoMapping[invoice.invoiceId] = invoiceInfo;
         emit InvoiceCreated(msg.sender, invoiceId, dueDateUnixTime, invoiceAmount);
     }  
 
@@ -77,7 +88,17 @@ contract InvoiceMaster {
         return invoice.isValid;
     }
 
-    function getInvoiceInfo(uint128 invoiceId) public view returns (uint lastPaymentDateUnixTime, uint dueDateUnix, uint payedAmount, address merchantWalletAddress){
+    function getInvoiceDescription(uint128 invoiceId) public view returns (string merchantId, string clientId, string paymentDescription){
+        InvoiceInfo memory invoiceInfo = invoiceInfoMapping[invoiceId];
+
+        if (!invoiceInfo.isValid){
+            revert();
+        }
+
+        return (invoiceInfo.merchantId, invoiceInfo.clientId, invoiceInfo.paymentDescription);
+    }
+
+    function getInvoiceDetails(uint128 invoiceId) public view returns (uint lastPaymentDateUnixTime, uint dueDateUnix, uint payedAmount, address merchantWalletAddress){
         Invoice memory invoice = registeredInvoices[invoiceId];
 
         if (!invoice.isValid){

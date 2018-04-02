@@ -203,18 +203,21 @@ namespace ContractBuilder
                 var bytecode = GetFileContent("InvoiceMaster.bin");
                 string allowedTokenAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
                 string merchantAirlinesWalletAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
-
-                contractAddress = //"0xc4b1984cedd8f60eede973dd4b0720b6c77187e0";
-                   ServiceProvider.GetService<IContractService>()
-                      .CreateContract(abi, bytecode, 4000000)
-                      .Result;
+                string merchantId = "DVX123";
+                string clientId = "XNV123";
+                string paymentDescription = File.ReadAllText(@"C:\Users\Aleks\Desktop\Payment").Substring(0, 25);
+                var currentGasPrice = (web3.Eth.GasPrice.SendRequestAsync().Result).Value;
+                contractAddress = "0x74a95cd9e408212c4867afe4c00f6bebc2acb0d5";
+                   //ServiceProvider.GetService<IContractService>()
+                   //   .CreateContract(abi, bytecode, 4000000)
+                   //   .Result;
 
                 contract = web3.Eth.GetContract(abi, contractAddress);
                 var createInvoiceFunc = contract.GetFunction("createInvoice");
                 var tokenFallbackFunc = contract.GetFunction("tokenFallback");
                 var getInvoiceStatusFunc = contract.GetFunction("getInvoiceStatus");
                 var bytesToBytes16Func = contract.GetFunction("bytesToBytes16");
-                var bytesToUintFunc = contract.GetFunction("bytesToUint");
+                //var bytesToUintFunc = contract.GetFunction("bytesToUint");
                 //enum InvoiceStatus {UNPAID,PAID,OVERDUE,LATE_PAYMENT,PARTIALLY_PAID}
                 {//Paid +
                     var date = DateTime.UtcNow + TimeSpan.FromDays(5);
@@ -227,12 +230,12 @@ namespace ContractBuilder
                     //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
                     //var encodedBytes = encoder.Encode(invoiceAmount);
                     var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
-                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(300000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
-                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate, merchantId, clientId, paymentDescription).Result;
                     var result1 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
                     var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
-                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(300000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount,
                         convertedArray).Result;
                     var result2 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
