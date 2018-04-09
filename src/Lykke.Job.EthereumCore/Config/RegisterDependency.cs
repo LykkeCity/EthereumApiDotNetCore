@@ -1,4 +1,5 @@
-﻿using Lykke.Service.EthereumCore.Core.Settings;
+﻿using Autofac;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.AzureRepositories;
@@ -15,14 +16,15 @@ namespace Lykke.Job.EthereumCore.Config
     public static class RegisterDependency
     {
         public static void InitJobDependencies(this IServiceCollection collection, 
+            ContainerBuilder builder,
             IReloadingManager<BaseSettings> settings, 
             IReloadingManager<SlackNotificationSettings> slackNotificationSettings,
             ILog log)
         {
             collection.AddSingleton(settings);
 
-            collection.RegisterAzureStorages(settings, slackNotificationSettings);
-            collection.RegisterAzureQueues(settings, slackNotificationSettings);
+            builder.RegisterAzureStorages(settings, slackNotificationSettings, log);
+            builder.RegisterAzureQueues(settings, slackNotificationSettings);
             collection.RegisterServices();
             collection.RegisterRabbitQueue(settings, log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();

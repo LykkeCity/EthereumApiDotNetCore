@@ -12,5 +12,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public AssetsServiceSettings Assets { get; set; }
         [Lykke.SettingsReader.Attributes.Optional]
         public ChaosSettings ChaosKitty { get; set; }
+        public LykkePay LykkePay { get; set; }
+        public ApiKeys ApiKeys { get; set; }
     }
 }

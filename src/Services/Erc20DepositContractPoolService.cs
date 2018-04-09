@@ -42,6 +42,9 @@ namespace Lykke.Service.EthereumCore.Services
         }
     }
 
+    /// <summary>
+    /// Default and LykkePay
+    /// </summary>
     public interface IErc20DepositContractPoolService
     {
         Task ReplenishPool();

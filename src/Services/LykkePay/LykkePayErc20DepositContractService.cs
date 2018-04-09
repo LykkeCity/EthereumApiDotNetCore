@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
 
-namespace Lykke.Service.EthereumCore.Services
+namespace Lykke.Service.EthereumCore.Services.LykkePay
 {
-    //Default Erc20 deposit contract
-    public class Erc20DepositContractService : IErc20DepositContractService
+    //LykkePay Erc20 deposit contract service
+    public class LykkePayErc20DepositContractService : IErc20DepositContractService
     {
         /*
          function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
@@ -26,9 +26,8 @@ namespace Lykke.Service.EthereumCore.Services
 
         return erc20Contract.transferFrom(this, _to, balance);
     }
-             */
+        */
 
-        private readonly IErc20DepositContractRepositoryOld _oldContractRepository;
         private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
@@ -36,16 +35,14 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly ILog _log;
         private readonly IWeb3 _web3;
 
-        public Erc20DepositContractService(
-            IErc20DepositContractRepositoryOld oldContractRepository,
-            IErc223DepositContractRepository contractRepository,
+        public LykkePayErc20DepositContractService(
+            [KeyFilter(Constants.LykkePayKey)] IErc223DepositContractRepository contractRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings,
             ILog log,
             IWeb3 web3)
         {
-            _oldContractRepository = oldContractRepository;
             _contractRepository = contractRepository;
             _contractService = contractService;
             _poolFactory = poolFactory;
@@ -61,7 +58,7 @@ namespace Lykke.Service.EthereumCore.Services
 
             if (string.IsNullOrEmpty(contractAddress))
             {
-                var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
+                var pool = _poolFactory.Get(Constants.LykkePayErc20DepositContractPoolQueue);
 
                 contractAddress = await pool.GetContractAddress();
 
@@ -90,7 +87,6 @@ namespace Lykke.Service.EthereumCore.Services
 
                 return null;
             }
-
         }
 
         public async Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes)
@@ -108,12 +104,11 @@ namespace Lykke.Service.EthereumCore.Services
         public async Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction)
         {
             await _contractRepository.ProcessAllAsync(processAction);
-            await _oldContractRepository.ProcessAllAsync(processAction);
         }
 
         public async Task<bool> ContainsAsync(string address)
         {
-            var contains = await _contractRepository.Contains(address) || await _oldContractRepository.Contains(address);
+            var contains = await _contractRepository.Contains(address);
 
             return contains;
         }
@@ -128,7 +123,7 @@ namespace Lykke.Service.EthereumCore.Services
             Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction("transferAllTokens");
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             if (!cashinWouldBeSuccesfull)
             {
@@ -136,37 +131,35 @@ namespace Lykke.Service.EthereumCore.Services
             }
 
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
         }
 
         public async Task<string> GetUserAddress(string contractAddress)
         {
-            var contract = (await _contractRepository.GetByContractAddress(contractAddress)) ??
-                (await _oldContractRepository.GetByContractAddress(contractAddress));
+            var contract = (await _contractRepository.GetByContractAddress(contractAddress));
 
-            return contract.UserAddress;
+            return contract?.UserAddress;
         }
-    }
 
-    public interface IErc20DepositContractService
-    {
-        Task<string> AssignContract(string userAddress);
+        private async Task<string> StartTransferAsync(string depositContractAddress,
+            string erc20TokenAddress, string destinationAddress)
+        {
+            Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
+            var cashin = contract.GetFunction("transferAllTokens");
+            var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
+                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
-        Task<string> CreateContract();
+            if (!cashinWouldBeSuccesfull)
+            {
+                throw new Exception($"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+            }
 
-        Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes);
+            string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
+                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
-        Task<string> GetContractAddress(string userAddress);
-
-        Task<string> GetUserAddress(string contractUser);
-
-        Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
-
-        Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
-           string erc20TokenAddress, string destinationAddress);
-
-        Task<bool> ContainsAsync(string address);
+            return trHash;
+        }
     }
 }

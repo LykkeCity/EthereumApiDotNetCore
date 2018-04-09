@@ -37,6 +37,7 @@ namespace Lykke.Job.EthereumCore.Modules
             _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
 
             Lykke.Job.EthereumCore.Config.RegisterDependency.InitJobDependencies(_services,
+                     builder,
                     _settings.Nested(x => x.EthereumCore),
                     _settings.Nested(x => x.SlackNotifications),
                     _log);

@@ -40,12 +40,13 @@ namespace TransactionResubmit
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
 
+            //TODO: Fix registration
             //RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
-            RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
+            //RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
+            //RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
             ServiceProvider = collection.BuildServiceProvider();
-            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
-            RegisterDependency.RegisterServices(collection);
+            //RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
+            //RegisterDependency.RegisterServices(collection);
             ServiceProvider = collection.BuildServiceProvider();
 
             var web3 = ServiceProvider.GetService<Web3>();
