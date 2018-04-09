@@ -178,5 +178,15 @@ namespace Lykke.Service.EthereumCore.Core.Settings
     {
         public double StateOfChaos { get; set; }
     }
+
+    public class ApiKeys
+    {
+        public IEnumerable<string> Keys { get; set; }
+    }
+
+    public class LykkePay
+    {
+        public string LykkePayAddress { get; set; }
+    }
 }
 //0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06

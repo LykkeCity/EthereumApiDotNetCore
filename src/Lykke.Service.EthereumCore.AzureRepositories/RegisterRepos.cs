@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
@@ -15,192 +16,209 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 {
     public static class RegisterReposExt
     {
-        public static void RegisterAzureStorages(this IServiceCollection Services,
+        public static void RegisterAzureStorages(this ContainerBuilder builder,
             IReloadingManager<BaseSettings> settings,
-            IReloadingManager<SlackNotificationSettings> slackNotificationSettings)
+            IReloadingManager<SlackNotificationSettings> slackNotificationSettings,
+            ILog log)
         {
             var dataReloadingManager = settings.ConnectionString(x => x.Db.DataConnString);
-            Services.AddSingleton<IPendingTransactionsRepository>(provider => new PendingTransactionsRepository(
+            builder.RegisterInstance<IPendingTransactionsRepository>(new PendingTransactionsRepository(
                 AzureTableStorage<PendingTransactionEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.PendingTransactions,
-                    provider.GetService<ILog>()),
+                    log),
                 AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.PendingTransactions,
-                provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ITransferContractRepository>(provider => new TransferContractRepository(
+            builder.RegisterInstance<ITransferContractRepository>(new TransferContractRepository(
                 AzureTableStorage<TransferContractEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.TransferContractTable,
-                provider.GetService<ILog>()),
+                log),
                 AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.TransferContractTable,
-                provider.GetService<ILog>())));
+                log)));
 
-            Services.AddSingleton<IEventTraceRepository>(provider => new EventTraceRepository(
+            builder.RegisterInstance<IEventTraceRepository>(new EventTraceRepository(
                 AzureTableStorage<EventTraceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.EventTraceTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<INonceRepository>(provider => new NonceRepository(
+            builder.RegisterInstance<INonceRepository>(new NonceRepository(
               AzureTableStorage<AddressNonceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.NonceCacheTable,
-                  provider.GetService<ILog>())));
+                  log)));
 
-            Services.AddSingleton<IPendingOperationRepository>(provider => new PendingOperationRepository(
+            builder.RegisterInstance<IPendingOperationRepository>(new PendingOperationRepository(
                 AzureTableStorage<PendingOperationEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.PendingOperationsTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IOperationToHashMatchRepository>(provider => new OperationToHashMatchRepository(
+            builder.RegisterInstance<IOperationToHashMatchRepository>(new OperationToHashMatchRepository(
                 AzureTableStorage<OperationToHashMatchEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
-                    provider.GetService<ILog>()),
+                    log),
                 AzureTableStorage<HashToOperationMatchEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
-                    provider.GetService<ILog>()),
+                    log),
                 AzureTableStorage<OperationToHashMatchHistoryEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OperationToHashMatchTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
 
-            Services.AddSingleton<IBlockSyncedRepository>(provider => new BlockSyncedRepository(
+            builder.RegisterInstance<IBlockSyncedRepository>(new BlockSyncedRepository(
                 AzureTableStorage<BlockSyncedEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlockSyncedTable,
-                    provider.GetService<ILog>()),
+                    log),
                 AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlockSyncedTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ICashinEventRepository>(provider => new CashinEventRepository(
+            builder.RegisterInstance<ICashinEventRepository>(new CashinEventRepository(
                 AzureTableStorage<CashinEventEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CashInEventTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IOwnerRepository>(provider => new OwnerRepository(
+            builder.RegisterInstance<IOwnerRepository>(new OwnerRepository(
                 AzureTableStorage<OwnerEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OwnerTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ICoinEventRepository>(provider => new CoinEventRepository(
+            builder.RegisterInstance<ICoinEventRepository>(new CoinEventRepository(
                 AzureTableStorage<CoinEventEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinEventEntityTable,
-                    provider.GetService<ILog>()),
+                    log),
                 AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinEventEntityTable,
-                provider.GetService<ILog>())));
+                log)));
 
-            Services.AddSingleton<IExternalTokenRepository>(provider => new ExternalTokenRepository(
+            builder.RegisterInstance<IExternalTokenRepository>(new ExternalTokenRepository(
                 AzureTableStorage<ExternalTokenEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.ExternalTokenTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IUserPaymentHistoryRepository>(provider => new UserPaymentHistoryRepository(
+            builder.RegisterInstance<IUserPaymentHistoryRepository>(new UserPaymentHistoryRepository(
                 AzureTableStorage<UserPaymentHistoryEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.UserPaymentHistoryTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IUserPaymentRepository>(provider => new UserPaymentRepository());
+            builder.RegisterInstance<IUserPaymentRepository>(new UserPaymentRepository());
 
-            Services.AddSingleton<IUserTransferWalletRepository>(provider => new UserTransferWalletRepository(
+            builder.RegisterInstance<IUserTransferWalletRepository>(new UserTransferWalletRepository(
                AzureTableStorage<UserTransferWalletEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.UserTransferWalletTable,
-                   provider.GetService<ILog>())
+                   log)
                    ));
 
-            Services.AddSingleton<IAppSettingsRepository>(provider => new AppSettingsRepository(
+            builder.RegisterInstance<IAppSettingsRepository>(new AppSettingsRepository(
                 AzureTableStorage<AppSettingEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.AppSettingsTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ICoinTransactionRepository>(provider => new CoinTransactionRepository(
+            builder.RegisterInstance<ICoinTransactionRepository>(new CoinTransactionRepository(
                 AzureTableStorage<CoinTransactionEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.TransactionsTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ICoinContractFilterRepository>(provider => new CoinContractFilterRepository(
+            builder.RegisterInstance<ICoinContractFilterRepository>(new CoinContractFilterRepository(
                 AzureTableStorage<CoinContractFilterEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinFiltersTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<ICoinRepository>((provider => new CoinRepository(
+            builder.RegisterInstance<ICoinRepository>((new CoinRepository(
                 AzureTableStorage<CoinEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinTable
-                    , provider.GetService<ILog>())
+                    , log)
                 , AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinTableInedex
-                   , provider.GetService<ILog>()))));
+                   , log))));
 
-            Services.AddSingleton<IUserAssignmentFailRepository>(provider => new UserAssignmentFailRepository(
+            builder.RegisterInstance<IUserAssignmentFailRepository>(new UserAssignmentFailRepository(
                 AzureTableStorage<UserAssignmentFailEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.UserAssignmentFailTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IOperationResubmittRepository>(provider => new OperationResubmittRepository(
+            builder.RegisterInstance<IOperationResubmittRepository>(new OperationResubmittRepository(
                AzureTableStorage<OperationResubmittEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OperationResubmittTable,
-                   provider.GetService<ILog>())));
+                   log)));
 
-            Services.AddSingleton<IOwnerRepository>(provider => new OwnerRepository(
+            builder.RegisterInstance<IOwnerRepository>(new OwnerRepository(
                 AzureTableStorage<OwnerEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OwnerTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IHotWalletOperationRepository>(provider => new HotWalletOperationRepository(
+            builder.RegisterInstance<IHotWalletOperationRepository>(new HotWalletOperationRepository(
                 AzureTableStorage<HotWalletCashoutEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.HotWalletCashoutTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IHotWalletTransactionRepository>(provider => new HotWalletTransactionRepository(
-                AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>.Create(dataReloadingManager, 
+            builder.RegisterInstance<IHotWalletTransactionRepository>(new HotWalletTransactionRepository(
+                AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
-                    provider.GetService<ILog>()),
-                AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>.Create(dataReloadingManager, 
+                    log),
+                AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.HotWalletCashoutTransactionTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IErc20DepositContractRepositoryOld>(provider => new Erc20DepositContractRepository(
+            builder.RegisterInstance<IErc20DepositContractRepositoryOld>(new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc20DepositContractTable,
-                provider.GetService<ILog>()),
+                log),
                 AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc20DepositContractTable,
-                provider.GetService<ILog>())
+                log)
                 ));
 
-            Services.AddSingleton<IErc223DepositContractRepository>(provider => new Erc20DepositContractRepository(
+            #region Default
+
+            builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc223DepositContractTable,
-                provider.GetService<ILog>()),
+                log),
                 AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
                 Constants.StoragePrefix + Constants.Erc223DepositContractTable,
-                provider.GetService<ILog>())
-                ));
+                log)
+                )).Keyed<IErc223DepositContractRepository>(Constants.DefaultKey);
 
-            Services.AddSingleton<IGasPriceRepository>(provider => new GasPriceRepository(
+            #endregion
+
+            #region LykkePay
+
+            builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
+                AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayKey + Constants.Erc223DepositContractTable,
+                    log),
+                AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayKey + Constants.Erc223DepositContractTable,
+                    log)
+            )).Keyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
+
+            #endregion
+
+            builder.RegisterInstance<IGasPriceRepository>(new GasPriceRepository(
                 AzureTableStorage<GasPriceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.GasPriceTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IBlackListAddressesRepository>(provider => new BlackListAddressesRepository(
+            builder.RegisterInstance<IBlackListAddressesRepository>(new BlackListAddressesRepository(
                 AzureTableStorage<BlackListAddressEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlackListAddressTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IAddressStatisticsRepository>(provider => new AddressStatisticsRepository(
+            builder.RegisterInstance<IAddressStatisticsRepository>(new AddressStatisticsRepository(
                 AzureTableStorage<AddressStatisticsEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.AddressStatisticsTable,
-                    provider.GetService<ILog>())));
+                    log)));
 
-            Services.AddSingleton<IWhiteListAddressesRepository>(provider => new WhiteListAddressesRepository(
+            builder.RegisterInstance<IWhiteListAddressesRepository>(new WhiteListAddressesRepository(
                 AzureTableStorage<WhiteListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.WhiteListAddressesTable,
-                    provider.GetService<ILog>())));
+                    log)));
         }
 
-        public static void RegisterAzureQueues(this IServiceCollection Services, 
-            IReloadingManager<BaseSettings> settings, 
+        public static void RegisterAzureQueues(this ContainerBuilder builder,
+            IReloadingManager<BaseSettings> settings,
             IReloadingManager<SlackNotificationSettings> slackNotificationManager)
         {
             var dataReloadingManager = settings.ConnectionString(x => x.Db.DataConnString);
             var slackReloadManager = slackNotificationManager.ConnectionString(x => x.AzureQueue.ConnectionString);
             var queueName = slackNotificationManager.CurrentValue.AzureQueue.QueueName;
-
-            Services.AddTransient<IQueueFactory, QueueFactory>();
-            Services.AddTransient<Func<string, IQueueExt>>(provider =>
+            Func<string, IQueueExt> oldQueueResolver = (queueNameArg) =>
             {
-                return (x =>
+                switch (queueNameArg)
                 {
-                    switch (x)
-                    {
-                        case Constants.TransferContractUserAssignmentQueueName:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        case Constants.EthereumContractQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        case Constants.SlackNotifierQueue:
-                            return AzureQueueExt.Create(slackReloadManager, Constants.StoragePrefix + queueName);
-                        case Constants.EthereumOutQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);//remove
-                        case Constants.ContractTransferQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        case Constants.TransactionMonitoringQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        case Constants.CoinTransactionQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        case Constants.UserContractManualQueue:
-                            return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + x);
-                        default:
-                            throw new Exception("Queue is not registered");
-                    }
-                });
-            });
+                    case Constants.TransferContractUserAssignmentQueueName:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    case Constants.EthereumContractQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    case Constants.SlackNotifierQueue:
+                        return AzureQueueExt.Create(slackReloadManager, Constants.StoragePrefix + queueName);
+                    case Constants.EthereumOutQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);//remove
+                    case Constants.ContractTransferQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    case Constants.TransactionMonitoringQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    case Constants.CoinTransactionQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    case Constants.UserContractManualQueue:
+                        return AzureQueueExt.Create(dataReloadingManager, Constants.StoragePrefix + queueNameArg);
+                    default:
+                        throw new Exception("Queue is not registered");
+                }
+            };
+
+            builder.RegisterType<QueueFactory>()
+                .As<IQueueFactory>().SingleInstance();
+            builder.RegisterInstance<Func<string, IQueueExt>>(oldQueueResolver);
 
         }
     }

@@ -10,6 +10,10 @@ namespace Lykke.Service.EthereumCore.Core
         /// Used to change table and queue names in testing enviroment
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
+
+        public const string DefaultKey = "default";
+        public const string LykkePayKey = "lykke-pay";
+
         public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
         public const string EventTraceTable = "EventTrace";
@@ -24,6 +28,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
         public const string HotWalletTransactionMonitoringQueue = "hotwallet-transaction-monitoring-queue";
         public const string Erc20DepositContractPoolQueue = "erc20-deposit-contract-pool-queue";
+        public const string LykkePayErc20DepositContractPoolQueue = "lykke-pay-erc20-deposit-contract-pool-queue";
         public const string Erc20DepositCashinTransferQueue = "erc20-deposit-cashin-transfer-queue";
         /// <summary>
         /// Used to internal monitoring of refill transactions
