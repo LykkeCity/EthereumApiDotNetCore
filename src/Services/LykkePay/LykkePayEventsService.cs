@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
@@ -43,7 +44,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             IQueueFactory queueFactory,
             AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
-            IErc20DepositContractService depositContractService)
+            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService depositContractService)
         {
             _cashinEventRepository = cashinEventRepository;
             _blockSyncedRepository = blockSyncedRepository;

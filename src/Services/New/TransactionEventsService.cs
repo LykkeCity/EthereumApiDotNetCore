@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
@@ -55,7 +56,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             IQueueFactory queueFactory,
             AppSettings settingsWrapper,
             IEthereumSamuraiApi indexerApi,
-            IErc20DepositContractService depositContractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService depositContractService,
             IEthereumIndexerService ethereumIndexerService)
         {
             _cashinEventRepository = cashinEventRepository;

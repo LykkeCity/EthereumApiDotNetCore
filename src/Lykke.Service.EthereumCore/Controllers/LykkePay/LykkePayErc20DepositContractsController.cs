@@ -24,10 +24,10 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [HttpPost]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        [ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CreateDepositContractAsync([FromQuery] string userAddress)
-        { 
+        {
             var contractAddress = await _contractService.AssignContract(userAddress);
 
             return Ok(new RegisterResponse
@@ -39,7 +39,7 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [HttpGet]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        [ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> GetDepositContractAsync([FromQuery] string userAddress)
         {
@@ -51,10 +51,10 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
             });
         }
 
-        [HttpPost]
+        [HttpPost("transfer")]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        [ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferAsync([FromBody] TransferFromDepositRequest request)
         {

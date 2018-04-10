@@ -24,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Services
 
         public async Task ReplenishPool()
         {
-            var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
+            var pool = _poolFactory.Get(Constants.LykkePayErc20DepositContractPoolQueue);
             var currentCount = await pool.Count();
 
             if (currentCount < _settings.MinContractPoolLength)

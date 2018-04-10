@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Settings;
 
@@ -12,7 +13,7 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly IBaseSettings _settings;
 
         public Erc20DepositContractPoolService(
-            IErc20DepositContractService contractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings)
         {

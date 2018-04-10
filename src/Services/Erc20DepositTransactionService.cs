@@ -11,6 +11,7 @@ using Lykke.Service.EthereumCore.Services.Coins;
 using AzureStorage.Queue;
 using Common.Log;
 using System.Numerics;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core.Utils;
 using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
@@ -55,7 +56,7 @@ namespace Lykke.Service.EthereumCore.Services
             ILog logger,
             IExchangeContractService coinContractService,
             IBaseSettings baseSettings,
-            IErc20DepositContractService erc20DepositContractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService erc20DepositContractService,
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
             IUserPaymentHistoryRepository userPaymentHistoryRepository,

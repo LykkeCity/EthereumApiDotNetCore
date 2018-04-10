@@ -17,6 +17,7 @@ using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Common;
 using System.Threading;
 using System.Collections.Concurrent;
+using Autofac.Features.AttributeFilters;
 
 namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
@@ -47,7 +48,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
             ILog log,
             Web3 web3,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
-            IErc20DepositContractService erc20DepositContractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService erc20DepositContractService,
             AppSettings settingsWrapper,
             IUserTransferWalletRepository userTransferWalletRepository,
             IGasPriceRepository gasPriceRepository)
