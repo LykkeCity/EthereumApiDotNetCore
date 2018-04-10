@@ -4,11 +4,11 @@ using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
 namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
 {
     /// <summary>
-    /// Event is fired after transaction has been included in to the blockchain with conf lvl of 3
+    /// Event is fired after there is at least 1 confirmation of the transfer to LykkePay address
     /// </summary>
-    public class TransferCompletedEvent : Erc20TransferBase
+    public class TransferDetectedEvent : Erc20TransferBase
     {
-        public TransferCompletedEvent(string transactionHash, 
+        public TransferDetectedEvent(string transactionHash, 
             string amount, 
             string tokenAddress, 
             string fromAddress, 

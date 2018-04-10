@@ -122,21 +122,6 @@ namespace Lykke.Job.EthereumCore
             try
             {
                 // NOTE: Job not yet recieve and process IsAlive requests here
-                {
-                    var x2 = ApplicationContainer.ResolveKeyed<IErc223DepositContractRepository>(Constants.DefaultKey);
-                    var x1 = ApplicationContainer.ResolveKeyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
-                }
-
-                {
-                    var x2 = ApplicationContainer.ResolveKeyed<IErc20DepositContractService>(Constants.DefaultKey);
-                    var x1 = ApplicationContainer.ResolveKeyed<IErc20DepositContractService>(Constants.LykkePayKey);
-                }
-
-                {
-                    var x2 = ApplicationContainer.ResolveKeyed<IErc20DepositContractPoolService>(Constants.DefaultKey);
-                    var x1 = ApplicationContainer.ResolveKeyed<IErc20DepositContractPoolService>(Constants.LykkePayKey);
-                }
-                var x = ApplicationContainer.Resolve<Erc20DepositContractPoolJob>();
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 //Rewrite request Interceptor
