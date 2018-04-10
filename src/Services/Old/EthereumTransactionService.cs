@@ -15,6 +15,7 @@ namespace Lykke.Service.EthereumCore.Services
     {
         Task<bool> IsTransactionInPool(string transactionHash);
         Task<bool> IsTransactionExecuted(string hash, int gasSended);
+        Task<bool> IsTransactionExecuted(string hash);
         Task<TransactionReceipt> GetTransactionReceipt(string transaction);
     }
 
@@ -45,10 +46,15 @@ namespace Lykke.Service.EthereumCore.Services
                 receipt.Status.Value == _failedStatus.Value)
                 return false;
 
-            if (receipt.GasUsed.Value != gasSended)
+            if (receipt.GasUsed.Value != transaction.Gas)
                 return true;
 
             return false;
+        }
+
+        public async Task<bool> IsTransactionExecuted(string hash)
+        {
+            return await IsTransactionExecuted(hash, Constants.GasForCoinTransaction);
         }
 
 

@@ -7,6 +7,7 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -126,7 +127,7 @@ namespace Lykke.Service.EthereumCore.Services
             Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction("transferAllTokens");
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             if (!cashinWouldBeSuccesfull)
             {
@@ -134,7 +135,7 @@ namespace Lykke.Service.EthereumCore.Services
             }
 
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
         }

@@ -68,6 +68,7 @@ namespace Lykke.Service.EthereumCore.Core
 
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
+        public const int GasForHotWalletTransaction = 400000;
         public const int GasForEthCashin = 800000;
         public const int HalfGasLimit = 100000;
 

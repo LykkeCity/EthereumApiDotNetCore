@@ -88,8 +88,8 @@ namespace Lykke.Job.EthereumCore.Job
             if (coinTransaction == null || coinTransaction.Error)
             {
                 await RepeatOperationTillWin(transaction);
-                //await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations." +
-                //    $" Reason - unable to find transaction in txPool and in blockchain within {_broadcastMonitoringPeriodSeconds} seconds");
+                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations(or errors)." +
+                    $" Reason - coinTransaction.Error is true");
             }
             else
             {

@@ -143,7 +143,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
                     transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.Erc20Transaction()
                     {
                         FromAddress = cashout.FromAddress,
-                        GasAmount = Constants.GasForCoinTransaction,
+                        GasAmount = Constants.GasForHotWalletTransaction,
                         GasPrice = selectedGasPrice,
                         ToAddress = cashout.ToAddress,
                         TokenAddress = cashout.TokenAddress,
@@ -157,7 +157,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
                     transactionForSigning = await _privateWalletService.GetTransactionForSigning(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.EthTransaction()
                     {
                         FromAddress = cashout.FromAddress,
-                        GasAmount = Constants.GasForCoinTransaction,
+                        GasAmount = Constants.GasForHotWalletTransaction,
                         GasPrice = selectedGasPrice,
                         ToAddress = cashout.ToAddress,
                         Value = cashout.Amount

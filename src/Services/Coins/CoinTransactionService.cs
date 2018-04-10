@@ -56,7 +56,7 @@ namespace Lykke.Service.EthereumCore.Services.Coins
                     ConfirmationLevel = 0,
                     TransactionHash = transaction.TransactionHash
                 };
-            bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash, Constants.GasForCoinTransaction);
+            bool error = coinDbTransaction?.Error == true || !await _transactionService.IsTransactionExecuted(transaction.TransactionHash);
 
             var confimations = await _contractService.GetCurrentBlock() - receipt.BlockNumber;
             var coinTransaction = new CoinTransaction
