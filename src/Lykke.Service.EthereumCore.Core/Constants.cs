@@ -72,6 +72,11 @@ namespace Lykke.Service.EthereumCore.Core
         public const string WhiteListAddressesTable = "WhiteListAddresses";
         public const string AddressStatisticsTable = "AddressStatistics";
 
+        #region  LykkePay
+        public const string LykkePayErc223DepositContractTable = "LykkePayErc223DepositContracts";
+        #endregion
+
+
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
         public const int GasForHotWalletTransaction = 400000;

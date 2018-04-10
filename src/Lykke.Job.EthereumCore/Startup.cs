@@ -20,6 +20,10 @@ using Lykke.SlackNotification.AzureQueue;
 using System.Reflection;
 using Nethereum.RPC.TransactionManagers;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Job.EthereumCore.Job;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services;
 
 namespace Lykke.Job.EthereumCore
 {
@@ -118,7 +122,21 @@ namespace Lykke.Job.EthereumCore
             try
             {
                 // NOTE: Job not yet recieve and process IsAlive requests here
+                {
+                    var x2 = ApplicationContainer.ResolveKeyed<IErc223DepositContractRepository>(Constants.DefaultKey);
+                    var x1 = ApplicationContainer.ResolveKeyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
+                }
 
+                {
+                    var x2 = ApplicationContainer.ResolveKeyed<IErc20DepositContractService>(Constants.DefaultKey);
+                    var x1 = ApplicationContainer.ResolveKeyed<IErc20DepositContractService>(Constants.LykkePayKey);
+                }
+
+                {
+                    var x2 = ApplicationContainer.ResolveKeyed<IErc20DepositContractPoolService>(Constants.DefaultKey);
+                    var x1 = ApplicationContainer.ResolveKeyed<IErc20DepositContractPoolService>(Constants.LykkePayKey);
+                }
+                var x = ApplicationContainer.Resolve<Erc20DepositContractPoolJob>();
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 //Rewrite request Interceptor

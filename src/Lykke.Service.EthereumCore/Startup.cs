@@ -21,6 +21,7 @@ using Lykke.Common.ApiLibrary.Middleware;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using Lykke.Service.EthereumCore;
+using Lykke.Service.EthereumCore.Filters.Swagger;
 using Nethereum.RPC.TransactionManagers;
 
 namespace Lykke.Service.EthereumCore
@@ -56,6 +57,8 @@ namespace Lykke.Service.EthereumCore
                 services.AddSwaggerGen(options =>
                 {
                     options.DefaultLykkeConfiguration("v1", "EthereumCore API");
+
+                    options.OperationFilter<ApiKeyHeaderAccessTokenOperationFilter>();
                 });
 
                 var builder = new ContainerBuilder();

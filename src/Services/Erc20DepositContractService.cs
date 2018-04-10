@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
@@ -38,7 +39,7 @@ namespace Lykke.Service.EthereumCore.Services
 
         public Erc20DepositContractService(
             IErc20DepositContractRepositoryOld oldContractRepository,
-            IErc223DepositContractRepository contractRepository,
+            [KeyFilter(Constants.DefaultKey)]IErc223DepositContractRepository contractRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings,

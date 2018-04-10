@@ -16,7 +16,11 @@ using Lykke.Service.EthereumCore.Services.Signature;
 using Lykke.Service.EthereumCore.Services.Transactions;
 using SigningServiceApiCaller;
 using System;
+using Autofac;
+using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Services.LykkePay;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -59,8 +63,8 @@ namespace Lykke.Service.EthereumCore.Services
             Services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
             Services.AddSingleton<ISignatureService, SignatureService>();
             Services.AddSingleton<IHotWalletService, HotWalletService>();
-            Services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
-            Services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
+            //Services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
+            //Services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
             Services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
             Services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
             Services.AddSingleton<ITransactionRouter, TransactionRouter>();
@@ -69,10 +73,10 @@ namespace Lykke.Service.EthereumCore.Services
             //Uses HttpClient Inside -> singleton
             Services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
-                var lykkeSigningAPI = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl
+                var lykkeSigningApi = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl
                     , UriKind.Absolute));
 
-                return lykkeSigningAPI;
+                return lykkeSigningApi;
             });
 
             Services.AddSingleton<IEthereumSamuraiApi>((provider) =>
@@ -124,7 +128,26 @@ namespace Lykke.Service.EthereumCore.Services
             });
         }
 
-        //need to fix that
+        public static void RegisterServices(this ContainerBuilder builder)
+        {
+            builder.RegisterType<LykkePayErc20DepositContractService>()
+                .Keyed<IErc20DepositContractService>(Constants.LykkePayKey)
+                .SingleInstance().WithAttributeFiltering();
+
+            builder.RegisterType<Erc20DepositContractService>()
+                .Keyed<IErc20DepositContractService>(Constants.DefaultKey)
+                .SingleInstance().WithAttributeFiltering();
+
+            builder.RegisterType<LykkePayErc20DepositContractPoolService>()
+                .Keyed<IErc20DepositContractPoolService>(Constants.LykkePayKey)
+                .SingleInstance().WithAttributeFiltering();
+
+            builder.RegisterType<Erc20DepositContractPoolService>()
+                .Keyed<IErc20DepositContractPoolService>(Constants.DefaultKey)
+                .SingleInstance().WithAttributeFiltering();
+        }
+
+        //TODO: need to fix that
         public static void ActivateRequestInterceptor(this IServiceProvider provider)
         {
             provider.GetService<ITransactionManager>();

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Services;
@@ -26,33 +27,41 @@ namespace Lykke.Job.EthereumCore.Config
             builder.RegisterAzureStorages(settings, slackNotificationSettings, log);
             builder.RegisterAzureQueues(settings, slackNotificationSettings);
             collection.RegisterServices();
+            builder.RegisterServices();
             collection.RegisterRabbitQueue(settings, log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.CurrentValue.MonitoringServiceUrl));
-            RegisterJobs(collection);
+            RegisterJobs(builder);
         }
 
-        public static void RegisterJobs(IServiceCollection collection)
+        public static void RegisterJobs(ContainerBuilder builder)
         {
             #region NewJobs
 
-            collection.AddSingleton<MonitoringCoinTransactionJob>();
-            collection.AddSingleton<MonitoringTransferContracts>();
-            collection.AddSingleton<MonitoringTransferTransactions>();
-            collection.AddSingleton<TransferContractPoolJob>();
-            collection.AddSingleton<TransferContractUserAssignmentJob>();
-            collection.AddSingleton<PoolRenewJob>();
-            collection.AddSingleton<PingContractsJob>();
-            collection.AddSingleton<TransferTransactionQueueJob>();
-            collection.AddSingleton<MonitoringOperationJob>();
-            collection.AddSingleton<CashinIndexingJob>();
-            collection.AddSingleton<CoinEventResubmittJob>();
-            collection.AddSingleton<HotWalletCashoutJob>();
-            collection.AddSingleton<HotWalletMonitoringTransactionJob>();
-            collection.AddSingleton<Erc20DepositContractPoolJob>();
-            collection.AddSingleton<Erc20DepositContractPoolRenewJob>();
-            collection.AddSingleton<Erc20DepositMonitoringCashinTransactions>();
-            collection.AddSingleton<Erc20DepositMonitoringContracts>();
+            //builder.RegisterType<<MonitoringCoinTransactionJob>();
+            //builder.RegisterType<<MonitoringTransferContracts>();
+            //builder.RegisterType<<MonitoringTransferTransactions>();
+            //builder.RegisterType<<TransferContractPoolJob>();
+            //builder.RegisterType<<TransferContractUserAssignmentJob>();
+            //builder.RegisterType<<PoolRenewJob>();
+            //builder.RegisterType<<PingContractsJob>();
+            //builder.RegisterType<<TransferTransactionQueueJob>();
+            //builder.RegisterType<<MonitoringOperationJob>();
+            //builder.RegisterType<<CashinIndexingJob>();
+            //builder.RegisterType<<CoinEventResubmittJob>();
+            //builder.RegisterType<<HotWalletCashoutJob>();
+            //builder.RegisterType<<HotWalletMonitoringTransactionJob>();
+            builder.RegisterType<Erc20DepositContractPoolJob>()
+                .SingleInstance().WithAttributeFiltering();
+            //builder.RegisterType<<Erc20DepositContractPoolRenewJob>();
+            //builder.RegisterType<<Erc20DepositMonitoringCashinTransactions>();
+            //builder.RegisterType<<Erc20DepositMonitoringContracts>();
+
+            #region LykkePay
+
+            //builder.RegisterType<<MonitoringCoinTransactionJob>();
+
+            #endregion
 
             #endregion
         }

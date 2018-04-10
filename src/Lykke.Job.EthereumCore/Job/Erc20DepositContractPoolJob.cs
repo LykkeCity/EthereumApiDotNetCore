@@ -12,7 +12,8 @@ namespace Lykke.Job.EthereumCore.Job
     public class Erc20DepositContractPoolJob
     {
         private readonly IErc20DepositContractPoolService _contractPoolService;
-        private IErc20DepositContractPoolService _contractPoolServiceLykkePay;
+        private readonly IErc20DepositContractPoolService _contractPoolServiceLykkePay;
+
         private readonly ILog _logger;
 
         public Erc20DepositContractPoolJob(
