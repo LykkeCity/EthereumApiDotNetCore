@@ -158,10 +158,10 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
             builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
-                    Constants.StoragePrefix + Constants.LykkePayKey + Constants.Erc223DepositContractTable,
+                    Constants.StoragePrefix  + Constants.LykkePayErc223DepositContractTable,
                     log),
                 AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
-                    Constants.StoragePrefix + Constants.LykkePayKey + Constants.Erc223DepositContractTable,
+                    Constants.StoragePrefix  + Constants.LykkePayErc223DepositContractTable,
                     log)
             )).Keyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
 

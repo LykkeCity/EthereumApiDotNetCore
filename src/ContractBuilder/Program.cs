@@ -74,7 +74,7 @@ namespace ContractBuilder
             ServiceProvider = collection.BuildServiceProvider();
             //RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
             //RegisterDependency.RegisterServices(collection);
-            Lykke.Job.EthereumCore.Config.RegisterDependency.RegisterJobs(collection);
+            //Lykke.Job.EthereumCore.Config.RegisterDependency.RegisterJobs(collection);
             //var web3 = ServiceProvider.GetService<Web3>();
             //web3.Eth.GetBalance.SendRequestAsync("");
             // web3.Eth.Transactions.SendTransaction.SendRequestAsync(new Nethereum.RPC.Eth.DTOs.TransactionInput()
