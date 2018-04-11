@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Service.UnitTests.Mocks
 {
-    public class MockEthereumSamuraiApi : IEthereumSamuraiApi
+    public class MockEthereumSamuraiApi : IEthereumSamuraiAPI
     {
         public Dictionary<string, string> AddressBalance = new Dictionary<string, string>
         {
@@ -158,6 +158,11 @@ namespace Service.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = null, long? stopBlock = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(
             string address,
             Dictionary<string, List<string>> customHeaders = null,
@@ -179,6 +184,16 @@ namespace Service.UnitTests.Mocks
             };
 
             return Task.FromResult(httpResponse);
+        }
+
+        public Task<HttpOperationResponse<object>> ApiBlockHashByBlockHashGetWithHttpMessagesAsync(string blockHash, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpOperationResponse<object>> ApiBlockNumberByBlockNumberGetWithHttpMessagesAsync(long blockNumber, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
         }
 
         public Task<HttpOperationResponse<object>> ApiErc20BalanceGetErc20BalanceByAddressPostWithHttpMessagesAsync(
@@ -219,6 +234,11 @@ namespace Service.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(int count, int start, string query = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiErc20TransferHistoryGetErc20TransfersPostWithHttpMessagesAsync(GetErc20TransferHistoryRequest request = null, int? start = null, int? count = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();
@@ -251,10 +271,20 @@ namespace Service.UnitTests.Mocks
             return Task.FromResult(httpResponse);
         }
 
+        public Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = null, long? stopBlock = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpOperationResponse<object>> ApiInternalMessagesTxHashByTransactionHashGetWithHttpMessagesAsync(
             string transactionHash,
             Dictionary<string, List<string>> customHeaders = null,
             CancellationToken cancellationToken            = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpOperationResponse> ApiIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();
         }
@@ -308,6 +338,11 @@ namespace Service.UnitTests.Mocks
             };
 
             return Task.FromResult(httpResponse);
+        }
+
+        public Task<HttpOperationResponse<object>> ApiTransactionByAddressGetWithHttpMessagesAsync(string address, int count, int start, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
         }
 
         public Task<HttpOperationResponse<object>> ApiTransactionTxHashByTransactionHashGetWithHttpMessagesAsync(

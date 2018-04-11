@@ -17,9 +17,9 @@ namespace Lykke.Service.EthereumCore.Services.Erc20
 
     public class Erc20BalanceService : IErc20BalanceService
     {
-        private readonly IEthereumSamuraiApi _ethereumSamuraiApi;
+        private readonly IEthereumSamuraiAPI _ethereumSamuraiApi;
 
-        public Erc20BalanceService(IEthereumSamuraiApi ethereumSamuraiApi)
+        public Erc20BalanceService(IEthereumSamuraiAPI ethereumSamuraiApi)
         {
             _ethereumSamuraiApi = ethereumSamuraiApi;
         }

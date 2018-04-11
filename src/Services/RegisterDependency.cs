@@ -20,6 +20,7 @@ using Autofac;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.LykkePay;
 
 namespace Lykke.Service.EthereumCore.Services
@@ -63,8 +64,6 @@ namespace Lykke.Service.EthereumCore.Services
             Services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
             Services.AddSingleton<ISignatureService, SignatureService>();
             Services.AddSingleton<IHotWalletService, HotWalletService>();
-            //Services.AddSingleton<IErc20DepositContractPoolService, Erc20DepositContractPoolService>();
-            //Services.AddSingleton<IErc20DepositContractService, Erc20DepositContractService>();
             Services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
             Services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
             Services.AddSingleton<ITransactionRouter, TransactionRouter>();
@@ -79,9 +78,9 @@ namespace Lykke.Service.EthereumCore.Services
                 return lykkeSigningApi;
             });
 
-            Services.AddSingleton<IEthereumSamuraiApi>((provider) =>
+            Services.AddSingleton<IEthereumSamuraiAPI>((provider) =>
             {
-                var ethereumSamuraiApi = new EthereumSamuraiApi(new Uri(provider.GetService<IBaseSettings>().EthereumSamuraiUrl
+                var ethereumSamuraiApi = new EthereumSamuraiAPI(new Uri(provider.GetService<IBaseSettings>().EthereumSamuraiUrl
                     , UriKind.Absolute));
 
                 return ethereumSamuraiApi;

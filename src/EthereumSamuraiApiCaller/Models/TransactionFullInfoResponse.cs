@@ -40,13 +40,36 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "transaction")]
+        [JsonProperty(PropertyName = "Transaction")]
         public TransactionResponse Transaction { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "erc20Transfers")]
+        [JsonProperty(PropertyName = "Erc20Transfers")]
         public IList<Erc20TransferHistoryResponse> Erc20Transfers { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            if (Transaction != null)
+            {
+                Transaction.Validate();
+            }
+            if (Erc20Transfers != null)
+            {
+                foreach (var element in Erc20Transfers)
+                {
+                    if (element != null)
+                    {
+                        element.Validate();
+                    }
+                }
+            }
+        }
     }
 }

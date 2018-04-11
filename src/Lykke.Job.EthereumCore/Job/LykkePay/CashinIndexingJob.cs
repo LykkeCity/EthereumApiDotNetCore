@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
@@ -25,14 +26,14 @@ namespace Lykke.Job.EthereumCore.Job.LykkePay
 
         public LykkePayIndexingJob(ILog log, 
             IBaseSettings settings, 
-            ITransactionEventsService transactionEventsService)
+            [KeyFilter(Constants.LykkePayKey)]ITransactionEventsService transactionEventsService)
         {
             _transactionEventsService = transactionEventsService;
             _settings = settings;
             _log = log;
         }
 
-        [TimerTrigger("0.00:00:30")]
+        [TimerTrigger("0.00:01:00")]
         public async Task Execute()
         {
             try

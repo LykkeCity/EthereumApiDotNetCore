@@ -10,17 +10,20 @@ using System;
 using Lykke.SettingsReader;
 using Lykke.RabbitMq.Azure;
 using AzureStorage.Blob;
+using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 
 namespace Lykke.Service.RabbitMQ
 {
     public static class RegisterRabbitQueueEx
     {
-        public static void RegisterRabbitQueue(this IServiceCollection Services, 
+        public static void RegisterRabbitQueue(this IServiceCollection Services,
             IReloadingManager<Lykke.Service.EthereumCore.Core.Settings.BaseSettings> settings,
-            ILog logger, 
+            ILog logger,
             string exchangePrefix = "")
         {
             var queueRepository = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMQ");
+            var queueRepositoryHW = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMqHotwallet");
+            var queueRepositoryLP = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMqLykkePay");
             var rabbitSettings = settings.CurrentValue.RabbitMq;
             string exchangeName = exchangePrefix + rabbitSettings.ExchangeEthereumCore;
             string connectionString = $"amqp://{rabbitSettings.Username}:{rabbitSettings.Password}@{rabbitSettings.Host}:{rabbitSettings.Port}";
@@ -33,7 +36,7 @@ namespace Lykke.Service.RabbitMQ
                 ExchangeName = exchangeName,
                 DeadLetterExchangeName = $"{exchangeName}.dlx",
                 RoutingKey = ""
-//                IsDurable = true
+                //                IsDurable = true
             };
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
@@ -53,7 +56,7 @@ namespace Lykke.Service.RabbitMQ
                 ExchangeName = $"{exchangeName}.hotwallet",
                 DeadLetterExchangeName = $"{exchangeName}.hotwallet.dlx",
                 RoutingKey = ""
-//                IsDurable = true
+                //                IsDurable = true
 
             };
 
@@ -61,13 +64,35 @@ namespace Lykke.Service.RabbitMQ
                 .SetSerializer(new BytesSerializer<HotWalletEvent>())
                 .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
                 .SetLogger(logger)
-                .SetQueueRepository(queueRepository)
+                .SetQueueRepository(queueRepositoryHW)
+                .Start();
+
+            #endregion
+
+            #region LykkePay
+
+            RabbitMqSubscriptionSettings rabbitMqLykkePaySettings = new RabbitMqSubscriptionSettings
+            {
+                ConnectionString = connectionString,
+                ExchangeName = $"{exchangeName}.lykkepay",
+                DeadLetterExchangeName = $"{exchangeName}.lykkepay.dlx",
+                RoutingKey = ""
+                //                IsDurable = true
+
+            };
+
+            RabbitMqPublisher<TransferEvent> lykkePayEventPublisher = new RabbitMqPublisher<TransferEvent>(rabbitMqLykkePaySettings)
+                .SetSerializer(new BytesSerializer<TransferEvent>())
+                .SetPublishStrategy(new PublishStrategy(rabbitSettings.RoutingKey))
+                .SetLogger(logger)
+                .SetQueueRepository(queueRepositoryLP)
                 .Start();
 
             #endregion
 
             Services.AddSingleton<IMessageProducer<string>>(publisher);
             Services.AddSingleton<IMessageProducer<HotWalletEvent>>(hotWalletCashoutEventPublisher);
+            Services.AddSingleton<IMessageProducer<TransferEvent>>(lykkePayEventPublisher);
             Services.AddSingleton<IRabbitQueuePublisher, RabbitQueuePublisher>();
         }
     }

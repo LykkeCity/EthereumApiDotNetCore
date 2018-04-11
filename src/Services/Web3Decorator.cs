@@ -8,19 +8,10 @@ using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services
 {
-    public interface IWeb3
-    {
-        ShhApiService Shh { get; }
-        EthApiContractService Eth { get; }
-        IClient Client { get; }
-        ITransactionManager TransactionManager { get; set; }
-        PersonalApiService Personal { get; }
-        NetApiService Net { get; }
-    }
-
     public class Web3Decorator : IWeb3
     {
         private readonly Web3 _web3;

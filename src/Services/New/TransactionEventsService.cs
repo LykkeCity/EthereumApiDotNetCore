@@ -45,7 +45,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly ICashinEventRepository _cashinEventRepository;
         private readonly IBlockSyncedRepository _blockSyncedRepository;
         private readonly AppSettings _settingsWrapper;
-        private readonly IEthereumSamuraiApi _indexerApi;
+        private readonly IEthereumSamuraiAPI _indexerApi;
         private readonly IErc20DepositContractService _depositContractService;
 
         public TransactionEventsService(Web3 web3,
@@ -55,7 +55,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             IBlockSyncedRepository blockSyncedRepository,
             IQueueFactory queueFactory,
             AppSettings settingsWrapper,
-            IEthereumSamuraiApi indexerApi,
+            IEthereumSamuraiAPI indexerApi,
             [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService depositContractService,
             IEthereumIndexerService ethereumIndexerService)
         {
@@ -126,7 +126,7 @@ namespace Lykke.Service.EthereumCore.Services.New
 
         public async Task IndexCashinEventsForErc20Deposits()
         {
-            var indexerStatusResponse = await _indexerApi.ApiSystemIsAliveGetWithHttpMessagesAsync();
+            var indexerStatusResponse = await _indexerApi.ApiIsAliveGetWithHttpMessagesAsync();
             if (indexerStatusResponse.Response.IsSuccessStatusCode)
             {
                 var responseContent = await indexerStatusResponse.Response.Content.ReadAsStringAsync();
