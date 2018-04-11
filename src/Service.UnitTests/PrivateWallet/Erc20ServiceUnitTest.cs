@@ -18,6 +18,7 @@ using Nethereum.Signer;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
+using Lykke.Service.EthereumCore.Core.Services;
 using Nethereum.Contracts;
 using Lykke.Service.EthereumCore.Services.Transactions;
 

@@ -22,7 +22,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the AddressHistoryResponse class.
         /// </summary>
-        public AddressHistoryResponse(long? blockNumber = default(long?), int? blockTimestamp = default(int?), string fromProperty = default(string), bool? hasError = default(bool?), int? messageIndex = default(int?), string to = default(string), string transactionHash = default(string), int? transactionIndex = default(int?), string value = default(string), string gasPrice = default(string), string gasUsed = default(string))
+        public AddressHistoryResponse(long blockNumber, int blockTimestamp, bool hasError, int messageIndex, int transactionIndex, string fromProperty = default(string), string to = default(string), string transactionHash = default(string), string value = default(string), string gasPrice = default(string), string gasUsed = default(string))
         {
             BlockNumber = blockNumber;
             BlockTimestamp = blockTimestamp;
@@ -46,12 +46,12 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
+        public long BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimestamp")]
-        public int? BlockTimestamp { get; set; }
+        public int BlockTimestamp { get; set; }
 
         /// <summary>
         /// </summary>
@@ -61,12 +61,12 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "hasError")]
-        public bool? HasError { get; set; }
+        public bool HasError { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "messageIndex")]
-        public int? MessageIndex { get; set; }
+        public int MessageIndex { get; set; }
 
         /// <summary>
         /// </summary>
@@ -81,7 +81,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "transactionIndex")]
-        public int? TransactionIndex { get; set; }
+        public int TransactionIndex { get; set; }
 
         /// <summary>
         /// </summary>
@@ -98,5 +98,15 @@ namespace EthereumSamuraiApiCaller.Models
         [JsonProperty(PropertyName = "gasUsed")]
         public string GasUsed { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

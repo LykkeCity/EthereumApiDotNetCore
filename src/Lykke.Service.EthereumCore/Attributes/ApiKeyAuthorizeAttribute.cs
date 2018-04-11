@@ -14,8 +14,6 @@ namespace Lykke.Service.EthereumCore.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class ApiKeyAuthorizeAttribute : ActionFilterAttribute
     {
-        public ApiKeys ApiKeys { get; set; }
-
         public const string ApiKeyHeaderName = "ApiKey";
 
         public ApiKeyAuthorizeAttribute()
@@ -24,11 +22,11 @@ namespace Lykke.Service.EthereumCore.Attributes
 
         public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            //var Keys = context.HttpContext.RequestServices.GetService(typeof(ApiKeys));
+            var keys = (ApiKeys)context.HttpContext.RequestServices.GetService(typeof(ApiKeys));
 
             if (context.HttpContext.Request.Headers.TryGetValue(ApiKeyHeaderName, out var values))
             {
-                var match = values.FirstOrDefault(x => ApiKeys.Keys.Contains(x));
+                var match = values.FirstOrDefault(x => keys.Keys.Contains(x));
 
                 if (match != null)
                 {

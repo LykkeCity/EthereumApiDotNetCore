@@ -22,11 +22,17 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the ApiError class.
         /// </summary>
-        public ApiError(int? code = default(int?), string message = default(string))
+        public ApiError(string message = default(string))
         {
-            Code = code;
             Message = message;
             CustomInit();
+        }
+        /// <summary>
+        /// Static constructor for ApiError class.
+        /// </summary>
+        static ApiError()
+        {
+            Code = "None";
         }
 
         /// <summary>
@@ -36,13 +42,13 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "code")]
-        public int? Code { get; set; }
+        [JsonProperty(PropertyName = "Message")]
+        public string Message { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "message")]
-        public string Message { get; set; }
+        [JsonProperty(PropertyName = "Code")]
+        public static string Code { get; private set; }
 
     }
 }

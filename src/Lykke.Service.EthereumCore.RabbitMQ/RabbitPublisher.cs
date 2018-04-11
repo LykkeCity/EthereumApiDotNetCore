@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 
 namespace Lykke.Service.RabbitMQ
 {
@@ -19,15 +20,18 @@ namespace Lykke.Service.RabbitMQ
     public class RabbitQueuePublisher : IRabbitQueuePublisher
     {
         private IMessageProducer<string> _publisher;
+        private readonly IMessageProducer<TransferEvent> _lykkePayPublisher;
         private readonly IMessageProducer<HotWalletEvent> _hotWalletPublisher;
         private readonly Dictionary<Type, MessageProducerWrapper> _messageProducerDictionary =
             new Dictionary<Type, MessageProducerWrapper>();
 
         public RabbitQueuePublisher(IMessageProducer<string> publisher,
-            IMessageProducer<HotWalletEvent> hotWalletPublisher)
+            IMessageProducer<HotWalletEvent> hotWalletPublisher,
+            IMessageProducer<TransferEvent> lykkePayPublisher)
         {
             _publisher = publisher;
             _hotWalletPublisher = hotWalletPublisher;
+            _lykkePayPublisher = lykkePayPublisher;
 
             #region String
 
@@ -41,6 +45,13 @@ namespace Lykke.Service.RabbitMQ
 
             MessageProducerWrapper hotWalletCashoutEventWrapper = CreateWrapper(typeof(HotWalletEvent), _hotWalletPublisher);
             _messageProducerDictionary.Add(typeof(HotWalletEvent), hotWalletCashoutEventWrapper);
+
+            #endregion
+
+            #region LykkePayEvents
+
+            MessageProducerWrapper lykkePayEventWrapper = CreateWrapper(typeof(TransferEvent), _lykkePayPublisher);
+            _messageProducerDictionary.Add(typeof(TransferEvent), lykkePayEventWrapper);
 
             #endregion
         }

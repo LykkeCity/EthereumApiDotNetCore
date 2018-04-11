@@ -73,7 +73,13 @@ namespace Lykke.Service.EthereumCore.Core
         public const string AddressStatisticsTable = "AddressStatistics";
 
         #region  LykkePay
+
+        public const string LykkePayOperationsTable = "LykkePayOperations";
         public const string LykkePayErc223DepositContractTable = "LykkePayErc223DepositContracts";
+        public const string LykkePayHotWalletCashoutTransactionTable = "LykkePayHotWalletCashoutTransaction";
+        public const string LykkePayErc223TransferQueue = "lykke-pay-erc-transfers-queue";
+        public const string LykkePayTransactionMonitoringQueue = "lykke-pay-transaction-monitoring-queue";
+
         #endregion
 
 
@@ -106,6 +112,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string PendingOperationsTable = "PendingOperation";
         public const string OperationToHashMatchTable = "OperationToHashMatch";
         public const string BlockSyncedTable = "BlockSynced";
+        public const string BlockSyncedByHashTable = "BlockSyncedByHash";
         public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
         public const string NonceCacheTable = "NonceCache";

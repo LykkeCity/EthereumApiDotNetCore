@@ -18,6 +18,7 @@ using Common;
 using System.Threading;
 using System.Collections.Concurrent;
 using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core.Shared;
 
 namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
@@ -244,16 +245,8 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
 
         private async Task UpdateUserTransferWallet(string contractAddress, string erc20TokenAddress, string userAddress)
         {
-            string formattedAddress =
-                _userTransferWalletRepository.FormatAddressForErc20(contractAddress, erc20TokenAddress);
-
-            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-            {
-                LastBalance = "",
-                TransferContractAddress = formattedAddress,
-                UpdateDate = DateTime.UtcNow,
-                UserAddress = userAddress
-            });
+            await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, contractAddress,
+                erc20TokenAddress, userAddress, "");
         }
     }
 }

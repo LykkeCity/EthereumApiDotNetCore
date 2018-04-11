@@ -22,7 +22,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Initializes a new instance of the InternalMessageResponse class.
         /// </summary>
-        public InternalMessageResponse(long? blockNumber = default(long?), int? blockTimeStamp = default(int?), int? depth = default(int?), string fromAddress = default(string), int? messageIndex = default(int?), string toAddress = default(string), string transactionHash = default(string), string type = default(string), string value = default(string))
+        public InternalMessageResponse(long blockNumber, int blockTimeStamp, int depth, int messageIndex, string fromAddress = default(string), string toAddress = default(string), string transactionHash = default(string), string type = default(string), string value = default(string))
         {
             BlockNumber = blockNumber;
             BlockTimeStamp = blockTimeStamp;
@@ -44,17 +44,17 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
+        public long BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimeStamp")]
-        public int? BlockTimeStamp { get; set; }
+        public int BlockTimeStamp { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "depth")]
-        public int? Depth { get; set; }
+        public int Depth { get; set; }
 
         /// <summary>
         /// </summary>
@@ -64,7 +64,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "messageIndex")]
-        public int? MessageIndex { get; set; }
+        public int MessageIndex { get; set; }
 
         /// <summary>
         /// </summary>
@@ -86,5 +86,15 @@ namespace EthereumSamuraiApiCaller.Models
         [JsonProperty(PropertyName = "value")]
         public string Value { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

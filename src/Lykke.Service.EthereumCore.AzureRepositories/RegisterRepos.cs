@@ -61,6 +61,12 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
                 AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlockSyncedTable,
                     log)));
 
+            builder.RegisterInstance<IBlockSyncedByHashRepository>(new BlockSyncedByHashRepository(
+                AzureTableStorage<BlockSyncedByHashEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlockSyncedByHashTable,
+                    log),
+                AzureTableStorage<AzureIndex>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.BlockSyncedByHashTable,
+                    log)));
+
             builder.RegisterInstance<ICashinEventRepository>(new CashinEventRepository(
                 AzureTableStorage<CashinEventEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CashInEventTable,
                     log)));
@@ -164,6 +170,18 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
                     Constants.StoragePrefix  + Constants.LykkePayErc223DepositContractTable,
                     log)
             )).Keyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
+
+            builder.RegisterInstance<IHotWalletOperationRepository>(new HotWalletOperationRepository(
+                AzureTableStorage<HotWalletCashoutEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.LykkePayOperationsTable,
+                    log))).Keyed<IHotWalletOperationRepository>(Constants.LykkePayKey);
+
+            builder.RegisterInstance<IHotWalletTransactionRepository>(new HotWalletTransactionRepository(
+                AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayHotWalletCashoutTransactionTable,
+                    log),
+                AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayHotWalletCashoutTransactionTable,
+                    log))).Keyed<IHotWalletTransactionRepository>(Constants.LykkePayKey);
 
             #endregion
 

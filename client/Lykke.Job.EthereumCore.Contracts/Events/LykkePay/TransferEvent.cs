@@ -6,15 +6,16 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
     /// <summary>
     /// Event is fired after there is at least 1 confirmation of the transfer to LykkePay address
     /// </summary>
-    public class TransferDetectedEvent : Erc20TransferBase
+    public class TransferEvent : Erc20TransferBase
     {
-        public TransferDetectedEvent(string transactionHash, 
+        public TransferEvent(string operationId,
+            string transactionHash, 
             string amount, 
             string tokenAddress, 
             string fromAddress, 
             string toAddress,
-            int confirmationNumber,
-            SenderType senderType) : base(transactionHash, amount, tokenAddress, fromAddress, toAddress, confirmationNumber, senderType)
+            SenderType senderType,
+            EventType eventType) : base(operationId, transactionHash, amount, tokenAddress, fromAddress, toAddress, senderType, eventType)
         {
         }
     }

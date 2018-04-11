@@ -123,9 +123,6 @@ namespace Lykke.Service.EthereumCore
             try
             {
                 // NOTE: Service not yet recieve and process requests here
-                {
-                    var x1 = ApplicationContainer.Resolve<LykkePayErc20DepositContractsController>();
-                }
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 //Rewrite request Interceptor

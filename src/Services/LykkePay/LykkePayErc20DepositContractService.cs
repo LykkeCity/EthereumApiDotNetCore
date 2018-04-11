@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
+using AzureStorage.Queue;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Core.Shared;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 
@@ -35,15 +39,23 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
         private readonly ILog _log;
         private readonly IWeb3 _web3;
         private readonly AppSettings _appSettings;
+        private readonly IQueueExt _transferQueue;
+        private readonly IErcInterfaceService _ercInterfaceService;
+        private readonly IHotWalletOperationRepository _operationsRepository;
+        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
         public LykkePayErc20DepositContractService(
             [KeyFilter(Constants.LykkePayKey)] IErc223DepositContractRepository contractRepository,
+            [KeyFilter(Constants.LykkePayKey)] IHotWalletOperationRepository operationsRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings,
             ILog log,
-            IWeb3 web3, 
-            AppSettings appSettings)
+            IWeb3 web3,
+            AppSettings appSettings,
+            IQueueFactory factory,
+            IErcInterfaceService ercInterfaceService,
+            IUserTransferWalletRepository userTransferWalletRepository)
         {
             _contractRepository = contractRepository;
             _contractService = contractService;
@@ -52,6 +64,10 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
             _log = log;
             _web3 = web3;
             _appSettings = appSettings;
+            _transferQueue = factory.Build(Constants.LykkePayErc223TransferQueue);
+            _ercInterfaceService = ercInterfaceService;
+            _operationsRepository = operationsRepository;
+            _userTransferWalletRepository = userTransferWalletRepository;
         }
 
 
@@ -124,35 +140,63 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
         public async Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress)
         {
-            //TODO: Enqueue transfer;
+            var depositContract = await _contractRepository.GetByContractAddress(depositContractAddress);
+            if (depositContract == null)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, $"DepositContractAddress {depositContractAddress} does not exist");
+            }
 
-            return "";
+            var userWallet = await TransferWalletSharedService.GetUserTransferWalletAsync(_userTransferWalletRepository,
+                depositContractAddress, erc20TokenAddress, depositContract.UserAddress);
+
+            if (userWallet != null && !string.IsNullOrEmpty(userWallet.LastBalance))
+            {
+                throw new ClientSideException(ExceptionType.TransferInProcessing, $"Transfer from {depositContractAddress} was started before wait for it to complete");
+            }
+
+            var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(depositContractAddress, erc20TokenAddress);
+            if (balance == 0)
+            {
+                throw new ClientSideException(ExceptionType.NotEnoughFunds, $"No tokens detected at deposit address {depositContractAddress}");
+            }
+
+            var guid = Guid.NewGuid();
+            var guidStr = guid.ToString();
+
+            var message = new Lykke.Service.EthereumCore.Core.Messages.LykkePay.LykkePayErc20TransferMessage()
+            {
+                OperationId = guidStr
+            };
+
+            var existingOperation = await _operationsRepository.GetAsync(guid.ToString());
+            if (existingOperation != null)
+            {
+                throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Try again later");
+            }
+
+            await _operationsRepository.SaveAsync(new HotWalletOperation()
+            {
+                Amount = balance,
+                FromAddress = depositContractAddress,
+                OperationId = guidStr,
+                OperationType = HotWalletOperationType.Cashin,
+                ToAddress = destinationAddress,
+                TokenAddress = erc20TokenAddress
+            });
+
+            await _transferQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
+
+            await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository,
+                depositContractAddress, erc20TokenAddress, depositContract.UserAddress, balance.ToString());
+
+            return guidStr;
         }
 
         public async Task<string> GetUserAddress(string contractAddress)
         {
-            var contract = (await _contractRepository.GetByContractAddress(contractAddress));
+            var contract = await _contractRepository.GetByContractAddress(contractAddress);
 
             return contract?.UserAddress;
         }
-
-        //private async Task<string> StartTransferAsync(string depositContractAddress,
-        //    string erc20TokenAddress, string destinationAddress)
-        //{
-        //    Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
-        //    var cashin = contract.GetFunction("transferAllTokens");
-        //    var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
-        //        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
-
-        //    if (!cashinWouldBeSuccesfull)
-        //    {
-        //        throw new Exception($"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
-        //    }
-
-        //    string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-        //        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
-
-        //    return trHash;
-        //}
     }
 }

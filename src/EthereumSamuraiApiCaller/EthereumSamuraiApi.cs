@@ -10,7 +10,6 @@ namespace EthereumSamuraiApiCaller
     using Microsoft.Rest.Serialization;
     using Models;
     using Newtonsoft.Json;
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Net;
@@ -18,7 +17,7 @@ namespace EthereumSamuraiApiCaller
     using System.Threading;
     using System.Threading.Tasks;
 
-    public partial class EthereumSamuraiApi : ServiceClient<EthereumSamuraiApi>, IEthereumSamuraiApi
+    public partial class EthereumSamuraiAPI : ServiceClient<EthereumSamuraiAPI>, IEthereumSamuraiAPI
     {
         /// <summary>
         /// The base URI of the service.
@@ -36,18 +35,18 @@ namespace EthereumSamuraiApiCaller
         public JsonSerializerSettings DeserializationSettings { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the EthereumSamuraiApi class.
+        /// Initializes a new instance of the EthereumSamuraiAPI class.
         /// </summary>
         /// <param name='handlers'>
         /// Optional. The delegating handlers to add to the http client pipeline.
         /// </param>
-        public EthereumSamuraiApi(params DelegatingHandler[] handlers) : base(handlers)
+        public EthereumSamuraiAPI(params DelegatingHandler[] handlers) : base(handlers)
         {
             Initialize();
         }
 
         /// <summary>
-        /// Initializes a new instance of the EthereumSamuraiApi class.
+        /// Initializes a new instance of the EthereumSamuraiAPI class.
         /// </summary>
         /// <param name='rootHandler'>
         /// Optional. The http client handler used to handle http transport.
@@ -55,13 +54,13 @@ namespace EthereumSamuraiApiCaller
         /// <param name='handlers'>
         /// Optional. The delegating handlers to add to the http client pipeline.
         /// </param>
-        public EthereumSamuraiApi(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
+        public EthereumSamuraiAPI(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
         {
             Initialize();
         }
 
         /// <summary>
-        /// Initializes a new instance of the EthereumSamuraiApi class.
+        /// Initializes a new instance of the EthereumSamuraiAPI class.
         /// </summary>
         /// <param name='baseUri'>
         /// Optional. The base URI of the service.
@@ -72,7 +71,7 @@ namespace EthereumSamuraiApiCaller
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        public EthereumSamuraiApi(System.Uri baseUri, params DelegatingHandler[] handlers) : this(handlers)
+        public EthereumSamuraiAPI(System.Uri baseUri, params DelegatingHandler[] handlers) : this(handlers)
         {
             if (baseUri == null)
             {
@@ -82,7 +81,7 @@ namespace EthereumSamuraiApiCaller
         }
 
         /// <summary>
-        /// Initializes a new instance of the EthereumSamuraiApi class.
+        /// Initializes a new instance of the EthereumSamuraiAPI class.
         /// </summary>
         /// <param name='baseUri'>
         /// Optional. The base URI of the service.
@@ -96,7 +95,7 @@ namespace EthereumSamuraiApiCaller
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        public EthereumSamuraiApi(System.Uri baseUri, HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : this(rootHandler, handlers)
+        public EthereumSamuraiAPI(System.Uri baseUri, HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : this(rootHandler, handlers)
         {
             if (baseUri == null)
             {
@@ -114,7 +113,7 @@ namespace EthereumSamuraiApiCaller
         /// </summary>
         private void Initialize()
         {
-            BaseUri = new System.Uri("http://localhost/");
+            BaseUri = new System.Uri("http://ethereum-indexer-api.lykke-api.svc.cluster.local/");
             SerializationSettings = new JsonSerializerSettings
             {
                 Formatting = Newtonsoft.Json.Formatting.Indented,
@@ -144,13 +143,13 @@ namespace EthereumSamuraiApiCaller
         }
         /// <param name='address'>
         /// </param>
-        /// <param name='startBlock'>
-        /// </param>
-        /// <param name='stopBlock'>
+        /// <param name='count'>
         /// </param>
         /// <param name='start'>
         /// </param>
-        /// <param name='count'>
+        /// <param name='startBlock'>
+        /// </param>
+        /// <param name='stopBlock'>
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -173,7 +172,7 @@ namespace EthereumSamuraiApiCaller
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = default(long?), long? stopBlock = default(long?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (address == null)
             {
@@ -189,32 +188,26 @@ namespace EthereumSamuraiApiCaller
                 tracingParameters.Add("address", address);
                 tracingParameters.Add("startBlock", startBlock);
                 tracingParameters.Add("stopBlock", stopBlock);
-                tracingParameters.Add("start", start);
                 tracingParameters.Add("count", count);
+                tracingParameters.Add("start", start);
                 tracingParameters.Add("cancellationToken", cancellationToken);
                 ServiceClientTracing.Enter(_invocationId, this, "ApiAddressHistoryByAddressGet", tracingParameters);
             }
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/AddressHistory/{address}").ToString();
-            _url = _url.Replace("{address}", System.Uri.EscapeDataString(address));
+            _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
             if (startBlock != null)
             {
-                _queryParameters.Add(string.Format("startBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(startBlock, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("StartBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(startBlock, SerializationSettings).Trim('"'))));
             }
             if (stopBlock != null)
             {
-                _queryParameters.Add(string.Format("stopBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(stopBlock, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("StopBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(stopBlock, SerializationSettings).Trim('"'))));
             }
-            if (start != null)
-            {
-                _queryParameters.Add(string.Format("start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
-            }
-            if (count != null)
-            {
-                _queryParameters.Add(string.Format("count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
-            }
+            _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
+            _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
             if (_queryParameters.Count > 0)
             {
                 _url += "?" + string.Join("&", _queryParameters);
@@ -455,6 +448,330 @@ namespace EthereumSamuraiApiCaller
                 try
                 {
                     _result.Body = SafeJsonConvert.DeserializeObject<BalanceResponse>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            // Deserialize Response
+            if ((int)_statusCode == 400)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<ApiException>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            // Deserialize Response
+            if ((int)_statusCode == 500)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<ApiException>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.Exit(_invocationId, _result);
+            }
+            return _result;
+        }
+
+        /// <param name='blockNumber'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// Headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="HttpOperationException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="SerializationException">
+        /// Thrown when unable to deserialize the response
+        /// </exception>
+        /// <return>
+        /// A response object containing the response body and response headers.
+        /// </return>
+        public async Task<HttpOperationResponse<object>> ApiBlockNumberByBlockNumberGetWithHttpMessagesAsync(long blockNumber, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            // Tracing
+            bool _shouldTrace = ServiceClientTracing.IsEnabled;
+            string _invocationId = null;
+            if (_shouldTrace)
+            {
+                _invocationId = ServiceClientTracing.NextInvocationId.ToString();
+                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
+                tracingParameters.Add("blockNumber", blockNumber);
+                tracingParameters.Add("cancellationToken", cancellationToken);
+                ServiceClientTracing.Enter(_invocationId, this, "ApiBlockNumberByBlockNumberGet", tracingParameters);
+            }
+            // Construct URL
+            var _baseUrl = BaseUri.AbsoluteUri;
+            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/Block/number/{blockNumber}").ToString();
+            _url = _url.Replace("{blockNumber}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(blockNumber, SerializationSettings).Trim('"')));
+            // Create HTTP transport objects
+            var _httpRequest = new HttpRequestMessage();
+            HttpResponseMessage _httpResponse = null;
+            _httpRequest.Method = new HttpMethod("GET");
+            _httpRequest.RequestUri = new System.Uri(_url);
+            // Set Headers
+
+
+            if (customHeaders != null)
+            {
+                foreach(var _header in customHeaders)
+                {
+                    if (_httpRequest.Headers.Contains(_header.Key))
+                    {
+                        _httpRequest.Headers.Remove(_header.Key);
+                    }
+                    _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
+                }
+            }
+
+            // Serialize Request
+            string _requestContent = null;
+            // Send Request
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
+            }
+            HttpStatusCode _statusCode = _httpResponse.StatusCode;
+            cancellationToken.ThrowIfCancellationRequested();
+            string _responseContent = null;
+            if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
+            {
+                var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                if (_httpResponse.Content != null) {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                }
+                else {
+                    _responseContent = string.Empty;
+                }
+                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                if (_shouldTrace)
+                {
+                    ServiceClientTracing.Error(_invocationId, ex);
+                }
+                _httpRequest.Dispose();
+                if (_httpResponse != null)
+                {
+                    _httpResponse.Dispose();
+                }
+                throw ex;
+            }
+            // Create Result
+            var _result = new HttpOperationResponse<object>();
+            _result.Request = _httpRequest;
+            _result.Response = _httpResponse;
+            // Deserialize Response
+            if ((int)_statusCode == 200)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<BlockResponse>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            // Deserialize Response
+            if ((int)_statusCode == 400)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<ApiException>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            // Deserialize Response
+            if ((int)_statusCode == 500)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<ApiException>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.Exit(_invocationId, _result);
+            }
+            return _result;
+        }
+
+        /// <param name='blockHash'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// Headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="HttpOperationException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="SerializationException">
+        /// Thrown when unable to deserialize the response
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        /// <return>
+        /// A response object containing the response body and response headers.
+        /// </return>
+        public async Task<HttpOperationResponse<object>> ApiBlockHashByBlockHashGetWithHttpMessagesAsync(string blockHash, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (blockHash == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "blockHash");
+            }
+            // Tracing
+            bool _shouldTrace = ServiceClientTracing.IsEnabled;
+            string _invocationId = null;
+            if (_shouldTrace)
+            {
+                _invocationId = ServiceClientTracing.NextInvocationId.ToString();
+                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
+                tracingParameters.Add("blockHash", blockHash);
+                tracingParameters.Add("cancellationToken", cancellationToken);
+                ServiceClientTracing.Enter(_invocationId, this, "ApiBlockHashByBlockHashGet", tracingParameters);
+            }
+            // Construct URL
+            var _baseUrl = BaseUri.AbsoluteUri;
+            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/Block/hash/{blockHash}").ToString();
+            _url = _url.Replace("{blockHash}", System.Uri.EscapeDataString(blockHash));
+            // Create HTTP transport objects
+            var _httpRequest = new HttpRequestMessage();
+            HttpResponseMessage _httpResponse = null;
+            _httpRequest.Method = new HttpMethod("GET");
+            _httpRequest.RequestUri = new System.Uri(_url);
+            // Set Headers
+
+
+            if (customHeaders != null)
+            {
+                foreach(var _header in customHeaders)
+                {
+                    if (_httpRequest.Headers.Contains(_header.Key))
+                    {
+                        _httpRequest.Headers.Remove(_header.Key);
+                    }
+                    _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
+                }
+            }
+
+            // Serialize Request
+            string _requestContent = null;
+            // Send Request
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
+            }
+            HttpStatusCode _statusCode = _httpResponse.StatusCode;
+            cancellationToken.ThrowIfCancellationRequested();
+            string _responseContent = null;
+            if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
+            {
+                var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                if (_httpResponse.Content != null) {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                }
+                else {
+                    _responseContent = string.Empty;
+                }
+                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                if (_shouldTrace)
+                {
+                    ServiceClientTracing.Error(_invocationId, ex);
+                }
+                _httpRequest.Dispose();
+                if (_httpResponse != null)
+                {
+                    _httpResponse.Dispose();
+                }
+                throw ex;
+            }
+            // Create Result
+            var _result = new HttpOperationResponse<object>();
+            _result.Request = _httpRequest;
+            _result.Response = _httpResponse;
+            // Deserialize Response
+            if ((int)_statusCode == 200)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<BlockResponse>(_responseContent, DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {
@@ -763,7 +1080,7 @@ namespace EthereumSamuraiApiCaller
             {
                 _requestContent = SafeJsonConvert.SerializeObject(contracts, SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
-                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
+                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
             }
             // Send Request
             if (_shouldTrace)
@@ -1033,11 +1350,11 @@ namespace EthereumSamuraiApiCaller
             return _result;
         }
 
-        /// <param name='query'>
-        /// </param>
         /// <param name='count'>
         /// </param>
         /// <param name='start'>
+        /// </param>
+        /// <param name='query'>
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -1054,7 +1371,7 @@ namespace EthereumSamuraiApiCaller
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(string query = default(string), int? count = default(int?), int? start = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(int count, int start, string query = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
@@ -1077,14 +1394,8 @@ namespace EthereumSamuraiApiCaller
             {
                 _queryParameters.Add(string.Format("Query={0}", System.Uri.EscapeDataString(query)));
             }
-            if (count != null)
-            {
-                _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
-            }
-            if (start != null)
-            {
-                _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
-            }
+            _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
+            _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
             if (_queryParameters.Count > 0)
             {
                 _url += "?" + string.Join("&", _queryParameters);
@@ -1562,13 +1873,13 @@ namespace EthereumSamuraiApiCaller
 
         /// <param name='address'>
         /// </param>
-        /// <param name='startBlock'>
-        /// </param>
-        /// <param name='stopBlock'>
+        /// <param name='count'>
         /// </param>
         /// <param name='start'>
         /// </param>
-        /// <param name='count'>
+        /// <param name='startBlock'>
+        /// </param>
+        /// <param name='stopBlock'>
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -1591,7 +1902,7 @@ namespace EthereumSamuraiApiCaller
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = default(long?), long? stopBlock = default(long?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (address == null)
             {
@@ -1607,15 +1918,15 @@ namespace EthereumSamuraiApiCaller
                 tracingParameters.Add("address", address);
                 tracingParameters.Add("startBlock", startBlock);
                 tracingParameters.Add("stopBlock", stopBlock);
-                tracingParameters.Add("start", start);
                 tracingParameters.Add("count", count);
+                tracingParameters.Add("start", start);
                 tracingParameters.Add("cancellationToken", cancellationToken);
                 ServiceClientTracing.Enter(_invocationId, this, "ApiInternalMessagesByAddressGet", tracingParameters);
             }
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/InternalMessages/{address}").ToString();
-            _url = _url.Replace("{address}", System.Uri.EscapeDataString(address));
+            _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
             if (startBlock != null)
             {
@@ -1625,14 +1936,8 @@ namespace EthereumSamuraiApiCaller
             {
                 _queryParameters.Add(string.Format("StopBlock={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(stopBlock, SerializationSettings).Trim('"'))));
             }
-            if (start != null)
-            {
-                _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
-            }
-            if (count != null)
-            {
-                _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
-            }
+            _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
+            _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
             if (_queryParameters.Count > 0)
             {
                 _url += "?" + string.Join("&", _queryParameters);
@@ -1772,7 +2077,7 @@ namespace EthereumSamuraiApiCaller
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse> ApiSystemIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse> ApiIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
@@ -1782,100 +2087,77 @@ namespace EthereumSamuraiApiCaller
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
                 tracingParameters.Add("cancellationToken", cancellationToken);
-                ServiceClientTracing.Enter(_invocationId, this, "ApiSystemIsAliveGet", tracingParameters);
+                ServiceClientTracing.Enter(_invocationId, this, "ApiIsAliveGet", tracingParameters);
             }
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
-            string[] urls = new[] { "api/System/isAlive", "api/IsAlive" };
-            var counter = 0;
-            HttpOperationResponse _result = null;
-            Exception storedException = null;
+            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/IsAlive").ToString();
+            // Create HTTP transport objects
+            var _httpRequest = new HttpRequestMessage();
+            HttpResponseMessage _httpResponse = null;
+            _httpRequest.Method = new HttpMethod("GET");
+            _httpRequest.RequestUri = new System.Uri(_url);
+            // Set Headers
 
-            do
+
+            if (customHeaders != null)
             {
-                try
+                foreach(var _header in customHeaders)
                 {
-                    var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), urls[counter]).ToString();
-                    // Create HTTP transport objects
-                    var _httpRequest = new HttpRequestMessage();
-                    HttpResponseMessage _httpResponse = null;
-                    _httpRequest.Method = new HttpMethod("GET");
-                    _httpRequest.RequestUri = new System.Uri(_url);
-                    // Set Headers
-
-
-                    if (customHeaders != null)
+                    if (_httpRequest.Headers.Contains(_header.Key))
                     {
-                        foreach (var _header in customHeaders)
-                        {
-                            if (_httpRequest.Headers.Contains(_header.Key))
-                            {
-                                _httpRequest.Headers.Remove(_header.Key);
-                            }
-                            _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
-                        }
+                        _httpRequest.Headers.Remove(_header.Key);
                     }
-
-                    // Serialize Request
-                    string _requestContent = null;
-                    // Send Request
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-                    }
-                    cancellationToken.ThrowIfCancellationRequested();
-                    _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-                    }
-                    HttpStatusCode _statusCode = _httpResponse.StatusCode;
-                    cancellationToken.ThrowIfCancellationRequested();
-                    string _responseContent = null;
-                    if ((int)_statusCode != 200)
-                    {
-                        var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                        if (_httpResponse.Content != null)
-                        {
-                            _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            _responseContent = string.Empty;
-                        }
-                        ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                        ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                        if (_shouldTrace)
-                        {
-                            ServiceClientTracing.Error(_invocationId, ex);
-                        }
-                        _httpRequest.Dispose();
-                        if (_httpResponse != null)
-                        {
-                            _httpResponse.Dispose();
-                        }
-                        throw ex;
-                    }
-                    // Create Result
-                    _result = new HttpOperationResponse();
-                    _result.Request = _httpRequest;
-                    _result.Response = _httpResponse;
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.Exit(_invocationId, _result);
-                    }
+                    _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
                 }
-                catch (Exception e)
-                {
-                    storedException = e;
-                }
-            } while (_result == null && counter++ <urls.Length);
-
-            if (_result == null && storedException != null)
-            {
-                throw storedException;
             }
 
+            // Serialize Request
+            string _requestContent = null;
+            // Send Request
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
+            }
+            HttpStatusCode _statusCode = _httpResponse.StatusCode;
+            cancellationToken.ThrowIfCancellationRequested();
+            string _responseContent = null;
+            if ((int)_statusCode != 200)
+            {
+                var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                if (_httpResponse.Content != null) {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                }
+                else {
+                    _responseContent = string.Empty;
+                }
+                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                if (_shouldTrace)
+                {
+                    ServiceClientTracing.Error(_invocationId, ex);
+                }
+                _httpRequest.Dispose();
+                if (_httpResponse != null)
+                {
+                    _httpResponse.Dispose();
+                }
+                throw ex;
+            }
+            // Create Result
+            var _result = new HttpOperationResponse();
+            _result.Request = _httpRequest;
+            _result.Response = _httpResponse;
+            if (_shouldTrace)
+            {
+                ServiceClientTracing.Exit(_invocationId, _result);
+            }
             return _result;
         }
 
@@ -2048,9 +2330,9 @@ namespace EthereumSamuraiApiCaller
 
         /// <param name='address'>
         /// </param>
-        /// <param name='start'>
-        /// </param>
         /// <param name='count'>
+        /// </param>
+        /// <param name='start'>
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -2073,7 +2355,7 @@ namespace EthereumSamuraiApiCaller
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<object>> ApiTransactionByAddressGetWithHttpMessagesAsync(string address, int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<object>> ApiTransactionByAddressGetWithHttpMessagesAsync(string address, int count, int start, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (address == null)
             {
@@ -2087,8 +2369,8 @@ namespace EthereumSamuraiApiCaller
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
                 tracingParameters.Add("address", address);
-                tracingParameters.Add("start", start);
                 tracingParameters.Add("count", count);
+                tracingParameters.Add("start", start);
                 tracingParameters.Add("cancellationToken", cancellationToken);
                 ServiceClientTracing.Enter(_invocationId, this, "ApiTransactionByAddressGet", tracingParameters);
             }
@@ -2097,14 +2379,8 @@ namespace EthereumSamuraiApiCaller
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/Transaction/{address}").ToString();
             _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
-            if (start != null)
-            {
-                _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
-            }
-            if (count != null)
-            {
-                _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
-            }
+            _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
+            _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
             if (_queryParameters.Count > 0)
             {
                 _url += "?" + string.Join("&", _queryParameters);

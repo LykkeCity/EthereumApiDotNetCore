@@ -20,7 +20,7 @@ namespace Service.UnitTests.PrivateWallet
         [TestInitialize]
         public void TestInit()
         {
-            IEthereumSamuraiApi ethereumSamurai = Config.Services.GetService<IEthereumSamuraiApi>();
+            IEthereumSamuraiAPI ethereumSamurai = Config.Services.GetService<IEthereumSamuraiAPI>();
             _ethereumIndexerService = new EthereumIndexerService(ethereumSamurai);
         }
 
