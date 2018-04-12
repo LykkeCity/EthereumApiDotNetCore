@@ -24,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [HttpPost]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CreateDepositContractAsync([FromQuery] string userAddress)
         {
@@ -39,7 +39,7 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [HttpGet]
         [ProducesResponseType(typeof(RegisterResponse), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> GetDepositContractAsync([FromQuery] string userAddress)
         {
@@ -52,23 +52,20 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         }
 
         [HttpPost("transfer")]
-        [ProducesResponseType(typeof(RegisterResponse), 200)]
+        [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]
-        //[ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferAsync([FromBody] TransferFromDepositRequest request)
         {
-            var contractAddress = await _contractService.GetContractAddress(request.UserAddress);
+            var containsAddress = await _contractService.ContainsAsync(request.DepositContractAddress);
 
-            if (contractAddress != null)
+            if (containsAddress)
             {
-                await _contractService.RecievePaymentFromDepositContract(contractAddress, request.TokenAddress, request.DestinationAddress);
+                await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress, request.TokenAddress, request.DestinationAddress);
             }
 
-            return Ok(new RegisterResponse
-            {
-                Contract = contractAddress
-            });
+            return Ok();
         }
     }
 }

@@ -16,6 +16,7 @@ namespace EthereumSamuraiApiCaller
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
+    using System;
 
     public partial class EthereumSamuraiAPI : ServiceClient<EthereumSamuraiAPI>, IEthereumSamuraiAPI
     {
@@ -122,7 +123,7 @@ namespace EthereumSamuraiApiCaller
                 NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize,
                 ContractResolver = new ReadOnlyJsonContractResolver(),
-                Converters = new  List<JsonConverter>
+                Converters = new List<JsonConverter>
                     {
                         new Iso8601TimeSpanConverter()
                     }
@@ -222,7 +223,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -251,10 +252,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -389,7 +392,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -418,10 +421,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -546,7 +551,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -575,10 +580,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -713,7 +720,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -742,10 +749,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -888,7 +897,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -900,11 +909,11 @@ namespace EthereumSamuraiApiCaller
 
             // Serialize Request
             string _requestContent = null;
-            if(request != null)
+            if (request != null)
             {
                 _requestContent = SafeJsonConvert.SerializeObject(request, SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
-                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
+                _httpRequest.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
             }
             // Send Request
             if (_shouldTrace)
@@ -923,10 +932,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1064,7 +1075,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1076,11 +1087,11 @@ namespace EthereumSamuraiApiCaller
 
             // Serialize Request
             string _requestContent = null;
-            if(contracts != null)
+            if (contracts != null)
             {
                 _requestContent = SafeJsonConvert.SerializeObject(contracts, SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
-                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
+                _httpRequest.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
             }
             // Send Request
             if (_shouldTrace)
@@ -1099,10 +1110,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1237,7 +1250,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1266,10 +1279,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1410,7 +1425,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1439,10 +1454,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1585,7 +1602,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1597,11 +1614,11 @@ namespace EthereumSamuraiApiCaller
 
             // Serialize Request
             string _requestContent = null;
-            if(request != null)
+            if (request != null)
             {
                 _requestContent = SafeJsonConvert.SerializeObject(request, SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
-                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
+                _httpRequest.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
             }
             // Send Request
             if (_shouldTrace)
@@ -1620,10 +1637,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1758,7 +1777,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1787,10 +1806,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -1952,7 +1973,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -1981,10 +2002,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -2091,72 +2114,94 @@ namespace EthereumSamuraiApiCaller
             }
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/IsAlive").ToString();
-            // Create HTTP transport objects
-            var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
-            _httpRequest.Method = new HttpMethod("GET");
-            _httpRequest.RequestUri = new System.Uri(_url);
-            // Set Headers
+            string[] urls = new[] { "api/System/isAlive", "api/IsAlive" };
+            var counter = 0;
+            HttpOperationResponse _result = null;
+            Exception storedException = null;
 
-
-            if (customHeaders != null)
+            do
             {
-                foreach(var _header in customHeaders)
+                try
                 {
-                    if (_httpRequest.Headers.Contains(_header.Key))
+                    var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), urls[counter]).ToString();
+                    // Create HTTP transport objects
+                    var _httpRequest = new HttpRequestMessage();
+                    HttpResponseMessage _httpResponse = null;
+                    _httpRequest.Method = new HttpMethod("GET");
+                    _httpRequest.RequestUri = new System.Uri(_url);
+                    // Set Headers
+
+
+                    if (customHeaders != null)
                     {
-                        _httpRequest.Headers.Remove(_header.Key);
+                        foreach (var _header in customHeaders)
+                        {
+                            if (_httpRequest.Headers.Contains(_header.Key))
+                            {
+                                _httpRequest.Headers.Remove(_header.Key);
+                            }
+                            _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
+                        }
                     }
-                    _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
-                }
-            }
 
-            // Serialize Request
-            string _requestContent = null;
-            // Send Request
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-            }
-            cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 200)
-            {
-                var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    // Serialize Request
+                    string _requestContent = null;
+                    // Send Request
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
+                    }
+                    cancellationToken.ThrowIfCancellationRequested();
+                    _httpResponse = await HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
+                    }
+                    HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                    cancellationToken.ThrowIfCancellationRequested();
+                    string _responseContent = null;
+                    if ((int)_statusCode != 200)
+                    {
+                        var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                        if (_httpResponse.Content != null)
+                        {
+                            _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _responseContent = string.Empty;
+                        }
+                        ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                        ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                        if (_shouldTrace)
+                        {
+                            ServiceClientTracing.Error(_invocationId, ex);
+                        }
+                        _httpRequest.Dispose();
+                        if (_httpResponse != null)
+                        {
+                            _httpResponse.Dispose();
+                        }
+                        throw ex;
+                    }
+                    // Create Result
+                    _result = new HttpOperationResponse();
+                    _result.Request = _httpRequest;
+                    _result.Response = _httpResponse;
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Exit(_invocationId, _result);
+                    }
                 }
-                else {
-                    _responseContent = string.Empty;
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                if (_shouldTrace)
+                catch (Exception e)
                 {
-                    ServiceClientTracing.Error(_invocationId, ex);
+                    storedException = e;
                 }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
-                {
-                    _httpResponse.Dispose();
-                }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationResponse();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            if (_shouldTrace)
+            } while (_result == null && counter++ < urls.Length);
+
+            if (_result == null && storedException != null)
             {
-                ServiceClientTracing.Exit(_invocationId, _result);
+                throw storedException;
             }
             return _result;
         }
@@ -2215,7 +2260,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -2244,10 +2289,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -2395,7 +2442,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -2424,10 +2471,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -2552,7 +2601,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -2581,10 +2630,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
@@ -2719,7 +2770,7 @@ namespace EthereumSamuraiApiCaller
 
             if (customHeaders != null)
             {
-                foreach(var _header in customHeaders)
+                foreach (var _header in customHeaders)
                 {
                     if (_httpRequest.Headers.Contains(_header.Key))
                     {
@@ -2748,10 +2799,12 @@ namespace EthereumSamuraiApiCaller
             if ((int)_statusCode != 200 && (int)_statusCode != 400 && (int)_statusCode != 500)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                if (_httpResponse.Content != null) {
+                if (_httpResponse.Content != null)
+                {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                else {
+                else
+                {
                     _responseContent = string.Empty;
                 }
                 ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);

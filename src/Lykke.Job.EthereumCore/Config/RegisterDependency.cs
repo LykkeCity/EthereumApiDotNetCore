@@ -59,7 +59,8 @@ namespace Lykke.Job.EthereumCore.Config
 
             #region LykkePay
 
-            //builder.RegisterType<MonitoringCoinTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayErc20DepositTransferStarterJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayHotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
 
             #endregion
 
