@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
@@ -21,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
 
             if (!cashinWouldBeSuccesfull)
             {
-                throw new Exception($"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+                throw new ClientSideException(ExceptionType.WrongParams, $"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
             }
 
             string trHash = await cashin.SendTransactionAsync(fromAddress,

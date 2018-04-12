@@ -22,11 +22,11 @@ namespace Lykke.Job.EthereumCore.Job.LykkePay
     {
         private readonly ILog _log;
         private readonly IBaseSettings _settings;
-        private readonly ITransactionEventsService _transactionEventsService;
+        private readonly ILykkePayEventsService _transactionEventsService;
 
         public LykkePayIndexingJob(ILog log, 
             IBaseSettings settings, 
-            [KeyFilter(Constants.LykkePayKey)]ITransactionEventsService transactionEventsService)
+            ILykkePayEventsService transactionEventsService)
         {
             _transactionEventsService = transactionEventsService;
             _settings = settings;
@@ -38,7 +38,9 @@ namespace Lykke.Job.EthereumCore.Job.LykkePay
         {
             try
             {
-                await _transactionEventsService.IndexCashinEventsForErc20Deposits();
+                await Task.Delay(50000000);
+                //TODO: Implement detection of erc20 incoming transfers
+                //await _transactionEventsService.IndexCashinEventsForErc20Deposits();
             }
             catch (Exception ex)
             {
