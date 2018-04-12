@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
+using AzureStorage.Queue;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
@@ -17,6 +18,7 @@ using Lykke.Service.EthereumCore.Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
+using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.RabbitMQ;
 using Lykke.Service.EthereumCore.Services.New;
@@ -36,6 +38,7 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IErc20DepositContractService _erc20DepositContractService;
+        private IQueueExt _transferStartQueue;
 
         public LykkePayHotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
@@ -47,7 +50,8 @@ namespace Lykke.Job.EthereumCore.Job
             IRabbitQueuePublisher rabbitQueuePublisher,
             ILykkePayEventsService transactionEventsService,
             IUserTransferWalletRepository userTransferWalletRepository,
-            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService erc20DepositContractService)
+            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService erc20DepositContractService,
+            IQueueFactory queueFactory)
         {
             _transactionEventsService = transactionEventsService;
             _ethereumTransactionService = ethereumTransactionService;
@@ -60,6 +64,7 @@ namespace Lykke.Job.EthereumCore.Job
             _rabbitQueuePublisher = rabbitQueuePublisher;
             _userTransferWalletRepository = userTransferWalletRepository;
             _erc20DepositContractService = erc20DepositContractService;
+            _transferStartQueue = queueFactory.Build(Constants.LykkePayErc223TransferQueue);
         }
 
         [QueueTrigger(Constants.LykkePayTransactionMonitoringQueue, 100, true)]
@@ -91,7 +96,7 @@ namespace Lykke.Job.EthereumCore.Job
             if (coinTransaction == null || coinTransaction.Error)
             {
                 await RepeatOperationTillWin(transaction);
-                await _slackNotifier.ErrorAsync($"EthereumCoreService: Transaction with hash {transaction.TransactionHash} has no confirmations.");
+                await _slackNotifier.ErrorAsync($"LYKKE_PAY: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
             }
             else
             {
@@ -147,11 +152,12 @@ namespace Lykke.Job.EthereumCore.Job
                     break;
 
                 case HotWalletOperationType.Cashin:
-                    string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
-                    await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
-                        operation.TokenAddress, userAddress, "");
+                    var retryMessage = new LykkePayErc20TransferMessage()
+                    {
+                        OperationId = operation.OperationId
+                    };
 
-
+                    await _transferStartQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(retryMessage));
                     break;
 
                 default:

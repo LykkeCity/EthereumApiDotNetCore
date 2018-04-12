@@ -1,25 +1,19 @@
-﻿using AzureStorage.Queue;
+﻿using Autofac.Features.AttributeFilters;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
+using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
+using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.Service.EthereumCore.Services.New.Models;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
-using Nethereum.Web3;
-using Newtonsoft.Json;
+using Lykke.Service.RabbitMQ;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Autofac.Features.AttributeFilters;
-using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
-using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
-using Lykke.Service.EthereumCore.Core.Services;
-using Lykke.Service.RabbitMQ;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
