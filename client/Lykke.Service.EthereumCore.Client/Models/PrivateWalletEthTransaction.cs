@@ -25,7 +25,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// Initializes a new instance of the PrivateWalletEthTransaction
         /// class.
         /// </summary>
-        public PrivateWalletEthTransaction(string value, string fromAddress, string toAddress, string gasAmount, string gasPrice)
+        public PrivateWalletEthTransaction(string value = default(string), string fromAddress = default(string), string toAddress = default(string), string gasAmount = default(string), string gasPrice = default(string))
         {
             Value = value;
             FromAddress = fromAddress;
@@ -42,27 +42,27 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
+        [JsonProperty(PropertyName = "Value")]
         public string Value { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "gasAmount")]
+        [JsonProperty(PropertyName = "GasAmount")]
         public string GasAmount { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "gasPrice")]
+        [JsonProperty(PropertyName = "GasPrice")]
         public string GasPrice { get; set; }
 
         /// <summary>
@@ -73,26 +73,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Value == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Value");
-            }
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (GasAmount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "GasAmount");
-            }
-            if (GasPrice == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "GasPrice");
-            }
             if (Value != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Value, "^[1-9][0-9]*$"))

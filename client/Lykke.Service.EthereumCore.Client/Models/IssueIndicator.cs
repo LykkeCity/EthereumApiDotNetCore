@@ -9,23 +9,23 @@ namespace Lykke.Service.EthereumCore.Client.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class CheckPendingModel
+    public partial class IssueIndicator
     {
         /// <summary>
-        /// Initializes a new instance of the CheckPendingModel class.
+        /// Initializes a new instance of the IssueIndicator class.
         /// </summary>
-        public CheckPendingModel()
+        public IssueIndicator()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the CheckPendingModel class.
+        /// Initializes a new instance of the IssueIndicator class.
         /// </summary>
-        public CheckPendingModel(string coinAdapterAddress = default(string), string userAddress = default(string))
+        public IssueIndicator(string type = default(string), string value = default(string))
         {
-            CoinAdapterAddress = coinAdapterAddress;
-            UserAddress = userAddress;
+            Type = type;
+            Value = value;
             CustomInit();
         }
 
@@ -36,13 +36,13 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "CoinAdapterAddress")]
-        public string CoinAdapterAddress { get; set; }
+        [JsonProperty(PropertyName = "Type")]
+        public string Type { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "UserAddress")]
-        public string UserAddress { get; set; }
+        [JsonProperty(PropertyName = "Value")]
+        public string Value { get; set; }
 
     }
 }

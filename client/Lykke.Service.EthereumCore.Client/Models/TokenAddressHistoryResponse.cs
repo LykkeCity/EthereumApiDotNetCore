@@ -24,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// Initializes a new instance of the TokenAddressHistoryResponse
         /// class.
         /// </summary>
-        public TokenAddressHistoryResponse(string tokenTransfered = default(string), string contractAddress = default(string), long? blockNumber = default(long?), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), int? transactionIndexInBlock = default(int?), int? messageIndex = default(int?))
+        public TokenAddressHistoryResponse(long blockNumber, int blockTimestamp, System.DateTime blockTimeUtc, bool hasError, int transactionIndexInBlock, int messageIndex, string tokenTransfered = default(string), string contractAddress = default(string), string value = default(string), string gasUsed = default(string), string gasPrice = default(string), string transactionHash = default(string), string fromProperty = default(string), string to = default(string))
         {
             TokenTransfered = tokenTransfered;
             ContractAddress = contractAddress;
@@ -61,7 +61,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
+        public long BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
@@ -96,27 +96,37 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimestamp")]
-        public int? BlockTimestamp { get; set; }
+        public int BlockTimestamp { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimeUtc")]
-        public System.DateTime? BlockTimeUtc { get; set; }
+        public System.DateTime BlockTimeUtc { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "hasError")]
-        public bool? HasError { get; set; }
+        public bool HasError { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "transactionIndexInBlock")]
-        public int? TransactionIndexInBlock { get; set; }
+        public int TransactionIndexInBlock { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "messageIndex")]
-        public int? MessageIndex { get; set; }
+        public int MessageIndex { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

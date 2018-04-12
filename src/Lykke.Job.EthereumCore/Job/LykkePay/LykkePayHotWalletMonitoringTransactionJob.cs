@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Common;
@@ -16,6 +17,7 @@ using Lykke.Service.EthereumCore.Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
+using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.RabbitMQ;
 using Lykke.Service.EthereumCore.Services.New;
 
@@ -29,24 +31,23 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly ISlackNotifier _slackNotifier;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
-        private readonly IHotWalletService _hotWalletService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
         private readonly ILykkePayEventsService _transactionEventsService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
-        private readonly ICashinEventRepository _cashinEventRepository;
-
+        private readonly IUserTransferWalletRepository _userTransferWalletRepository;
+        private readonly IErc20DepositContractService _erc20DepositContractService;
 
         public LykkePayHotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
             IBaseSettings settings,
             ISlackNotifier slackNotifier,
             IEthereumTransactionService ethereumTransactionService,
-            IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
-            IHotWalletOperationRepository hotWalletCashoutRepository,
-            IHotWalletService hotWalletService,
+            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
+            [KeyFilter(Constants.LykkePayKey)]IHotWalletOperationRepository hotWalletCashoutRepository,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            ICashinEventRepository cashinEventRepository,
-            ILykkePayEventsService transactionEventsService)
+            ILykkePayEventsService transactionEventsService,
+            IUserTransferWalletRepository userTransferWalletRepository,
+            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService erc20DepositContractService)
         {
             _transactionEventsService = transactionEventsService;
             _ethereumTransactionService = ethereumTransactionService;
@@ -56,9 +57,9 @@ namespace Lykke.Job.EthereumCore.Job
             _slackNotifier = slackNotifier;
             _hotWalletCashoutTransactionRepository = hotWalletCashoutTransactionRepository;
             _hotWalletCashoutRepository = hotWalletCashoutRepository;
-            _hotWalletService = hotWalletService;
             _rabbitQueuePublisher = rabbitQueuePublisher;
-            _cashinEventRepository = cashinEventRepository;
+            _userTransferWalletRepository = userTransferWalletRepository;
+            _erc20DepositContractService = erc20DepositContractService;
         }
 
         [QueueTrigger(Constants.LykkePayTransactionMonitoringQueue, 100, true)]
@@ -146,7 +147,11 @@ namespace Lykke.Job.EthereumCore.Job
                     break;
 
                 case HotWalletOperationType.Cashin:
-                    await _hotWalletService.RemoveCashinLockAsync(operation.TokenAddress, operation.FromAddress);
+                    string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
+                    await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
+                        operation.TokenAddress, userAddress, "");
+
+
                     break;
 
                 default:
@@ -166,43 +171,35 @@ namespace Lykke.Job.EthereumCore.Job
                 }
 
                 string amount;
-                Lykke.Job.EthereumCore.Contracts.Enums.LykkePay.EventType eventType;
                 switch (operation.OperationType)
                 {
                     case HotWalletOperationType.Cashout:
                         amount = operation.Amount.ToString();
                         break;
                     case HotWalletOperationType.Cashin:
-                        await _hotWalletService.RemoveCashinLockAsync(operation.TokenAddress, operation.FromAddress);
-                        var cashinEvent = await _cashinEventRepository.GetAsync(transactionHash);
-                        if (cashinEvent == null)
-                        {
-                            var transferedTokens = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
-                            if (transferedTokens == null || transferedTokens == 0)
-                            {
-                                //Not yet indexed
-                                SendMessageToTheQueueEnd(context, transaction, 5000);
-                                return false;
-                            }
+                        string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
+                        await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
+                            operation.TokenAddress, userAddress, "");
 
-                            amount = transferedTokens.ToString();
-                        }
-                        else
+                        var transferedTokens = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
+                        if (transferedTokens == null || transferedTokens == 0)
                         {
-                            amount = cashinEvent.Amount;
+                            //Not yet indexed
+                            SendMessageToTheQueueEnd(context, transaction, 10000);
+                            return false;
                         }
 
-                        eventType = EventType.Completed;
+                        amount = transferedTokens.ToString();
                         break;
                     default:
                         return false;
                 }
 
-                TransferEvent @event = new TransferEvent(operation.OperationId, 
+                TransferEvent @event = new TransferEvent(operation.OperationId,
                     transactionHash,
                     amount,
                     operation.TokenAddress,
-                    operation.FromAddress, 
+                    operation.FromAddress,
                     operation.ToAddress,
                     SenderType.EthereumCore,
                     EventType.Completed);

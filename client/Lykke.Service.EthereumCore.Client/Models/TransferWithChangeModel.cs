@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the TransferWithChangeModel class.
         /// </summary>
-        public TransferWithChangeModel(string change, string signFrom, System.Guid id, string coinAdapterAddress, string fromAddress, string toAddress, string amount, string signTo = default(string))
+        public TransferWithChangeModel(System.Guid id, string change = default(string), string signFrom = default(string), string signTo = default(string), string coinAdapterAddress = default(string), string fromAddress = default(string), string toAddress = default(string), string amount = default(string))
         {
             Change = change;
             SignFrom = signFrom;
@@ -43,42 +43,42 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "change")]
+        [JsonProperty(PropertyName = "Change")]
         public string Change { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "signFrom")]
+        [JsonProperty(PropertyName = "SignFrom")]
         public string SignFrom { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "signTo")]
+        [JsonProperty(PropertyName = "SignTo")]
         public string SignTo { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "coinAdapterAddress")]
+        [JsonProperty(PropertyName = "CoinAdapterAddress")]
         public string CoinAdapterAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "amount")]
+        [JsonProperty(PropertyName = "Amount")]
         public string Amount { get; set; }
 
         /// <summary>
@@ -89,30 +89,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Change == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Change");
-            }
-            if (SignFrom == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "SignFrom");
-            }
-            if (CoinAdapterAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "CoinAdapterAddress");
-            }
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (Amount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Amount");
-            }
             if (Change != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Change, "^[1-9][0-9]*$"))

@@ -35,7 +35,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "hashHex")]
+        [JsonProperty(PropertyName = "HashHex")]
         public string HashHex { get; set; }
 
     }

@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the IssueTokensModel class.
         /// </summary>
-        public IssueTokensModel(string externalTokenAddress, string toAddress, string amount)
+        public IssueTokensModel(string externalTokenAddress = default(string), string toAddress = default(string), string amount = default(string))
         {
             ExternalTokenAddress = externalTokenAddress;
             ToAddress = toAddress;
@@ -38,17 +38,17 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "externalTokenAddress")]
+        [JsonProperty(PropertyName = "ExternalTokenAddress")]
         public string ExternalTokenAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "amount")]
+        [JsonProperty(PropertyName = "Amount")]
         public string Amount { get; set; }
 
         /// <summary>
@@ -59,18 +59,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (ExternalTokenAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ExternalTokenAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (Amount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Amount");
-            }
             if (Amount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Amount, "^[1-9][0-9]*$"))

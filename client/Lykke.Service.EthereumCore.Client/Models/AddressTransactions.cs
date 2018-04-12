@@ -6,7 +6,6 @@
 
 namespace Lykke.Service.EthereumCore.Client.Models
 {
-    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
@@ -23,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the AddressTransactions class.
         /// </summary>
-        public AddressTransactions(string address, int? start = default(int?), int? count = default(int?))
+        public AddressTransactions(int start, int count, string address = default(string))
         {
             Address = address;
             Start = start;
@@ -38,31 +37,28 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "address")]
+        [JsonProperty(PropertyName = "Address")]
         public string Address { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "start")]
-        public int? Start { get; set; }
+        [JsonProperty(PropertyName = "Start")]
+        public int Start { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "count")]
-        public int? Count { get; set; }
+        [JsonProperty(PropertyName = "Count")]
+        public int Count { get; set; }
 
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="ValidationException">
+        /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
-            if (Address == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Address");
-            }
+            //Nothing to validate
         }
     }
 }

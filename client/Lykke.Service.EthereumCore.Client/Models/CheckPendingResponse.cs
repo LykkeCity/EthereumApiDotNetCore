@@ -35,7 +35,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "isSynced")]
+        [JsonProperty(PropertyName = "IsSynced")]
         public bool IsSynced { get; set; }
 
         /// <summary>

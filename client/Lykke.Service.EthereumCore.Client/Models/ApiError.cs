@@ -25,9 +25,9 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <param name="code">Possible values include: 'None',
         /// 'ContractPoolEmpty', 'MissingRequiredParams', 'WrongParams',
         /// 'EntityAlreadyExists', 'WrongSign', 'OperationWithIdAlreadyExists',
-        /// 'NotEnoughFunds', 'TransactionExists',
+        /// 'TransferInProcessing', 'NotEnoughFunds', 'TransactionExists',
         /// 'TransactionRequiresMoreGas'</param>
-        public ApiError(string code = default(string), string message = default(string))
+        public ApiError(ExceptionType code, string message = default(string))
         {
             Code = code;
             Message = message;
@@ -42,16 +42,26 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Gets or sets possible values include: 'None', 'ContractPoolEmpty',
         /// 'MissingRequiredParams', 'WrongParams', 'EntityAlreadyExists',
-        /// 'WrongSign', 'OperationWithIdAlreadyExists', 'NotEnoughFunds',
-        /// 'TransactionExists', 'TransactionRequiresMoreGas'
+        /// 'WrongSign', 'OperationWithIdAlreadyExists',
+        /// 'TransferInProcessing', 'NotEnoughFunds', 'TransactionExists',
+        /// 'TransactionRequiresMoreGas'
         /// </summary>
-        [JsonProperty(PropertyName = "code")]
-        public string Code { get; set; }
+        [JsonProperty(PropertyName = "Code")]
+        public ExceptionType Code { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "message")]
+        [JsonProperty(PropertyName = "Message")]
         public string Message { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+        }
     }
 }

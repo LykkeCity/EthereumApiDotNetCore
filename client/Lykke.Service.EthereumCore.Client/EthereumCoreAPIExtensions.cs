@@ -11,16 +11,16 @@ namespace Lykke.Service.EthereumCore.Client
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Extension methods for EthereumApi.
+    /// Extension methods for EthereumCoreAPI.
     /// </summary>
-    public static partial class EthereumApiExtensions
+    public static partial class EthereumCoreAPIExtensions
     {
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
             /// <param name='ercTransaction'>
             /// </param>
-            public static object ApiErc20BalancePost(this IEthereumApi operations, GetErcBalance ercTransaction = default(GetErcBalance))
+            public static object ApiErc20BalancePost(this IEthereumCoreAPI operations, GetErcBalance ercTransaction = default(GetErcBalance))
             {
                 return operations.ApiErc20BalancePostAsync(ercTransaction).GetAwaiter().GetResult();
             }
@@ -33,7 +33,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiErc20BalancePostAsync(this IEthereumApi operations, GetErcBalance ercTransaction = default(GetErcBalance), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiErc20BalancePostAsync(this IEthereumCoreAPI operations, GetErcBalance ercTransaction = default(GetErcBalance), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20BalancePostWithHttpMessagesAsync(ercTransaction, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -46,7 +46,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='userAddress'>
             /// </param>
-            public static object ApiErc20depositsGet(this IEthereumApi operations, string userAddress = default(string))
+            public static object ApiErc20depositsGet(this IEthereumCoreAPI operations, string userAddress = default(string))
             {
                 return operations.ApiErc20depositsGetAsync(userAddress).GetAwaiter().GetResult();
             }
@@ -59,7 +59,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiErc20depositsGetAsync(this IEthereumApi operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiErc20depositsGetAsync(this IEthereumCoreAPI operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20depositsGetWithHttpMessagesAsync(userAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -72,7 +72,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='userAddress'>
             /// </param>
-            public static object ApiErc20depositsPost(this IEthereumApi operations, string userAddress = default(string))
+            public static object ApiErc20depositsPost(this IEthereumCoreAPI operations, string userAddress = default(string))
             {
                 return operations.ApiErc20depositsPostAsync(userAddress).GetAwaiter().GetResult();
             }
@@ -85,7 +85,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiErc20depositsPostAsync(this IEthereumApi operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiErc20depositsPostAsync(this IEthereumCoreAPI operations, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20depositsPostWithHttpMessagesAsync(userAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -98,7 +98,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='ercTransaction'>
             /// </param>
-            public static object ApiErc20WalletGetTransactionPost(this IEthereumApi operations, PrivateWalletErc20Transaction ercTransaction = default(PrivateWalletErc20Transaction))
+            public static object ApiErc20WalletGetTransactionPost(this IEthereumCoreAPI operations, PrivateWalletErc20Transaction ercTransaction = default(PrivateWalletErc20Transaction))
             {
                 return operations.ApiErc20WalletGetTransactionPostAsync(ercTransaction).GetAwaiter().GetResult();
             }
@@ -111,7 +111,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiErc20WalletGetTransactionPostAsync(this IEthereumApi operations, PrivateWalletErc20Transaction ercTransaction = default(PrivateWalletErc20Transaction), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiErc20WalletGetTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletErc20Transaction ercTransaction = default(PrivateWalletErc20Transaction), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20WalletGetTransactionPostWithHttpMessagesAsync(ercTransaction, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -124,7 +124,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='ethTransactionSigned'>
             /// </param>
-            public static object ApiErc20WalletSubmitTransactionPost(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
+            public static object ApiErc20WalletSubmitTransactionPost(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
             {
                 return operations.ApiErc20WalletSubmitTransactionPostAsync(ethTransactionSigned).GetAwaiter().GetResult();
             }
@@ -137,7 +137,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiErc20WalletSubmitTransactionPostAsync(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiErc20WalletSubmitTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiErc20WalletSubmitTransactionPostWithHttpMessagesAsync(ethTransactionSigned, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -150,7 +150,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeCashoutPost(this IEthereumApi operations, CashoutModel model = default(CashoutModel))
+            public static object ApiExchangeCashoutPost(this IEthereumCoreAPI operations, CashoutModel model = default(CashoutModel))
             {
                 return operations.ApiExchangeCashoutPostAsync(model).GetAwaiter().GetResult();
             }
@@ -163,7 +163,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeCashoutPostAsync(this IEthereumApi operations, CashoutModel model = default(CashoutModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeCashoutPostAsync(this IEthereumCoreAPI operations, CashoutModel model = default(CashoutModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeCashoutPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -176,7 +176,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='guid'>
             /// </param>
-            public static CheckIdResponse ApiExchangeCheckIdByGuidGet(this IEthereumApi operations, System.Guid guid)
+            public static CheckIdResponse ApiExchangeCheckIdByGuidGet(this IEthereumCoreAPI operations, System.Guid guid)
             {
                 return operations.ApiExchangeCheckIdByGuidGetAsync(guid).GetAwaiter().GetResult();
             }
@@ -189,7 +189,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<CheckIdResponse> ApiExchangeCheckIdByGuidGetAsync(this IEthereumApi operations, System.Guid guid, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<CheckIdResponse> ApiExchangeCheckIdByGuidGetAsync(this IEthereumCoreAPI operations, System.Guid guid, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeCheckIdByGuidGetWithHttpMessagesAsync(guid, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -202,7 +202,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeTransferPost(this IEthereumApi operations, TransferModel model = default(TransferModel))
+            public static object ApiExchangeTransferPost(this IEthereumCoreAPI operations, TransferModel model = default(TransferModel))
             {
                 return operations.ApiExchangeTransferPostAsync(model).GetAwaiter().GetResult();
             }
@@ -215,7 +215,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeTransferPostAsync(this IEthereumApi operations, TransferModel model = default(TransferModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeTransferPostAsync(this IEthereumCoreAPI operations, TransferModel model = default(TransferModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeTransferPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -228,7 +228,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeCheckSignPost(this IEthereumApi operations, CheckSignModel model = default(CheckSignModel))
+            public static object ApiExchangeCheckSignPost(this IEthereumCoreAPI operations, CheckSignModel model = default(CheckSignModel))
             {
                 return operations.ApiExchangeCheckSignPostAsync(model).GetAwaiter().GetResult();
             }
@@ -241,7 +241,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeCheckSignPostAsync(this IEthereumApi operations, CheckSignModel model = default(CheckSignModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeCheckSignPostAsync(this IEthereumCoreAPI operations, CheckSignModel model = default(CheckSignModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeCheckSignPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -254,7 +254,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeTransferWithChangePost(this IEthereumApi operations, TransferWithChangeModel model = default(TransferWithChangeModel))
+            public static object ApiExchangeTransferWithChangePost(this IEthereumCoreAPI operations, TransferWithChangeModel model = default(TransferWithChangeModel))
             {
                 return operations.ApiExchangeTransferWithChangePostAsync(model).GetAwaiter().GetResult();
             }
@@ -267,7 +267,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeTransferWithChangePostAsync(this IEthereumApi operations, TransferWithChangeModel model = default(TransferWithChangeModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeTransferWithChangePostAsync(this IEthereumCoreAPI operations, TransferWithChangeModel model = default(TransferWithChangeModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeTransferWithChangePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -280,7 +280,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeCheckPendingTransactionPost(this IEthereumApi operations, CheckPendingModel model = default(CheckPendingModel))
+            public static object ApiExchangeCheckPendingTransactionPost(this IEthereumCoreAPI operations, CheckPendingModel model = default(CheckPendingModel))
             {
                 return operations.ApiExchangeCheckPendingTransactionPostAsync(model).GetAwaiter().GetResult();
             }
@@ -293,7 +293,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeCheckPendingTransactionPostAsync(this IEthereumApi operations, CheckPendingModel model = default(CheckPendingModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeCheckPendingTransactionPostAsync(this IEthereumCoreAPI operations, CheckPendingModel model = default(CheckPendingModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeCheckPendingTransactionPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -306,7 +306,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiExchangeEstimateCashoutGasPost(this IEthereumApi operations, TransferModel model = default(TransferModel))
+            public static object ApiExchangeEstimateCashoutGasPost(this IEthereumCoreAPI operations, TransferModel model = default(TransferModel))
             {
                 return operations.ApiExchangeEstimateCashoutGasPostAsync(model).GetAwaiter().GetResult();
             }
@@ -319,7 +319,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiExchangeEstimateCashoutGasPostAsync(this IEthereumApi operations, TransferModel model = default(TransferModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiExchangeEstimateCashoutGasPostAsync(this IEthereumCoreAPI operations, TransferModel model = default(TransferModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExchangeEstimateCashoutGasPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -330,7 +330,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static ListResultExternalTokenModel ApiExternalTokenGet(this IEthereumApi operations)
+            public static ListResultExternalTokenModel ApiExternalTokenGet(this IEthereumCoreAPI operations)
             {
                 return operations.ApiExternalTokenGetAsync().GetAwaiter().GetResult();
             }
@@ -341,7 +341,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ListResultExternalTokenModel> ApiExternalTokenGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ListResultExternalTokenModel> ApiExternalTokenGetAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExternalTokenGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {
@@ -354,7 +354,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='externalTokenAddress'>
             /// </param>
-            public static ExternalTokenModel ApiExternalTokenByExternalTokenAddressGet(this IEthereumApi operations, string externalTokenAddress)
+            public static ExternalTokenModel ApiExternalTokenByExternalTokenAddressGet(this IEthereumCoreAPI operations, string externalTokenAddress)
             {
                 return operations.ApiExternalTokenByExternalTokenAddressGetAsync(externalTokenAddress).GetAwaiter().GetResult();
             }
@@ -367,7 +367,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ExternalTokenModel> ApiExternalTokenByExternalTokenAddressGetAsync(this IEthereumApi operations, string externalTokenAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ExternalTokenModel> ApiExternalTokenByExternalTokenAddressGetAsync(this IEthereumCoreAPI operations, string externalTokenAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExternalTokenByExternalTokenAddressGetWithHttpMessagesAsync(externalTokenAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -380,7 +380,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static ExternalTokenModel ApiExternalTokenCreatePost(this IEthereumApi operations, CreateExternalTokenModel model = default(CreateExternalTokenModel))
+            public static ExternalTokenModel ApiExternalTokenCreatePost(this IEthereumCoreAPI operations, CreateExternalTokenModel model = default(CreateExternalTokenModel))
             {
                 return operations.ApiExternalTokenCreatePostAsync(model).GetAwaiter().GetResult();
             }
@@ -393,7 +393,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ExternalTokenModel> ApiExternalTokenCreatePostAsync(this IEthereumApi operations, CreateExternalTokenModel model = default(CreateExternalTokenModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ExternalTokenModel> ApiExternalTokenCreatePostAsync(this IEthereumCoreAPI operations, CreateExternalTokenModel model = default(CreateExternalTokenModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExternalTokenCreatePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -406,7 +406,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static ExternalTokenModel ApiExternalTokenIssuePost(this IEthereumApi operations, IssueTokensModel model = default(IssueTokensModel))
+            public static ExternalTokenModel ApiExternalTokenIssuePost(this IEthereumCoreAPI operations, IssueTokensModel model = default(IssueTokensModel))
             {
                 return operations.ApiExternalTokenIssuePostAsync(model).GetAwaiter().GetResult();
             }
@@ -419,7 +419,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ExternalTokenModel> ApiExternalTokenIssuePostAsync(this IEthereumApi operations, IssueTokensModel model = default(IssueTokensModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ExternalTokenModel> ApiExternalTokenIssuePostAsync(this IEthereumCoreAPI operations, IssueTokensModel model = default(IssueTokensModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExternalTokenIssuePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -434,7 +434,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='ownerAddress'>
             /// </param>
-            public static BalanceModel ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGet(this IEthereumApi operations, string externalTokenAddress, string ownerAddress)
+            public static BalanceModel ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGet(this IEthereumCoreAPI operations, string externalTokenAddress, string ownerAddress)
             {
                 return operations.ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGetAsync(externalTokenAddress, ownerAddress).GetAwaiter().GetResult();
             }
@@ -449,7 +449,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<BalanceModel> ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGetAsync(this IEthereumApi operations, string externalTokenAddress, string ownerAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<BalanceModel> ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGetAsync(this IEthereumCoreAPI operations, string externalTokenAddress, string ownerAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiExternalTokenBalanceByExternalTokenAddressByOwnerAddressGetWithHttpMessagesAsync(externalTokenAddress, ownerAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -460,7 +460,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static GasPriceModel ApiGasPriceGet(this IEthereumApi operations)
+            public static GasPriceModel ApiGasPriceGet(this IEthereumCoreAPI operations)
             {
                 return operations.ApiGasPriceGetAsync().GetAwaiter().GetResult();
             }
@@ -471,7 +471,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<GasPriceModel> ApiGasPriceGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<GasPriceModel> ApiGasPriceGetAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiGasPriceGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {
@@ -484,7 +484,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static void ApiGasPricePost(this IEthereumApi operations, GasPriceModel model = default(GasPriceModel))
+            public static void ApiGasPricePost(this IEthereumCoreAPI operations, GasPriceModel model = default(GasPriceModel))
             {
                 operations.ApiGasPricePostAsync(model).GetAwaiter().GetResult();
             }
@@ -497,7 +497,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task ApiGasPricePostAsync(this IEthereumApi operations, GasPriceModel model = default(GasPriceModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task ApiGasPricePostAsync(this IEthereumCoreAPI operations, GasPriceModel model = default(GasPriceModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 (await operations.ApiGasPricePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
@@ -507,7 +507,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiHashCalculateAndGetIdPost(this IEthereumApi operations, BaseCoinRequestParametersModel model = default(BaseCoinRequestParametersModel))
+            public static object ApiHashCalculateAndGetIdPost(this IEthereumCoreAPI operations, BaseCoinRequestParametersModel model = default(BaseCoinRequestParametersModel))
             {
                 return operations.ApiHashCalculateAndGetIdPostAsync(model).GetAwaiter().GetResult();
             }
@@ -520,7 +520,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiHashCalculateAndGetIdPostAsync(this IEthereumApi operations, BaseCoinRequestParametersModel model = default(BaseCoinRequestParametersModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiHashCalculateAndGetIdPostAsync(this IEthereumCoreAPI operations, BaseCoinRequestParametersModel model = default(BaseCoinRequestParametersModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiHashCalculateAndGetIdPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -533,7 +533,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiHashCalculatePost(this IEthereumApi operations, BaseCoinRequestModel model = default(BaseCoinRequestModel))
+            public static object ApiHashCalculatePost(this IEthereumCoreAPI operations, BaseCoinRequestModel model = default(BaseCoinRequestModel))
             {
                 return operations.ApiHashCalculatePostAsync(model).GetAwaiter().GetResult();
             }
@@ -546,7 +546,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiHashCalculatePostAsync(this IEthereumApi operations, BaseCoinRequestModel model = default(BaseCoinRequestModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiHashCalculatePostAsync(this IEthereumCoreAPI operations, BaseCoinRequestModel model = default(BaseCoinRequestModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiHashCalculatePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -559,7 +559,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='hotWalletCashout'>
             /// </param>
-            public static ApiException ApiHotWalletPost(this IEthereumApi operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest))
+            public static ApiException ApiHotWalletPost(this IEthereumCoreAPI operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest))
             {
                 return operations.ApiHotWalletPostAsync(hotWalletCashout).GetAwaiter().GetResult();
             }
@@ -572,7 +572,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ApiException> ApiHotWalletPostAsync(this IEthereumApi operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ApiException> ApiHotWalletPostAsync(this IEthereumCoreAPI operations, HotWalletCashoutRequest hotWalletCashout = default(HotWalletCashoutRequest), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiHotWalletPostWithHttpMessagesAsync(hotWalletCashout, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -585,7 +585,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='transactionHash'>
             /// </param>
-            public static object ApiInternalMessagesTxHashByTransactionHashPost(this IEthereumApi operations, string transactionHash)
+            public static object ApiInternalMessagesTxHashByTransactionHashPost(this IEthereumCoreAPI operations, string transactionHash)
             {
                 return operations.ApiInternalMessagesTxHashByTransactionHashPostAsync(transactionHash).GetAwaiter().GetResult();
             }
@@ -598,7 +598,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiInternalMessagesTxHashByTransactionHashPostAsync(this IEthereumApi operations, string transactionHash, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiInternalMessagesTxHashByTransactionHashPostAsync(this IEthereumCoreAPI operations, string transactionHash, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiInternalMessagesTxHashByTransactionHashPostWithHttpMessagesAsync(transactionHash, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -611,7 +611,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='addressTransactions'>
             /// </param>
-            public static object ApiInternalMessagesPost(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions))
+            public static object ApiInternalMessagesPost(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions))
             {
                 return operations.ApiInternalMessagesPostAsync(addressTransactions).GetAwaiter().GetResult();
             }
@@ -624,7 +624,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiInternalMessagesPostAsync(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiInternalMessagesPostAsync(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiInternalMessagesPostWithHttpMessagesAsync(addressTransactions, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -635,9 +635,127 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            public static object IsAlive(this IEthereumCoreAPI operations)
+            {
+                return operations.IsAliveAsync().GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> IsAliveAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.IsAliveWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiLykkePayErc20depositsGet(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string))
+            {
+                return operations.ApiLykkePayErc20depositsGetAsync(apiKey, userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiLykkePayErc20depositsGetAsync(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiLykkePayErc20depositsGetWithHttpMessagesAsync(apiKey, userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiLykkePayErc20depositsPost(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string))
+            {
+                return operations.ApiLykkePayErc20depositsPostAsync(apiKey, userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiLykkePayErc20depositsPostAsync(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiLykkePayErc20depositsPostWithHttpMessagesAsync(apiKey, userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            public static ApiException ApiLykkePayErc20depositsTransferPost(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest))
+            {
+                return operations.ApiLykkePayErc20depositsTransferPostAsync(apiKey, request).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<ApiException> ApiLykkePayErc20depositsTransferPostAsync(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(apiKey, request, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='ethTransaction'>
             /// </param>
-            public static object ApiPrivateWalletGetTransactionPost(this IEthereumApi operations, PrivateWalletEthTransaction ethTransaction = default(PrivateWalletEthTransaction))
+            public static object ApiPrivateWalletGetTransactionPost(this IEthereumCoreAPI operations, PrivateWalletEthTransaction ethTransaction = default(PrivateWalletEthTransaction))
             {
                 return operations.ApiPrivateWalletGetTransactionPostAsync(ethTransaction).GetAwaiter().GetResult();
             }
@@ -650,7 +768,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiPrivateWalletGetTransactionPostAsync(this IEthereumApi operations, PrivateWalletEthTransaction ethTransaction = default(PrivateWalletEthTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiPrivateWalletGetTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletEthTransaction ethTransaction = default(PrivateWalletEthTransaction), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiPrivateWalletGetTransactionPostWithHttpMessagesAsync(ethTransaction, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -663,7 +781,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='ethTransactionSigned'>
             /// </param>
-            public static object ApiPrivateWalletSubmitTransactionPost(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
+            public static object ApiPrivateWalletSubmitTransactionPost(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
             {
                 return operations.ApiPrivateWalletSubmitTransactionPostAsync(ethTransactionSigned).GetAwaiter().GetResult();
             }
@@ -676,7 +794,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiPrivateWalletSubmitTransactionPostAsync(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiPrivateWalletSubmitTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiPrivateWalletSubmitTransactionPostWithHttpMessagesAsync(ethTransactionSigned, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -689,7 +807,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='ethTransactionSigned'>
             /// </param>
-            public static object ApiPrivateWalletEstimateTransactionPost(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
+            public static object ApiPrivateWalletEstimateTransactionPost(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction))
             {
                 return operations.ApiPrivateWalletEstimateTransactionPostAsync(ethTransactionSigned).GetAwaiter().GetResult();
             }
@@ -702,7 +820,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiPrivateWalletEstimateTransactionPostAsync(this IEthereumApi operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiPrivateWalletEstimateTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiPrivateWalletEstimateTransactionPostWithHttpMessagesAsync(ethTransactionSigned, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -715,7 +833,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='address'>
             /// </param>
-            public static object ApiRpcGetBalanceByAddressGet(this IEthereumApi operations, string address)
+            public static object ApiRpcGetBalanceByAddressGet(this IEthereumCoreAPI operations, string address)
             {
                 return operations.ApiRpcGetBalanceByAddressGetAsync(address).GetAwaiter().GetResult();
             }
@@ -728,7 +846,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiRpcGetBalanceByAddressGetAsync(this IEthereumApi operations, string address, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiRpcGetBalanceByAddressGetAsync(this IEthereumCoreAPI operations, string address, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiRpcGetBalanceByAddressGetWithHttpMessagesAsync(address, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -739,7 +857,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static object ApiRpcGetNetworkGasPriceGet(this IEthereumApi operations)
+            public static object ApiRpcGetNetworkGasPriceGet(this IEthereumCoreAPI operations)
             {
                 return operations.ApiRpcGetNetworkGasPriceGetAsync().GetAwaiter().GetResult();
             }
@@ -750,7 +868,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiRpcGetNetworkGasPriceGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiRpcGetNetworkGasPriceGetAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiRpcGetNetworkGasPriceGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {
@@ -761,28 +879,9 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static void ApiIsaliveGet(this IEthereumApi operations)
-            {
-                operations.ApiIsaliveGetAsync().GetAwaiter().GetResult();
-            }
-
-            /// <param name='operations'>
-            /// The operations group for this extension method.
-            /// </param>
-            /// <param name='cancellationToken'>
-            /// The cancellation token.
-            /// </param>
-            public static async Task ApiIsaliveGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
-            {
-                (await operations.ApiIsaliveGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false)).Dispose();
-            }
-
-            /// <param name='operations'>
-            /// The operations group for this extension method.
-            /// </param>
             /// <param name='addressTransactions'>
             /// </param>
-            public static object ApiTransactionsPost(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions))
+            public static object ApiTransactionsPost(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions))
             {
                 return operations.ApiTransactionsPostAsync(addressTransactions).GetAwaiter().GetResult();
             }
@@ -795,7 +894,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransactionsPostAsync(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransactionsPostAsync(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransactionsPostWithHttpMessagesAsync(addressTransactions, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -808,7 +907,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='transactionHash'>
             /// </param>
-            public static object ApiTransactionsTxHashByTransactionHashPost(this IEthereumApi operations, string transactionHash)
+            public static object ApiTransactionsTxHashByTransactionHashPost(this IEthereumCoreAPI operations, string transactionHash)
             {
                 return operations.ApiTransactionsTxHashByTransactionHashPostAsync(transactionHash).GetAwaiter().GetResult();
             }
@@ -821,7 +920,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransactionsTxHashByTransactionHashPostAsync(this IEthereumApi operations, string transactionHash, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransactionsTxHashByTransactionHashPostAsync(this IEthereumCoreAPI operations, string transactionHash, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransactionsTxHashByTransactionHashPostWithHttpMessagesAsync(transactionHash, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -834,7 +933,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='addressTransactions'>
             /// </param>
-            public static object ApiTransactionsHistoryPost(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions))
+            public static object ApiTransactionsHistoryPost(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions))
             {
                 return operations.ApiTransactionsHistoryPostAsync(addressTransactions).GetAwaiter().GetResult();
             }
@@ -847,7 +946,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransactionsHistoryPostAsync(this IEthereumApi operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransactionsHistoryPostAsync(this IEthereumCoreAPI operations, AddressTransactions addressTransactions = default(AddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransactionsHistoryPostWithHttpMessagesAsync(addressTransactions, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -860,7 +959,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='addressTransactions'>
             /// </param>
-            public static object ApiTransactionsErcHistoryPost(this IEthereumApi operations, TokenAddressTransactions addressTransactions = default(TokenAddressTransactions))
+            public static object ApiTransactionsErcHistoryPost(this IEthereumCoreAPI operations, TokenAddressTransactions addressTransactions = default(TokenAddressTransactions))
             {
                 return operations.ApiTransactionsErcHistoryPostAsync(addressTransactions).GetAwaiter().GetResult();
             }
@@ -873,7 +972,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransactionsErcHistoryPostAsync(this IEthereumApi operations, TokenAddressTransactions addressTransactions = default(TokenAddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransactionsErcHistoryPostAsync(this IEthereumCoreAPI operations, TokenAddressTransactions addressTransactions = default(TokenAddressTransactions), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransactionsErcHistoryPostWithHttpMessagesAsync(addressTransactions, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -886,7 +985,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static object ApiTransitionCreatePost(this IEthereumApi operations, CreateTransitionContractModel model = default(CreateTransitionContractModel))
+            public static object ApiTransitionCreatePost(this IEthereumCoreAPI operations, CreateTransitionContractModel model = default(CreateTransitionContractModel))
             {
                 return operations.ApiTransitionCreatePostAsync(model).GetAwaiter().GetResult();
             }
@@ -899,7 +998,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransitionCreatePostAsync(this IEthereumApi operations, CreateTransitionContractModel model = default(CreateTransitionContractModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransitionCreatePostAsync(this IEthereumCoreAPI operations, CreateTransitionContractModel model = default(CreateTransitionContractModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransitionCreatePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -914,7 +1013,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='coinAdapterAddress'>
             /// </param>
-            public static object ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGet(this IEthereumApi operations, string userAddress, string coinAdapterAddress)
+            public static object ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGet(this IEthereumCoreAPI operations, string userAddress, string coinAdapterAddress)
             {
                 return operations.ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetAsync(userAddress, coinAdapterAddress).GetAwaiter().GetResult();
             }
@@ -929,7 +1028,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetAsync(this IEthereumApi operations, string userAddress, string coinAdapterAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetAsync(this IEthereumCoreAPI operations, string userAddress, string coinAdapterAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetWithHttpMessagesAsync(userAddress, coinAdapterAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -940,7 +1039,85 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static ListResultCoinResult ApiCoinAdapterGet(this IEthereumApi operations)
+            /// <param name='address'>
+            /// </param>
+            public static object ApiWhiteListByAddressGet(this IEthereumCoreAPI operations, string address)
+            {
+                return operations.ApiWhiteListByAddressGetAsync(address).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiWhiteListByAddressGetAsync(this IEthereumCoreAPI operations, string address, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiWhiteListByAddressGetWithHttpMessagesAsync(address, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            public static ApiException ApiWhiteListByAddressDelete(this IEthereumCoreAPI operations, string address)
+            {
+                return operations.ApiWhiteListByAddressDeleteAsync(address).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='address'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<ApiException> ApiWhiteListByAddressDeleteAsync(this IEthereumCoreAPI operations, string address, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiWhiteListByAddressDeleteWithHttpMessagesAsync(address, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            public static ApiException ApiWhiteListPost(this IEthereumCoreAPI operations, EthereumAddressRequest model = default(EthereumAddressRequest))
+            {
+                return operations.ApiWhiteListPostAsync(model).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<ApiException> ApiWhiteListPostAsync(this IEthereumCoreAPI operations, EthereumAddressRequest model = default(EthereumAddressRequest), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiWhiteListPostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            public static ListResultCoinResult ApiCoinAdapterGet(this IEthereumCoreAPI operations)
             {
                 return operations.ApiCoinAdapterGetAsync().GetAwaiter().GetResult();
             }
@@ -951,7 +1128,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ListResultCoinResult> ApiCoinAdapterGetAsync(this IEthereumApi operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ListResultCoinResult> ApiCoinAdapterGetAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterGetWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {
@@ -964,7 +1141,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='adapterAddress'>
             /// </param>
-            public static ExistsModel ApiCoinAdapterExistsByAdapterAddressGet(this IEthereumApi operations, string adapterAddress)
+            public static ExistsModel ApiCoinAdapterExistsByAdapterAddressGet(this IEthereumCoreAPI operations, string adapterAddress)
             {
                 return operations.ApiCoinAdapterExistsByAdapterAddressGetAsync(adapterAddress).GetAwaiter().GetResult();
             }
@@ -977,7 +1154,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ExistsModel> ApiCoinAdapterExistsByAdapterAddressGetAsync(this IEthereumApi operations, string adapterAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ExistsModel> ApiCoinAdapterExistsByAdapterAddressGetAsync(this IEthereumCoreAPI operations, string adapterAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterExistsByAdapterAddressGetWithHttpMessagesAsync(adapterAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -990,7 +1167,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='id'>
             /// </param>
-            public static CoinResult ApiCoinAdapterByIdGet(this IEthereumApi operations, string id)
+            public static CoinResult ApiCoinAdapterByIdGet(this IEthereumCoreAPI operations, string id)
             {
                 return operations.ApiCoinAdapterByIdGetAsync(id).GetAwaiter().GetResult();
             }
@@ -1003,7 +1180,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<CoinResult> ApiCoinAdapterByIdGetAsync(this IEthereumApi operations, string id, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<CoinResult> ApiCoinAdapterByIdGetAsync(this IEthereumCoreAPI operations, string id, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterByIdGetWithHttpMessagesAsync(id, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -1016,7 +1193,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='adapterAddress'>
             /// </param>
-            public static CoinResult ApiCoinAdapterAddressByAdapterAddressGet(this IEthereumApi operations, string adapterAddress)
+            public static CoinResult ApiCoinAdapterAddressByAdapterAddressGet(this IEthereumCoreAPI operations, string adapterAddress)
             {
                 return operations.ApiCoinAdapterAddressByAdapterAddressGetAsync(adapterAddress).GetAwaiter().GetResult();
             }
@@ -1029,7 +1206,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<CoinResult> ApiCoinAdapterAddressByAdapterAddressGetAsync(this IEthereumApi operations, string adapterAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<CoinResult> ApiCoinAdapterAddressByAdapterAddressGetAsync(this IEthereumCoreAPI operations, string adapterAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterAddressByAdapterAddressGetWithHttpMessagesAsync(adapterAddress, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -1042,7 +1219,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='model'>
             /// </param>
-            public static RegisterResponse ApiCoinAdapterCreatePost(this IEthereumApi operations, CreateAssetModel model = default(CreateAssetModel))
+            public static RegisterResponse ApiCoinAdapterCreatePost(this IEthereumCoreAPI operations, CreateAssetModel model = default(CreateAssetModel))
             {
                 return operations.ApiCoinAdapterCreatePostAsync(model).GetAwaiter().GetResult();
             }
@@ -1055,7 +1232,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<RegisterResponse> ApiCoinAdapterCreatePostAsync(this IEthereumApi operations, CreateAssetModel model = default(CreateAssetModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<RegisterResponse> ApiCoinAdapterCreatePostAsync(this IEthereumCoreAPI operations, CreateAssetModel model = default(CreateAssetModel), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterCreatePostWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -1070,7 +1247,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='userAddress'>
             /// </param>
-            public static object ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGet(this IEthereumApi operations, string coinAdapterAddress, string userAddress)
+            public static object ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGet(this IEthereumCoreAPI operations, string coinAdapterAddress, string userAddress)
             {
                 return operations.ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGetAsync(coinAdapterAddress, userAddress).GetAwaiter().GetResult();
             }
@@ -1085,7 +1262,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGetAsync(this IEthereumApi operations, string coinAdapterAddress, string userAddress, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGetAsync(this IEthereumCoreAPI operations, string coinAdapterAddress, string userAddress, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiCoinAdapterBalanceByCoinAdapterAddressByUserAddressGetWithHttpMessagesAsync(coinAdapterAddress, userAddress, null, cancellationToken).ConfigureAwait(false))
                 {

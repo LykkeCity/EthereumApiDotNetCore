@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the GasPriceModel class.
         /// </summary>
-        public GasPriceModel(string max, string min)
+        public GasPriceModel(string max = default(string), string min = default(string))
         {
             Max = max;
             Min = min;
@@ -37,12 +37,12 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "max")]
+        [JsonProperty(PropertyName = "Max")]
         public string Max { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "min")]
+        [JsonProperty(PropertyName = "Min")]
         public string Min { get; set; }
 
         /// <summary>
@@ -53,14 +53,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Max == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Max");
-            }
-            if (Min == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Min");
-            }
             if (Max != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Max, "^[1-9][0-9]*$"))

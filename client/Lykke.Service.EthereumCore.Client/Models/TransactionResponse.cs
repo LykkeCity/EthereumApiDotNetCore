@@ -24,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the TransactionResponse class.
         /// </summary>
-        public TransactionResponse(int? transactionIndex = default(int?), long? blockNumber = default(long?), string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), int? blockTimestamp = default(int?), string contractAddress = default(string), string gasUsed = default(string), System.DateTime? blockTimeUtc = default(System.DateTime?), bool? hasError = default(bool?), IList<TokenAddressHistoryResponse> ercTransfer = default(IList<TokenAddressHistoryResponse>))
+        public TransactionResponse(int transactionIndex, long blockNumber, int blockTimestamp, System.DateTime blockTimeUtc, bool hasError, string gas = default(string), string gasPrice = default(string), string value = default(string), string nonce = default(string), string transactionHash = default(string), string blockHash = default(string), string fromProperty = default(string), string to = default(string), string input = default(string), string contractAddress = default(string), string gasUsed = default(string), IList<TokenAddressHistoryResponse> ercTransfer = default(IList<TokenAddressHistoryResponse>))
         {
             TransactionIndex = transactionIndex;
             BlockNumber = blockNumber;
@@ -54,12 +54,12 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "transactionIndex")]
-        public int? TransactionIndex { get; set; }
+        public int TransactionIndex { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
+        public long BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
@@ -109,7 +109,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimestamp")]
-        public int? BlockTimestamp { get; set; }
+        public int BlockTimestamp { get; set; }
 
         /// <summary>
         /// </summary>
@@ -124,17 +124,36 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimeUtc")]
-        public System.DateTime? BlockTimeUtc { get; set; }
+        public System.DateTime BlockTimeUtc { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "hasError")]
-        public bool? HasError { get; set; }
+        public bool HasError { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "ercTransfer")]
         public IList<TokenAddressHistoryResponse> ErcTransfer { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            if (ErcTransfer != null)
+            {
+                foreach (var element in ErcTransfer)
+                {
+                    if (element != null)
+                    {
+                        element.Validate();
+                    }
+                }
+            }
+        }
     }
 }

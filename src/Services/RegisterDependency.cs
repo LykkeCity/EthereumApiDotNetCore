@@ -29,46 +29,6 @@ namespace Lykke.Service.EthereumCore.Services
     {
         public static void RegisterServices(this IServiceCollection Services)
         {
-            Services.AddTransient<IContractService, ContractService>();
-            Services.AddTransient<IPaymentService, PaymentService>();
-            Services.AddTransient<IEthereumQueueOutService, EthereumQueueOutService>();
-            Services.AddTransient<IEthereumTransactionService, EthereumTransactionService>();
-            Services.AddTransient<IExchangeContractService, ExchangeContractService>();
-            Services.AddTransient<ICoinTransactionService, CoinTransactionService>();
-            Services.AddTransient<IErcInterfaceService, ErcInterfaceService>();
-            Services.AddTransient<AssetContractService>();
-            Services.AddTransient<TransferContractService>();
-            Services.AddTransient<ExternalTokenService>();
-            Services.AddTransient<TransferContractPoolService>();
-            Services.AddTransient<ITransferContractQueueService, TransferContractQueueService>();
-            Services.AddTransient<ITransferContractQueueServiceFactory, TransferContractQueueServiceFactory>();
-            Services.AddTransient<ITransferContractService, TransferContractService>();
-            Services.AddTransient<TransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            Services.AddTransient<ITransferContractTransactionService, TransferContractTransactionService>();
-            Services.AddTransient<ITransferContractUserAssignmentQueueService, TransferContractUserAssignmentQueueService>();
-            Services.AddTransient<ISlackNotifier, SlackNotifier>();
-            Services.AddTransient<ICoinEventPublisher, CoinEventPublisherService>();
-            Services.AddTransient<ICoinEventService, CoinEventService>();
-            Services.AddSingleton<IHashCalculator, HashCalculator>();
-            Services.AddSingleton<IPendingOperationService, PendingOperationService>();
-            Services.AddSingleton<ITransactionEventsService, TransactionEventsService>();
-            Services.AddSingleton<INonceCalculator, NonceCalculator>();
-            Services.AddSingleton<IPrivateWalletService, PrivateWalletService>();
-            Services.AddSingleton<IEthereumIndexerService, EthereumIndexerService>();
-            Services.AddSingleton<ISignatureChecker, SignatureChecker>();
-            Services.AddSingleton<IRawTransactionSubmitter, RawTransactionSubmitter>();
-            Services.AddSingleton<IErc20PrivateWalletService, Erc20PrivateWalletService>();
-            Services.AddSingleton<IOwnerService, OwnerService>();
-            Services.AddSingleton<IOwnerBlockchainService, OwnerBlockchainService>();
-            Services.AddSingleton<IErc20BalanceService, Erc20BalanceService>();
-            Services.AddSingleton<ITransactionValidationService, TransactionValidationService>();
-            Services.AddSingleton<ISignatureService, SignatureService>();
-            Services.AddSingleton<IHotWalletService, HotWalletService>();
-            Services.AddSingleton<IErc20DepositContractQueueServiceFactory, Erc20DepositContractQueueServiceFactory>();
-            Services.AddSingleton<IErc20DepositTransactionService, Erc20DepositTransactionService>();
-            Services.AddSingleton<ITransactionRouter, TransactionRouter>();
-            Services.AddSingleton<IGasPriceService, GasPriceService>();
-
             //Uses HttpClient Inside -> singleton
             Services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
@@ -129,6 +89,47 @@ namespace Lykke.Service.EthereumCore.Services
 
         public static void RegisterServices(this ContainerBuilder builder)
         {
+            builder.RegisterType<ContractService>().As<IContractService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PaymentService>().As<IPaymentService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<EthereumQueueOutService>().As<IEthereumQueueOutService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<EthereumTransactionService>().As<IEthereumTransactionService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<ExchangeContractService>().As<IExchangeContractService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CoinTransactionService>().As<ICoinTransactionService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<ErcInterfaceService>().As<IErcInterfaceService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<AssetContractService>().AsSelf().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractService>().AsSelf().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<ExternalTokenService>().AsSelf().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractPoolService>().AsSelf().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractQueueService>().As<ITransferContractQueueService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractQueueServiceFactory>().As<ITransferContractQueueServiceFactory>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractService>().As<ITransferContractService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractUserAssignmentQueueService>().AsSelf().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractTransactionService>().As<ITransferContractTransactionService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractUserAssignmentQueueService>().As<ITransferContractUserAssignmentQueueService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<SlackNotifier>().As<ISlackNotifier>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CoinEventPublisherService>().As<ICoinEventPublisher>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CoinEventService>().As<ICoinEventService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HashCalculator>().As<IHashCalculator>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PendingOperationService>().As<IPendingOperationService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransactionEventsService>().As<ITransactionEventsService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<NonceCalculator>().As<INonceCalculator>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PrivateWalletService>().As<IPrivateWalletService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<EthereumIndexerService>().As<IEthereumIndexerService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<SignatureChecker>().As<ISignatureChecker>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<RawTransactionSubmitter>().As<IRawTransactionSubmitter>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20PrivateWalletService>().As<IErc20PrivateWalletService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<OwnerService>().As<IOwnerService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<OwnerBlockchainService>().As<IOwnerBlockchainService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20BalanceService>().As<IErc20BalanceService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransactionValidationService>().As<ITransactionValidationService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<SignatureService>().As<ISignatureService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HotWalletService>().As<IHotWalletService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositContractQueueServiceFactory>().As<IErc20DepositContractQueueServiceFactory>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositTransactionService>().As<IErc20DepositTransactionService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransactionRouter>().As<ITransactionRouter>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<GasPriceService>().As<IGasPriceService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayEventsService>().As<ILykkePayEventsService>().SingleInstance().WithAttributeFiltering();
+
             builder.RegisterType<LykkePayErc20DepositContractService>()
                 .Keyed<IErc20DepositContractService>(Constants.LykkePayKey)
                 .SingleInstance().WithAttributeFiltering();

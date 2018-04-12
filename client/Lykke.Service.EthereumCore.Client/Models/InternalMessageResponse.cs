@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the InternalMessageResponse class.
         /// </summary>
-        public InternalMessageResponse(string transactionHash = default(string), long? blockNumber = default(long?), string fromAddress = default(string), string toAddress = default(string), int? depth = default(int?), string value = default(string), int? messageIndex = default(int?), string type = default(string), int? blockTimestamp = default(int?), System.DateTime? blockTimeUtc = default(System.DateTime?))
+        public InternalMessageResponse(long blockNumber, int depth, int messageIndex, int blockTimestamp, System.DateTime blockTimeUtc, string transactionHash = default(string), string fromAddress = default(string), string toAddress = default(string), string value = default(string), string type = default(string))
         {
             TransactionHash = transactionHash;
             BlockNumber = blockNumber;
@@ -50,7 +50,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockNumber")]
-        public long? BlockNumber { get; set; }
+        public long BlockNumber { get; set; }
 
         /// <summary>
         /// </summary>
@@ -65,7 +65,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "depth")]
-        public int? Depth { get; set; }
+        public int Depth { get; set; }
 
         /// <summary>
         /// </summary>
@@ -75,7 +75,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "messageIndex")]
-        public int? MessageIndex { get; set; }
+        public int MessageIndex { get; set; }
 
         /// <summary>
         /// </summary>
@@ -85,12 +85,22 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimestamp")]
-        public int? BlockTimestamp { get; set; }
+        public int BlockTimestamp { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "blockTimeUtc")]
-        public System.DateTime? BlockTimeUtc { get; set; }
+        public System.DateTime BlockTimeUtc { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

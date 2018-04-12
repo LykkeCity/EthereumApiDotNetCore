@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the CheckSignModel class.
         /// </summary>
-        public CheckSignModel(string sign, System.Guid id, string coinAdapterAddress, string fromAddress, string toAddress, string amount)
+        public CheckSignModel(System.Guid id, string sign = default(string), string coinAdapterAddress = default(string), string fromAddress = default(string), string toAddress = default(string), string amount = default(string))
         {
             Sign = sign;
             Id = id;
@@ -41,32 +41,32 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "sign")]
+        [JsonProperty(PropertyName = "Sign")]
         public string Sign { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "coinAdapterAddress")]
+        [JsonProperty(PropertyName = "CoinAdapterAddress")]
         public string CoinAdapterAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "amount")]
+        [JsonProperty(PropertyName = "Amount")]
         public string Amount { get; set; }
 
         /// <summary>
@@ -77,26 +77,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Sign == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Sign");
-            }
-            if (CoinAdapterAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "CoinAdapterAddress");
-            }
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (Amount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Amount");
-            }
             if (Amount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Amount, "^[1-9][0-9]*$"))
