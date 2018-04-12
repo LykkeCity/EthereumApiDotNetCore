@@ -18,7 +18,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             Contract contract = web3.Eth.GetContract(settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction("transferAllTokens");
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
-                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+                new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             if (!cashinWouldBeSuccesfull)
             {
@@ -26,7 +26,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             }
 
             string trHash = await cashin.SendTransactionAsync(fromAddress,
-                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+                new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
         }
