@@ -78,6 +78,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string LykkePayErc223DepositContractTable = "LykkePayErc223DepositContracts";
         public const string LykkePayHotWalletCashoutTransactionTable = "LykkePayHotWalletCashoutTransaction";
         public const string LykkePayErc223TransferQueue = "lykke-pay-erc-transfers-queue";
+        public const string LykkePayErc223TransferNotificationsQueue = "lykke-pay-erc-transfers-notifications-queue";
         public const string LykkePayTransactionMonitoringQueue = "lykke-pay-transaction-monitoring-queue";
 
         #endregion

@@ -726,7 +726,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// </param>
             /// <param name='request'>
             /// </param>
-            public static ApiException ApiLykkePayErc20depositsTransferPost(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest))
+            public static object ApiLykkePayErc20depositsTransferPost(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest))
             {
                 return operations.ApiLykkePayErc20depositsTransferPostAsync(apiKey, request).GetAwaiter().GetResult();
             }
@@ -742,7 +742,7 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ApiException> ApiLykkePayErc20depositsTransferPostAsync(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> ApiLykkePayErc20depositsTransferPostAsync(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(apiKey, request, null, cancellationToken).ConfigureAwait(false))
                 {

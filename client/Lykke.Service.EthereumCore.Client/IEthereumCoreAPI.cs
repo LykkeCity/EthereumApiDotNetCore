@@ -317,7 +317,7 @@ namespace Lykke.Service.EthereumCore.Client
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<ApiException>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='ethTransaction'>
         /// </param>
