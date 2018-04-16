@@ -6,6 +6,7 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCoreSelfHosted.Models;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Models;
 
 namespace Lykke.Service.EthereumCore.Controllers.LykkePay
 {
@@ -51,21 +52,20 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
             });
         }
 
+        //TODO: Contract response
         [HttpPost("transfer")]
-        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(OperationIdResponse), 200)] 
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferAsync([FromBody] TransferFromDepositRequest request)
         {
-            var containsAddress = await _contractService.ContainsAsync(request.DepositContractAddress);
+            string opId = await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress, request.TokenAddress, request.DestinationAddress);
 
-            if (containsAddress)
+            return Ok(new OperationIdResponse()
             {
-                await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress, request.TokenAddress, request.DestinationAddress);
-            }
-
-            return Ok();
+                OperationId = opId
+            });
         }
     }
 }

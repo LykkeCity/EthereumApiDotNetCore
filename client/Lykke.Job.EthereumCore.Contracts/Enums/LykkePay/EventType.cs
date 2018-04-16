@@ -10,6 +10,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Enums.LykkePay
     public enum EventType
     {
         Detected,
+        Started,
         Completed
     }
 }

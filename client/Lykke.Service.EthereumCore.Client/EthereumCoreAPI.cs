@@ -113,7 +113,7 @@ namespace Lykke.Service.EthereumCore.Client
         /// </summary>
         private void Initialize()
         {
-            BaseUri = new System.Uri("http://localhost:5001/");
+            BaseUri = new System.Uri("http://localhost:5000/");
             SerializationSettings = new JsonSerializerSettings
             {
                 Formatting = Newtonsoft.Json.Formatting.Indented,
@@ -4295,7 +4295,7 @@ namespace Lykke.Service.EthereumCore.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<ApiException>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (apiKey == null)
             {
@@ -4389,9 +4389,27 @@ namespace Lykke.Service.EthereumCore.Client
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<ApiException>();
+            var _result = new HttpOperationResponse<object>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
+            // Deserialize Response
+            if ((int)_statusCode == 200)
+            {
+                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    _result.Body = SafeJsonConvert.DeserializeObject<OperationIdResponse>(_responseContent, DeserializationSettings);
+                }
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                }
+            }
             // Deserialize Response
             if ((int)_statusCode == 400)
             {
