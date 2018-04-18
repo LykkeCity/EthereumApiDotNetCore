@@ -16,7 +16,7 @@ namespace Lykke.Service.EthereumCore.Client
 
     /// <summary>
     /// </summary>
-    public partial interface IEthereumApi : System.IDisposable
+    public partial interface IEthereumCoreAPI : System.IDisposable
     {
         /// <summary>
         /// The base URI of the service.
@@ -43,6 +43,36 @@ namespace Lykke.Service.EthereumCore.Client
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiErc20BalancePostWithHttpMessagesAsync(GetErcBalance ercTransaction = default(GetErcBalance), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='address'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiErc20BlackListByAddressGetWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='address'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ApiException>> ApiErc20BlackListByAddressDeleteWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='model'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ApiException>> ApiErc20BlackListPostWithHttpMessagesAsync(EthereumAddressRequest model = default(EthereumAddressRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='userAddress'>
         /// </param>
@@ -272,6 +302,14 @@ namespace Lykke.Service.EthereumCore.Client
         /// </param>
         Task<HttpOperationResponse<object>> ApiInternalMessagesPostWithHttpMessagesAsync(AddressTransactions addressTransactions = default(AddressTransactions), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> IsAliveWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='ethTransaction'>
         /// </param>
         /// <param name='customHeaders'>
@@ -319,14 +357,6 @@ namespace Lykke.Service.EthereumCore.Client
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiRpcGetNetworkGasPriceGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <param name='customHeaders'>
-        /// The headers that will be added to request.
-        /// </param>
-        /// <param name='cancellationToken'>
-        /// The cancellation token.
-        /// </param>
-        Task<HttpOperationResponse> ApiIsaliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='addressTransactions'>
         /// </param>
@@ -389,6 +419,36 @@ namespace Lykke.Service.EthereumCore.Client
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetWithHttpMessagesAsync(string userAddress, string coinAdapterAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='address'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiWhiteListByAddressGetWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='address'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ApiException>> ApiWhiteListByAddressDeleteWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='model'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ApiException>> ApiWhiteListPostWithHttpMessagesAsync(EthereumAddressRequest model = default(EthereumAddressRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='customHeaders'>
         /// The headers that will be added to request.

@@ -37,7 +37,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "data")]
+        [JsonProperty(PropertyName = "Data")]
         public IList<CoinResult> Data { get; set; }
 
     }

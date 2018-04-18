@@ -35,8 +35,21 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "error")]
+        [JsonProperty(PropertyName = "Error")]
         public ApiError Error { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            if (Error != null)
+            {
+                Error.Validate();
+            }
+        }
     }
 }

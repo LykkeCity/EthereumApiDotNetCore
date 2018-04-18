@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the CreateExternalTokenModel class.
         /// </summary>
-        public CreateExternalTokenModel(string tokenName, bool allowEmission, string tokenSymbol, string version, byte[] divisibility, string initialSupply = default(string))
+        public CreateExternalTokenModel(bool allowEmission, byte[] divisibility, string tokenName = default(string), string tokenSymbol = default(string), string version = default(string), string initialSupply = default(string))
         {
             TokenName = tokenName;
             AllowEmission = allowEmission;
@@ -41,32 +41,32 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenName")]
+        [JsonProperty(PropertyName = "TokenName")]
         public string TokenName { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "allowEmission")]
+        [JsonProperty(PropertyName = "AllowEmission")]
         public bool AllowEmission { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenSymbol")]
+        [JsonProperty(PropertyName = "TokenSymbol")]
         public string TokenSymbol { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "version")]
+        [JsonProperty(PropertyName = "Version")]
         public string Version { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "initialSupply")]
+        [JsonProperty(PropertyName = "InitialSupply")]
         public string InitialSupply { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "divisibility")]
+        [JsonProperty(PropertyName = "Divisibility")]
         public byte[] Divisibility { get; set; }
 
         /// <summary>
@@ -77,18 +77,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (TokenName == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "TokenName");
-            }
-            if (TokenSymbol == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "TokenSymbol");
-            }
-            if (Version == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Version");
-            }
             if (Divisibility == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Divisibility");

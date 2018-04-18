@@ -163,6 +163,10 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             Services.AddSingleton<IWhiteListAddressesRepository>(provider => new WhiteListAddressesRepository(
                 AzureTableStorage<WhiteListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.WhiteListAddressesTable,
                     provider.GetService<ILog>())));
+
+            Services.AddSingleton<IErc20BlackListAddressesRepository>(provider => new Erc20BlackListAddressesRepository(
+                AzureTableStorage<Erc20BlackListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.Erc20BlackListAddressTable,
+                    provider.GetService<ILog>())));
         }
 
         public static void RegisterAzureQueues(this IServiceCollection Services, 

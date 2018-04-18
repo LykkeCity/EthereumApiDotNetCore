@@ -25,7 +25,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// Initializes a new instance of the PrivateWalletErc20Transaction
         /// class.
         /// </summary>
-        public PrivateWalletErc20Transaction(string tokenAddress, string tokenAmount, string value, string fromAddress, string toAddress, string gasAmount, string gasPrice)
+        public PrivateWalletErc20Transaction(string tokenAddress = default(string), string tokenAmount = default(string), string value = default(string), string fromAddress = default(string), string toAddress = default(string), string gasAmount = default(string), string gasPrice = default(string))
         {
             TokenAddress = tokenAddress;
             TokenAmount = tokenAmount;
@@ -44,37 +44,37 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenAddress")]
+        [JsonProperty(PropertyName = "TokenAddress")]
         public string TokenAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenAmount")]
+        [JsonProperty(PropertyName = "TokenAmount")]
         public string TokenAmount { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
+        [JsonProperty(PropertyName = "Value")]
         public string Value { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "gasAmount")]
+        [JsonProperty(PropertyName = "GasAmount")]
         public string GasAmount { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "gasPrice")]
+        [JsonProperty(PropertyName = "GasPrice")]
         public string GasPrice { get; set; }
 
         /// <summary>
@@ -85,34 +85,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (TokenAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "TokenAddress");
-            }
-            if (TokenAmount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "TokenAmount");
-            }
-            if (Value == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Value");
-            }
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (GasAmount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "GasAmount");
-            }
-            if (GasPrice == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "GasPrice");
-            }
             if (TokenAmount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(TokenAmount, "^[1-9][0-9]*$"))

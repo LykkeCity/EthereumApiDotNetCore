@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the BaseCoinRequestModel class.
         /// </summary>
-        public BaseCoinRequestModel(System.Guid id, string coinAdapterAddress, string fromAddress, string toAddress, string amount)
+        public BaseCoinRequestModel(System.Guid id, string coinAdapterAddress = default(string), string fromAddress = default(string), string toAddress = default(string), string amount = default(string))
         {
             Id = id;
             CoinAdapterAddress = coinAdapterAddress;
@@ -40,27 +40,27 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "coinAdapterAddress")]
+        [JsonProperty(PropertyName = "CoinAdapterAddress")]
         public string CoinAdapterAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "amount")]
+        [JsonProperty(PropertyName = "Amount")]
         public string Amount { get; set; }
 
         /// <summary>
@@ -71,22 +71,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (CoinAdapterAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "CoinAdapterAddress");
-            }
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (ToAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "ToAddress");
-            }
-            if (Amount == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Amount");
-            }
             if (Amount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Amount, "^[1-9][0-9]*$"))

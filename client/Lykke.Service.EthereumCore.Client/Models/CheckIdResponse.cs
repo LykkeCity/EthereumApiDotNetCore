@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the CheckIdResponse class.
         /// </summary>
-        public CheckIdResponse(bool? isOk = default(bool?), System.Guid? proposedId = default(System.Guid?))
+        public CheckIdResponse(bool isOk, System.Guid proposedId)
         {
             IsOk = isOk;
             ProposedId = proposedId;
@@ -36,13 +36,23 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "isOk")]
-        public bool? IsOk { get; set; }
+        [JsonProperty(PropertyName = "IsOk")]
+        public bool IsOk { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "proposedId")]
-        public System.Guid? ProposedId { get; set; }
+        [JsonProperty(PropertyName = "ProposedId")]
+        public System.Guid ProposedId { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

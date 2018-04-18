@@ -38,12 +38,12 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "address")]
+        [JsonProperty(PropertyName = "Address")]
         public string Address { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenAddresses")]
+        [JsonProperty(PropertyName = "TokenAddresses")]
         public IList<string> TokenAddresses { get; set; }
 
     }

@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the CheckSignResponse class.
         /// </summary>
-        public CheckSignResponse(bool? signIsCorrect = default(bool?))
+        public CheckSignResponse(bool signIsCorrect)
         {
             SignIsCorrect = signIsCorrect;
             CustomInit();
@@ -35,8 +35,18 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "signIsCorrect")]
-        public bool? SignIsCorrect { get; set; }
+        [JsonProperty(PropertyName = "SignIsCorrect")]
+        public bool SignIsCorrect { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

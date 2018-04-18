@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the ExistsModel class.
         /// </summary>
-        public ExistsModel(bool? exists = default(bool?))
+        public ExistsModel(bool exists)
         {
             Exists = exists;
             CustomInit();
@@ -35,8 +35,18 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "exists")]
-        public bool? Exists { get; set; }
+        [JsonProperty(PropertyName = "Exists")]
+        public bool Exists { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

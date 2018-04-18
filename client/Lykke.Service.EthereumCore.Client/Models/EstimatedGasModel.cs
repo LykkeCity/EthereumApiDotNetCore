@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the EstimatedGasModel class.
         /// </summary>
-        public EstimatedGasModel(string estimatedGas = default(string), bool? isAllowed = default(bool?))
+        public EstimatedGasModel(bool isAllowed, string estimatedGas = default(string))
         {
             EstimatedGas = estimatedGas;
             IsAllowed = isAllowed;
@@ -36,13 +36,23 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "estimatedGas")]
+        [JsonProperty(PropertyName = "EstimatedGas")]
         public string EstimatedGas { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "isAllowed")]
-        public bool? IsAllowed { get; set; }
+        [JsonProperty(PropertyName = "IsAllowed")]
+        public bool IsAllowed { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }
