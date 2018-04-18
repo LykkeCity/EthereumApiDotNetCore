@@ -11,7 +11,7 @@ using System.Numerics;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
-    public class WhiteListAddressesEntity : TableEntity, IWhiteListAddress
+    public class Erc20BlackListAddressesEntity : TableEntity, IErc20BlackListAddress
     {
         public string Address
         {
@@ -27,7 +27,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 
         public static string GetPartitionKey()
         {
-            return "WhiteListAddress";
+            return "Erc20BlackListAddress";
         }
 
         public static string GetRowKey(string address)
@@ -35,9 +35,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
             return address.ToLower();
         }
 
-        public static WhiteListAddressesEntity Create(IWhiteListAddress whiteListAddress)
+        public static Erc20BlackListAddressesEntity Create(IErc20BlackListAddress whiteListAddress)
         {
-            return new WhiteListAddressesEntity
+            return new Erc20BlackListAddressesEntity
             {
                 PartitionKey = GetPartitionKey(),
                 Address = GetRowKey(whiteListAddress.Address),
@@ -45,30 +45,30 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
         }
     }
 
-    public class WhiteListAddressesRepository : IWhiteListAddressesRepository
+    public class Erc20BlackListAddressesRepository : IErc20BlackListAddressesRepository
     {
-        private readonly INoSQLTableStorage<WhiteListAddressesEntity> _table;
+        private readonly INoSQLTableStorage<Erc20BlackListAddressesEntity> _table;
 
-        public WhiteListAddressesRepository(INoSQLTableStorage<WhiteListAddressesEntity> table)
+        public Erc20BlackListAddressesRepository(INoSQLTableStorage<Erc20BlackListAddressesEntity> table)
         {
             _table = table;
         }
 
         public async Task DeleteAsync(string address)
         {
-            await _table.DeleteIfExistAsync(WhiteListAddressesEntity.GetPartitionKey(), WhiteListAddressesEntity.GetRowKey(address));
+            await _table.DeleteIfExistAsync(Erc20BlackListAddressesEntity.GetPartitionKey(), Erc20BlackListAddressesEntity.GetRowKey(address));
         }
 
-        public async Task<IWhiteListAddress> GetAsync(string address)
+        public async Task<IErc20BlackListAddress> GetAsync(string address)
         {
-            var entity = await _table.GetDataAsync(WhiteListAddressesEntity.GetPartitionKey(), WhiteListAddressesEntity.GetRowKey(address));
+            var entity = await _table.GetDataAsync(Erc20BlackListAddressesEntity.GetPartitionKey(), Erc20BlackListAddressesEntity.GetRowKey(address));
 
             return entity;
         }
 
-        public async Task SaveAsync(IWhiteListAddress address)
+        public async Task SaveAsync(IErc20BlackListAddress address)
         {
-            var entity = WhiteListAddressesEntity.Create(address);
+            var entity = Erc20BlackListAddressesEntity.Create(address);
 
             await _table.InsertOrReplaceAsync(entity);
         }

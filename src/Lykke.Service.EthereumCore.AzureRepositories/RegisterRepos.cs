@@ -200,6 +200,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             builder.RegisterInstance<IWhiteListAddressesRepository>(new WhiteListAddressesRepository(
                 AzureTableStorage<WhiteListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.WhiteListAddressesTable,
                     log)));
+
+            builder.RegisterInstance<IErc20BlackListAddressesRepository>(new Erc20BlackListAddressesRepository(
+                AzureTableStorage<Erc20BlackListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.Erc20BlackListAddressTable, log)));
         }
 
         public static void RegisterAzureQueues(this ContainerBuilder builder,

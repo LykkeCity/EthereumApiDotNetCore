@@ -68,6 +68,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string Erc20DepositContractTable = "Erc20DepositContracts";
         public const string Erc223DepositContractTable = "Erc223DepositContracts";
         public const string BlackListAddressTable = "BlackListAddresses";
+        public const string Erc20BlackListAddressTable = "BlackListAddresses";
         public const string WhiteListAddressesTable = "WhiteListAddresses";
         public const string AddressStatisticsTable = "AddressStatistics";
 
