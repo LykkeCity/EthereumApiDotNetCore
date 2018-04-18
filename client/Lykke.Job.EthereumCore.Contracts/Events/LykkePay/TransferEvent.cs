@@ -3,17 +3,19 @@ using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
 
 namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
 {
-    public class TransferEvent : Erc20TransferBase
+    public class TransferEvent
     {
-        public DateTime DetectedTime { get; protected set; }
-        public string TransactionHash { get; protected set; }
-        public string Amount { get; protected set; }
-        public string TokenAddress { get; protected set; }
-        public string FromAddress { get; protected set; }
-        public string ToAddress { get; protected set; }
-        public SenderType SenderType { get; protected set; }
-        public EventType EventType { get; protected set; }
-        public string OperationId { get; protected set; }
+        public DateTime DetectedTime { get; private set; }
+        public string TransactionHash { get; private set; }
+        public string Amount { get; private set; }
+        public string TokenAddress { get; private set; }
+        public string FromAddress { get; private set; }
+        public string ToAddress { get; private set; }
+        public SenderType SenderType { get; private set; }
+        public EventType EventType { get; private set; }
+        public string OperationId { get; private set; }
+        public string BlockHash { get; private set; }
+        public ulong BlockNumber { get; private set; }
 
         public TransferEvent(string operationId,
             string transactionHash, 
@@ -21,8 +23,10 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
             string tokenAddress, 
             string fromAddress, 
             string toAddress,
+            string blockHash,
+            ulong blockNumber,
             SenderType senderType,
-            EventType eventType) : base(operationId, transactionHash, amount, tokenAddress, fromAddress, toAddress, senderType, eventType)
+            EventType eventType)
         {
             OperationId = operationId;
             DetectedTime = DateTime.UtcNow;
@@ -33,6 +37,8 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
             ToAddress = toAddress;
             SenderType = senderType;
             EventType = eventType;
+            BlockHash = blockHash;
+            BlockNumber = blockNumber;
         }
     }
 }

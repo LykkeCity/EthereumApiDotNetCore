@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
@@ -176,6 +177,7 @@ namespace Lykke.Job.EthereumCore.Job
                     return false;
                 }
 
+                (BigInteger? amount, string blockHash, ulong blockNumber) transferedInfo = (null, null, 0);
                 string amount;
                 switch (operation.OperationType)
                 {
@@ -187,15 +189,16 @@ namespace Lykke.Job.EthereumCore.Job
                         await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
                             operation.TokenAddress, userAddress, "");
 
-                        var transferedTokens = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
-                        if (transferedTokens == null || transferedTokens == 0)
+                        transferedInfo = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
+                        if (transferedInfo.amount == null || 
+                            transferedInfo.amount == 0)
                         {
                             //Not yet indexed
                             SendMessageToTheQueueEnd(context, transaction, 10000);
                             return false;
                         }
 
-                        amount = transferedTokens.ToString();
+                        amount = transferedInfo.amount.ToString();
                         break;
                     default:
                         return false;
@@ -207,6 +210,8 @@ namespace Lykke.Job.EthereumCore.Job
                     operation.TokenAddress,
                     operation.FromAddress,
                     operation.ToAddress,
+                    transferedInfo.blockHash,
+                    transferedInfo.blockNumber,
                     SenderType.EthereumCore,
                     EventType.Completed);
 
