@@ -20,7 +20,7 @@ namespace Lykke.Service.EthereumCore.Services.New
     public interface ILykkePayEventsService
     {
         Task IndexCashinEventsForErc20Deposits();
-        Task<BigInteger?> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
+        Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
     }
 
     public class LykkePayEventsService : ILykkePayEventsService
@@ -58,13 +58,13 @@ namespace Lykke.Service.EthereumCore.Services.New
             _web3 = web3;
         }
 
-        public async Task<BigInteger?> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash)
+        public async Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash)
         {
             BigInteger result = 0;
             var transaction = await _ethereumIndexerService.GetTransactionAsync(transactionHash);
 
             if (transaction == null)
-                return null;
+                return (null, null, 0);
 
             if (transaction.ErcTransfer != null)
             {
@@ -80,7 +80,7 @@ namespace Lykke.Service.EthereumCore.Services.New
                 }
             }
 
-            return result;
+            return (result, transaction.Transaction?.BlockHash, transaction.Transaction?.BlockNumber ?? 0);
         }
 
         public async Task IndexCashinEventsForErc20Deposits()
@@ -95,12 +95,11 @@ namespace Lykke.Service.EthereumCore.Services.New
 
                 while (lastSyncedBlock <= lastIndexedBlock)
                 {
-                    //_web3.Eth.Blocks.
+                    //Get all transfers from block
                     var transfersResponse = await _indexerApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync
                     (
                         new GetErc20TransferHistoryRequest
                         {
-                            AssetHolder = _settingsWrapper.Ethereum.HotwalletAddress?.ToLower(),
                             BlockNumber = (long)lastSyncedBlock,
                         }
                     );
@@ -123,6 +122,8 @@ namespace Lykke.Service.EthereumCore.Services.New
                                     transfer.Contract,
                                     transfer.FromProperty,
                                     transfer.To,
+                                    transfer.BlockHash,
+                                    (ulong)transfer.BlockNumber,
                                     SenderType.Customer,
                                     EventType.Detected
                                     ));

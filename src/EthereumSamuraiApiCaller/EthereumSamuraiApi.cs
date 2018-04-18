@@ -2197,7 +2197,9 @@ namespace EthereumSamuraiApiCaller
                 {
                     storedException = e;
                 }
-            } while (_result == null && counter++ < urls.Length);
+
+                counter++;
+            } while (_result == null && counter < urls.Length);
 
             if (_result == null && storedException != null)
             {
