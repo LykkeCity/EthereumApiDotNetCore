@@ -42,7 +42,7 @@ namespace Lykke.Service.EthereumCore.Controllers
         {
             return Ok(new IsAddressValidResponse()
             {
-                IsValid = _exchangeContractService.IsValidAddress(ethAddress)
+                IsValid = _exchangeContractService.IsValidAddress(ethAddress ?? "")
             });
         }
     }
