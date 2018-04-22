@@ -39,29 +39,29 @@ namespace Lykke.Job.EthereumCore.Config
         {
             #region NewJobs
 
-            //builder.RegisterType<MonitoringCoinTransactionJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<MonitoringTransferContracts>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<MonitoringTransferTransactions>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<TransferContractPoolJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<TransferContractUserAssignmentJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<PoolRenewJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<PingContractsJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<TransferTransactionQueueJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<MonitoringOperationJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<CashinIndexingJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<CoinEventResubmittJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<HotWalletCashoutJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<HotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<Erc20DepositContractPoolJob>()
-            //    .SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<Erc20DepositContractPoolRenewJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<Erc20DepositMonitoringCashinTransactions>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<Erc20DepositMonitoringContracts>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringCoinTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringTransferContracts>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringTransferTransactions>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractPoolJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractUserAssignmentJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PoolRenewJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PingContractsJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferTransactionQueueJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringOperationJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CashinIndexingJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CoinEventResubmittJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HotWalletCashoutJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositContractPoolJob>()
+                .SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositContractPoolRenewJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositMonitoringCashinTransactions>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositMonitoringContracts>().SingleInstance().WithAttributeFiltering();
 
             #region LykkePay
 
-            //builder.RegisterType<LykkePayErc20DepositTransferStarterJob>().SingleInstance().WithAttributeFiltering();
-            //builder.RegisterType<LykkePayHotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayErc20DepositTransferStarterJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayHotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
             //TODO:Test on icoming transfers
             //builder.RegisterType<LykkePayIndexingJob>().SingleInstance().WithAttributeFiltering();
             //builder.RegisterType<LykkePayTransferNotificationJob>().SingleInstance().WithAttributeFiltering();
