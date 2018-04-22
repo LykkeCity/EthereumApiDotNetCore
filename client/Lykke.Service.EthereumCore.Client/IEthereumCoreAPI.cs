@@ -429,6 +429,16 @@ namespace Lykke.Service.EthereumCore.Client
         /// </param>
         Task<HttpOperationResponse<object>> ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetWithHttpMessagesAsync(string userAddress, string coinAdapterAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='ethAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiValidationGetWithHttpMessagesAsync(string ethAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='address'>
         /// </param>
         /// <param name='customHeaders'>
