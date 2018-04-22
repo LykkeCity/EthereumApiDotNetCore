@@ -20,7 +20,9 @@ using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.Service.EthereumCore.Services.HotWallet;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using Lykke.Service.RabbitMQ;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace Lykke.Job.EthereumCore.Job
 {
@@ -29,31 +31,23 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly ILog _logger;
 
         private readonly AppSettings _settings;
-        private readonly IWeb3 _web3;
         private readonly IHotWalletOperationRepository _operationsRepository;
-        private readonly IQueueExt _transactionMonitoringQueue;
-        private readonly IHotWalletTransactionRepository _hotWalletTransactionRepository;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
-        private readonly IErcInterfaceService _ercInterfaceService;
+        private readonly IEthereumIndexerService _ethereumIndexerService;
+        private readonly IWeb3 _web3;
 
         public LykkePayTransferNotificationJob(AppSettings settings,
             ILog logger,
-            IWeb3 web3,
-            IQueueFactory queueFactory,
             [KeyFilter(Constants.LykkePayKey)]IHotWalletOperationRepository operationsRepository,
-            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository hotWalletTransactionRepository,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            IErcInterfaceService ercInterfaceService
+            IWeb3 web3
             )
         {
             _settings = settings;
             _logger = logger;
-            _web3 = web3;
             _operationsRepository = operationsRepository;
-            _transactionMonitoringQueue = queueFactory.Build(Constants.LykkePayTransactionMonitoringQueue);
-            _hotWalletTransactionRepository = hotWalletTransactionRepository;
             _rabbitQueuePublisher = rabbitQueuePublisher;
-            _ercInterfaceService = ercInterfaceService;
+            _web3 = web3;
         }
 
         [QueueTrigger(Constants.LykkePayErc223TransferNotificationsQueue, 200, true)]
@@ -79,12 +73,25 @@ namespace Lykke.Job.EthereumCore.Job
                     return;
                 }
 
+                Transaction transaction = await _web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(message.TransactionHash);
+
+                if (transaction == null)
+                {
+                    message.LastError = "Not yet indexed";
+                    message.DequeueCount++;
+                    context.MoveMessageToEnd(message.ToJson());
+                    context.SetCountQueueBasedDelay(_settings.EthereumCore.MaxQueueDelay, 30000);
+                    return;
+                }
+
                 TransferEvent @event = new TransferEvent(operation.OperationId,
                     message.TransactionHash,
                     message.Balance,
                     operation.TokenAddress,
                     operation.FromAddress,
                     operation.ToAddress,
+                    transaction?.BlockHash,
+                    (ulong)transaction?.BlockNumber.Value,
                     SenderType.EthereumCore,
                     EventType.Started);
 

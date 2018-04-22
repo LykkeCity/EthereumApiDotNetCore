@@ -38,9 +38,7 @@ namespace Lykke.Job.EthereumCore.Job.LykkePay
         {
             try
             {
-                await Task.Delay(50000000);
-                //TODO: Implement detection of erc20 incoming transfers
-                //await _transactionEventsService.IndexCashinEventsForErc20Deposits();
+                await _transactionEventsService.IndexCashinEventsForErc20Deposits();
             }
             catch (Exception ex)
             {

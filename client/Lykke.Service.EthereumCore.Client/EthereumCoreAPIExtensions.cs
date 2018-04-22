@@ -1117,6 +1117,32 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='ethAddress'>
+            /// </param>
+            public static object ApiValidationGet(this IEthereumCoreAPI operations, string ethAddress = default(string))
+            {
+                return operations.ApiValidationGetAsync(ethAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='ethAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiValidationGetAsync(this IEthereumCoreAPI operations, string ethAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiValidationGetWithHttpMessagesAsync(ethAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='address'>
             /// </param>
             public static object ApiWhiteListByAddressGet(this IEthereumCoreAPI operations, string address)
