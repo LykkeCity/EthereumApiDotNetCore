@@ -60,7 +60,9 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> TransferAsync([FromBody] TransferFromDepositRequest request)
         {
-            string opId = await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress, request.TokenAddress, request.DestinationAddress);
+            string opId = await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress?.ToLower(), 
+                request.TokenAddress?.ToLower(), 
+                request.DestinationAddress?.ToLower());
 
             return Ok(new OperationIdResponse()
             {
