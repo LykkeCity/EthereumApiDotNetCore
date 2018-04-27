@@ -27,7 +27,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 
         public static string GetPartitionKey()
         {
-            return $"WhiteListAddress";
+            return "WhiteListAddress";
         }
 
         public static string GetRowKey(string address)

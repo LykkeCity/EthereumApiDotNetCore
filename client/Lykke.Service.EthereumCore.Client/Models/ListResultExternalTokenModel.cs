@@ -39,7 +39,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "data")]
+        [JsonProperty(PropertyName = "Data")]
         public IList<ExternalTokenModel> Data { get; set; }
 
     }

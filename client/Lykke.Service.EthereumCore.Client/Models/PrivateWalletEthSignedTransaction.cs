@@ -6,7 +6,6 @@
 
 namespace Lykke.Service.EthereumCore.Client.Models
 {
-    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
@@ -25,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// Initializes a new instance of the PrivateWalletEthSignedTransaction
         /// class.
         /// </summary>
-        public PrivateWalletEthSignedTransaction(string fromAddress, string signedTransactionHex)
+        public PrivateWalletEthSignedTransaction(string fromAddress = default(string), string signedTransactionHex = default(string))
         {
             FromAddress = fromAddress;
             SignedTransactionHex = signedTransactionHex;
@@ -39,30 +38,13 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "signedTransactionHex")]
+        [JsonProperty(PropertyName = "SignedTransactionHex")]
         public string SignedTransactionHex { get; set; }
 
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (FromAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "FromAddress");
-            }
-            if (SignedTransactionHex == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "SignedTransactionHex");
-            }
-        }
     }
 }

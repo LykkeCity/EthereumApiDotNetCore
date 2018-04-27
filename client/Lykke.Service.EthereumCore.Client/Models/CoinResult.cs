@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the CoinResult class.
         /// </summary>
-        public CoinResult(string blockchain = default(string), string id = default(string), string name = default(string), string adapterAddress = default(string), string externalTokenAddress = default(string), int? multiplier = default(int?), bool? blockchainDepositEnabled = default(bool?), bool? containsEth = default(bool?))
+        public CoinResult(int multiplier, bool blockchainDepositEnabled, bool containsEth, string blockchain = default(string), string id = default(string), string name = default(string), string adapterAddress = default(string), string externalTokenAddress = default(string))
         {
             Blockchain = blockchain;
             Id = id;
@@ -42,43 +42,53 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "blockchain")]
+        [JsonProperty(PropertyName = "Blockchain")]
         public string Blockchain { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty(PropertyName = "Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "adapterAddress")]
+        [JsonProperty(PropertyName = "AdapterAddress")]
         public string AdapterAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "externalTokenAddress")]
+        [JsonProperty(PropertyName = "ExternalTokenAddress")]
         public string ExternalTokenAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "multiplier")]
-        public int? Multiplier { get; set; }
+        [JsonProperty(PropertyName = "Multiplier")]
+        public int Multiplier { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "blockchainDepositEnabled")]
-        public bool? BlockchainDepositEnabled { get; set; }
+        [JsonProperty(PropertyName = "BlockchainDepositEnabled")]
+        public bool BlockchainDepositEnabled { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "containsEth")]
-        public bool? ContainsEth { get; set; }
+        [JsonProperty(PropertyName = "ContainsEth")]
+        public bool ContainsEth { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

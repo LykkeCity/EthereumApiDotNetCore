@@ -7,28 +7,30 @@
 namespace Lykke.Service.EthereumCore.Client.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class CreateAssetModel
+    public partial class IsAliveResponse
     {
         /// <summary>
-        /// Initializes a new instance of the CreateAssetModel class.
+        /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        public CreateAssetModel()
+        public IsAliveResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the CreateAssetModel class.
+        /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        public CreateAssetModel(bool containsEth, int multiplier, string blockchain = default(string), string externalTokenAddress = default(string), string name = default(string))
+        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
         {
-            Blockchain = blockchain;
-            ContainsEth = containsEth;
-            ExternalTokenAddress = externalTokenAddress;
-            Multiplier = multiplier;
             Name = name;
+            Version = version;
+            Env = env;
+            IsDebug = isDebug;
+            IssueIndicators = issueIndicators;
             CustomInit();
         }
 
@@ -39,28 +41,28 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Blockchain")]
-        public string Blockchain { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "ContainsEth")]
-        public bool ContainsEth { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "ExternalTokenAddress")]
-        public string ExternalTokenAddress { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Multiplier")]
-        public int Multiplier { get; set; }
-
-        /// <summary>
-        /// </summary>
         [JsonProperty(PropertyName = "Name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Version")]
+        public string Version { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Env")]
+        public string Env { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "IsDebug")]
+        public bool IsDebug { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "IssueIndicators")]
+        public IList<IssueIndicator> IssueIndicators { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -70,7 +72,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            //Nothing to validate
         }
     }
 }

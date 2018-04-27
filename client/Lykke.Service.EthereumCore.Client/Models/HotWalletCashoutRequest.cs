@@ -23,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the HotWalletCashoutRequest class.
         /// </summary>
-        public HotWalletCashoutRequest(string operationId, string fromAddress = default(string), string toAddress = default(string), string amount = default(string), string tokenAddress = default(string))
+        public HotWalletCashoutRequest(string operationId = default(string), string fromAddress = default(string), string toAddress = default(string), string amount = default(string), string tokenAddress = default(string))
         {
             OperationId = operationId;
             FromAddress = fromAddress;
@@ -40,27 +40,27 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "operationId")]
+        [JsonProperty(PropertyName = "OperationId")]
         public string OperationId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "fromAddress")]
+        [JsonProperty(PropertyName = "FromAddress")]
         public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "toAddress")]
+        [JsonProperty(PropertyName = "ToAddress")]
         public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "amount")]
+        [JsonProperty(PropertyName = "Amount")]
         public string Amount { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "tokenAddress")]
+        [JsonProperty(PropertyName = "TokenAddress")]
         public string TokenAddress { get; set; }
 
         /// <summary>
@@ -71,10 +71,6 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (OperationId == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "OperationId");
-            }
             if (Amount != null)
             {
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Amount, "^[1-9][0-9]*$"))

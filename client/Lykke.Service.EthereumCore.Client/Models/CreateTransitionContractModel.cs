@@ -6,7 +6,6 @@
 
 namespace Lykke.Service.EthereumCore.Client.Models
 {
-    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
@@ -25,7 +24,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// Initializes a new instance of the CreateTransitionContractModel
         /// class.
         /// </summary>
-        public CreateTransitionContractModel(string coinAdapterAddress, string userAddress)
+        public CreateTransitionContractModel(string coinAdapterAddress = default(string), string userAddress = default(string))
         {
             CoinAdapterAddress = coinAdapterAddress;
             UserAddress = userAddress;
@@ -39,30 +38,13 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "coinAdapterAddress")]
+        [JsonProperty(PropertyName = "CoinAdapterAddress")]
         public string CoinAdapterAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "userAddress")]
+        [JsonProperty(PropertyName = "UserAddress")]
         public string UserAddress { get; set; }
 
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (CoinAdapterAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "CoinAdapterAddress");
-            }
-            if (UserAddress == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "UserAddress");
-            }
-        }
     }
 }

@@ -37,17 +37,17 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty(PropertyName = "Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "contractAddress")]
+        [JsonProperty(PropertyName = "ContractAddress")]
         public string ContractAddress { get; set; }
 
     }

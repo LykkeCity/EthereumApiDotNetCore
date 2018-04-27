@@ -22,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Client.Models
         /// <summary>
         /// Initializes a new instance of the HashResponseWithId class.
         /// </summary>
-        public HashResponseWithId(System.Guid? operationId = default(System.Guid?), string hashHex = default(string))
+        public HashResponseWithId(System.Guid operationId, string hashHex = default(string))
         {
             OperationId = operationId;
             HashHex = hashHex;
@@ -36,13 +36,23 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "operationId")]
-        public System.Guid? OperationId { get; set; }
+        [JsonProperty(PropertyName = "OperationId")]
+        public System.Guid OperationId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "hashHex")]
+        [JsonProperty(PropertyName = "HashHex")]
         public string HashHex { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

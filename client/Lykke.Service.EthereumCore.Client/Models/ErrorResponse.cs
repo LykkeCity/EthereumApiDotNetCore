@@ -7,25 +7,27 @@
 namespace Lykke.Service.EthereumCore.Client.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class CheckPendingModel
+    public partial class ErrorResponse
     {
         /// <summary>
-        /// Initializes a new instance of the CheckPendingModel class.
+        /// Initializes a new instance of the ErrorResponse class.
         /// </summary>
-        public CheckPendingModel()
+        public ErrorResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the CheckPendingModel class.
+        /// Initializes a new instance of the ErrorResponse class.
         /// </summary>
-        public CheckPendingModel(string coinAdapterAddress = default(string), string userAddress = default(string))
+        public ErrorResponse(string errorMessage = default(string), IDictionary<string, IList<string>> modelErrors = default(IDictionary<string, IList<string>>))
         {
-            CoinAdapterAddress = coinAdapterAddress;
-            UserAddress = userAddress;
+            ErrorMessage = errorMessage;
+            ModelErrors = modelErrors;
             CustomInit();
         }
 
@@ -36,13 +38,13 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "CoinAdapterAddress")]
-        public string CoinAdapterAddress { get; set; }
+        [JsonProperty(PropertyName = "ErrorMessage")]
+        public string ErrorMessage { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "UserAddress")]
-        public string UserAddress { get; set; }
+        [JsonProperty(PropertyName = "ModelErrors")]
+        public IDictionary<string, IList<string>> ModelErrors { get; set; }
 
     }
 }
