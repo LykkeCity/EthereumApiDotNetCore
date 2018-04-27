@@ -8,6 +8,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;
 using System.Numerics;
+using Common;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {
@@ -25,9 +26,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
             }
         }
 
-        public static string GetPartitionKey()
+        public static string GetPartitionKey(string address)
         {
-            return "Erc20BlackListAddress";
+            return address.CalculateHexHash32(3);
         }
 
         public static string GetRowKey(string address)
@@ -39,7 +40,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
         {
             return new Erc20BlackListAddressesEntity
             {
-                PartitionKey = GetPartitionKey(),
+                PartitionKey = GetPartitionKey(whiteListAddress.Address),
                 Address = GetRowKey(whiteListAddress.Address),
             };
         }
@@ -56,12 +57,12 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 
         public async Task DeleteAsync(string address)
         {
-            await _table.DeleteIfExistAsync(Erc20BlackListAddressesEntity.GetPartitionKey(), Erc20BlackListAddressesEntity.GetRowKey(address));
+            await _table.DeleteIfExistAsync(Erc20BlackListAddressesEntity.GetPartitionKey(address), Erc20BlackListAddressesEntity.GetRowKey(address));
         }
 
         public async Task<IErc20BlackListAddress> GetAsync(string address)
         {
-            var entity = await _table.GetDataAsync(Erc20BlackListAddressesEntity.GetPartitionKey(), Erc20BlackListAddressesEntity.GetRowKey(address));
+            var entity = await _table.GetDataAsync(Erc20BlackListAddressesEntity.GetPartitionKey(address), Erc20BlackListAddressesEntity.GetRowKey(address));
 
             return entity;
         }
