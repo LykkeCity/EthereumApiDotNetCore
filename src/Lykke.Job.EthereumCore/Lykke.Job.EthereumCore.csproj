@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="4.1.0" />
+    <PackageReference Include="Lykke.Common" Version="6.5.0" />
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.0.16" />
     <!-- #if azurequeuesub -->
     <PackageReference Include="Lykke.JobTriggers" Version="1.2.0" />

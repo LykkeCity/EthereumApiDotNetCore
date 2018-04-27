@@ -27,7 +27,7 @@
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
-    <PackageReference Include="Lykke.Common" Version="4.1.0" />
+    <PackageReference Include="Lykke.Common" Version="6.5.0" />
     <PackageReference Include="Lykke.AzureStorage" Version="3.2.0" />
   </ItemGroup>
 
