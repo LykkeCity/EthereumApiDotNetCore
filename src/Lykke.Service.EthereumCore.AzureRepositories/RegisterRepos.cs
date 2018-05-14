@@ -164,10 +164,10 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
             builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
-                    Constants.StoragePrefix  + Constants.LykkePayErc223DepositContractTable,
+                    Constants.StoragePrefix + Constants.LykkePayErc223DepositContractTable,
                     log),
                 AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
-                    Constants.StoragePrefix  + Constants.LykkePayErc223DepositContractTable,
+                    Constants.StoragePrefix + Constants.LykkePayErc223DepositContractTable,
                     log)
             )).Keyed<IErc223DepositContractRepository>(Constants.LykkePayKey);
 
@@ -201,9 +201,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
                 AzureTableStorage<WhiteListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.WhiteListAddressesTable,
                     log)));
 
-            Services.AddSingleton<IErc20BlackListAddressesRepository>(provider => new Erc20BlackListAddressesRepository(
+            builder.RegisterInstance<IErc20BlackListAddressesRepository>(new Erc20BlackListAddressesRepository(
                 AzureTableStorage<Erc20BlackListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.Erc20BlackListAddressTable,
-                    provider.GetService<ILog>())));
+                    log)));
         }
 
         public static void RegisterAzureQueues(this ContainerBuilder builder,

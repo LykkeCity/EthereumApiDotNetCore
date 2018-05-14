@@ -41,27 +41,27 @@ namespace Lykke.Service.EthereumCore.Client.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Name")]
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Version")]
+        [JsonProperty(PropertyName = "version")]
         public string Version { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Env")]
+        [JsonProperty(PropertyName = "env")]
         public string Env { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "IsDebug")]
+        [JsonProperty(PropertyName = "isDebug")]
         public bool IsDebug { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "IssueIndicators")]
+        [JsonProperty(PropertyName = "issueIndicators")]
         public IList<IssueIndicator> IssueIndicators { get; set; }
 
         /// <summary>
