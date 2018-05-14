@@ -58,12 +58,12 @@ namespace TransactionResubmit
 
             var web3 = ServiceProvider.GetService<Web3>();
 
-            try
-            {
-                var blockNumber = web3.Eth.Blocks.GetBlockNumber.SendRequestAsync().Result;
-                Console.WriteLine($"RPC Works! {blockNumber.Value.ToString()}");
-            }
-            catch (Exception e)
+            //try
+            //{
+            //    var blockNumber = web3.Eth.Blocks.GetBlockNumber.SendRequestAsync().Result;
+            //    Console.WriteLine($"RPC Works! {blockNumber.Value.ToString()}");
+            //}
+            //catch (Exception e)
             {
                 Console.WriteLine($"Rpc does not work at all! {e.Message}");
             }
