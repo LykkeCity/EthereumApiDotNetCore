@@ -67,6 +67,8 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         /// Ethereum geth URL
         /// </summary>
         public string EthereumUrl { get; set; }
+
+        [Lykke.SettingsReader.Attributes.HttpCheck("/api/IsAlive")]
         public string SignatureProviderUrl { get; set; }
 
         [Optional]
