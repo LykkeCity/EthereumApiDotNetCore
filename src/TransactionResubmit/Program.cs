@@ -45,6 +45,7 @@ namespace TransactionResubmit
 
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
+            collection.AddSingleton<IReloadingManager<BaseSettings>>(settings.Nested(x => x.EthereumCore));
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
             collection.AddSingleton<ILog>(new LogToConsole());
 
@@ -65,7 +66,7 @@ namespace TransactionResubmit
             //}
             //catch (Exception e)
             {
-                Console.WriteLine($"Rpc does not work at all! {e.Message}");
+                //Console.WriteLine($"Rpc does not work at all! {e.Message}");
             }
                 Console.WriteLine($"Type 0 to exit");
             Console.WriteLine($"Type 1 to SHOW pending Transactions");
@@ -80,6 +81,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
             Console.WriteLine($"Type 12 to REWRITE TRANSACTIONS");
+            Console.WriteLine($"Type 13 to put everything in coin event resubmit queue");
             var command = "";
 
             do
@@ -307,7 +309,7 @@ namespace TransactionResubmit
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.StackTrace + " " + e.Message);
             }
         }
 
