@@ -123,6 +123,9 @@ namespace TransactionResubmit
                     case "12":
                         REwriteTransactionWithNumber();
                         break;
+                    case "13":
+                        MoveFromCoinEventResubmittPoisonToProcessing();
+                        break;
                     default:
                         break;
                 }
@@ -130,6 +133,41 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void MoveFromCoinEventResubmittPoisonToProcessing()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queuePoison = queueFactory.Build(Constants.CoinEventResubmittQueue + "-poison");
+                var queue = queueFactory.Build(Constants.CoinEventResubmittQueue);
+                var count = queuePoison.Count().Result;
+                for (int i = 0; i < count; i++)
+                {
+                    var message = queuePoison.GetRawMessageAsync().Result;
+
+                    OperationHashMatchMessage newMessage = JsonConvert.DeserializeObject<OperationHashMatchMessage>(message.AsString);
+
+                    queue.PutRawMessageAsync(message.AsString).Wait();
+                    queuePoison.FinishRawMessageAsync(message);
+                }
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger nonce,
