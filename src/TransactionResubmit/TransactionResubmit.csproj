@@ -26,6 +26,7 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="HashForResubmit.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

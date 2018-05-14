@@ -18,9 +18,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.Transactions;
+using Nethereum.Util;
+using SigningServiceApiCaller;
+using SigningServiceApiCaller.Models;
 
 namespace TransactionResubmit
 {
@@ -39,6 +46,7 @@ namespace TransactionResubmit
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
+            collection.AddSingleton<ILog>(new LogToConsole());
 
             //RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
             RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
@@ -71,6 +79,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
+            Console.WriteLine($"Type 12 to REWRITE TRANSACTIONS");
             var command = "";
 
             do
@@ -111,6 +120,9 @@ namespace TransactionResubmit
                     case "11":
                         MoveFromPendingAndPoisonToProcessing();
                         break;
+                    case "12":
+                        REwriteTransactionWithNumber();
+                        break;
                     default:
                         break;
                 }
@@ -118,6 +130,67 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger nonce,
+            BigInteger value, BigInteger gasPrice, BigInteger gasValue)
+        {
+            try
+            {
+                var signingApi = ServiceProvider.GetRequiredService<ILykkeSigningAPI>();
+                var web3 = ServiceProvider.GetRequiredService<IWeb3>();
+                var sendRawTransaction = new EthSendRawTransaction(web3.Client);
+
+                var transaction = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gasValue, data);
+                var signRequest = new EthereumTransactionSignRequest
+                {
+                    FromProperty = new AddressUtil().ConvertToChecksumAddress(from),
+                    Transaction = transaction.GetRLPEncoded().ToHex()
+                };
+
+                var signResponse = await signingApi.ApiEthereumSignPostAsync(signRequest);
+                var txHash = await sendRawTransaction.SendRequestAsync(signResponse.SignedTransaction.EnsureHexPrefix());
+
+                return txHash;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.StackTrace +" " + e.Message);
+                return null;
+            }
+        }
+
+        private static void REwriteTransactionWithNumber()
+        {
+            try
+            {
+                Console.WriteLine("Type nonce number?: Y/N");
+                var input = Console.ReadLine();
+                if (!BigInteger.TryParse(input, out var nonce))
+                {
+                    Console.WriteLine("Wrong nonce");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var settings = ServiceProvider.GetRequiredService<IBaseSettings>();
+
+                var hash = SendTransactionAsync(settings.EthereumMainAccount,
+                    "0xaD66EcE9Bf8C71870AeCdaf01b06dCf4b3c2F579",
+                    "",
+                    nonce,
+                    1,
+                    BigInteger.Parse("15000000000"),//CHANGE HERE TO INCREASE FEE
+                    BigInteger.Parse("21100")).Result;
+
+
+
+                Console.WriteLine("Processed " + hash);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static void MoveFromPendingAndPoisonToProcessing()
@@ -600,10 +673,10 @@ namespace TransactionResubmit
             var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
             var builder = new ConfigurationBuilder()
                 .SetBasePath(location)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
-            var settings = configuration.LoadSettings<AppSettings>();
+            var settings = configuration.LoadSettings<AppSettings>("ConnectionStrings:ConnectionString");
 
             return settings;
         }
