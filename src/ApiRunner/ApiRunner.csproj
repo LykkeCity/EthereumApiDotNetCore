@@ -33,10 +33,6 @@
     <None Update=".dockerignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.json">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="docker-compose.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
