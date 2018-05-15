@@ -82,6 +82,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
             Console.WriteLine($"Type 12 to REWRITE TRANSACTIONS");
             Console.WriteLine($"Type 13 to put everything in coin event resubmit queue");
+            Console.WriteLine($"Type 14 to change gas price");
             var command = "";
 
             do
@@ -128,6 +129,9 @@ namespace TransactionResubmit
                     case "13":
                         MoveFromCoinEventResubmittPoisonToProcessing();
                         break;
+                    case "14":
+                        ChangeGasPrice();
+                        break;
                     default:
                         break;
                 }
@@ -135,6 +139,38 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void ChangeGasPrice()
+        {
+            try
+            {
+                Console.WriteLine("Write Min Gas Price");
+                var input = Console.ReadLine();
+                if (!BigInteger.TryParse(input, out var min))
+                {
+                    Console.WriteLine("Wrong input!");
+                    return;
+                }
+
+                Console.WriteLine("Write Max Gas Price");
+                input = Console.ReadLine();
+                if (!BigInteger.TryParse(input, out var max))
+                {
+                    Console.WriteLine("Wrong input!");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var gasPriceService = ServiceProvider.GetService<IGasPriceService>();
+                gasPriceService.SetAsync(min, max).Wait();
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private static void MoveFromCoinEventResubmittPoisonToProcessing()
