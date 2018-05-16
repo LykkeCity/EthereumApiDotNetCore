@@ -53,16 +53,16 @@ namespace Lykke.Job.EthereumCore.Job
         [QueueTrigger(Constants.LykkePayErc223TransferNotificationsQueue, 200, true)]
         public async Task Execute(LykkePayErc20TransferNotificationMessage message, QueueTriggeringContext context)
         {
+            if (string.IsNullOrEmpty(message?.OperationId))
+            {
+                await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
+                    "Execute", "", "Empty message skipped");
+
+                return;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(message?.OperationId))
-                {
-                    await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
-                        "Execute", "", "Empty message skipped");
-
-                    return;
-                }
-
                 var operation = await _operationsRepository.GetAsync(message.OperationId);
 
                 if (operation == null)

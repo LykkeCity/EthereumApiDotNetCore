@@ -15,23 +15,8 @@ using Nethereum.Hex.HexTypes;
 
 namespace Lykke.Service.EthereumCore.Services.LykkePay
 {
-    //LykkePay Erc20 deposit contract service
     public class LykkePayErc20DepositContractService : IErc20DepositContractService
     {
-        /*
-         function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
-        
-        ERC20Interface erc20Contract = ERC20Interface(_tokenAddress);
-        uint balance = erc20Contract.balanceOf(this); 
-
-        if (balance <= 0 || _to == address(this)) {
-            return false;
-        }
-
-        return erc20Contract.transferFrom(this, _to, balance);
-    }
-        */
-
         private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
@@ -160,15 +145,14 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
                 throw new ClientSideException(ExceptionType.NotEnoughFunds, $"No tokens detected at deposit address {depositContractAddress}");
             }
 
-            var guid = Guid.NewGuid();
-            var guidStr = guid.ToString();
+            var guidStr = Guid.NewGuid().ToString();
 
             var message = new Lykke.Service.EthereumCore.Core.Messages.LykkePay.LykkePayErc20TransferMessage()
             {
                 OperationId = guidStr
             };
 
-            var existingOperation = await _operationsRepository.GetAsync(guid.ToString());
+            var existingOperation = await _operationsRepository.GetAsync(guidStr);
             if (existingOperation != null)
             {
                 throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Try again later");

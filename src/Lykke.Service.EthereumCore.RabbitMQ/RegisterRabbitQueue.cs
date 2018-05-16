@@ -36,7 +36,6 @@ namespace Lykke.Service.RabbitMQ
                 ExchangeName = exchangeName,
                 DeadLetterExchangeName = $"{exchangeName}.dlx",
                 RoutingKey = ""
-                //                IsDurable = true
             };
 
             RabbitMqPublisher<string> publisher = new RabbitMqPublisher<string>(rabbitMqDefaultSettings)
@@ -56,7 +55,6 @@ namespace Lykke.Service.RabbitMQ
                 ExchangeName = $"{exchangeName}.hotwallet",
                 DeadLetterExchangeName = $"{exchangeName}.hotwallet.dlx",
                 RoutingKey = ""
-                //                IsDurable = true
 
             };
 
@@ -77,7 +75,6 @@ namespace Lykke.Service.RabbitMQ
                 ExchangeName = $"{exchangeName}.lykkepay",
                 DeadLetterExchangeName = $"{exchangeName}.lykkepay.dlx",
                 RoutingKey = ""
-                //                IsDurable = true
 
             };
 
@@ -116,7 +113,7 @@ namespace Lykke.Service.RabbitMQ
         public void Publish(RabbitMqSubscriptionSettings settings, IModel channel, byte[] body)
         {
             channel.BasicPublish(exchange: _exchangeName ?? settings.ExchangeName,
-                      routingKey: _queue,//remove
+                      routingKey: _queue,
                       basicProperties: null,
                       body: body);
         }

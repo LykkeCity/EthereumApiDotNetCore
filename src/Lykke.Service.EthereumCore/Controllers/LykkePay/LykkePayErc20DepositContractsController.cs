@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using EthereumApi.Models.Models.LykkePay;
 using Lykke.Service.EthereumCore.Attributes;
@@ -30,8 +31,13 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public async Task<IActionResult> CreateDepositContractAsync([FromQuery] string userAddress)
+        public async Task<IActionResult> CreateDepositContractAsync([FromQuery][Required] string userAddress)
         {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
             var contractAddress = await _contractService.AssignContract(userAddress);
 
             return Ok(new RegisterResponse
@@ -45,8 +51,13 @@ namespace Lykke.Service.EthereumCore.Controllers.LykkePay
         [ProducesResponseType(typeof(ApiException), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(ApiException), 500)]
-        public async Task<IActionResult> GetDepositContractAsync([FromQuery] string userAddress)
+        public async Task<IActionResult> GetDepositContractAsync([FromQuery][Required] string userAddress)
         {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
             var contractAddress = await _contractService.GetContractAddress(userAddress);
 
             return Ok(new RegisterResponse

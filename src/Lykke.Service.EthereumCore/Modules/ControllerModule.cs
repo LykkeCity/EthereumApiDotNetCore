@@ -21,12 +21,10 @@ namespace Lykke.Service.EthereumCore.Modules
     public class ControllerModule : Module
     {
         private readonly ILog _log;
-        //private readonly IServiceCollection _services;
 
         public ControllerModule(ILog log)
         {
             _log = log;
-            //_services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -36,8 +34,6 @@ namespace Lykke.Service.EthereumCore.Modules
             {
                 builder.RegisterType(@type).WithAttributeFiltering();
             });
-
-            //builder.Populate(_services);
         }
     }
 

@@ -32,11 +32,11 @@ namespace Lykke.Job.EthereumCore.Job
             try
             {
                 await _contractPoolService.ReplenishPool();
-                await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(Execute), "", "Pool have been replenished", DateTime.UtcNow);
+                await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(Execute), "", "Pool have been replenished");
             }
             catch (Exception e)
             {
-                await _logger.WriteErrorAsync(nameof(Erc20DepositContractPoolJob), nameof(Execute), "", e, DateTime.UtcNow);
+                await _logger.WriteErrorAsync(nameof(Erc20DepositContractPoolJob), nameof(Execute), "", e);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (Exception e)
             {
-                await _logger.WriteErrorAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForLykkeApi), "", e, DateTime.UtcNow);
+                await _logger.WriteErrorAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForLykkeApi), "", e);
             }
         }
     }

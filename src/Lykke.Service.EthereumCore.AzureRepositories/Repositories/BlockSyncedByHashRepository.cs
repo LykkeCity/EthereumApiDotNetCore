@@ -65,6 +65,10 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
         public async Task<IBlockSyncedByHash> GetLastSyncedAsync(string partition)
         {
             var index = await _index.GetDataAsync(_lastSyncedPartition, partition);
+
+            if (index == null)
+                return null;
+
             var entity = await _table.GetDataAsync(index);
 
             return entity;

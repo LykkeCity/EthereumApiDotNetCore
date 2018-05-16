@@ -147,6 +147,10 @@ namespace Lykke.Job.EthereumCore.Job
         private async Task RepeatOperationTillWin(CoinTransactionMessage message)
         {
             var operation = await GetOperationAsync(message?.TransactionHash, message?.OperationId);
+
+            if (operation == null)
+                return;
+
             switch (operation.OperationType)
             {
                 case HotWalletOperationType.Cashout:
