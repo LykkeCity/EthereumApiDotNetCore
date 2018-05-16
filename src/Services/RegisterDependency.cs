@@ -152,5 +152,10 @@ namespace Lykke.Service.EthereumCore.Services
         {
             provider.GetService<ITransactionManager>();
         }
+
+        public static void ActivateRequestInterceptor(this IContainer provider)
+        {
+            provider.Resolve<ITransactionManager>();
+        }
     }
 }

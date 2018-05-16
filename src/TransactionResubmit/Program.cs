@@ -21,35 +21,34 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using EthereumSamuraiApiCaller;
+using EthereumSamuraiApiCaller.Models;
 
 namespace TransactionResubmit
 {
     class Program
     {
-        static IServiceProvider ServiceProvider;
+        static IContainer ServiceProvider;
         static void Main(string[] args)
         {
-            var configurationBuilder = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json").AddEnvironmentVariables();
-            var configuration = configurationBuilder.Build();
-
             var settings = GetCurrentSettings();
-
+            var log = new LogToConsole();
+            ContainerBuilder builder = new ContainerBuilder();
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
+            collection.RegisterServices();
+            RegisterReposExt.RegisterAzureStorages(builder, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications), log);
+            RegisterReposExt.RegisterAzureQueues(builder, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), log);
+            RegisterDependency.RegisterServices(builder);
+            builder.Populate(collection);
+            ServiceProvider = builder.Build();
+            ServiceProvider.ActivateRequestInterceptor();
 
-            //TODO: Fix registration
-            //RegisterReposExt.RegisterAzureLogs(collection, settings.EthereumCore, "");
-            //RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            //RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            ServiceProvider = collection.BuildServiceProvider();
-            //RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
-            //RegisterDependency.RegisterServices(collection);
-            ServiceProvider = collection.BuildServiceProvider();
-
-            var web3 = ServiceProvider.GetService<Web3>();
+            var web3 = ServiceProvider.Resolve<Web3>();
 
             try
             {
@@ -72,6 +71,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 9 to REMOVE DUPLICATE user transfer wallet locks");
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
+            Console.WriteLine($"Type 20 to init starting point for lykkepay indexing");
             var command = "";
 
             do
@@ -112,6 +112,9 @@ namespace TransactionResubmit
                     case "11":
                         MoveFromPendingAndPoisonToProcessing();
                         break;
+                    case "20":
+                        InitIndexStartForLykkePay();
+                        break;
                     default:
                         break;
                 }
@@ -119,6 +122,54 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void InitIndexStartForLykkePay()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var partition = "LykkePay_ERC20_HOTWALLET";
+                var repo = ServiceProvider.Resolve<IBlockSyncedByHashRepository>(); 
+                var contractService = ServiceProvider.Resolve<IContractService>();
+                var indexerApi = ServiceProvider.Resolve<IEthereumSamuraiAPI>();
+                var lastSyncedBlockNumber = repo.GetLastSyncedAsync(partition)?.Result;
+                if (lastSyncedBlockNumber == null ||
+                    !BigInteger.TryParse(lastSyncedBlockNumber.BlockNumber, out var lastSynced))
+                {
+                    Console.WriteLine("Creating starting point");
+                    var currentBlock = contractService.GetCurrentBlock().Result - 100;
+                    var blockCurrent = indexerApi.ApiBlockNumberByBlockNumberGetAsync((long)currentBlock).Result as BlockResponse;
+
+                    if (blockCurrent == null)
+                        throw new Exception("Not yet indexed. Indexer issue");
+
+                    repo.InsertAsync(new BlockSyncedByHash()
+                    {
+                        BlockNumber = blockCurrent.Number.ToString(),
+                        BlockHash = blockCurrent.BlockHash,
+                        Partition = partition
+                    }).Wait();
+                }
+                else
+                {
+                    Console.WriteLine("Index already created");
+                }
+
+                Console.WriteLine("All Processed");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error " + e.Message + " " + e.StackTrace);
+            }
         }
 
         private static void MoveFromPendingAndPoisonToProcessing()
@@ -151,7 +202,7 @@ namespace TransactionResubmit
 
         private static void MoveToPendingOperationQueue(string fromQueue)
         {
-            var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+            var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
             var queuePoison = queueFactory.Build(fromQueue);
             var queue = queueFactory.Build(Constants.PendingOperationsQueue);
             var count = queuePoison.Count().Result;
@@ -179,7 +230,7 @@ namespace TransactionResubmit
                 }
                 Console.WriteLine("Started");
 
-                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
                 var queuePoison = queueFactory.Build(Constants.PendingOperationsQueue + "-poison");
                 var queue = queueFactory.Build(Constants.PendingOperationsQueue);
                 var count = queuePoison.Count().Result;
@@ -203,7 +254,7 @@ namespace TransactionResubmit
 
         private static void ShowPendingTransactionsAmount()
         {
-            var web3 = ServiceProvider.GetService<Web3>();
+            var web3 = ServiceProvider.Resolve<Web3>();
             var block = web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(BlockParameter.CreatePending()).Result;
             var transactionsCount = block.Transactions.Count();
 
@@ -223,7 +274,7 @@ namespace TransactionResubmit
                 }
                 Console.WriteLine("Started");
 
-                var userTransferWalletRepository = ServiceProvider.GetService<IUserTransferWalletRepository>();
+                var userTransferWalletRepository = ServiceProvider.Resolve<IUserTransferWalletRepository>();
                 var userTransferWallets = userTransferWalletRepository.GetAllAsync().Result;
 
                 foreach (var wallet in userTransferWallets)
@@ -256,10 +307,10 @@ namespace TransactionResubmit
                 }
                 Console.WriteLine("Started");
 
-                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
                 var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
-                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var coinEventRepo = ServiceProvider.Resolve<ICoinEventRepository>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId) && x.CoinEventType == CoinEventType.CashinStarted).ToList();
                 if (events != null)
                 {
@@ -299,11 +350,11 @@ namespace TransactionResubmit
                 }
                 Console.WriteLine("Started");
 
-                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+                var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
                 var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
-                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
-                var opRepo = ServiceProvider.GetService<IOperationToHashMatchRepository>();
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var coinEventRepo = ServiceProvider.Resolve<ICoinEventRepository>();
+                var opRepo = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
                 var allCoinEvents = events.ToLookup(x => x.OperationId);
                 opRepo.ProcessAllAsync((matches) =>
@@ -344,9 +395,9 @@ namespace TransactionResubmit
             try
             {
                 List<string> allUnpublishedEvents = new List<string>();
-                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
-                var opRepo = ServiceProvider.GetService<IOperationToHashMatchRepository>();
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var coinEventRepo = ServiceProvider.Resolve<ICoinEventRepository>();
+                var opRepo = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
                 var allCoinEvents = events.ToLookup(x => x.OperationId);
                 opRepo.ProcessAllAsync((matches) =>
@@ -398,10 +449,10 @@ namespace TransactionResubmit
                 Console.WriteLine("Reassignment started");
 
                 List<string> allTransferContracts = new List<string>();
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
-                var transferRepo = ServiceProvider.GetService<ITransferContractRepository>();
-                var assignmentService = ServiceProvider.GetService<ITransferContractUserAssignmentQueueService>();
-                var transferContractService = ServiceProvider.GetService<ITransferContractService>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
+                var transferRepo = ServiceProvider.Resolve<ITransferContractRepository>();
+                var assignmentService = ServiceProvider.Resolve<ITransferContractUserAssignmentQueueService>();
+                var transferContractService = ServiceProvider.Resolve<ITransferContractService>();
 
                 transferRepo.ProcessAllAsync((contract) =>
                 {
@@ -437,9 +488,9 @@ namespace TransactionResubmit
             try
             {
                 List<string> allTransferContracts = new List<string>();
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
-                var transferRepo = ServiceProvider.GetService<ITransferContractRepository>();
-                var transferContractService = ServiceProvider.GetService<ITransferContractService>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
+                var transferRepo = ServiceProvider.Resolve<ITransferContractRepository>();
+                var transferContractService = ServiceProvider.Resolve<ITransferContractService>();
                 transferRepo.ProcessAllAsync((contract) =>
                 {
                     var currentUser = transferContractService.GetTransferAddressUser(contract.CoinAdapterAddress, contract.ContractAddress).Result;
@@ -465,7 +516,7 @@ namespace TransactionResubmit
         {
             try
             {
-                var pendingOperationService = ServiceProvider.GetService<IPendingOperationService>();
+                var pendingOperationService = ServiceProvider.Resolve<IPendingOperationService>();
                 ResubmitModel resubmitModel;
                 Console.WriteLine("ResubmittingStarted");
                 using (var streamRead = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "TransactionsForResubmit.json")))
@@ -509,7 +560,7 @@ namespace TransactionResubmit
 
         private static void HashResubmit()
         {
-            var queueFactory = ServiceProvider.GetService<IQueueFactory>();
+            var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
             var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
             RabbitList resubmitModel;
             using (var streamRead = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "HashForResubmit.json")))
@@ -532,8 +583,8 @@ namespace TransactionResubmit
             {
                 var list = new List<string>();
                 Console.WriteLine("CheckingOperation");
-                IEthereumTransactionService coinTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
-                var operationToHashMatchRepository = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                IEthereumTransactionService coinTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
+                var operationToHashMatchRepository = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
                 operationToHashMatchRepository.ProcessAllAsync((items) =>
                 {
                     foreach (var item in items)
@@ -569,10 +620,10 @@ namespace TransactionResubmit
                     return;
                 }
 
-                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
-                IEthereumTransactionService coinTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
+                IEthereumTransactionService coinTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var queue = queueFactory.Build(Constants.PendingOperationsQueue);
-                var operationToHashMatchRepository = ServiceProvider.GetService<IOperationToHashMatchRepository>();
+                var operationToHashMatchRepository = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
                 operationToHashMatchRepository.ProcessAllAsync((items) =>
                 {
                     foreach (var item in items)
