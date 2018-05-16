@@ -10,6 +10,10 @@ namespace Lykke.Service.EthereumCore.Core
         /// Used to change table and queue names in testing enviroment
         /// </summary>
         public static string StoragePrefix { get; set; } = "";
+
+        public const string DefaultKey = "default";
+        public const string LykkePayKey = "lykke-pay";
+
         public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
         public const string EventTraceTable = "EventTrace";
@@ -24,6 +28,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
         public const string HotWalletTransactionMonitoringQueue = "hotwallet-transaction-monitoring-queue";
         public const string Erc20DepositContractPoolQueue = "erc20-deposit-contract-pool-queue";
+        public const string LykkePayErc20DepositContractPoolQueue = "lykke-pay-erc20-deposit-contract-pool-queue";
         public const string Erc20DepositCashinTransferQueue = "erc20-deposit-cashin-transfer-queue";
         /// <summary>
         /// Used to internal monitoring of refill transactions
@@ -67,6 +72,18 @@ namespace Lykke.Service.EthereumCore.Core
         public const string WhiteListAddressesTable = "WhiteListAddresses";
         public const string AddressStatisticsTable = "AddressStatistics";
 
+        #region  LykkePay
+
+        public const string LykkePayOperationsTable = "LykkePayOperations";
+        public const string LykkePayErc223DepositContractTable = "LykkePayErc223DepositContracts";
+        public const string LykkePayHotWalletCashoutTransactionTable = "LykkePayHotWalletCashoutTransaction";
+        public const string LykkePayErc223TransferQueue = "lykke-pay-erc-transfers-queue";
+        public const string LykkePayErc223TransferNotificationsQueue = "lykke-pay-erc-transfers-notifications-queue";
+        public const string LykkePayTransactionMonitoringQueue = "lykke-pay-transaction-monitoring-queue";
+
+        #endregion
+
+
         public const int GasForUserContractTransafer = 50000;
         public const int GasForCoinTransaction = 200000;
         public const int GasForHotWalletTransaction = 400000;
@@ -96,6 +113,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string PendingOperationsTable = "PendingOperation";
         public const string OperationToHashMatchTable = "OperationToHashMatch";
         public const string BlockSyncedTable = "BlockSynced";
+        public const string BlockSyncedByHashTable = "BlockSyncedByHash";
         public const string CashInEventTable = "CashInEvent";
         public const string PendingOperationsQueue = "pending-operations";
         public const string NonceCacheTable = "NonceCache";

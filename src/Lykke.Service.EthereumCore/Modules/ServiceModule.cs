@@ -36,21 +36,17 @@ namespace Lykke.Service.EthereumCore.Modules
                 //For the dark gods
                 ChaosKitty.StateOfChaos = _settings.CurrentValue.ChaosKitty.StateOfChaos;
             }
-            // TODO: Do not register entire settings in container, pass necessary settings to services which requires them
-            // ex:
-            //  builder.RegisterType<QuotesPublisher>()
-            //      .As<IQuotesPublisher>()
-            //      .WithParameter(TypedParameter.From(_settings.CurrentValue.QuotesPublication))
             var nesetdBaseSettings = _settings.Nested(x => x.EthereumCore);
             var nesetdSlackSettings = _settings.Nested(x => x.SlackNotifications);
             _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
             _services.AddSingleton(_settings.CurrentValue);
             _services.AddSingleton(_settings);
             _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
-            //builder.RegisterAzureLogs(settings.EthereumCore, "Api");
-            _services.RegisterAzureStorages(nesetdBaseSettings, nesetdSlackSettings);
-            _services.RegisterAzureQueues(nesetdBaseSettings, nesetdSlackSettings);
+            _services.AddSingleton(_settings.CurrentValue.ApiKeys);
+            builder.RegisterAzureStorages(nesetdBaseSettings, nesetdSlackSettings, _log);
+            builder.RegisterAzureQueues(nesetdBaseSettings, nesetdSlackSettings);
             _services.RegisterServices();
+            builder.RegisterServices();
 
             ServiceProvider = _services.BuildServiceProvider();
             _services.RegisterRabbitQueue(nesetdBaseSettings, _log);

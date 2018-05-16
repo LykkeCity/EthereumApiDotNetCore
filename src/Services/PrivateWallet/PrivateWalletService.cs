@@ -20,6 +20,7 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {

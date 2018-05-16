@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services.Transactions
 {

@@ -41,5 +41,26 @@ namespace Lykke.Job.EthereumCore.Job
                 await pool.PushContractAddress(contract);
             }
         }
+
+        [TimerTrigger("1.00:00:00")]
+        public async Task ExecuteForLykkePay()
+        {
+            await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolRenewJob), nameof(ExecuteForLykkePay), "", "Job has been started ", DateTime.UtcNow);
+
+            var pool = _poolFactory.Get(Constants.LykkePayErc20DepositContractPoolQueue);
+            var count = await pool.Count();
+
+            for (var i = 0; i < count; i++)
+            {
+                var contract = await pool.GetContractAddress();
+
+                if (contract == null)
+                {
+                    break;
+                }
+
+                await pool.PushContractAddress(contract);
+            }
+        }
     }
 }

@@ -20,7 +20,11 @@ using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Common.ApiLibrary.Middleware;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore;
+using Lykke.Service.EthereumCore.Controllers.LykkePay;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Filters.Swagger;
 using Nethereum.RPC.TransactionManagers;
 
 namespace Lykke.Service.EthereumCore
@@ -47,6 +51,7 @@ namespace Lykke.Service.EthereumCore
             try
             {
                 var mvcBuilder = services.AddMvc()
+                    .AddControllersAsServices()
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ContractResolver =
@@ -56,14 +61,18 @@ namespace Lykke.Service.EthereumCore
                 services.AddSwaggerGen(options =>
                 {
                     options.DefaultLykkeConfiguration("v1", "EthereumCore API");
+
+                    options.OperationFilter<ApiKeyHeaderAccessTokenOperationFilter>();
                 });
 
                 var builder = new ContainerBuilder();
                 var appSettings = Configuration.LoadSettings<AppSettings>();
                 Log = CreateLogWithSlack(services, appSettings);
                 mvcBuilder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(Log)); });
+                //builder.RegisterModule(new ControllerModule(Log));
                 builder.RegisterModule(new ServiceModule(appSettings, Log));
                 builder.Populate(services);
+                builder.RegisterControllers();//RegisterType<LykkePayErc20DepositContractsController>().WithAttributeFiltering();
                 ApplicationContainer = builder.Build();
 
                 return new AutofacServiceProvider(ApplicationContainer);
@@ -114,7 +123,6 @@ namespace Lykke.Service.EthereumCore
             try
             {
                 // NOTE: Service not yet recieve and process requests here
-
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 //Rewrite request Interceptor

@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCoreSelfHosted.Models;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services;
@@ -11,7 +13,7 @@ namespace Lykke.Service.EthereumCore.Controllers
     {
         private readonly IErc20DepositContractService _contractService;
 
-        public Erc20DepositContractsController(IErc20DepositContractService contractService)
+        public Erc20DepositContractsController([KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService)
         {
             _contractService = contractService;
         }

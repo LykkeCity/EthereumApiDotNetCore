@@ -18,6 +18,7 @@ using System.Linq;
 using System.Collections;
 using Lykke.Service.Assets.Client.Models;
 using System.Collections.Generic;
+using Autofac.Features.AttributeFilters;
 using EthereumSamuraiApiCaller;
 using Lykke.Service.EthereumCore.Services.Erc20;
 
@@ -60,7 +61,7 @@ namespace Lykke.Job.EthereumCore.Job
             IUserAssignmentFailRepository userAssignmentFailRepository,
             IQueueFactory queueFactory,
             ISlackNotifier slackNotifier,
-            IErc20DepositContractService erc20DepositContractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService erc20DepositContractService,
             IAssetsService assetsService,
             IErc20BalanceService erc20BalanceService,
             IErc20DepositTransactionService erc20DepositTransactionService

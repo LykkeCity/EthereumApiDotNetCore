@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
@@ -11,6 +13,7 @@ using Nethereum.RPC.Eth.DTOs;
 
 namespace Lykke.Service.EthereumCore.Services
 {
+    //Default Erc20 deposit contract
     public class Erc20DepositContractService : IErc20DepositContractService
     {
         /*
@@ -37,7 +40,7 @@ namespace Lykke.Service.EthereumCore.Services
 
         public Erc20DepositContractService(
             IErc20DepositContractRepositoryOld oldContractRepository,
-            IErc223DepositContractRepository contractRepository,
+            [KeyFilter(Constants.DefaultKey)]IErc223DepositContractRepository contractRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
             IBaseSettings settings,

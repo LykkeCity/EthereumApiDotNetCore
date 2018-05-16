@@ -32,9 +32,9 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
     public class EthereumIndexerService : IEthereumIndexerService
     {
         private AddressUtil _addressUtil;
-        private IEthereumSamuraiApi _ethereumSamuraiApi;
+        private IEthereumSamuraiAPI _ethereumSamuraiApi;
 
-        public EthereumIndexerService(IEthereumSamuraiApi ethereumSamuraiApi)
+        public EthereumIndexerService(IEthereumSamuraiAPI ethereumSamuraiApi)
         {
             _addressUtil = new AddressUtil();
             _ethereumSamuraiApi = ethereumSamuraiApi;
@@ -144,7 +144,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
         public async Task<IEnumerable<AddressHistoryModel>> GetAddressHistory(AddressTransaction addressTransactions)
         {
-            var historyResponseRaw = await _ethereumSamuraiApi.ApiAddressHistoryByAddressGetAsync(addressTransactions.Address, null, null, addressTransactions.Start, addressTransactions.Count);
+            var historyResponseRaw = await _ethereumSamuraiApi.ApiAddressHistoryByAddressGetAsync(addressTransactions.Address, addressTransactions.Count, addressTransactions.Start, null, null);
             var addressHistoryResponse = historyResponseRaw as FilteredAddressHistoryResponse;
             ThrowOnError(historyResponseRaw);
             int responseCount = addressHistoryResponse.History?.Count ?? 0;
@@ -155,13 +155,13 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 result.Add(
                     new AddressHistoryModel()
                     {
-                        MessageIndex = item.MessageIndex.Value,
-                        TransactionIndexInBlock = item.TransactionIndex.Value,
-                        BlockNumber = (ulong)item.BlockNumber.Value,
-                        BlockTimestamp = (uint)item.BlockTimestamp.Value,
-                        BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(item.BlockTimestamp.Value),
+                        MessageIndex = item.MessageIndex,
+                        TransactionIndexInBlock = item.TransactionIndex,
+                        BlockNumber = (ulong)item.BlockNumber,
+                        BlockTimestamp = (uint)item.BlockTimestamp,
+                        BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(item.BlockTimestamp),
                         From = item.FromProperty,
-                        HasError = item.HasError.Value,
+                        HasError = item.HasError,
                         To = item.To,
                         TransactionHash = item.TransactionHash,
                         Value = item.Value,
@@ -176,7 +176,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         public async Task<IEnumerable<InternalMessageModel>> GetInternalMessagesHistory(AddressTransaction addressMessages)
         {
             var internalMessageResponseRaw = await _ethereumSamuraiApi.
-                     ApiInternalMessagesByAddressGetAsync(addressMessages.Address, null, null, addressMessages.Start, addressMessages.Count);
+                     ApiInternalMessagesByAddressGetAsync(addressMessages.Address, addressMessages.Count, addressMessages.Start, null, null);
             FilteredInternalMessageResponse internalMessageResponse = internalMessageResponseRaw as FilteredInternalMessageResponse;
             ThrowOnError(internalMessageResponseRaw);
             int responseCount = internalMessageResponse.Messages?.Count ?? 0;
@@ -205,16 +205,16 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         {
             return new InternalMessageModel()
             {
-                BlockNumber = (ulong)message.BlockNumber.Value,
-                Depth = message.Depth.Value,
+                BlockNumber = (ulong)message.BlockNumber,
+                Depth = message.Depth,
                 FromAddress = message.FromAddress,
-                MessageIndex = message.MessageIndex.Value,
+                MessageIndex = message.MessageIndex,
                 ToAddress = message.ToAddress,
                 TransactionHash = message.TransactionHash,
                 Type = message.Type,
                 Value = BigInteger.Parse(message.Value),
                 BlockTimestamp = (uint)message.BlockTimeStamp,
-                BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(message.BlockTimeStamp.Value)
+                BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(message.BlockTimeStamp)
             };
         }
 
@@ -226,8 +226,8 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             return new TransactionModel()
             {
                 BlockHash = transaction.BlockHash,
-                BlockNumber = (ulong)transaction.BlockNumber.Value,
-                BlockTimestamp = (uint)transaction.BlockTimestamp.Value,
+                BlockNumber = (ulong)transaction.BlockNumber,
+                BlockTimestamp = (uint)transaction.BlockTimestamp,
                 ContractAddress = transaction.ContractAddress,
                 From = transaction.FromProperty,
                 Gas = transaction.Gas,
@@ -237,10 +237,10 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 Nonce = transaction.Nonce,
                 To = transaction.To,
                 TransactionHash = transaction.TransactionHash,
-                TransactionIndex = transaction.TransactionIndex.Value,
+                TransactionIndex = transaction.TransactionIndex,
                 Value = transaction.Value,
-                BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp.Value),
-                HasError = transaction.HasError.Value
+                BlockTimeUtc = DateUtils.UnixTimeStampToDateTimeUtc(transaction.BlockTimestamp),
+                HasError = transaction.HasError
             };
         }
     }

@@ -35,7 +35,7 @@ namespace EthereumSamuraiApiCaller.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "error")]
+        [JsonProperty(PropertyName = "Error")]
         public ApiError Error { get; set; }
 
     }

@@ -310,6 +310,45 @@ namespace Lykke.Service.EthereumCore.Client
         /// </param>
         Task<HttpOperationResponse<object>> IsAliveWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='userAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsGetWithHttpMessagesAsync(string apiKey, string userAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='userAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsPostWithHttpMessagesAsync(string apiKey, string userAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='request'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='ethTransaction'>
         /// </param>
         /// <param name='customHeaders'>
@@ -419,6 +458,16 @@ namespace Lykke.Service.EthereumCore.Client
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiTransitionContractAddressByUserAddressByCoinAdapterAddressGetWithHttpMessagesAsync(string userAddress, string coinAdapterAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='ethAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiValidationGetWithHttpMessagesAsync(string ethAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='address'>
         /// </param>

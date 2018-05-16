@@ -17,6 +17,8 @@ using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Common;
 using System.Threading;
 using System.Collections.Concurrent;
+using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core.Shared;
 
 namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
@@ -47,7 +49,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
             ILog log,
             Web3 web3,
             IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
-            IErc20DepositContractService erc20DepositContractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService erc20DepositContractService,
             AppSettings settingsWrapper,
             IUserTransferWalletRepository userTransferWalletRepository,
             IGasPriceRepository gasPriceRepository)
@@ -243,16 +245,8 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
 
         private async Task UpdateUserTransferWallet(string contractAddress, string erc20TokenAddress, string userAddress)
         {
-            string formattedAddress =
-                _userTransferWalletRepository.FormatAddressForErc20(contractAddress, erc20TokenAddress);
-
-            await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
-            {
-                LastBalance = "",
-                TransferContractAddress = formattedAddress,
-                UpdateDate = DateTime.UtcNow,
-                UserAddress = userAddress
-            });
+            await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, contractAddress,
+                erc20TokenAddress, userAddress, "");
         }
     }
 }

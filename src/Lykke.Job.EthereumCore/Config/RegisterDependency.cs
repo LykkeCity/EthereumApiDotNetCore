@@ -1,4 +1,6 @@
-﻿using Lykke.Service.EthereumCore.Core.Settings;
+﻿using Autofac;
+using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.AzureRepositories;
@@ -6,6 +8,7 @@ using Lykke.Job.EthereumCore.Job;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
 using Common.Log;
+using Lykke.Job.EthereumCore.Job.LykkePay;
 using RabbitMQ;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
@@ -15,42 +18,54 @@ namespace Lykke.Job.EthereumCore.Config
     public static class RegisterDependency
     {
         public static void InitJobDependencies(this IServiceCollection collection, 
+            ContainerBuilder builder,
             IReloadingManager<BaseSettings> settings, 
             IReloadingManager<SlackNotificationSettings> slackNotificationSettings,
             ILog log)
         {
             collection.AddSingleton(settings);
 
-            collection.RegisterAzureStorages(settings, slackNotificationSettings);
-            collection.RegisterAzureQueues(settings, slackNotificationSettings);
+            builder.RegisterAzureStorages(settings, slackNotificationSettings, log);
+            builder.RegisterAzureQueues(settings, slackNotificationSettings);
             collection.RegisterServices();
+            builder.RegisterServices();
             collection.RegisterRabbitQueue(settings, log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.CurrentValue.MonitoringServiceUrl));
-            RegisterJobs(collection);
+            RegisterJobs(builder);
         }
 
-        public static void RegisterJobs(IServiceCollection collection)
+        public static void RegisterJobs(ContainerBuilder builder)
         {
             #region NewJobs
 
-            collection.AddSingleton<MonitoringCoinTransactionJob>();
-            collection.AddSingleton<MonitoringTransferContracts>();
-            collection.AddSingleton<MonitoringTransferTransactions>();
-            collection.AddSingleton<TransferContractPoolJob>();
-            collection.AddSingleton<TransferContractUserAssignmentJob>();
-            collection.AddSingleton<PoolRenewJob>();
-            collection.AddSingleton<PingContractsJob>();
-            collection.AddSingleton<TransferTransactionQueueJob>();
-            collection.AddSingleton<MonitoringOperationJob>();
-            collection.AddSingleton<CashinIndexingJob>();
-            collection.AddSingleton<CoinEventResubmittJob>();
-            collection.AddSingleton<HotWalletCashoutJob>();
-            collection.AddSingleton<HotWalletMonitoringTransactionJob>();
-            collection.AddSingleton<Erc20DepositContractPoolJob>();
-            collection.AddSingleton<Erc20DepositContractPoolRenewJob>();
-            collection.AddSingleton<Erc20DepositMonitoringCashinTransactions>();
-            collection.AddSingleton<Erc20DepositMonitoringContracts>();
+            builder.RegisterType<MonitoringCoinTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringTransferContracts>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringTransferTransactions>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractPoolJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferContractUserAssignmentJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PoolRenewJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<PingContractsJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<TransferTransactionQueueJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<MonitoringOperationJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CashinIndexingJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<CoinEventResubmittJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HotWalletCashoutJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<HotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositContractPoolJob>()
+                .SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositContractPoolRenewJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositMonitoringCashinTransactions>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositMonitoringContracts>().SingleInstance().WithAttributeFiltering();
+
+            #region LykkePay
+
+            builder.RegisterType<LykkePayErc20DepositTransferStarterJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayHotWalletMonitoringTransactionJob>().SingleInstance().WithAttributeFiltering();
+            //TODO:Test on icoming transfers
+            builder.RegisterType<LykkePayIndexingJob>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<LykkePayTransferNotificationJob>().SingleInstance().WithAttributeFiltering();
+            #endregion
 
             #endregion
         }

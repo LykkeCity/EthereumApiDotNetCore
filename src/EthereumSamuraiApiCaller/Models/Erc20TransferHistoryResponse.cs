@@ -6,6 +6,7 @@
 
 namespace EthereumSamuraiApiCaller.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
@@ -24,7 +25,7 @@ namespace EthereumSamuraiApiCaller.Models
         /// Initializes a new instance of the Erc20TransferHistoryResponse
         /// class.
         /// </summary>
-        public Erc20TransferHistoryResponse(long blockNumber, long blockTimestamp, int logIndex, int transactionIndex, string blockHash = default(string), string contract = default(string), string fromProperty = default(string), string to = default(string), string transactionHash = default(string), string transferAmount = default(string), string gasUsed = default(string), string gasPrice = default(string))
+        public Erc20TransferHistoryResponse(long blockNumber, long blockTimestamp, int logIndex, int transactionIndex, string gasUsed, string gasPrice, string blockHash = default(string), string contract = default(string), string fromProperty = default(string), string to = default(string), string transactionHash = default(string), string transferAmount = default(string))
         {
             BlockHash = blockHash;
             BlockNumber = blockNumber;
@@ -109,12 +110,19 @@ namespace EthereumSamuraiApiCaller.Models
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
-            //Nothing to validate
+            if (GasUsed == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "GasUsed");
+            }
+            if (GasPrice == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "GasPrice");
+            }
         }
     }
 }

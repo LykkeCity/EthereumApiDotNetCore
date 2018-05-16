@@ -16,7 +16,7 @@ namespace EthereumSamuraiApiCaller
 
     /// <summary>
     /// </summary>
-    public partial interface IEthereumSamuraiApi : System.IDisposable
+    public partial interface IEthereumSamuraiAPI : System.IDisposable
     {
         /// <summary>
         /// The base URI of the service.
@@ -36,13 +36,13 @@ namespace EthereumSamuraiApiCaller
 
         /// <param name='address'>
         /// </param>
-        /// <param name='startBlock'>
-        /// </param>
-        /// <param name='stopBlock'>
+        /// <param name='count'>
         /// </param>
         /// <param name='start'>
         /// </param>
-        /// <param name='count'>
+        /// <param name='startBlock'>
+        /// </param>
+        /// <param name='stopBlock'>
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -50,7 +50,7 @@ namespace EthereumSamuraiApiCaller
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<object>> ApiAddressHistoryByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = default(long?), long? stopBlock = default(long?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='address'>
         /// </param>
@@ -61,6 +61,26 @@ namespace EthereumSamuraiApiCaller
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiBalanceGetBalanceByAddressGetWithHttpMessagesAsync(string address, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='blockNumber'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiBlockNumberByBlockNumberGetWithHttpMessagesAsync(long blockNumber, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='blockHash'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiBlockHashByBlockHashGetWithHttpMessagesAsync(string blockHash, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='request'>
         /// </param>
@@ -98,11 +118,11 @@ namespace EthereumSamuraiApiCaller
         /// </param>
         Task<HttpOperationResponse<object>> ApiErc20TokenByContractAddressGetWithHttpMessagesAsync(string contractAddress, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        /// <param name='query'>
-        /// </param>
         /// <param name='count'>
         /// </param>
         /// <param name='start'>
+        /// </param>
+        /// <param name='query'>
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -110,7 +130,7 @@ namespace EthereumSamuraiApiCaller
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(string query = default(string), int? count = default(int?), int? start = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<object>> ApiErc20TokenGetWithHttpMessagesAsync(int count, int start, string query = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='request'>
         /// </param>
@@ -138,13 +158,13 @@ namespace EthereumSamuraiApiCaller
 
         /// <param name='address'>
         /// </param>
-        /// <param name='startBlock'>
-        /// </param>
-        /// <param name='stopBlock'>
+        /// <param name='count'>
         /// </param>
         /// <param name='start'>
         /// </param>
-        /// <param name='count'>
+        /// <param name='startBlock'>
+        /// </param>
+        /// <param name='stopBlock'>
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -152,7 +172,7 @@ namespace EthereumSamuraiApiCaller
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, long? startBlock = default(long?), long? stopBlock = default(long?), int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<object>> ApiInternalMessagesByAddressGetWithHttpMessagesAsync(string address, int count, int start, long? startBlock = default(long?), long? stopBlock = default(long?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -160,7 +180,7 @@ namespace EthereumSamuraiApiCaller
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse> ApiSystemIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse> ApiIsAliveGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='transactionHash'>
         /// </param>
@@ -174,9 +194,9 @@ namespace EthereumSamuraiApiCaller
 
         /// <param name='address'>
         /// </param>
-        /// <param name='start'>
-        /// </param>
         /// <param name='count'>
+        /// </param>
+        /// <param name='start'>
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -184,7 +204,7 @@ namespace EthereumSamuraiApiCaller
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<object>> ApiTransactionByAddressGetWithHttpMessagesAsync(string address, int? start = default(int?), int? count = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<object>> ApiTransactionByAddressGetWithHttpMessagesAsync(string address, int count, int start, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='blockNumber'>
         /// </param>

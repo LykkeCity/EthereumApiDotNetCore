@@ -26,8 +26,8 @@ namespace Service.UnitTests
         {
             IServiceCollection collection = new ServiceCollection();
             collection.AddSingleton<INonceCalculator, Mocks.MockNonceCalculator>();
-            collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
-            collection.AddSingleton<IEthereumSamuraiApi, Mocks.MockEthereumSamuraiApi>();
+            collection.AddSingleton<IEthereumSamuraiAPI, Mocks.MockEthereumSamuraiApi>();
+            collection.AddSingleton<IEthereumSamuraiAPI, Mocks.MockEthereumSamuraiApi>();
             collection.AddSingleton<ISignatureChecker, SignatureChecker>();
 
 
