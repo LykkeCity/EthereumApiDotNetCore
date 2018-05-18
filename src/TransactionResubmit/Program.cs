@@ -146,11 +146,18 @@ namespace TransactionResubmit
                     !BigInteger.TryParse(lastSyncedBlockNumber.BlockNumber, out var lastSynced))
                 {
                     Console.WriteLine("Creating starting point");
-                    var currentBlock = contractService.GetCurrentBlock().Result - 100;
+                    var currentBlock = contractService.GetCurrentBlock().Result - 50000;
                     var blockCurrent = indexerApi.ApiBlockNumberByBlockNumberGetAsync((long)currentBlock).Result as BlockResponse;
-
+                    var previous = indexerApi.ApiBlockNumberByBlockNumberGetAsync((long)currentBlock - 1).Result as BlockResponse;
                     if (blockCurrent == null)
                         throw new Exception("Not yet indexed. Indexer issue");
+
+                    repo.InsertAsync(new BlockSyncedByHash()
+                    {
+                        BlockNumber = previous.Number.ToString(),
+                        BlockHash = previous.BlockHash,
+                        Partition = partition
+                    }).Wait();
 
                     repo.InsertAsync(new BlockSyncedByHash()
                     {
