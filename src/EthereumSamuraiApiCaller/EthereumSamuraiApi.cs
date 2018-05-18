@@ -197,7 +197,7 @@ namespace EthereumSamuraiApiCaller
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/AddressHistory/{address}").ToString();
-            _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
+            _url = _url.Replace("{address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
             if (startBlock != null)
             {
@@ -1947,7 +1947,7 @@ namespace EthereumSamuraiApiCaller
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/InternalMessages/{address}").ToString();
-            _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
+            _url = _url.Replace("{address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
             if (startBlock != null)
             {
@@ -2426,7 +2426,7 @@ namespace EthereumSamuraiApiCaller
             // Construct URL
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "api/Transaction/{address}").ToString();
-            _url = _url.Replace("{Address}", System.Uri.EscapeDataString(address));
+            _url = _url.Replace("{address}", System.Uri.EscapeDataString(address));
             List<string> _queryParameters = new List<string>();
             _queryParameters.Add(string.Format("Count={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(count, SerializationSettings).Trim('"'))));
             _queryParameters.Add(string.Format("Start={0}", System.Uri.EscapeDataString(SafeJsonConvert.SerializeObject(start, SerializationSettings).Trim('"'))));
