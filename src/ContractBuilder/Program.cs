@@ -33,6 +33,7 @@ using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Contracts;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace ContractBuilder
 {
@@ -100,6 +101,73 @@ namespace ContractBuilder
             //var eventService = ServiceProvider.GetService<ITransactionEventsService>();
             //eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce",
             //    "0x512867d36f1d6ee43f2056a7c41606133bce514fbc8e911c1834eeae80800ceb").Wait();
+
+            #region EmissiveErc223 TOKEN
+
+            string tokenAddress = "";
+            string depositAddress = "0xafa7e8771b46ef5def063ee55123ae98e2235277";
+            Contract contract;
+
+            var web3 = ServiceProvider.GetService<IWeb3>();
+            {
+                //address issuer,
+                //string tokenName,
+                //uint8 divisibility,
+                //string tokenSymbol,
+                //string version
+                var abi = GetFileContent("Erc20DepositContract.abi");
+                var bytecode = GetFileContent("Erc20DepositContract.bin");
+                depositAddress = string.IsNullOrEmpty(depositAddress) ?
+                    ServiceProvider.GetService<IContractService>()
+                    .CreateContract(abi,
+                            bytecode,
+                            4000000)
+                    .Result : depositAddress;
+            }
+            {
+
+                var abi = GetFileContent("EmissiveErc223Token.abi");
+                var bytecode = GetFileContent("EmissiveErc223Token.bin");
+                tokenAddress = string.IsNullOrEmpty(tokenAddress) ?
+                    ServiceProvider.GetService<IContractService>()
+                    .CreateContract(abi,
+                            bytecode,
+                            4000000,
+                            settings.CurrentValue.EthereumCore.EthereumMainAccount,
+                            "LykkeTestErc223Token",
+                            18,
+                            "LTE223",
+                            "1.0.0")
+                    .Result : tokenAddress;
+                contract = web3.Eth.GetContract(abi, tokenAddress);
+            }
+
+            {
+                //Transfer to the deposit contract
+                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
+                var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+                    depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+                WaitForTransactionCompleation(web3, transactionHash);
+                var balance = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
+                var isPossibleToWithdrawWithTokenFallback = erc20Service.CheckTokenFallback(depositAddress).Result;
+                var isPossibleToWithdrawToExternal = 
+                    erc20Service.CheckTokenFallback("0x856924997fa22efad8dc75e83acfa916490989a4").Result;
+            }
+
+            {
+                //Transfer to the contract without fallback function
+                string contractWithoutFallback = "0xd6ff42fa358403e0f9462c08e78c4baea1093945";
+                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
+                var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+                    contractWithoutFallback, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+                WaitForTransactionCompleation(web3, transactionHash);
+                var balance = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
+                var isPossibleToWithdrawWithoutTokenFallback = erc20Service.CheckTokenFallback(contractWithoutFallback).Result;
+            }
+
+            #endregion
 
             #region DBE TOKEN
 
@@ -517,7 +585,7 @@ namespace ContractBuilder
                 await job.ProcessOperation(new Lykke.Service.EthereumCore.Services.New.Models.OperationHashMatchMessage()
                 {
                     OperationId = operationId,
-                },null, exchangeContractService.TransferWithoutSignCheck);
+                }, null, exchangeContractService.TransferWithoutSignCheck);
 
                 Console.WriteLine("Start removing from processing queue");
                 await pendingOperationService.RemoveFromPendingOperationQueue(operationId);
@@ -710,6 +778,16 @@ namespace ContractBuilder
             foreach (var item in allEvents)
             {
                 Console.WriteLine($"{item.Event.EventNumber} {item.Event.Value}");
+            }
+        }
+
+        public static void WaitForTransactionCompleation(IWeb3 web3, string transactioHash)
+        {
+            // get contract transaction
+            TransactionReceipt receipt;
+            while ((receipt = web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactioHash).Result) == null)
+            {
+                Task.Delay(350).Wait();
             }
         }
     }
