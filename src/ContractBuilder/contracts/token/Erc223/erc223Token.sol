@@ -20,16 +20,10 @@ contract ERC223Token is ERC223Interface {
     mapping(address => uint) balances; // List of user balances.
     mapping (address => mapping (address => uint256)) private allowances;
     
-    string public name;
-    string public symbol;
-    uint8 public decimals;
     uint256 public supply;
     
-    function ERC223Token(string _name, string _symbol, uint8 _decimals, uint256 _totalSupply) public
+    function ERC223Token(uint256 _totalSupply) public
     {
-        name = _name;
-        symbol = _symbol;
-        decimals = _decimals;
         supply = _totalSupply;
     }       
 

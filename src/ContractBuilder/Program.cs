@@ -100,11 +100,6 @@ namespace ContractBuilder
 
             var web3 = ServiceProvider.GetService<IWeb3>();
             {
-                //address issuer,
-                //string tokenName,
-                //uint8 divisibility,
-                //string tokenSymbol,
-                //string version
                 var abi = GetFileContent("Erc20DepositContract.abi");
                 var bytecode = GetFileContent("Erc20DepositContract.bin");
                 depositAddress = string.IsNullOrEmpty(depositAddress) ?
@@ -115,7 +110,11 @@ namespace ContractBuilder
                     .Result : depositAddress;
             }
             {
-
+                //address issuer,
+                //string tokenName,
+                //uint8 divisibility,
+                //string tokenSymbol,
+                //string version
                 var abi = GetFileContent("EmissiveErc223Token.abi");
                 var bytecode = GetFileContent("EmissiveErc223Token.bin");
                 tokenAddress = string.IsNullOrEmpty(tokenAddress) ?
@@ -124,7 +123,7 @@ namespace ContractBuilder
                             bytecode,
                             4000000,
                             settings.CurrentValue.EthereumCore.EthereumMainAccount,
-                            "LykkeTestErc223Token",
+                            "LykkeErc223Token",
                             18,
                             "LTE223",
                             "1.0.0")
@@ -143,6 +142,17 @@ namespace ContractBuilder
                 var isPossibleToWithdrawWithTokenFallback = erc20Service.CheckTokenFallback(depositAddress).Result;
                 var isPossibleToWithdrawToExternal = 
                     erc20Service.CheckTokenFallback("0x856924997fa22efad8dc75e83acfa916490989a4").Result;
+            }
+
+            {
+                //Transfer to the account managed by external private key
+                var toAddress = "0x856924997fa22efad8dc75e83acfa916490989a4";
+                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
+                var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+                    toAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+                WaitForTransactionCompleation(web3, transactionHash);
+                var balance = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
             }
 
             {
