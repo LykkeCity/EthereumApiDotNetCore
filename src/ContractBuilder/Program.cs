@@ -22,9 +22,12 @@ using Lykke.Service.EthereumCore.Services.New;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Models;
 using System.Numerics;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
+using Lykke.Service.EthereumCore.Core.Services;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
@@ -46,7 +49,7 @@ namespace ContractBuilder
     }
     public class Program
     {
-        public static IServiceProvider ServiceProvider { get; set; }
+        public static IContainer ServiceProvider { get; set; }
 
         public static void Main(string[] args)
         {
@@ -55,21 +58,30 @@ namespace ContractBuilder
             var settings = GetCurrentSettingsFromUrl();
             SaveSettings(settings);
 
-            IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-            collection.AddSingleton(settings);
-            collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
-            collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
-            collection.AddSingleton(settings.Nested(x => x.EthereumCore));
-            collection.AddSingleton(settings.CurrentValue);
+            ContainerBuilder collection = new ContainerBuilder();
+            IServiceCollection serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            serviceCollection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
+            serviceCollection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
+            collection.RegisterServices();
+            collection.RegisterInstance(settings).SingleInstance();
+            collection.RegisterInstance(settings.Nested(x => x.EthereumCore));
+            collection.RegisterInstance(settings.CurrentValue);
             var consoleLogger = new LogToConsole();
-            collection.AddSingleton<ILog>(consoleLogger);
+            collection.RegisterInstance<ILog>(consoleLogger).SingleInstance();
 
             //TODO: Uncomment and fix registrations
-            //RegisterReposExt.RegisterAzureQueues(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            //RegisterReposExt.RegisterAzureStorages(collection, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            ServiceProvider = collection.BuildServiceProvider();
+            RegisterReposExt.RegisterAzureQueues(collection, 
+                settings.Nested(x => x.EthereumCore),
+                settings.Nested(x => x.SlackNotifications));
+            RegisterReposExt.RegisterAzureStorages(collection, 
+                settings.Nested(x => x.EthereumCore), 
+                settings.Nested(x => x.SlackNotifications),
+                consoleLogger);
             //RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), ServiceProvider.GetService<ILog>());
-            //RegisterDependency.RegisterServices(collection);
+            RegisterDependency.RegisterServices(collection);
+            serviceCollection.RegisterServices();
+            collection.Populate(serviceCollection);
+            ServiceProvider = collection.Build();
             //Lykke.Job.EthereumCore.Config.RegisterDependency.RegisterJobs(collection);
             //var web3 = ServiceProvider.GetService<Web3>();
             //web3.Eth.GetBalance.SendRequestAsync("");
@@ -80,7 +92,6 @@ namespace ContractBuilder
             //var key = EthECKey.GenerateKey().GetPrivateKeyAsBytes();
             //var stringKey = Encoding.Unicode.GetString(key);
             GetAllContractInJson();
-            ServiceProvider = collection.BuildServiceProvider();
             ServiceProvider.ActivateRequestInterceptor();
             //var lykkeSigningAPI = ServiceProvider.GetService<ILykkeSigningAPI>();
             //lykkeSigningAPI.ApiEthereumAddkeyPost(new AddKeyRequest()
@@ -98,12 +109,12 @@ namespace ContractBuilder
             string depositAddress = "0xafa7e8771b46ef5def063ee55123ae98e2235277";
             Contract contract;
 
-            var web3 = ServiceProvider.GetService<IWeb3>();
+            var web3 = ServiceProvider.Resolve<IWeb3>();
             {
                 var abi = GetFileContent("Erc20DepositContract.abi");
                 var bytecode = GetFileContent("Erc20DepositContract.bin");
                 depositAddress = string.IsNullOrEmpty(depositAddress) ?
-                    ServiceProvider.GetService<IContractService>()
+                    ServiceProvider.Resolve<IContractService>()
                     .CreateContract(abi,
                             bytecode,
                             4000000)
@@ -118,7 +129,7 @@ namespace ContractBuilder
                 var abi = GetFileContent("EmissiveErc223Token.abi");
                 var bytecode = GetFileContent("EmissiveErc223Token.bin");
                 tokenAddress = string.IsNullOrEmpty(tokenAddress) ?
-                    ServiceProvider.GetService<IContractService>()
+                    ServiceProvider.Resolve<IContractService>()
                     .CreateContract(abi,
                             bytecode,
                             4000000,
@@ -133,7 +144,7 @@ namespace ContractBuilder
 
             {
                 //Transfer to the deposit contract
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -147,7 +158,7 @@ namespace ContractBuilder
             {
                 //Transfer to the account managed by external private key
                 var toAddress = "0x856924997fa22efad8dc75e83acfa916490989a4";
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     toAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -158,7 +169,7 @@ namespace ContractBuilder
             {
                 //Transfer to the contract without fallback function
                 string contractWithoutFallback = "0xd6ff42fa358403e0f9462c08e78c4baea1093945";
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     contractWithoutFallback, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -248,7 +259,7 @@ namespace ContractBuilder
             //0xa237230df97a0d6710241597a0186662928afa373c13b8d4eac86f36aa678985      0x1
             //0xb63ac4f94006cbbfe58a1d651e173c56dc74a45e4d1141ac57fc51a0d4202e95
 
-            var service = ServiceProvider.GetService<IErcInterfaceService>();
+            var service = ServiceProvider.Resolve<IErcInterfaceService>();
             service.Transfer("0x5adbf411faf2595698d80b7f93d570dd16d7f4b2", settings.CurrentValue.EthereumCore.EthereumMainAccount,
                 "0xae4d8b0c887508750ddb6b32752a82431941e2e7", System.Numerics.BigInteger.Parse("10000000000000000000")).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
@@ -398,7 +409,7 @@ namespace ContractBuilder
                 var abi = GetFileContent($"{transferName}.abi");
                 var bytecode = GetFileContent($"{transferName}.bin");
 
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, 2000000, clientAddress);
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(abi, bytecode, 2000000, clientAddress);
                 settings.EthereumCore.TokenTransferContract = new EthereumContract
                 {
                     Address = contractAddress,
@@ -424,7 +435,7 @@ namespace ContractBuilder
             {
                 var settings = GetCurrentSettings();
 
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(settings.EthereumCore.MainContract.Abi, settings.EthereumCore.MainContract.ByteCode);
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(settings.EthereumCore.MainContract.Abi, settings.EthereumCore.MainContract.ByteCode);
 
                 settings.EthereumCore.MainContract.Address = contractAddress;
 
@@ -449,7 +460,7 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("MainExchange.abi");
                 var bytecode = GetFileContent("MainExchange.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(abi, bytecode);
 
                 settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
@@ -489,8 +500,8 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("MainExchangeMultipleOwners.abi");
                 var bytecode = GetFileContent("MainExchangeMultipleOwners.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
-                IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(abi, bytecode);
+                IBaseSettings baseSettings = ServiceProvider.Resolve<IBaseSettings>();
                 settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
 
@@ -535,7 +546,7 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("MainExchangeNM.abi");
                 var bytecode = GetFileContent("MainExchangeNM.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode);
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(abi, bytecode);
 
                 settings.EthereumCore.MainExchangeContract = new Lykke.Service.EthereumCore.Core.Settings.EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New main exchange contract: " + contractAddress);
@@ -557,11 +568,11 @@ namespace ContractBuilder
         static async Task SendTransactionFromMainExchange()
         {
             string operationId = "";
-            IPendingOperationService pendingOperationService = ServiceProvider.GetService<IPendingOperationService>();
+            IPendingOperationService pendingOperationService = ServiceProvider.Resolve<IPendingOperationService>();
             try
             {
-                MonitoringOperationJob job = ServiceProvider.GetService<MonitoringOperationJob>();
-                IExchangeContractService exchangeContractService = ServiceProvider.GetService<IExchangeContractService>();
+                MonitoringOperationJob job = ServiceProvider.Resolve<MonitoringOperationJob>();
+                IExchangeContractService exchangeContractService = ServiceProvider.Resolve<IExchangeContractService>();
                 string filePath = Path.Combine(AppContext.BaseDirectory, "transferTransaction.txt");
                 var content = File.ReadAllText(filePath);
                 TransferModel model = Newtonsoft.Json.JsonConvert.DeserializeObject<TransferModel>(content);
@@ -598,9 +609,9 @@ namespace ContractBuilder
                 //Console.WriteLine("Type new main exchange address:");
                 //string newMainExchangeAddress = Console.ReadLine().Trim().ToLower();
                 var settings = GetCurrentSettings();
-                var exchangeService = ServiceProvider.GetService<IExchangeContractService>();
-                var ethereumTransactionService = ServiceProvider.GetService<IEthereumTransactionService>();
-                IEnumerable<ICoin> adapters = await ServiceProvider.GetService<ICoinRepository>().GetAll();
+                var exchangeService = ServiceProvider.Resolve<IExchangeContractService>();
+                var ethereumTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
+                IEnumerable<ICoin> adapters = await ServiceProvider.Resolve<ICoinRepository>().GetAll();
                 foreach (var adapter in adapters)
                 {
                     string transactionHash = await exchangeService.ChangeMainContractInCoin(adapter.AdapterAddress,
@@ -613,7 +624,7 @@ namespace ContractBuilder
                     }
                 }
 
-                IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
+                IBaseSettings baseSettings = ServiceProvider.Resolve<IBaseSettings>();
                 baseSettings.MainExchangeContract.Address = mainExchangeAddress;
                 baseSettings.MainExchangeContract.Abi = mainExchangeAbi;
 
@@ -632,9 +643,9 @@ namespace ContractBuilder
             try
             {
                 var settings = GetCurrentSettings();
-                var exchangeService = ServiceProvider.GetService<IExchangeContractService>();
-                var ownerService = ServiceProvider.GetService<IOwnerService>();
-                IBaseSettings baseSettings = ServiceProvider.GetService<IBaseSettings>();
+                var exchangeService = ServiceProvider.Resolve<IExchangeContractService>();
+                var ownerService = ServiceProvider.Resolve<IOwnerService>();
+                IBaseSettings baseSettings = ServiceProvider.Resolve<IBaseSettings>();
                 //baseSettings.MainExchangeContract.Address = "0xf5f0f53f86b7a5a92f150b1cf0edc12969b51f7e";
                 baseSettings.MainExchangeContract.Abi = GetFileContent("MainExchangeMultipleOwners.abi");
 
@@ -677,7 +688,7 @@ namespace ContractBuilder
                 var settings = GetCurrentSettings();
                 var abi = GetFileContent("BCAPToken.abi");
                 var bytecode = GetFileContent("BCAPToken.bin");
-                string contractAddress = await ServiceProvider.GetService<IContractService>().CreateContract(abi, bytecode, 2000000, settings.EthereumCore.EthereumMainAccount);
+                string contractAddress = await ServiceProvider.Resolve<IContractService>().CreateContract(abi, bytecode, 2000000, settings.EthereumCore.EthereumMainAccount);
 
                 settings.EthereumCore.MainExchangeContract = new EthereumContract { Abi = abi, ByteCode = bytecode, Address = contractAddress };
                 Console.WriteLine("New BCAP Token: " + contractAddress);
