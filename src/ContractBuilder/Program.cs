@@ -118,7 +118,7 @@ namespace ContractBuilder
 
             string tokenAddress = "";
             string depositAddress = "0xafa7e8771b46ef5def063ee55123ae98e2235277";
-            Contract contract;
+            Contract emissiveContract;
 
             var web3 = ServiceProvider.Resolve<IWeb3>();
             {
@@ -150,7 +150,7 @@ namespace ContractBuilder
                             "LTE223",
                             "1.0.0")
                     .Result : tokenAddress;
-                contract = web3.Eth.GetContract(abi, tokenAddress);
+                emissiveContract = web3.Eth.GetContract(abi, tokenAddress);
             }
 
             {
@@ -196,21 +196,17 @@ namespace ContractBuilder
             #region InvoiceMaster
 
             {
-                string contractAddress;
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
+                string contractAddress = "";
                 Contract contract;
-                var web3 = ServiceProvider.GetService<IWeb3>();
                 var abi = GetFileContent("InvoiceMaster.abi");
                 var bytecode = GetFileContent("InvoiceMaster.bin");
-                string allowedTokenAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
-                string merchantAirlinesWalletAddress = settings.CurrentValue.EthereumCore.EthereumMainAccount;
-                string merchantId = "DVX123";
-                string clientId = "XNV123";
-                string paymentDescription = File.ReadAllText(@"C:\Users\Aleks\Desktop\Payment").Substring(0, 25);
-                var currentGasPrice = (web3.Eth.GasPrice.SendRequestAsync().Result).Value;
-                contractAddress = "0x74a95cd9e408212c4867afe4c00f6bebc2acb0d5";
-                   //ServiceProvider.GetService<IContractService>()
-                   //   .CreateContract(abi, bytecode, 4000000)
-                   //   .Result;
+                string allowedTokenAddress = tokenAddress;
+                string merchantAirlinesWalletAddress = "0x856924997fa22efad8dc75e83acfa916490989a4";
+                contractAddress = string.IsNullOrEmpty(contractAddress) ? 
+                   ServiceProvider.Resolve<IContractService>()
+                      .CreateContract(abi, bytecode, 4000000)
+                      .Result : contractAddress;
 
                 contract = web3.Eth.GetContract(abi, contractAddress);
                 var createInvoiceFunc = contract.GetFunction("createInvoice");
@@ -232,12 +228,16 @@ namespace ContractBuilder
                     var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
                         settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(300000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
-                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate, merchantId, clientId, paymentDescription).Result;
+                        allowedTokenAddress, merchantAirlinesWalletAddress, dueDate).Result;
                     var result1 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
-                    var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
-                        settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(300000),
-                        new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount,
-                        convertedArray).Result;
+                    var hash = erc20Service.Transfer(allowedTokenAddress,
+                        settings.CurrentValue.EthereumCore.EthereumMainAccount,
+                        contractAddress, invoiceAmount, convertedArray).Result;
+                    WaitForTransactionCompleation(web3, hash);
+                    //var receipt2 = tokenFallbackFunc.SendTransactionAndWaitForReceiptAsync(
+                    //    settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(300000),
+                    //    new HexBigInteger(20000000000), new HexBigInteger(0), null, allowedTokenAddress, invoiceAmount,
+                    //    convertedArray).Result;
                     var result2 = getInvoiceStatusFunc.CallAsync<int>(convertedId).Result;
                 }
 
@@ -249,8 +249,6 @@ namespace ContractBuilder
                     BigInteger invoiceAmount = 1000000000000;
                     HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
                     var convertedArray = convertedIdHex.ToHexByteArray();
-                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
-                    //var encodedBytes = encoder.Encode(invoiceAmount);
                     var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
                         settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
@@ -271,8 +269,6 @@ namespace ContractBuilder
                     BigInteger invoiceAmount = 1000000000000;
                     HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
                     var convertedArray = convertedIdHex.ToHexByteArray();
-                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
-                    //var encodedBytes = encoder.Encode(invoiceAmount);
                     var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
                         settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
@@ -288,8 +284,6 @@ namespace ContractBuilder
                     BigInteger invoiceAmount = 1000000000000;
                     HexBigInteger convertedIdHex = new HexBigInteger(convertedId);
                     var convertedArray = convertedIdHex.ToHexByteArray();
-                    //Bytes32TypeEncoder encoder = new Bytes32TypeEncoder();
-                    //var encodedBytes = encoder.Encode(invoiceAmount);
                     var receipt = createInvoiceFunc.SendTransactionAndWaitForReceiptAsync(
                         settings.CurrentValue.EthereumCore.EthereumMainAccount, new HexBigInteger(200000),
                         new HexBigInteger(20000000000), new HexBigInteger(0), null, convertedId, invoiceAmount,
@@ -308,23 +302,23 @@ namespace ContractBuilder
 
             #region InstanceInvoice
 
-            {
-                string tokenAddress;
-                Contract contract;
-                var web3 = ServiceProvider.GetService<IWeb3>();
-                var abi = GetFileContent("Invoice.abi");
-                var bytecode = GetFileContent("Invoice.bin");
-                string invoiceId = "1";
-                BigInteger amount = 1000000000;
-                BigInteger dueDate = (long)(DateTime.UtcNow + TimeSpan.FromDays(5)).ToUnixTime();
-                string allowedTokenAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
-                string merchantAirlinesWalletAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
+            //{
+            //    string tokenAddress;
+            //    Contract contract;
+            //    var web3 = ServiceProvider.GetService<IWeb3>();
+            //    var abi = GetFileContent("Invoice.abi");
+            //    var bytecode = GetFileContent("Invoice.bin");
+            //    string invoiceId = "1";
+            //    BigInteger amount = 1000000000;
+            //    BigInteger dueDate = (long)(DateTime.UtcNow + TimeSpan.FromDays(5)).ToUnixTime();
+            //    string allowedTokenAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
+            //    string merchantAirlinesWalletAddress = "0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce";
 
-                tokenAddress =
-                    ServiceProvider.GetService<IContractService>()
-                    .CreateContract(abi, bytecode, 4000000, invoiceId, amount, dueDate, allowedTokenAddress, merchantAirlinesWalletAddress)
-                    .Result;
-            }
+            //    tokenAddress =
+            //        ServiceProvider.GetService<IContractService>()
+            //        .CreateContract(abi, bytecode, 4000000, invoiceId, amount, dueDate, allowedTokenAddress, merchantAirlinesWalletAddress)
+            //        .Result;
+            //}
 
             #endregion
 

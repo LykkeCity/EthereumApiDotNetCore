@@ -154,7 +154,7 @@ namespace TransactionResubmit
                 };
                 //2507153
                 //2552291
-                ITransactionEventsService transactionService = ServiceProvider.GetService<ITransactionEventsService>();
+                ITransactionEventsService transactionService = ServiceProvider.Resolve<ITransactionEventsService>();
 
                 transactionService.RestartIndexedEventsForBlock(blockNumber).Wait();
 
@@ -261,14 +261,14 @@ namespace TransactionResubmit
                 }
                 Console.WriteLine("Started");
 
-                var hotWalletSettings = ServiceProvider.GetService<HotWalletSettings>();
-                var queueFactory = ServiceProvider.GetService<IQueueFactory>();
-                var coinEventRepo = ServiceProvider.GetService<ICoinEventRepository>();
-                var pendingOperationRepo = ServiceProvider.GetService<IPendingOperationRepository>();
+                var hotWalletSettings = ServiceProvider.Resolve<HotWalletSettings>();
+                var queueFactory = ServiceProvider.Resolve<IQueueFactory>();
+                var coinEventRepo = ServiceProvider.Resolve<ICoinEventRepository>();
+                var pendingOperationRepo = ServiceProvider.Resolve<IPendingOperationRepository>();
                 var queuePending = queueFactory.Build(Constants.PendingOperationsQueue);
 
                 var currentDate = DateTime.UtcNow;
-                var trService = ServiceProvider.GetService<IEthereumTransactionService>();
+                var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId)
                  && (currentDate - x.EventTime) > TimeSpan.FromDays(1)
                  && (x.CoinEventType == CoinEventType.CashoutStarted || 

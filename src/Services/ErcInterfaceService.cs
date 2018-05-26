@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Services;
+using Nethereum.ABI.Encoders;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -33,7 +34,7 @@ namespace Lykke.Service.EthereumCore.Services
     {
         Task<BigInteger> GetPendingBalanceForExternalTokenAsync(string address, string externalTokenAddress);
         Task<BigInteger> GetBalanceForExternalTokenAsync(string address, string externalTokenAddress);
-        Task<string> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
+        Task<string> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount, byte[] bytes = null);
         Task<bool> CheckTokenFallback(string toAddress);
     }
 
@@ -41,6 +42,10 @@ namespace Lykke.Service.EthereumCore.Services
     {
         public const string Erc223ReceiverAbi =
             "[{\"constant\":true,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"tokenFallback\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]";
+
+        //no transfer function in this abi for (string toAddress, BigInteger amount)
+        public const string Erc223TokenAbi =
+            "[{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"supply\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_who\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"}]";
         private readonly IBaseSettings _settings;
         private readonly IWeb3 _web3;
 
@@ -84,16 +89,24 @@ namespace Lykke.Service.EthereumCore.Services
 
         //Use function below to transfer from main
         public async Task<string> Transfer(string externalTokenAddress, string fromAddress,
-            string toAddress, BigInteger amount)
+            string toAddress, BigInteger amount, byte[] bytes = null)
         {
-            Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
-            Function function = contract.GetFunction("transfer");
+            if (bytes == null)
+            {
+                Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
+                Function function = contract.GetFunction("transfer");
+                string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount);
 
-            //bool success = await function.CallAsync<bool>(toAddress, amount);
+                return trHash;
+            }
+            else
+            {
+                Contract contract = _web3.Eth.GetContract(Erc223TokenAbi, externalTokenAddress);
+                Function function = contract.GetFunction("transfer");
+                string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount, bytes);
 
-            string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount);
-
-            return trHash;
+                return trHash;
+            }
         }
 
         /*

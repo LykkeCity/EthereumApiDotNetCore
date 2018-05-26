@@ -19,20 +19,11 @@ contract InvoiceMaster {
         bool isValid;
     }
 
-    struct InvoiceInfo {
-        uint128 invoiceId;//Guid in external system
-        string merchantId;
-        string clientId;
-        string paymentDescription;
-        bool isValid;
-    }
-
     //Possible Invoice statuses
     enum InvoiceStatus {UNPAID,PAID,OVERDUE,LATE_PAYMENT,PARTIALLY_PAID}
 
     address _owner;
     mapping (uint128 => Invoice) public registeredInvoices;
-    mapping (uint128 => InvoiceInfo) public invoiceInfoMapping;
 
     modifier onlyOwner { 
         if (msg.sender == _owner) _; 
@@ -46,20 +37,17 @@ contract InvoiceMaster {
         revert();
     }
 
-    function createInvoice(uint128 invoiceId, uint invoiceAmount, address tokenAddress, address merchantWalletAddress, uint dueDateUnixTime, string merchantId, string clientId, string paymentDescription) onlyOwner public {
+    function createInvoice(uint128 invoiceId, uint invoiceAmount, address tokenAddress, address merchantWalletAddress, uint dueDateUnixTime) onlyOwner public {
         if (registeredInvoices[invoiceId].isValid){
             revert();
         }
 
         Invoice memory invoice = Invoice(invoiceId, invoiceAmount, tokenAddress, merchantWalletAddress, dueDateUnixTime, 0, 0, true);
-        InvoiceInfo memory invoiceInfo = InvoiceInfo(invoiceId, merchantId, clientId, paymentDescription, true);
-
         registeredInvoices[invoice.invoiceId] = invoice;
-        invoiceInfoMapping[invoice.invoiceId] = invoiceInfo;
         emit InvoiceCreated(msg.sender, invoiceId, dueDateUnixTime, invoiceAmount);
     }  
 
-    function tokenFallback(address _from, uint _value, bytes _data) public returns(bool ok) {
+    function tokenFallback(address _from, uint _value, bytes _data) internal returns(bool ok) {
         address tokenAddress = msg.sender;
         bytes16 data16 = bytesToBytes16(_data);
         uint128 invoiceId = uint128(data16);
@@ -75,8 +63,10 @@ contract InvoiceMaster {
 
         invoice.lastPaymentDateUnixTime = block.timestamp;
         invoice.payedAmount += _value;
-
         registeredInvoices[invoiceId] = invoice;
+        ERC20Interface erc20Contract = ERC20Interface(invoice.tokenAddress);
+        erc20Contract.transfer(invoice.merchantWalletAddress, _value);
+
         emit PaymentDetected(tokenAddress, invoiceId, _value);
 
         return true;
@@ -86,16 +76,6 @@ contract InvoiceMaster {
         Invoice memory invoice = registeredInvoices[invoiceId];
 
         return invoice.isValid;
-    }
-
-    function getInvoiceDescription(uint128 invoiceId) public view returns (string merchantId, string clientId, string paymentDescription){
-        InvoiceInfo memory invoiceInfo = invoiceInfoMapping[invoiceId];
-
-        if (!invoiceInfo.isValid){
-            revert();
-        }
-
-        return (invoiceInfo.merchantId, invoiceInfo.clientId, invoiceInfo.paymentDescription);
     }
 
     function getInvoiceDetails(uint128 invoiceId) public view returns (uint lastPaymentDateUnixTime, uint dueDateUnix, uint payedAmount, address merchantWalletAddress){

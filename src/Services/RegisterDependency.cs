@@ -49,7 +49,7 @@ namespace Lykke.Service.EthereumCore.Services
             Services.AddSingleton<Web3>((provider) =>
             {
                 var baseSettings = provider.GetService<IBaseSettings>();
-                var web3 = new Web3("http://127.0.0.1:8000"/*baseSettings.EthereumUrl*/);
+                var web3 = new Web3(baseSettings.EthereumUrl);
 
                 return web3;
             });
