@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.JobTriggers" Version="1.2.0" />
+    <PackageReference Include="Lykke.JobTriggers" Version="2.1.0" />
     <PackageReference Include="Lykke.RabbitMq.Azure" Version="4.0.1" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="4.3.1" />
     <PackageReference Include="Lykke.SettingsReader" Version="1.1.4" />
