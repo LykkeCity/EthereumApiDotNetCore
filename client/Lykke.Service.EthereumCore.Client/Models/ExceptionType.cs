@@ -38,7 +38,9 @@ namespace Lykke.Service.EthereumCore.Client.Models
         [EnumMember(Value = "TransactionExists")]
         TransactionExists,
         [EnumMember(Value = "TransactionRequiresMoreGas")]
-        TransactionRequiresMoreGas
+        TransactionRequiresMoreGas,
+        [EnumMember(Value = "WrongDestination")]
+        WrongDestination
     }
     internal static class ExceptionTypeEnumExtension
     {
@@ -73,6 +75,8 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return "TransactionExists";
                 case ExceptionType.TransactionRequiresMoreGas:
                     return "TransactionRequiresMoreGas";
+                case ExceptionType.WrongDestination:
+                    return "WrongDestination";
             }
             return null;
         }
@@ -103,6 +107,8 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return ExceptionType.TransactionExists;
                 case "TransactionRequiresMoreGas":
                     return ExceptionType.TransactionRequiresMoreGas;
+                case "WrongDestination":
+                    return ExceptionType.WrongDestination;
             }
             return null;
         }

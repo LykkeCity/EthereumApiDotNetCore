@@ -12,11 +12,13 @@ namespace Lykke.Service.EthereumCore.Core.Shared
 {
     public static class Erc20SharedService
     {
+        public const string TransferAllTokensFuncName = "transferAllTokens";
+
         public static async Task<string> StartTransferAsync(IWeb3 web3, BaseSettings settings,
             string fromAddress, string depositContractAddress, string erc20TokenAddress, string destinationAddress)
         {
             Contract contract = web3.Eth.GetContract(settings.Erc20DepositContract.Abi, depositContractAddress);
-            var cashin = contract.GetFunction("transferAllTokens");
+            var cashin = contract.GetFunction(TransferAllTokensFuncName);
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
                 new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
@@ -29,6 +31,17 @@ namespace Lykke.Service.EthereumCore.Core.Shared
                 new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
+        }
+
+        public static async Task<bool> EstimateCashinAsync(IWeb3 web3, BaseSettings settings,
+            string fromAddress, string depositContractAddress, string erc20TokenAddress, string destinationAddress)
+        {
+            Contract contract = web3.Eth.GetContract(settings.Erc20DepositContract.Abi, depositContractAddress);
+            var cashin = contract.GetFunction(TransferAllTokensFuncName);
+            var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
+                new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+
+            return cashinWouldBeSuccesfull;
         }
     }
 }
