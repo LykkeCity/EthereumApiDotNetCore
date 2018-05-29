@@ -17,6 +17,7 @@ namespace Lykke.Service.EthereumCore.Core.Exceptions
         WrongSign = 5,
         OperationWithIdAlreadyExists = 6,
         TransferInProcessing = 7,
+        WrongDestination = 8,
 
         #region PrivateWallets
 
