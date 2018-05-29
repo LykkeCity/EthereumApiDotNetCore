@@ -178,27 +178,33 @@ namespace Lykke.Job.EthereumCore.Job
                 }
 
                 (BigInteger? amount, string blockHash, ulong blockNumber) transferedInfo = (null, null, 0);
-                string amount;
+                string amount = operation.Amount.ToString();
                 switch (operation.OperationType)
                 {
                     case HotWalletOperationType.Cashout:
-                        amount = operation.Amount.ToString();
                         break;
                     case HotWalletOperationType.Cashin:
                         string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
                         await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
                             operation.TokenAddress, userAddress, "");
 
-                        transferedInfo = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
-                        if (transferedInfo.amount == null ||
-                            transferedInfo.amount == 0)
+                        //There will be nothing to index in failed event
+                        if (success)
                         {
-                            //Not yet indexed
-                            SendMessageToTheQueueEnd(context, transaction, 10000);
-                            return false;
+                            transferedInfo =
+                                await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(
+                                    transactionHash);
+                            if (transferedInfo.amount == null ||
+                                transferedInfo.amount == 0)
+                            {
+                                //Not yet indexed
+                                SendMessageToTheQueueEnd(context, transaction, 10000);
+                                return false;
+                            }
+
+                            amount = transferedInfo.amount.ToString();
                         }
 
-                        amount = transferedInfo.amount.ToString();
                         break;
                     default:
                         return false;
