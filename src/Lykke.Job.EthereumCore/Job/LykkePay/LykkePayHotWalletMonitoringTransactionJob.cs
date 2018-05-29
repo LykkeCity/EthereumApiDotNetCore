@@ -94,7 +94,7 @@ namespace Lykke.Job.EthereumCore.Job
                 return;
             }
 
-            if (coinTransaction == null || coinTransaction.Error)
+            if (coinTransaction == null)
             {
                 await RepeatOperationTillWin(transaction);
                 await _slackNotifier.ErrorAsync($"LYKKE_PAY: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
@@ -103,26 +103,22 @@ namespace Lykke.Job.EthereumCore.Job
             {
                 if (coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
-                    if (!coinTransaction.Error)
-                    {
-                        bool sentToRabbit = await SendCompleteEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
+                    bool sentToRabbit = await SendCompleteEvent(transaction.TransactionHash, transaction.OperationId, !coinTransaction.Error, context, transaction);
 
-                        if (sentToRabbit)
-                        {
-                            await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
-                                       $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
-                        }
-                        else
-                        {
-                            await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
-                                $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
-                        }
+                    if (sentToRabbit)
+                    {
+                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                                   $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                     }
                     else
                     {
-                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error!");
-                        await RepeatOperationTillWin(transaction);
-                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. RETRY!");
+                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                            $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                    }
+
+                    if (coinTransaction.Error)
+                    {
+                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. Notify Caller about fail!");
                     }
                 }
                 else
@@ -194,7 +190,7 @@ namespace Lykke.Job.EthereumCore.Job
                             operation.TokenAddress, userAddress, "");
 
                         transferedInfo = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
-                        if (transferedInfo.amount == null || 
+                        if (transferedInfo.amount == null ||
                             transferedInfo.amount == 0)
                         {
                             //Not yet indexed
@@ -208,6 +204,7 @@ namespace Lykke.Job.EthereumCore.Job
                         return false;
                 }
 
+                EventType eventType = success ? EventType.Completed : EventType.Failed;
                 TransferEvent @event = new TransferEvent(operation.OperationId,
                     transactionHash,
                     amount,
@@ -217,7 +214,7 @@ namespace Lykke.Job.EthereumCore.Job
                     transferedInfo.blockHash,
                     transferedInfo.blockNumber,
                     SenderType.EthereumCore,
-                    EventType.Completed);
+                    eventType);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
 
