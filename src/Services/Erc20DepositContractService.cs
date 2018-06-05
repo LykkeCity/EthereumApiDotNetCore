@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
@@ -134,7 +135,7 @@ namespace Lykke.Service.EthereumCore.Services
 
             if (!cashinWouldBeSuccesfull)
             {
-                throw new Exception($"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+                throw new ClientSideException(ExceptionType.CantEstimateExecution ,$"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
             }
 
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
