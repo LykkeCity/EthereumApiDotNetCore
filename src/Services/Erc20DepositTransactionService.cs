@@ -11,6 +11,8 @@ using Lykke.Service.EthereumCore.Services.Coins;
 using AzureStorage.Queue;
 using Common.Log;
 using System.Numerics;
+using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Utils;
 using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
@@ -35,21 +37,15 @@ namespace Lykke.Service.EthereumCore.Services
     public class Erc20DepositTransactionService : IErc20DepositTransactionService
     {
         private readonly ILog _logger;
-        private readonly IBaseSettings _baseSettings;
         private readonly IQueueExt _queue;
-        private readonly IErc20DepositContractService _erc20DepositContractService;
         private readonly ITransferContractRepository _transferContractRepository;
-        private TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
-        private readonly ICoinTransactionService _cointTransactionService;
-        private readonly ICoinTransactionRepository _coinTransactionRepository;
-        private readonly ICoinEventService _coinEventService;
         private readonly IErcInterfaceService _ercInterfaceService;
-        private readonly IEventTraceRepository _eventTraceRepository;
         private readonly string _hotWalletAddress;
         private readonly IHotWalletService _hotWalletService;
         private readonly IQueueExt _cointTransactionQueue;
+        private readonly ISlackNotifier _slackNotifier;
 
         public Erc20DepositTransactionService(IQueueFactory queueFactory,
             ILog logger,
@@ -65,23 +61,18 @@ namespace Lykke.Service.EthereumCore.Services
             IEventTraceRepository eventTraceRepository,
             IErcInterfaceService ercInterfaceService,
             AppSettings settingsWrapper,
-            IHotWalletService hotWalletService)
+            IHotWalletService hotWalletService,
+            ISlackNotifier slackNotifier)
         {
-            _eventTraceRepository = eventTraceRepository;
             _logger = logger;
-            _baseSettings = baseSettings;
             _queue = queueFactory.Build(Constants.Erc20DepositCashinTransferQueue);
-            _erc20DepositContractService = erc20DepositContractService;
-            _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;
             _userPaymentHistoryRepository = userPaymentHistoryRepository;
-            _cointTransactionService = cointTransactionService;
-            _coinTransactionRepository = coinTransactionRepository;
-            _coinEventService = coinEventService;
             _ercInterfaceService = ercInterfaceService;
             _hotWalletAddress = settingsWrapper.Ethereum.HotwalletAddress;
             _hotWalletService = hotWalletService;
             _cointTransactionQueue = queueFactory.Build(Constants.HotWalletTransactionMonitoringQueue);
+            _slackNotifier = slackNotifier;
         }
 
         public async Task PutContractTransferTransaction(Erc20DepositContractTransaction tr)
@@ -142,6 +133,21 @@ namespace Lykke.Service.EthereumCore.Services
                     });
 
                     await _cointTransactionQueue.PutRawMessageAsync(JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = transactionHash }));
+                }
+                catch (ClientSideException clientSideExc)
+                {
+                    var context = new
+                    {
+                        obj = contractTransferTr.ToJson(),
+                        exc = clientSideExc.ToJson()
+                    }.ToJson();
+                    await _logger.WriteInfoAsync(nameof(Erc20DepositTransactionService), nameof(TransferToCoinContract),
+                        $"{context}");
+                    await UpdateUserTransferWallet(contractTransferTr);
+                    //Redirect issues to dedicated slack channel
+                    await _slackNotifier.ErrorAsync($"{nameof(Erc20DepositTransactionService)} can't start cashin {context}");
+
+                    return;
                 }
                 catch (Exception exc)
                 {
