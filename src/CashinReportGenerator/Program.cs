@@ -162,15 +162,17 @@ namespace CashinReportGenerator
 
                                 do
                                 {
-                                    RetryPolicy.ExecuteAsync(async () =>
+                                    RetryPolicy.ExecuteUnlimitedAsync(async () =>
                                     {
+                                        Console.WriteLine($"Requesting for: {address} - from :{start} - count: {count}");
+
                                         batchRead = await GetTransactionHistory(samuraiApi, new AddressTransaction()
                                         {
                                             Address = address,
                                             Count = count,
                                             Start = start,
                                         });
-                                    }, 5, 100).Wait();
+                                    }, 300).Wait();
 
                                     foreach (var item in batchRead)
                                     {
@@ -195,10 +197,10 @@ namespace CashinReportGenerator
                                         csvWriter.WriteRecord<TransactionFeeModel>(model);
                                         csvWriter.NextRecord();
 
-                                        Console.WriteLine($"Written ${model.ToJson()}");
+                                        //Console.WriteLine($"Written ${model.ToJson()}");
                                     }
 
-                                    Console.WriteLine($"Requested {address} - {start} - {count}");
+                                    Console.WriteLine($"Completed {address} - {start} - {count}");
 
                                     start += count;
                                 } while (batchRead != null && batchRead.Count() != 0);
@@ -340,8 +342,8 @@ namespace CashinReportGenerator
                                                 continue;
                                             }
 
-                                                //var amount = BigInteger.Parse(item.Value);
-                                                ExternalTransactionModel model = new ExternalTransactionModel()
+                                            //var amount = BigInteger.Parse(item.Value);
+                                            ExternalTransactionModel model = new ExternalTransactionModel()
                                             {
                                                 ClientId = wallet.ClientId,
                                                 DateTimeUtc = item.BlockTimeUtc,
@@ -417,8 +419,8 @@ namespace CashinReportGenerator
                                                 continue;
                                             }
 
-                                                //var amount = BigInteger.Parse(item.Value);
-                                                ExternalTransactionModel model = new ExternalTransactionModel()
+                                            //var amount = BigInteger.Parse(item.Value);
+                                            ExternalTransactionModel model = new ExternalTransactionModel()
                                             {
                                                 ClientId = wallet.ClientId,
                                                 DateTimeUtc = item.BlockTimeUtc,

@@ -37,5 +37,30 @@ namespace CashinReportGenerator
 
             } while (!isExecutionCompleted);
         }
+
+        /// <summary>
+        /// Retry policy with exponential waiting before retries
+        /// </summary>
+        /// <returns></returns>
+        public static async Task ExecuteUnlimitedAsync(Func<Task> func, int delayMs)
+        {
+            bool isExecutionCompleted = false;
+            int currentTry = 1;
+
+            do
+            {
+                try
+                {
+                    await func();
+                    isExecutionCompleted = true;
+                }
+                catch (Exception e)
+                {
+                    await Task.Delay(delayMs);
+                    currentTry++;
+                }
+
+            } while (!isExecutionCompleted);
+        }
     }
 }
