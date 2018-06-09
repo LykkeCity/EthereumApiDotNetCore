@@ -54,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.RabbitMQ", "src\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj", "{94D09F25-27DB-420E-846F-14730A1263C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashinReportGenerator", "..\..\CashinReportGenerator\CashinReportGenerator.csproj", "{1AA67A7A-D8BA-4344-8AC4-A77CDACCC7A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashinReportGenerator", "src\CashinReportGenerator\CashinReportGenerator.csproj", "{404993B1-4316-4AFA-AF28-0492A2173162}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,10 +138,10 @@ Global
 		{94D09F25-27DB-420E-846F-14730A1263C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94D09F25-27DB-420E-846F-14730A1263C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94D09F25-27DB-420E-846F-14730A1263C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AA67A7A-D8BA-4344-8AC4-A77CDACCC7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AA67A7A-D8BA-4344-8AC4-A77CDACCC7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AA67A7A-D8BA-4344-8AC4-A77CDACCC7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AA67A7A-D8BA-4344-8AC4-A77CDACCC7A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{404993B1-4316-4AFA-AF28-0492A2173162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{404993B1-4316-4AFA-AF28-0492A2173162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{404993B1-4316-4AFA-AF28-0492A2173162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{404993B1-4316-4AFA-AF28-0492A2173162}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
