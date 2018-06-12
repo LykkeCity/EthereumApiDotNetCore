@@ -13,6 +13,7 @@ namespace Lykke.Service.EthereumCore.Core
 
         public const string DefaultKey = "default";
         public const string LykkePayKey = "lykke-pay";
+        public const string AirLinesKey = "airlines";
 
         public const string AddressForRoundRobinTransactionSending = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
         public const string EmptyEthereumAddress = "0x0000000000000000000000000000000000000000";
@@ -80,6 +81,17 @@ namespace Lykke.Service.EthereumCore.Core
         public const string LykkePayErc223TransferQueue = "lykke-pay-erc-transfers-queue";
         public const string LykkePayErc223TransferNotificationsQueue = "lykke-pay-erc-transfers-notifications-queue";
         public const string LykkePayTransactionMonitoringQueue = "lykke-pay-transaction-monitoring-queue";
+
+        #endregion
+
+        #region  Airlines
+
+        public const string AirlinesOperationsTable = "AirlinesOperations";
+        public const string AirlinesErc223DepositContractTable = "AirlinesErc223DepositContracts";
+        public const string AirlinesHotWalletCashoutTransactionTable = "AirlinesHotWalletCashoutTransaction";
+        public const string AirlinesErc223TransferQueue = "airlines-erc-transfers-queue";
+        public const string AirlinesErc223TransferNotificationsQueue = "airlines-erc-transfers-notifications-queue";
+        public const string AirlinesTransactionMonitoringQueue = "airlines-transaction-monitoring-queue";
 
         #endregion
 

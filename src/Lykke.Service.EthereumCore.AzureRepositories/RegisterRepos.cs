@@ -185,6 +185,31 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
             #endregion
 
+            #region Airlines
+
+            builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
+                AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayErc223DepositContractTable,
+                    log),
+                AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayErc223DepositContractTable,
+                    log)
+            )).Keyed<IErc223DepositContractRepository>(Constants.AirLinesKey);
+
+            builder.RegisterInstance<IHotWalletOperationRepository>(new HotWalletOperationRepository(
+                AzureTableStorage<HotWalletCashoutEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.LykkePayOperationsTable,
+                    log))).Keyed<IHotWalletOperationRepository>(Constants.AirLinesKey);
+
+            builder.RegisterInstance<IHotWalletTransactionRepository>(new HotWalletTransactionRepository(
+                AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayHotWalletCashoutTransactionTable,
+                    log),
+                AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.LykkePayHotWalletCashoutTransactionTable,
+                    log))).Keyed<IHotWalletTransactionRepository>(Constants.AirLinesKey);
+
+            #endregion
+
             builder.RegisterInstance<IGasPriceRepository>(new GasPriceRepository(
                 AzureTableStorage<GasPriceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.GasPriceTable,
                     log)));

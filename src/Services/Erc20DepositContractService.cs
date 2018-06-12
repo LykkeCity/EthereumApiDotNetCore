@@ -168,7 +168,7 @@ namespace Lykke.Service.EthereumCore.Services
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
-           string erc20TokenAddress, string destinationAddress);
+           string erc20TokenAddress, string destinationAddress, string tokenAmount = null);
 
         Task<bool> ContainsAsync(string address);
     }

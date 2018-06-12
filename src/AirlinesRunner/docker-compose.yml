@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  apirunner:
+    image: lykkex/lykke-service-ethereumapi:${tag}
+    ports:
+     - "${Port}:5000"
+    environment:
+     - ConnectionStrings__ConnectionString=${SettingsConnString}

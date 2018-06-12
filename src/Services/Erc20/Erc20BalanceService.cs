@@ -31,7 +31,7 @@ namespace Lykke.Service.EthereumCore.Services.Erc20
             var response = await _ethereumSamuraiApi.ApiErc20BalanceGetErc20BalanceByAddressPostAsync
             (
                 address,
-                erc20TokenAddresses?.ToList()
+                erc20TokenAddresses?.ToList() ?? new List<string>()
             );
 
 
