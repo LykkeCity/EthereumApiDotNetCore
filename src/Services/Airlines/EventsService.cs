@@ -1,9 +1,9 @@
-﻿using Autofac.Features.AttributeFilters;
-using EthereumSamuraiApiCaller;
+﻿using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
 using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
@@ -17,39 +17,38 @@ using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public interface ILykkePayEventsService
+    public interface IAirlinesEventsService
     {
-        Task IndexCashinEventsForErc20Deposits();
         Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
     }
 
-    public class EventsService : ILykkePayEventsService
+    public class EventsService : IAirlinesEventsService
     {
-        private const string Erc20HotWalletMarker = "LykkePay_ERC20_HOTWALLET";
+        private const string Erc20HotWalletMarker = "Airlines_ERC20_HOTWALLET";
 
-        private readonly IBaseSettings _baseSettings;
+        private readonly AirlinesSettings _baseSettings;
         private readonly IBlockSyncedByHashRepository _blockSyncedRepository;
-        private readonly AppSettings _settingsWrapper;
+        private readonly AirlinesAppSettings _settingsWrapper;
         private readonly IEthereumSamuraiAPI _indexerApi;
-        private readonly IErc20DepositContractService _depositContractService;
-        private IEthereumIndexerService _ethereumIndexerService;
-        private IWeb3 _web3;
-        private IRabbitQueuePublisher _rabbitQueuePublisher;
+        private readonly IAirlinesErc20DepositContractService _depositContractService;
+        private readonly IEthereumIndexerService _ethereumIndexerService;
+        private readonly IWeb3 _web3;
+        private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
 
         public EventsService(
-            IBaseSettings baseSettings,
+            AirlinesSettings settings,
             ICashinEventRepository cashinEventRepository,
             IBlockSyncedByHashRepository blockSyncedRepository,
             IQueueFactory queueFactory,
-            AppSettings settingsWrapper,
+            AirlinesAppSettings settingsWrapper,
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IWeb3 web3,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService depositContractService)
+            IAirlinesErc20DepositContractService depositContractService)
         {
             _blockSyncedRepository = blockSyncedRepository;
-            _baseSettings = baseSettings;
+            _baseSettings = settings;
             _settingsWrapper = settingsWrapper;
             _indexerApi = indexerApi;
             _depositContractService = depositContractService;

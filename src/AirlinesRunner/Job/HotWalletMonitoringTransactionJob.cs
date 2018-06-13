@@ -62,10 +62,10 @@ namespace Lykke.Service.AirlinesJobRunner.Job
             _rabbitQueuePublisher = rabbitQueuePublisher;
             _userTransferWalletRepository = userTransferWalletRepository;
             _erc20DepositContractService = erc20DepositContractService;
-            _transferStartQueue = queueFactory.Build(Constants.LykkePayErc223TransferQueue);
+            _transferStartQueue = queueFactory.Build(Constants.AirlinesErc223TransferQueue);
         }
 
-        [QueueTrigger(Constants.LykkePayTransactionMonitoringQueue, 100, true)]
+        [QueueTrigger(Constants.AirlinesTransactionMonitoringQueue, 100, true)]
         public async Task Execute(CoinTransactionMessage transaction, QueueTriggeringContext context)
         {
             ICoinTransaction coinTransaction = null;

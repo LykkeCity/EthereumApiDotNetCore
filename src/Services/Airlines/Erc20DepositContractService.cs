@@ -5,6 +5,7 @@ using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
@@ -15,29 +16,29 @@ using Nethereum.Hex.HexTypes;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public class Erc20DepositContractService : IErc20DepositContractService
+    public class Erc20DepositContractService : IAirlinesErc20DepositContractService
     {
         private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
-        private readonly IBaseSettings _settings;
+        private readonly AirlinesSettings _settings;
         private readonly ILog _log;
         private readonly IWeb3 _web3;
-        private readonly AppSettings _appSettings;
+        private readonly AirlinesAppSettings _appSettings;
         private readonly IQueueExt _transferQueue;
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IHotWalletOperationRepository _operationsRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
         public Erc20DepositContractService(
-            [KeyFilter(Constants.LykkePayKey)] IErc223DepositContractRepository contractRepository,
-            [KeyFilter(Constants.LykkePayKey)] IHotWalletOperationRepository operationsRepository,
+            [KeyFilter(Constants.AirLinesKey)] IErc223DepositContractRepository contractRepository,
+            [KeyFilter(Constants.AirLinesKey)] IHotWalletOperationRepository operationsRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            IBaseSettings settings,
+            AirlinesSettings settings,
             ILog log,
             IWeb3 web3,
-            AppSettings appSettings,
+            AirlinesAppSettings appSettings,
             IQueueFactory factory,
             IErcInterfaceService ercInterfaceService,
             IUserTransferWalletRepository userTransferWalletRepository)
@@ -80,9 +81,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
         {
             try
             {
-                var fromAddress = _appSettings.LykkePay.LykkePayAddress;
-                var abi = _settings.Erc20DepositContract.Abi;
-                var byteCode = _settings.Erc20DepositContract.ByteCode;
+                var fromAddress = _appSettings.Airlines.AirlinesAddress;
+                var abi = _settings.Erc223DepositContract.Abi;
+                var byteCode = _settings.Erc223DepositContract.ByteCode;
 
                 return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
             }
@@ -143,7 +144,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(depositContractAddress, erc20TokenAddress);
             if (balance == 0 || amount > balance)
             {
-                throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough tokens to proceed with withdrawal detected at deposit address {depositContractAddress}");
+                throw new ClientSideException(ExceptionType.NotEnoughFunds, 
+                    $"Not enough tokens to proceed with withdrawal detected at deposit address {depositContractAddress}. " +
+                    $"Current balance: {balance}");
             }
 
             var guidStr = Guid.NewGuid().ToString();

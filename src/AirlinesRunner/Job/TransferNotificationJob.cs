@@ -42,7 +42,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
             _web3 = web3;
         }
 
-        [QueueTrigger(Constants.LykkePayErc223TransferNotificationsQueue, 200, true)]
+        [QueueTrigger(Constants.AirlinesErc223TransferNotificationsQueue, 200, true)]
         public async Task Execute(LykkePayErc20TransferNotificationMessage message, QueueTriggeringContext context)
         {
             if (string.IsNullOrEmpty(message?.OperationId))

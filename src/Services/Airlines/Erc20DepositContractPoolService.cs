@@ -2,20 +2,21 @@
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Settings;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public class LykkePayErc20DepositContractPoolService : IErc20DepositContractPoolService
+    public class Erc20DepositContractPoolService : IErc20DepositContractPoolService
     {
-        private readonly IErc20DepositContractService _contractService;
+        private readonly IAirlinesErc20DepositContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
-        private readonly IBaseSettings _settings;
+        private readonly AirlinesSettings _settings;
 
-        public LykkePayErc20DepositContractPoolService(
-            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService contractService,
+        public Erc20DepositContractPoolService(
+            IAirlinesErc20DepositContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            IBaseSettings settings)
+            AirlinesSettings settings)
         {
             _contractService = contractService;
             _poolFactory = poolFactory;

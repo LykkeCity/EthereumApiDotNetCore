@@ -45,14 +45,14 @@ namespace Lykke.Service.AirlinesJobRunner.Job
             _logger = logger;
             _web3 = web3;
             _operationsRepository = operationsRepository;
-            _transactionMonitoringQueue = queueFactory.Build(Constants.LykkePayTransactionMonitoringQueue);
-            _transactionStartedNotificationQueue = queueFactory.Build(Constants.LykkePayErc223TransferNotificationsQueue);
+            _transactionMonitoringQueue = queueFactory.Build(Constants.AirlinesTransactionMonitoringQueue);
+            _transactionStartedNotificationQueue = queueFactory.Build(Constants.AirlinesErc223TransferNotificationsQueue);
             _hotWalletTransactionRepository = hotWalletTransactionRepository;
             _rabbitQueuePublisher = rabbitQueuePublisher;
             _ercInterfaceService = ercInterfaceService;
         }
 
-        [QueueTrigger(Constants.LykkePayErc223TransferQueue, 200, true)]
+        [QueueTrigger(Constants.AirlinesErc223TransferQueue, 200, true)]
         public async Task Execute(LykkePayErc20TransferMessage transaction, QueueTriggeringContext context)
         {
             try

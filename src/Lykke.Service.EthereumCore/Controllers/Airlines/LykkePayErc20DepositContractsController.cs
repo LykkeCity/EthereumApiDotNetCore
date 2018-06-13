@@ -4,6 +4,7 @@ using Autofac.Features.AttributeFilters;
 using EthereumApi.Models.Models.Airlines;
 using Lykke.Service.EthereumCore.Attributes;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCoreSelfHosted.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,9 @@ namespace Lykke.Service.EthereumCore.Controllers.Airlines
     [Produces("application/json")]
     public class AirlinesErc20DepositContractsController : Controller
     {
-        private readonly IErc20DepositContractService _contractService;
+        private readonly IAirlinesErc20DepositContractService _contractService;
 
-        public AirlinesErc20DepositContractsController([KeyFilter(Constants.AirLinesKey)] IErc20DepositContractService contractService)
+        public AirlinesErc20DepositContractsController(IAirlinesErc20DepositContractService contractService)
         {
             _contractService = contractService;
         }
