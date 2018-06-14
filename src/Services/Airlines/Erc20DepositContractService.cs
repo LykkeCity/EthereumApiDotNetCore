@@ -162,9 +162,21 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
                 throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Try again later");
             }
 
+            var transactionSenderAddress = _appSettings.Airlines.AirlinesAddress;
+            var estimationResult = await Erc20SharedService.EstimateDepositTransferAsync(_web3, _settings.Erc223DepositContract.Abi, 
+                transactionSenderAddress, 
+                depositContractAddress,
+                erc20TokenAddress,
+                destinationAddress);
+
+            if (!estimationResult)
+            {
+                throw new ClientSideException(ExceptionType.WrongDestination, $"Can't estimate transfer {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+            }
+
             await _operationsRepository.SaveAsync(new HotWalletOperation()
             {
-                Amount = balance,
+                Amount = amount,
                 FromAddress = depositContractAddress,
                 OperationId = guidStr,
                 OperationType = HotWalletOperationType.Cashin,

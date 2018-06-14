@@ -19,6 +19,7 @@ using System;
 using Autofac;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.LykkePay;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.LykkePay;
@@ -145,6 +146,19 @@ namespace Lykke.Service.EthereumCore.Services
             builder.RegisterType<Erc20DepositContractPoolService>()
                 .Keyed<IErc20DepositContractPoolService>(Constants.DefaultKey)
                 .SingleInstance().WithAttributeFiltering();
+
+            #region Airlines
+
+            builder.RegisterType<LykkePayErc20DepositContractService>()
+                .Keyed<IErc20DepositContractService>(Constants.AirLinesKey)
+                .SingleInstance().WithAttributeFiltering();
+
+
+            builder.RegisterType<LykkePayErc20DepositContractPoolService>()
+                .Keyed<IErc20DepositContractPoolService>(Constants.AirLinesKey)
+                .SingleInstance().WithAttributeFiltering();
+
+            #endregion
         }
 
         //TODO: need to fix that

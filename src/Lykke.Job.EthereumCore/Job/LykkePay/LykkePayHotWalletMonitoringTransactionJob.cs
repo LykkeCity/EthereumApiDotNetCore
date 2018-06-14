@@ -19,6 +19,7 @@ using Lykke.Service.EthereumCore.Services.HotWallet;
 using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
+using Lykke.Service.EthereumCore.Core.LykkePay;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.RabbitMQ;

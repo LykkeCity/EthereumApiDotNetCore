@@ -25,7 +25,6 @@ namespace Lykke.Service.AirlinesJobRunner.Job
         private readonly AppSettings _settings;
         private readonly IHotWalletOperationRepository _operationsRepository;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
-        private readonly IEthereumIndexerService _ethereumIndexerService;
         private readonly IWeb3 _web3;
 
         public TransferNotificationJob(AppSettings settings,
@@ -47,7 +46,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
         {
             if (string.IsNullOrEmpty(message?.OperationId))
             {
-                await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
+                await _logger.WriteWarningAsync(nameof(TransferNotificationJob),
                     "Execute", "", "Empty message skipped");
 
                 return;
@@ -59,7 +58,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
 
                 if (operation == null)
                 {
-                    await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
+                    await _logger.WriteWarningAsync(nameof(TransferNotificationJob),
                         "Execute", message.ToJson(), $"No operation for id {message?.OperationId} message skipped");
 
                     return;

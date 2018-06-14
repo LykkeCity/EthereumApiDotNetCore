@@ -14,15 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.LykkePay;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
-    public interface ILykkePayEventsService
-    {
-        Task IndexCashinEventsForErc20Deposits();
-        Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash);
-    }
-
     public class LykkePayEventsService : ILykkePayEventsService
     {
         private const string Erc20HotWalletMarker = "LykkePay_ERC20_HOTWALLET";

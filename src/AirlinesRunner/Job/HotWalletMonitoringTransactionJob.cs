@@ -20,6 +20,8 @@ using Lykke.Service.RabbitMQ;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Airlines;
+using Lykke.Service.EthereumCore.Core.LykkePay;
 
 namespace Lykke.Service.AirlinesJobRunner.Job
 {
@@ -35,7 +37,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
         private readonly ILykkePayEventsService _transactionEventsService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
-        private readonly IErc20DepositContractService _erc20DepositContractService;
+        private readonly IAirlinesErc20DepositContractService _erc20DepositContractService;
         private IQueueExt _transferStartQueue;
 
         public HotWalletMonitoringTransactionJob(ILog log,
@@ -48,7 +50,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
             IRabbitQueuePublisher rabbitQueuePublisher,
             ILykkePayEventsService transactionEventsService,
             IUserTransferWalletRepository userTransferWalletRepository,
-            [KeyFilter(Constants.AirLinesKey)]IErc20DepositContractService erc20DepositContractService,
+            IAirlinesErc20DepositContractService erc20DepositContractService,
             IQueueFactory queueFactory)
         {
             _transactionEventsService = transactionEventsService;
@@ -91,35 +93,31 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                 return;
             }
 
-            if (coinTransaction == null || coinTransaction.Error)
+            if (coinTransaction == null)
             {
                 await RepeatOperationTillWin(transaction);
-                await _slackNotifier.ErrorAsync($"LYKKE_PAY: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
+                await _slackNotifier.ErrorAsync($"Airlines: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
             }
             else
             {
                 if (coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
-                    if (!coinTransaction.Error)
-                    {
-                        bool sentToRabbit = await SendCompleteEvent(transaction.TransactionHash, transaction.OperationId, true, context, transaction);
+                    bool sentToRabbit = await SendCompleteEvent(transaction.TransactionHash, transaction.OperationId, !coinTransaction.Error, context, transaction);
 
-                        if (sentToRabbit)
-                        {
-                            await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
-                                       $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
-                        }
-                        else
-                        {
-                            await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
-                                $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
-                        }
+                    if (sentToRabbit)
+                    {
+                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                                   $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                     }
                     else
                     {
-                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error!");
-                        await RepeatOperationTillWin(transaction);
-                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. RETRY!");
+                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                            $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
+                    }
+
+                    if (coinTransaction.Error)
+                    {
+                        await _slackNotifier.ErrorAsync($"EthereumCoreService: HOTWALLET - Transaction with hash {transaction.TransactionHash} has an Error. Notify Caller about fail!");
                     }
                 }
                 else
@@ -179,32 +177,39 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                 }
 
                 (BigInteger? amount, string blockHash, ulong blockNumber) transferedInfo = (null, null, 0);
-                string amount;
+                string amount = operation.Amount.ToString();
                 switch (operation.OperationType)
                 {
                     case HotWalletOperationType.Cashout:
-                        amount = operation.Amount.ToString();
                         break;
                     case HotWalletOperationType.Cashin:
                         string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
                         await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
                             operation.TokenAddress, userAddress, "");
 
-                        transferedInfo = await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(transactionHash);
-                        if (transferedInfo.amount == null || 
-                            transferedInfo.amount == 0)
+                        //There will be nothing to index in failed event
+                        if (success)
                         {
-                            //Not yet indexed
-                            SendMessageToTheQueueEnd(context, transaction, 10000);
-                            return false;
+                            transferedInfo =
+                                await _transactionEventsService.IndexCashinEventsForErc20TransactionHashAsync(
+                                    transactionHash);
+                            if (transferedInfo.amount == null ||
+                                transferedInfo.amount == 0)
+                            {
+                                //Not yet indexed
+                                SendMessageToTheQueueEnd(context, transaction, 10000);
+                                return false;
+                            }
+
+                            amount = transferedInfo.amount.ToString();
                         }
 
-                        amount = transferedInfo.amount.ToString();
                         break;
                     default:
                         return false;
                 }
 
+                EventType eventType = success ? EventType.Completed : EventType.Failed;
                 TransferEvent @event = new TransferEvent(operation.OperationId,
                     transactionHash,
                     amount,
@@ -214,7 +219,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                     transferedInfo.blockHash,
                     transferedInfo.blockNumber,
                     SenderType.EthereumCore,
-                    EventType.Completed);
+                    eventType);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
 

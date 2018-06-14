@@ -99,7 +99,7 @@ namespace Lykke.Job.EthereumCore.Job
                     return;
                 }
 
-                var trHash = await Erc20SharedService.StartTransferAsync(_web3, _settings.EthereumCore,
+                var trHash = await Erc20SharedService.StartDepositTransferAsync(_web3, _settings.EthereumCore,
                     transactionSenderAddress,
                     operation.FromAddress, operation.TokenAddress, operation.ToAddress);
                 await _hotWalletTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
