@@ -87,7 +87,7 @@ namespace Lykke.Job.EthereumCore.Job
                 return;
             }
 
-            if ((coinTransaction == null || coinTransaction.ConfirmationLevel == 0) &&
+            if ((coinTransaction == null) &&
                 (DateTime.UtcNow - transaction.PutDateTime > _broadcastMonitoringPeriodSeconds))
             {
                 await RepeatOperationTillWin(transaction);
