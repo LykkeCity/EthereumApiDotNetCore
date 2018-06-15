@@ -96,7 +96,7 @@ namespace Lykke.Job.EthereumCore.Job
             }
             else
             {
-                if (coinTransaction != null && coinTransaction.ConfirmationLevel != 0)
+                if (coinTransaction != null && coinTransaction.ConfirmationLevel >= CoinTransactionService.Level2Confirm)
                 {
                     if (!coinTransaction.Error)
                     {
