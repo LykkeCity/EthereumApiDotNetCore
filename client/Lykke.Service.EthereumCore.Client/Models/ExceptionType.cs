@@ -33,6 +33,8 @@ namespace Lykke.Service.EthereumCore.Client.Models
         OperationWithIdAlreadyExists,
         [EnumMember(Value = "TransferInProcessing")]
         TransferInProcessing,
+        [EnumMember(Value = "CantEstimateExecution")]
+        CantEstimateExecution,
         [EnumMember(Value = "NotEnoughFunds")]
         NotEnoughFunds,
         [EnumMember(Value = "TransactionExists")]
@@ -69,6 +71,8 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return "OperationWithIdAlreadyExists";
                 case ExceptionType.TransferInProcessing:
                     return "TransferInProcessing";
+                case ExceptionType.CantEstimateExecution:
+                    return "CantEstimateExecution";
                 case ExceptionType.NotEnoughFunds:
                     return "NotEnoughFunds";
                 case ExceptionType.TransactionExists:
@@ -101,14 +105,16 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return ExceptionType.OperationWithIdAlreadyExists;
                 case "TransferInProcessing":
                     return ExceptionType.TransferInProcessing;
+                case "WrongDestination":
+                    return ExceptionType.WrongDestination;
+                case "CantEstimateExecution":
+                    return ExceptionType.CantEstimateExecution;
                 case "NotEnoughFunds":
                     return ExceptionType.NotEnoughFunds;
                 case "TransactionExists":
                     return ExceptionType.TransactionExists;
                 case "TransactionRequiresMoreGas":
                     return ExceptionType.TransactionRequiresMoreGas;
-                case "WrongDestination":
-                    return ExceptionType.WrongDestination;
             }
             return null;
         }

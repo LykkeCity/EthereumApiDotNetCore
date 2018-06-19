@@ -1,14 +1,9 @@
-﻿using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Nethereum.Web3;
-using Lykke.Service.EthereumCore.Services;
-using Common.Log;
-using Lykke.Service.EthereumCore.Core.Settings;
-using System.Numerics;
-using System;
+﻿using System;
+using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
 using Common;
+using Common.Log;
 using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 using Lykke.JobTriggers.Triggers.Attributes;
@@ -16,15 +11,17 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Core.Shared;
+using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.RabbitMQ;
 
-namespace Lykke.Job.EthereumCore.Job
+namespace Lykke.Job.EthereumCore.Job.Airlines
 {
-    public class LykkePayErc20DepositTransferStarterJob
+    public class Erc20DepositTransferStarterJob
     {
         private readonly ILog _logger;
 
@@ -37,12 +34,12 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IQueueExt _transactionStartedNotificationQueue;
 
-        public LykkePayErc20DepositTransferStarterJob(AppSettings settings,
+        public Erc20DepositTransferStarterJob(AppSettings settings,
             ILog logger,
             IWeb3 web3,
             IQueueFactory queueFactory,
-            [KeyFilter(Constants.LykkePayKey)]IHotWalletOperationRepository operationsRepository,
-            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository hotWalletTransactionRepository,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletOperationRepository operationsRepository,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletTransactionRepository hotWalletTransactionRepository,
             IRabbitQueuePublisher rabbitQueuePublisher,
             IErcInterfaceService ercInterfaceService
             )
@@ -51,21 +48,21 @@ namespace Lykke.Job.EthereumCore.Job
             _logger = logger;
             _web3 = web3;
             _operationsRepository = operationsRepository;
-            _transactionMonitoringQueue = queueFactory.Build(Constants.LykkePayTransactionMonitoringQueue);
-            _transactionStartedNotificationQueue = queueFactory.Build(Constants.LykkePayErc223TransferNotificationsQueue);
+            _transactionMonitoringQueue = queueFactory.Build(Constants.AirlinesTransactionMonitoringQueue);
+            _transactionStartedNotificationQueue = queueFactory.Build(Constants.AirlinesErc223TransferNotificationsQueue);
             _hotWalletTransactionRepository = hotWalletTransactionRepository;
             _rabbitQueuePublisher = rabbitQueuePublisher;
             _ercInterfaceService = ercInterfaceService;
         }
 
-        [QueueTrigger(Constants.LykkePayErc223TransferQueue, 200, true)]
+        [QueueTrigger(Constants.AirlinesErc223TransferQueue, 200, true)]
         public async Task Execute(LykkePayErc20TransferMessage transaction, QueueTriggeringContext context)
         {
             IHotWalletOperation operation = null;
 
             if (string.IsNullOrEmpty(transaction?.OperationId))
             {
-                await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
+                await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
                     "Execute", "", "Empty message skipped");
 
                 return;
@@ -77,20 +74,20 @@ namespace Lykke.Job.EthereumCore.Job
 
                 if (operation == null)
                 {
-                    await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
+                    await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
                         "Execute", transaction.ToJson(),
                         $"No operation for id {transaction?.OperationId} message skipped");
 
                     return;
                 }
 
-                var transactionSenderAddress = _settings.LykkePay.LykkePayAddress;
+                var transactionSenderAddress = _settings.Airlines.AirlinesAddress;
                 var balance =
                     await _ercInterfaceService.GetPendingBalanceForExternalTokenAsync(operation.FromAddress,
                         operation.TokenAddress);
                 if (balance == 0)
                 {
-                    await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
+                    await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
                         "Execute", transaction.ToJson(),
                         $"DepositAddress: {operation.FromAddress}, TokenAddress: {operation.TokenAddress}");
 
@@ -99,9 +96,13 @@ namespace Lykke.Job.EthereumCore.Job
                     return;
                 }
 
-                var trHash = await Erc20SharedService.StartDepositTransferAsync(_web3, _settings.EthereumCore,
+                var trHash = await Erc223SharedService.StartDepositTransferAsync(_web3,
+                    _settings.EthereumCore.Erc223DepositContract.Abi,
                     transactionSenderAddress,
-                    operation.FromAddress, operation.TokenAddress, operation.ToAddress);
+                    operation.FromAddress, 
+                    operation.TokenAddress, 
+                    operation.ToAddress,
+                    operation.Amount);
                 await _hotWalletTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
                 {
                     OperationId = transaction.OperationId,
@@ -122,7 +123,7 @@ namespace Lykke.Job.EthereumCore.Job
                 {
                     OperationId = transaction.OperationId,
                     TransactionHash = trHash,
-                    Balance = balance.ToString() //At the starting moment(may change at the end of the execution)
+                    Balance = balance.ToString() 
                 };
 
                 await _transactionStartedNotificationQueue.PutRawMessageAsync(
@@ -144,7 +145,7 @@ namespace Lykke.Job.EthereumCore.Job
                     SenderType.EthereumCore,
                     EventType.Failed);
 
-                await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob), "Execute",
+                await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob), "Execute",
                     operation.ToJson(), ex);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
@@ -155,7 +156,7 @@ namespace Lykke.Job.EthereumCore.Job
                     return;
 
                 if (ex.Message != transaction.LastError)
-                    await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob),
+                    await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
                         "Execute", transaction.ToJson(), "transaction.OperationId");
 
                 transaction.LastError = ex.Message;
@@ -163,7 +164,7 @@ namespace Lykke.Job.EthereumCore.Job
                 context.MoveMessageToEnd(transaction.ToJson());
                 context.SetCountQueueBasedDelay(_settings.EthereumCore.MaxQueueDelay, 200);
 
-                await _logger.WriteErrorAsync(nameof(LykkePayErc20DepositTransferStarterJob), "Execute",
+                await _logger.WriteErrorAsync(nameof(Erc20DepositTransferStarterJob), "Execute",
                     transaction.ToJson(), ex);
             }
         }

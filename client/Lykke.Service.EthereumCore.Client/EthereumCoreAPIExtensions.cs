@@ -18,6 +18,102 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiAirlinesErc20depositsGet(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string))
+            {
+                return operations.ApiAirlinesErc20depositsGetAsync(apiKey, userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiAirlinesErc20depositsGetAsync(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiAirlinesErc20depositsGetWithHttpMessagesAsync(apiKey, userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            public static object ApiAirlinesErc20depositsPost(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string))
+            {
+                return operations.ApiAirlinesErc20depositsPostAsync(apiKey, userAddress).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='userAddress'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiAirlinesErc20depositsPostAsync(this IEthereumCoreAPI operations, string apiKey, string userAddress = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiAirlinesErc20depositsPostWithHttpMessagesAsync(apiKey, userAddress, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            public static object ApiAirlinesErc20depositsTransferPost(this IEthereumCoreAPI operations, string apiKey, AirlinesTransferFromDepositRequest request = default(AirlinesTransferFromDepositRequest))
+            {
+                return operations.ApiAirlinesErc20depositsTransferPostAsync(apiKey, request).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='apiKey'>
+            /// Api key
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiAirlinesErc20depositsTransferPostAsync(this IEthereumCoreAPI operations, string apiKey, AirlinesTransferFromDepositRequest request = default(AirlinesTransferFromDepositRequest), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiAirlinesErc20depositsTransferPostWithHttpMessagesAsync(apiKey, request, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='ercTransaction'>
             /// </param>
             public static object ApiErc20BalancePost(this IEthereumCoreAPI operations, GetErcBalance ercTransaction = default(GetErcBalance))

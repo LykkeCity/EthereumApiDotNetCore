@@ -5,6 +5,7 @@ using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
@@ -13,14 +14,13 @@ using Lykke.Service.EthereumCore.Core.Shared;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 
-namespace Lykke.Service.EthereumCore.Services.LykkePay
+namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public class LykkePayErc20DepositContractService : IErc20DepositContractService
+    public class AirlinesErc20DepositContractService : IAirlinesErc20DepositContractService
     {
         private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
-        private readonly IBaseSettings _settings;
         private readonly ILog _log;
         private readonly IWeb3 _web3;
         private readonly AppSettings _appSettings;
@@ -29,12 +29,11 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
         private readonly IHotWalletOperationRepository _operationsRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
-        public LykkePayErc20DepositContractService(
-            [KeyFilter(Constants.LykkePayKey)] IErc223DepositContractRepository contractRepository,
-            [KeyFilter(Constants.LykkePayKey)] IHotWalletOperationRepository operationsRepository,
+        public AirlinesErc20DepositContractService(
+            [KeyFilter(Constants.AirLinesKey)] IErc223DepositContractRepository contractRepository,
+            [KeyFilter(Constants.AirLinesKey)] IHotWalletOperationRepository operationsRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            IBaseSettings settings,
             ILog log,
             IWeb3 web3,
             AppSettings appSettings,
@@ -45,11 +44,11 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
             _contractRepository = contractRepository;
             _contractService = contractService;
             _poolFactory = poolFactory;
-            _settings = settings;
+            _appSettings = appSettings;
             _log = log;
             _web3 = web3;
             _appSettings = appSettings;
-            _transferQueue = factory.Build(Constants.LykkePayErc223TransferQueue);
+            _transferQueue = factory.Build(Constants.AirlinesErc223TransferQueue);
             _ercInterfaceService = ercInterfaceService;
             _operationsRepository = operationsRepository;
             _userTransferWalletRepository = userTransferWalletRepository;
@@ -62,7 +61,7 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
 
             if (string.IsNullOrEmpty(contractAddress))
             {
-                var pool = _poolFactory.Get(Constants.LykkePayErc20DepositContractPoolQueue);
+                var pool = _poolFactory.Get(Constants.AirlinesErc20DepositContractPoolQueue);
 
                 contractAddress = await pool.GetContractAddress();
 
@@ -80,15 +79,15 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
         {
             try
             {
-                var fromAddress = _appSettings.LykkePay.LykkePayAddress;
-                var abi = _settings.Erc20DepositContract.Abi;
-                var byteCode = _settings.Erc20DepositContract.ByteCode;
+                var fromAddress = _appSettings.Airlines.AirlinesAddress;
+                var abi = _appSettings.EthereumCore.Erc223DepositContract.Abi;
+                var byteCode = _appSettings.EthereumCore.Erc223DepositContract.ByteCode;
 
                 return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync(nameof(Erc20DepositContractService), nameof(CreateContract), "", e, DateTime.UtcNow);
+                await _log.WriteErrorAsync(nameof(Services.Erc20DepositContractService), nameof(CreateContract), "", e, DateTime.UtcNow);
 
                 return null;
             }
@@ -123,7 +122,7 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
         /// <param name="destinationAddress"></param>
         /// <returns>TransactionHash</returns>
         public async Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
-           string erc20TokenAddress, string destinationAddress)
+           string erc20TokenAddress, string destinationAddress, string tokenAmount)
         {
             var depositContract = await _contractRepository.GetByContractAddress(depositContractAddress);
             if (depositContract == null)
@@ -139,10 +138,13 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
                 throw new ClientSideException(ExceptionType.TransferInProcessing, $"Transfer from {depositContractAddress} was started before wait for it to complete");
             }
 
+            var amount = System.Numerics.BigInteger.Parse(tokenAmount);
             var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(depositContractAddress, erc20TokenAddress);
-            if (balance == 0)
+            if (balance == 0 || amount > balance)
             {
-                throw new ClientSideException(ExceptionType.NotEnoughFunds, $"No tokens detected at deposit address {depositContractAddress}");
+                throw new ClientSideException(ExceptionType.NotEnoughFunds, 
+                    $"Not enough tokens to proceed with withdrawal detected at deposit address {depositContractAddress}. " +
+                    $"Current balance: {balance}");
             }
 
             var guidStr = Guid.NewGuid().ToString();
@@ -157,13 +159,15 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
             {
                 throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Try again later");
             }
-            var transactionSenderAddress = _appSettings.LykkePay.LykkePayAddress;
-            var estimationResult = await Erc20SharedService.EstimateDepositTransferAsync(_web3,
-                _settings.Erc20DepositContract.Abi,
-                transactionSenderAddress,
+
+            var transactionSenderAddress = _appSettings.Airlines.AirlinesAddress;
+            var estimationResult = await Erc223SharedService.EstimateDepositTransferAsync(_web3, 
+                _appSettings.EthereumCore.Erc223DepositContract.Abi, 
+                transactionSenderAddress, 
                 depositContractAddress,
-                erc20TokenAddress, 
-                destinationAddress);
+                erc20TokenAddress,
+                destinationAddress,
+                amount);
 
             if (!estimationResult)
             {
@@ -172,7 +176,7 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
 
             await _operationsRepository.SaveAsync(new HotWalletOperation()
             {
-                Amount = balance,
+                Amount = amount,
                 FromAddress = depositContractAddress,
                 OperationId = guidStr,
                 OperationType = HotWalletOperationType.Cashin,

@@ -13,6 +13,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         [Lykke.SettingsReader.Attributes.Optional]
         public ChaosSettings ChaosKitty { get; set; }
         public LykkePay LykkePay { get; set; }
+        public Airlines Airlines { get; set; }
         public ApiKeys ApiKeys { get; set; }
     }
 }

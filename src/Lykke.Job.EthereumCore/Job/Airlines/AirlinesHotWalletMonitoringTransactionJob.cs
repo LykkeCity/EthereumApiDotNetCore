@@ -3,35 +3,32 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
-using Lykke.Service.EthereumCore.Services.Coins;
-using Common.Log;
 using Common;
+using Common.Log;
 using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
-using Lykke.JobTriggers.Triggers.Attributes;
-using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.JobTriggers.Triggers.Bindings;
-using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Core.Notifiers;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.EthereumCore.Services.HotWallet;
-using RabbitMQ;
-using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
+using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.JobTriggers.Triggers.Bindings;
+using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.LykkePay;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
+using Lykke.Service.EthereumCore.Core.Notifiers;
+using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Core.Shared;
+using Lykke.Service.EthereumCore.Services;
+using Lykke.Service.EthereumCore.Services.Coins;
+using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.Service.RabbitMQ;
-using Lykke.Service.EthereumCore.Services.New;
 
-namespace Lykke.Job.EthereumCore.Job
+namespace Lykke.Job.EthereumCore.Job.Airlines
 {
-    public class LykkePayHotWalletMonitoringTransactionJob
+    public class AirlinesHotWalletMonitoringTransactionJob
     {
         private readonly ILog _log;
         private readonly ICoinTransactionService _coinTransactionService;
-        private readonly IBaseSettings _settings;
+        private readonly AppSettings _settings;
         private readonly ISlackNotifier _slackNotifier;
         private readonly IHotWalletTransactionRepository _hotWalletCashoutTransactionRepository;
         private readonly IHotWalletOperationRepository _hotWalletCashoutRepository;
@@ -39,20 +36,20 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly ILykkePayEventsService _transactionEventsService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
-        private readonly IErc20DepositContractService _erc20DepositContractService;
+        private readonly IAirlinesErc20DepositContractService _erc20DepositContractService;
         private IQueueExt _transferStartQueue;
 
-        public LykkePayHotWalletMonitoringTransactionJob(ILog log,
+        public AirlinesHotWalletMonitoringTransactionJob(ILog log,
             ICoinTransactionService coinTransactionService,
-            IBaseSettings settings,
+            AppSettings settings,
             ISlackNotifier slackNotifier,
             IEthereumTransactionService ethereumTransactionService,
-            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
-            [KeyFilter(Constants.LykkePayKey)]IHotWalletOperationRepository hotWalletCashoutRepository,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletTransactionRepository hotWalletCashoutTransactionRepository,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletOperationRepository hotWalletCashoutRepository,
             IRabbitQueuePublisher rabbitQueuePublisher,
             ILykkePayEventsService transactionEventsService,
             IUserTransferWalletRepository userTransferWalletRepository,
-            [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService erc20DepositContractService,
+            [KeyFilter(Constants.AirLinesKey)]IAirlinesErc20DepositContractService erc20DepositContractService,
             IQueueFactory queueFactory)
         {
             _transactionEventsService = transactionEventsService;
@@ -66,10 +63,10 @@ namespace Lykke.Job.EthereumCore.Job
             _rabbitQueuePublisher = rabbitQueuePublisher;
             _userTransferWalletRepository = userTransferWalletRepository;
             _erc20DepositContractService = erc20DepositContractService;
-            _transferStartQueue = queueFactory.Build(Constants.LykkePayErc223TransferQueue);
+            _transferStartQueue = queueFactory.Build(Constants.AirlinesErc223TransferQueue);
         }
 
-        [QueueTrigger(Constants.LykkePayTransactionMonitoringQueue, 100, true)]
+        [QueueTrigger(Constants.AirlinesTransactionMonitoringQueue, 100, true)]
         public async Task Execute(CoinTransactionMessage transaction, QueueTriggeringContext context)
         {
             ICoinTransaction coinTransaction = null;
@@ -87,18 +84,18 @@ namespace Lykke.Job.EthereumCore.Job
             catch (Exception ex)
             {
                 if (ex.Message != transaction.LastError)
-                    await _log.WriteWarningAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", $"TrHash: [{transaction.TransactionHash}]", "");
+                    await _log.WriteWarningAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "Execute", $"TrHash: [{transaction.TransactionHash}]", "");
 
                 SendMessageToTheQueueEnd(context, transaction, 200, ex.Message);
 
-                await _log.WriteErrorAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "", ex);
+                await _log.WriteErrorAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "Execute", "", ex);
                 return;
             }
 
             if (coinTransaction == null)
             {
                 await RepeatOperationTillWin(transaction);
-                await _slackNotifier.ErrorAsync($"LYKKE_PAY: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
+                await _slackNotifier.ErrorAsync($"Airlines: Transaction with hash {transaction.TransactionHash} has ERROR. RETRY. Address is yet blocked");
             }
             else
             {
@@ -108,12 +105,12 @@ namespace Lykke.Job.EthereumCore.Job
 
                     if (sentToRabbit)
                     {
-                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                        await _log.WriteInfoAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "Execute", "",
                                    $"Put coin transaction {transaction.TransactionHash} to rabbit queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                     }
                     else
                     {
-                        await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                        await _log.WriteInfoAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "Execute", "",
                             $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                     }
 
@@ -125,7 +122,7 @@ namespace Lykke.Job.EthereumCore.Job
                 else
                 {
                     SendMessageToTheQueueEnd(context, transaction, 100);
-                    await _log.WriteInfoAsync(nameof(HotWalletMonitoringTransactionJob), "Execute", "",
+                    await _log.WriteInfoAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "Execute", "",
                             $"Put coin transaction {transaction.TransactionHash} to monitoring queue with confimation level {coinTransaction?.ConfirmationLevel ?? 0}");
                 }
             }
@@ -229,7 +226,7 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync(nameof(HotWalletMonitoringTransactionJob), "SendCompletedCoinEvent", $"trHash: {transactionHash}", e, DateTime.UtcNow);
+                await _log.WriteErrorAsync(nameof(AirlinesHotWalletMonitoringTransactionJob), "SendCompletedCoinEvent", $"trHash: {transactionHash}", e, DateTime.UtcNow);
                 SendMessageToTheQueueEnd(context, transaction, 100);
 
                 return false;
@@ -241,7 +238,7 @@ namespace Lykke.Job.EthereumCore.Job
             transaction.DequeueCount++;
             transaction.LastError = string.IsNullOrEmpty(error) ? transaction.LastError : error;
             context.MoveMessageToEnd(transaction.ToJson());
-            context.SetCountQueueBasedDelay(_settings.MaxQueueDelay, delay);
+            context.SetCountQueueBasedDelay(_settings.EthereumCore.MaxQueueDelay, delay);
         }
     }
 }

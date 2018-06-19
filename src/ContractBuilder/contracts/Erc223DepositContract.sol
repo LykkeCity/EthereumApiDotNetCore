@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 import "./token/erc20Contract.sol";
 
-contract Erc20DepositContract {
+contract Erc223DepositContract {
     
     address public _owner = msg.sender;
 
@@ -16,16 +16,21 @@ contract Erc20DepositContract {
         throw;
     }
 
-    function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
+    function transferTokens(address _tokenAddress, address _to, uint256 _amount) onlyOwner public returns (bool success) {
         
         ERC20Interface erc20Contract = ERC20Interface(_tokenAddress);
         uint balance = erc20Contract.balanceOf(this); 
 
-        if (balance <= 0 || _to == address(this)) {
+        if (_amount <= 0)
+        {
+            return;
+        }
+
+        if (_amount > balance || _to == address(this)) {
             return false;
         }
 
-        return erc20Contract.transfer(_to, balance);
+        return erc20Contract.transfer(_to, _amount);
     }
 
     //Add compatibility for erc223 contract reciever

@@ -34,6 +34,45 @@ namespace Lykke.Service.EthereumCore.Client
         JsonSerializerSettings DeserializationSettings { get; }
 
 
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='userAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiAirlinesErc20depositsGetWithHttpMessagesAsync(string apiKey, string userAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='userAddress'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiAirlinesErc20depositsPostWithHttpMessagesAsync(string apiKey, string userAddress = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='apiKey'>
+        /// Api key
+        /// </param>
+        /// <param name='request'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiAirlinesErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, AirlinesTransferFromDepositRequest request = default(AirlinesTransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='ercTransaction'>
         /// </param>
         /// <param name='customHeaders'>

@@ -145,7 +145,6 @@ namespace Lykke.Job.EthereumCore
             try
             {
                 // NOTE: Job still can recieve and process IsAlive requests here, so take care about it if you add logic here.
-
                 await ApplicationContainer.Resolve<IShutdownManager>().StopAsync();
 
                 _triggerHost?.Cancel();

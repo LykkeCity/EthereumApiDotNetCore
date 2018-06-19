@@ -100,10 +100,6 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
                 AzureTableStorage<AppSettingEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.AppSettingsTable,
                     log)));
 
-            builder.RegisterInstance<ICoinTransactionRepository>(new CoinTransactionRepository(
-                AzureTableStorage<CoinTransactionEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.TransactionsTable,
-                    log)));
-
             builder.RegisterInstance<ICoinContractFilterRepository>(new CoinContractFilterRepository(
                 AzureTableStorage<CoinContractFilterEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.CoinFiltersTable,
                     log)));
@@ -185,6 +181,31 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
             #endregion
 
+            #region AirLines 
+
+            builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
+                AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.AirlinesErc223DepositContractTable,
+                    log),
+                AzureTableStorage<Erc20DepositContractReversedEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.AirlinesErc223DepositContractTable,
+                    log)
+            )).Keyed<IErc223DepositContractRepository>(Constants.AirLinesKey);
+
+            builder.RegisterInstance<IHotWalletOperationRepository>(new HotWalletOperationRepository(
+                AzureTableStorage<HotWalletCashoutEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.LykkePayOperationsTable,
+                    log))).Keyed<IHotWalletOperationRepository>(Constants.AirLinesKey);
+
+            builder.RegisterInstance<IHotWalletTransactionRepository>(new HotWalletTransactionRepository(
+                AzureTableStorage<HotWalletCashoutTransactionOpIdPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.AirlinesHotWalletCashoutTransactionTable,
+                    log),
+                AzureTableStorage<HotWalletCashoutTransactionHashPartitionEntity>.Create(dataReloadingManager,
+                    Constants.StoragePrefix + Constants.AirlinesHotWalletCashoutTransactionTable,
+                    log))).Keyed<IHotWalletTransactionRepository>(Constants.AirLinesKey);
+
+            #endregion
+
             builder.RegisterInstance<IGasPriceRepository>(new GasPriceRepository(
                 AzureTableStorage<GasPriceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.GasPriceTable,
                     log)));
@@ -207,10 +228,9 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
         }
 
         public static void RegisterAzureQueues(this ContainerBuilder builder,
-            IReloadingManager<BaseSettings> settings,
+            IReloadingManager<string> dataReloadingManager,
             IReloadingManager<SlackNotificationSettings> slackNotificationManager)
         {
-            var dataReloadingManager = settings.ConnectionString(x => x.Db.DataConnString);
             var slackReloadManager = slackNotificationManager.ConnectionString(x => x.AzureQueue.ConnectionString);
             var queueName = slackNotificationManager.CurrentValue.AzureQueue.QueueName;
             Func<string, IQueueExt> oldQueueResolver = (queueNameArg) =>

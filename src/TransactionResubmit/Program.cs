@@ -41,8 +41,9 @@ namespace TransactionResubmit
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
             collection.RegisterServices();
             RegisterReposExt.RegisterAzureStorages(builder, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications), log);
-            RegisterReposExt.RegisterAzureQueues(builder, settings.Nested(x => x.EthereumCore), settings.Nested(x => x.SlackNotifications));
-            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore), log);
+            RegisterReposExt.RegisterAzureQueues(builder, settings.Nested(x => x.EthereumCore.Db.DataConnString), settings.Nested(x => x.SlackNotifications));
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, settings.Nested(x => x.EthereumCore.RabbitMq),
+                settings.Nested(x => x.EthereumCore.Db.DataConnString), log);
             RegisterDependency.RegisterServices(builder);
             builder.Populate(collection);
             ServiceProvider = builder.Build();
