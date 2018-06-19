@@ -37,40 +37,30 @@ namespace Lykke.Service.EthereumCore.Services
     public class TransferContractTransactionService : ITransferContractTransactionService
     {
         private readonly ILog _logger;
-        private readonly IBaseSettings _baseSettings;
         private readonly IQueueExt _queue;
         private readonly ITransferContractRepository _transferContractRepository;
         private TransferContractService _transferContractService;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
         private readonly IUserPaymentHistoryRepository _userPaymentHistoryRepository;
-        private readonly ICoinTransactionService _cointTransactionService;
-        private readonly ICoinTransactionRepository _coinTransactionRepository;
         private readonly ICoinEventService _coinEventService;
         private readonly IEventTraceRepository _eventTraceRepository;
 
         public TransferContractTransactionService(Func<string, IQueueExt> queueFactory,
             ILog logger,
-            IExchangeContractService coinContractService,
-            IBaseSettings baseSettings,
             ITransferContractRepository transferContractRepository,
             TransferContractService transferContractService,
             IUserTransferWalletRepository userTransferWalletRepository,
             IUserPaymentHistoryRepository userPaymentHistoryRepository,
-            ICoinTransactionService cointTransactionService,
-            ICoinTransactionRepository coinTransactionRepository,
             ICoinEventService coinEventService,
             IEventTraceRepository eventTraceRepository)
         {
             _eventTraceRepository = eventTraceRepository;
             _logger = logger;
-            _baseSettings = baseSettings;
             _queue = queueFactory(Constants.ContractTransferQueue);
             _transferContractRepository = transferContractRepository;
             _transferContractService = transferContractService;
             _userTransferWalletRepository = userTransferWalletRepository;
             _userPaymentHistoryRepository = userPaymentHistoryRepository;
-            _cointTransactionService = cointTransactionService;
-            _coinTransactionRepository = coinTransactionRepository;
             _coinEventService = coinEventService;
         }
 
