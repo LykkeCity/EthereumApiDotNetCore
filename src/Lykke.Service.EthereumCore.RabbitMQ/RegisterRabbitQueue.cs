@@ -17,14 +17,15 @@ namespace Lykke.Service.RabbitMQ
     public static class RegisterRabbitQueueEx
     {
         public static void RegisterRabbitQueue(this IServiceCollection Services,
-            IReloadingManager<Lykke.Service.EthereumCore.Core.Settings.BaseSettings> settings,
+            IReloadingManager<Lykke.Service.EthereumCore.Core.Settings.RabbitMq> settings,
+            IReloadingManager<string> dataConnString,
             ILog logger,
             string exchangePrefix = "")
         {
-            var queueRepository = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMQ");
-            var queueRepositoryHW = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMqHotwallet");
-            var queueRepositoryLP = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(settings.ConnectionString(x => x.Db.DataConnString)), "ethereumCoreRabbitMqLykkePay");
-            var rabbitSettings = settings.CurrentValue.RabbitMq;
+            var queueRepository = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(dataConnString), "ethereumCoreRabbitMQ");
+            var queueRepositoryHW = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(dataConnString), "ethereumCoreRabbitMqHotwallet");
+            var queueRepositoryLP = new MessagePackBlobPublishingQueueRepository(AzureBlobStorage.Create(dataConnString), "ethereumCoreRabbitMqLykkePay");
+            var rabbitSettings = settings.CurrentValue;
             string exchangeName = exchangePrefix + rabbitSettings.ExchangeEthereumCore;
             string connectionString = $"amqp://{rabbitSettings.Username}:{rabbitSettings.Password}@{rabbitSettings.Host}:{rabbitSettings.Port}";
 

@@ -1,10 +1,15 @@
-﻿using Autofac.Features.AttributeFilters;
+﻿using System;
+using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
 using Common;
 using Common.Log;
+using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
+using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
@@ -13,19 +18,14 @@ using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.Service.RabbitMQ;
-using System;
-using System.Threading.Tasks;
-using Lykke.Job.EthereumCore.Contracts.Enums.LykkePay;
-using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
-using Lykke.Service.EthereumCore.Core.Exceptions;
 
-namespace Lykke.Service.AirlinesJobRunner.Job
+namespace Lykke.Job.EthereumCore.Job.Airlines
 {
     public class Erc20DepositTransferStarterJob
     {
         private readonly ILog _logger;
 
-        private readonly AirlinesAppSettings _settings;
+        private readonly AppSettings _settings;
         private readonly IWeb3 _web3;
         private readonly IHotWalletOperationRepository _operationsRepository;
         private readonly IQueueExt _transactionMonitoringQueue;
@@ -34,7 +34,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IQueueExt _transactionStartedNotificationQueue;
 
-        public Erc20DepositTransferStarterJob(AirlinesAppSettings settings,
+        public Erc20DepositTransferStarterJob(AppSettings settings,
             ILog logger,
             IWeb3 web3,
             IQueueFactory queueFactory,
@@ -96,7 +96,8 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                     return;
                 }
 
-                var trHash = await Erc20SharedService.StartDepositTransferAsync(_web3, _settings.EthereumCore,
+                var trHash = await Erc223SharedService.StartDepositTransferAsync(_web3,
+                    _settings.EthereumCore.Erc223DepositContract.Abi,
                     transactionSenderAddress,
                     operation.FromAddress, 
                     operation.TokenAddress, 
@@ -122,7 +123,7 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                 {
                     OperationId = transaction.OperationId,
                     TransactionHash = trHash,
-                    Balance = balance.ToString() //At the starting moment(may change at the end of the execution)
+                    Balance = balance.ToString() 
                 };
 
                 await _transactionStartedNotificationQueue.PutRawMessageAsync(

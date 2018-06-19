@@ -10,50 +10,33 @@ using Lykke.Service.RabbitMQ;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Services.Common;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public class EventsService : ILykkePayEventsService
+    public class AirlinesEventsService : EventsServiceCommon
     {
-        private readonly IAirlinesErc20DepositContractService _depositContractService;
-        private readonly IEthereumIndexerService _ethereumIndexerService;
-
-        public EventsService(
+        public AirlinesEventsService(
+            IBlockSyncedByHashRepository blockSyncedRepository,
+            IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
-            IAirlinesErc20DepositContractService depositContractService)
+            IRabbitQueuePublisher rabbitQueuePublisher,
+            IAirlinesErc20DepositContractService depositContractService) : 
+            base(blockSyncedRepository,
+                indexerApi,
+                ethereumIndexerService,
+                rabbitQueuePublisher,
+                depositContractService)
         {
-            _depositContractService = depositContractService;
-            _ethereumIndexerService = ethereumIndexerService;
         }
 
-        public async Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash)
+        protected override string HotWalletMarker
         {
-            BigInteger result = 0;
-            var transaction = await _ethereumIndexerService.GetTransactionAsync(transactionHash);
-
-            if (transaction == null)
-                return (null, null, 0);
-
-            if (transaction.ErcTransfer != null)
+            get
             {
-                //only one transfer could appear in deposit transaction
-                foreach (var item in transaction.ErcTransfer)
-                {
-                    if (!await _depositContractService.ContainsAsync(item.From?.ToLower()))
-                    { 
-                        continue;
-                    }
-
-                    BigInteger.TryParse(item.Value, out result);
-                }
+                return "Airlines_ERC20_HOTWALLET";
             }
-
-            return (result, transaction.Transaction?.BlockHash, transaction.Transaction?.BlockNumber ?? 0);
-        }
-
-        public async Task IndexCashinEventsForErc20Deposits()
-        {
-            throw new NotImplementedException();
         }
     }
 }

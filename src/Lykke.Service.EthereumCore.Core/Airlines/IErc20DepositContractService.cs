@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.Repositories;
 
 namespace Lykke.Service.EthereumCore.Core.Airlines
 {
-    public interface IAirlinesErc20DepositContractService
+    public interface IAirlinesErc20DepositContractService : IErc20DepositContractLocatorService
     {
         Task<string> AssignContract(string userAddress);
 
@@ -22,7 +23,5 @@ namespace Lykke.Service.EthereumCore.Core.Airlines
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
             string erc20TokenAddress, string destinationAddress, string tokenAmount);
-
-        Task<bool> ContainsAsync(string address);
     }
 }

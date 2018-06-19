@@ -26,39 +26,5 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
                 Error = transaction.Error
             };
         }
-
-    }
-
-
-    public class CoinTransactionRepository : ICoinTransactionRepository
-    {
-        private readonly INoSQLTableStorage<CoinTransactionEntity> _table;
-
-        public CoinTransactionRepository(INoSQLTableStorage<CoinTransactionEntity> table)
-        {
-            _table = table;
-        }
-
-        public async Task AddAsync(ICoinTransaction transaction)
-        {
-            var entity = CoinTransactionEntity.Create(transaction);
-            await _table.InsertAsync(entity);
-        }
-
-        public async Task InsertOrReplaceAsync(ICoinTransaction transaction)
-        {
-            var entity = CoinTransactionEntity.Create(transaction);
-
-            await _table.InsertOrReplaceAsync(entity);
-        }
-
-        public async Task<ICoinTransaction> GetTransaction(string transactionHash)
-        {
-            return await _table.GetDataAsync(CoinTransactionEntity.GeneratePartitionKey(), transactionHash);
-        }
-
-        public void DeleteTable()
-        {
-        }
     }
 }

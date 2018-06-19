@@ -30,7 +30,7 @@ contract Erc223DepositContract {
             return false;
         }
 
-        return erc20Contract.transfer(_to, balance);
+        return erc20Contract.transfer(_to, _amount);
     }
 
     //Add compatibility for erc223 contract reciever

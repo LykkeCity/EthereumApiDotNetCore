@@ -9,7 +9,7 @@ using Lykke.Service.EthereumCore.Models.Attributes;
 namespace EthereumApi.Models.Models.Airlines
 {
     [DataContract]
-    public class TransferFromDepositRequest
+    public class AirlinesTransferFromDepositRequest
     {
         [DataMember(Name = "depositAddress")]
         [EthereumAddress(allowsEmpty: false)]
@@ -23,7 +23,7 @@ namespace EthereumApi.Models.Models.Airlines
         [EthereumAddress(allowsEmpty: false)]
         public string DestinationAddress { get; set; }
 
-        [DataMember(Name = "destinationAddress")]
+        [DataMember(Name = "tokenAmount")]
         [RegularExpression(Constants.BigIntTemplate)]
         public string TokenAmount { get; set; }
     }

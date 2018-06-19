@@ -33,14 +33,16 @@ namespace Lykke.Service.EthereumCore.Client.Models
         OperationWithIdAlreadyExists,
         [EnumMember(Value = "TransferInProcessing")]
         TransferInProcessing,
+        [EnumMember(Value = "WrongDestination")]
+        WrongDestination,
+        [EnumMember(Value = "CantEstimateExecution")]
+        CantEstimateExecution,
         [EnumMember(Value = "NotEnoughFunds")]
         NotEnoughFunds,
         [EnumMember(Value = "TransactionExists")]
         TransactionExists,
         [EnumMember(Value = "TransactionRequiresMoreGas")]
-        TransactionRequiresMoreGas,
-        [EnumMember(Value = "WrongDestination")]
-        WrongDestination
+        TransactionRequiresMoreGas
     }
     internal static class ExceptionTypeEnumExtension
     {
@@ -69,14 +71,16 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return "OperationWithIdAlreadyExists";
                 case ExceptionType.TransferInProcessing:
                     return "TransferInProcessing";
+                case ExceptionType.WrongDestination:
+                    return "WrongDestination";
+                case ExceptionType.CantEstimateExecution:
+                    return "CantEstimateExecution";
                 case ExceptionType.NotEnoughFunds:
                     return "NotEnoughFunds";
                 case ExceptionType.TransactionExists:
                     return "TransactionExists";
                 case ExceptionType.TransactionRequiresMoreGas:
                     return "TransactionRequiresMoreGas";
-                case ExceptionType.WrongDestination:
-                    return "WrongDestination";
             }
             return null;
         }
@@ -101,14 +105,16 @@ namespace Lykke.Service.EthereumCore.Client.Models
                     return ExceptionType.OperationWithIdAlreadyExists;
                 case "TransferInProcessing":
                     return ExceptionType.TransferInProcessing;
+                case "WrongDestination":
+                    return ExceptionType.WrongDestination;
+                case "CantEstimateExecution":
+                    return ExceptionType.CantEstimateExecution;
                 case "NotEnoughFunds":
                     return ExceptionType.NotEnoughFunds;
                 case "TransactionExists":
                     return ExceptionType.TransactionExists;
                 case "TransactionRequiresMoreGas":
                     return ExceptionType.TransactionRequiresMoreGas;
-                case "WrongDestination":
-                    return ExceptionType.WrongDestination;
             }
             return null;
         }

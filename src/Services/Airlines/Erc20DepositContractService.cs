@@ -16,29 +16,27 @@ using Nethereum.Hex.HexTypes;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
 {
-    public class Erc20DepositContractService : IAirlinesErc20DepositContractService
+    public class AirlinesErc20DepositContractService : IAirlinesErc20DepositContractService
     {
         private readonly IErc223DepositContractRepository _contractRepository;
         private readonly IContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
-        private readonly AirlinesSettings _settings;
         private readonly ILog _log;
         private readonly IWeb3 _web3;
-        private readonly AirlinesAppSettings _appSettings;
+        private readonly AppSettings _appSettings;
         private readonly IQueueExt _transferQueue;
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly IHotWalletOperationRepository _operationsRepository;
         private readonly IUserTransferWalletRepository _userTransferWalletRepository;
 
-        public Erc20DepositContractService(
+        public AirlinesErc20DepositContractService(
             [KeyFilter(Constants.AirLinesKey)] IErc223DepositContractRepository contractRepository,
             [KeyFilter(Constants.AirLinesKey)] IHotWalletOperationRepository operationsRepository,
             IContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            AirlinesSettings settings,
             ILog log,
             IWeb3 web3,
-            AirlinesAppSettings appSettings,
+            AppSettings appSettings,
             IQueueFactory factory,
             IErcInterfaceService ercInterfaceService,
             IUserTransferWalletRepository userTransferWalletRepository)
@@ -46,11 +44,11 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             _contractRepository = contractRepository;
             _contractService = contractService;
             _poolFactory = poolFactory;
-            _settings = settings;
+            _appSettings = appSettings;
             _log = log;
             _web3 = web3;
             _appSettings = appSettings;
-            _transferQueue = factory.Build(Constants.LykkePayErc223TransferQueue);
+            _transferQueue = factory.Build(Constants.AirlinesErc223TransferQueue);
             _ercInterfaceService = ercInterfaceService;
             _operationsRepository = operationsRepository;
             _userTransferWalletRepository = userTransferWalletRepository;
@@ -63,7 +61,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
 
             if (string.IsNullOrEmpty(contractAddress))
             {
-                var pool = _poolFactory.Get(Constants.LykkePayErc20DepositContractPoolQueue);
+                var pool = _poolFactory.Get(Constants.AirlinesErc20DepositContractPoolQueue);
 
                 contractAddress = await pool.GetContractAddress();
 
@@ -82,8 +80,8 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             try
             {
                 var fromAddress = _appSettings.Airlines.AirlinesAddress;
-                var abi = _settings.Erc223DepositContract.Abi;
-                var byteCode = _settings.Erc223DepositContract.ByteCode;
+                var abi = _appSettings.EthereumCore.Erc223DepositContract.Abi;
+                var byteCode = _appSettings.EthereumCore.Erc223DepositContract.ByteCode;
 
                 return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
             }
@@ -163,11 +161,13 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             }
 
             var transactionSenderAddress = _appSettings.Airlines.AirlinesAddress;
-            var estimationResult = await Erc20SharedService.EstimateDepositTransferAsync(_web3, _settings.Erc223DepositContract.Abi, 
+            var estimationResult = await Erc223SharedService.EstimateDepositTransferAsync(_web3, 
+                _appSettings.EthereumCore.Erc223DepositContract.Abi, 
                 transactionSenderAddress, 
                 depositContractAddress,
                 erc20TokenAddress,
-                destinationAddress);
+                destinationAddress,
+                amount);
 
             if (!estimationResult)
             {

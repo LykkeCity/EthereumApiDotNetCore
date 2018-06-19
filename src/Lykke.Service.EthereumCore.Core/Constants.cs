@@ -29,7 +29,6 @@ namespace Lykke.Service.EthereumCore.Core
         public const string HotWalletCashoutQueue = "hotwallet-cashout-queue";
         public const string HotWalletTransactionMonitoringQueue = "hotwallet-transaction-monitoring-queue";
         public const string Erc20DepositContractPoolQueue = "erc20-deposit-contract-pool-queue";
-        public const string LykkePayErc20DepositContractPoolQueue = "lykke-pay-erc20-deposit-contract-pool-queue";
         public const string Erc20DepositCashinTransferQueue = "erc20-deposit-cashin-transfer-queue";
         /// <summary>
         /// Used to internal monitoring of refill transactions
@@ -81,6 +80,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string LykkePayErc223TransferQueue = "lykke-pay-erc-transfers-queue";
         public const string LykkePayErc223TransferNotificationsQueue = "lykke-pay-erc-transfers-notifications-queue";
         public const string LykkePayTransactionMonitoringQueue = "lykke-pay-transaction-monitoring-queue";
+        public const string LykkePayErc20DepositContractPoolQueue = "lykke-pay-erc20-deposit-contract-pool-queue";
 
         #endregion
 
@@ -92,6 +92,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string AirlinesErc223TransferQueue = "airlines-erc-transfers-queue";
         public const string AirlinesErc223TransferNotificationsQueue = "airlines-erc-transfers-notifications-queue";
         public const string AirlinesTransactionMonitoringQueue = "airlines-transaction-monitoring-queue";
+        public const string AirlinesErc20DepositContractPoolQueue = "airlines-erc20-deposit-contract-pool-queue";
 
         #endregion
 

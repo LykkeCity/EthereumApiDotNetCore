@@ -1,20 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Autofac.Features.AttributeFilters;
-using Lykke.Service.EthereumCore.Services.Coins;
-using Common.Log;
-using Common;
+﻿using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
-using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.JobTriggers.Triggers.Bindings;
+using Lykke.Service.EthereumCore.Core.LykkePay;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Core.Notifiers;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Services;
-using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Services.New;
-using Lykke.Service.EthereumCore.Services.New.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace Lykke.Job.EthereumCore.Job.LykkePay
 {

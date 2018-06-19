@@ -36,6 +36,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         EthereumContractBase TokenAdapterContract { get; set; }
         EthereumContractBase EthAdapterContract { get; set; }
         EthereumContractBase Erc20DepositContract { get; set; }
+        EthereumContractBase Erc223DepositContract { get; set; }
         string ERC20ABI { get; set; }
         string CoinAbi { get; set; }
         int MaxDequeueCount { get; set; }
@@ -59,6 +60,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public EthereumContractBase TokenAdapterContract { get; set; }
         public EthereumContractBase EthAdapterContract { get; set; }
         public EthereumContractBase Erc20DepositContract { get; set; }
+        public EthereumContractBase Erc223DepositContract { get; set; }
 
         public string EthereumMainAccount { get; set; }
         public string EthereumMainAccountPassword { get; set; }
