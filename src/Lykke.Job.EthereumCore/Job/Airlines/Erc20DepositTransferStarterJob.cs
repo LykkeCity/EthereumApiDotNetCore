@@ -123,7 +123,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                 {
                     OperationId = transaction.OperationId,
                     TransactionHash = trHash,
-                    Balance = balance.ToString() 
+                    Balance = operation.Amount.ToString() 
                 };
 
                 await _transactionStartedNotificationQueue.PutRawMessageAsync(
