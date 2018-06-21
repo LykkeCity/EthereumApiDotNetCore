@@ -16,6 +16,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
         public string OperationId { get; private set; }
         public string BlockHash { get; private set; }
         public ulong BlockNumber { get; private set; }
+        public WorkflowType WorkflowType { get; private set; }
 
         public TransferEvent(string operationId,
             string transactionHash, 
@@ -26,7 +27,8 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
             string blockHash,
             ulong blockNumber,
             SenderType senderType,
-            EventType eventType)
+            EventType eventType,
+            WorkflowType workflowType)
         {
             OperationId = operationId;
             DetectedTime = DateTime.UtcNow;
@@ -39,6 +41,7 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
             EventType = eventType;
             BlockHash = blockHash;
             BlockNumber = blockNumber;
+            WorkflowType = workflowType;
         }
     }
 }

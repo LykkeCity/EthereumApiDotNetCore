@@ -143,7 +143,8 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     "",
                     0,
                     SenderType.EthereumCore,
-                    EventType.Failed);
+                    EventType.Failed,
+                    WorkflowType.Airlines);
 
                 await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob), "Execute",
                     operation.ToJson(), ex);

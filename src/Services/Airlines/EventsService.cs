@@ -11,6 +11,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Services.Common;
 
 namespace Lykke.Service.EthereumCore.Services.Airlines
@@ -22,7 +23,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            IAirlinesErc20DepositContractService depositContractService) : 
+            IAggregatedErc20DepositContractLocatorService depositContractService) : 
             base(blockSyncedRepository,
                 indexerApi,
                 ethereumIndexerService,

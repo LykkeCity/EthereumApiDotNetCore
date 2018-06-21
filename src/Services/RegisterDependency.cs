@@ -153,6 +153,7 @@ namespace Lykke.Service.EthereumCore.Services
 
             builder.RegisterType<AggregatedDepositContractLocatorService>()
                 .Keyed<IErc20DepositContractLocatorService>(Constants.DefaultKey)
+                .Keyed<IAggregatedErc20DepositContractLocatorService>(Constants.DefaultKey)
                 .SingleInstance().WithAttributeFiltering();
 
             builder.RegisterType<LykkePayErc20DepositContractService>()

@@ -26,7 +26,7 @@ namespace Lykke.Service.EthereumCore.Services.Common
 
         private readonly IBlockSyncedByHashRepository _blockSyncedRepository;
         private readonly IEthereumSamuraiAPI _indexerApi;
-        private readonly IErc20DepositContractLocatorService _depositContractService;
+        private readonly IAggregatedErc20DepositContractLocatorService _depositContractService;
         private readonly IEthereumIndexerService _ethereumIndexerService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
 
@@ -35,7 +35,7 @@ namespace Lykke.Service.EthereumCore.Services.Common
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            IErc20DepositContractLocatorService depositContractService)
+            IAggregatedErc20DepositContractLocatorService depositContractService)
         {
             _blockSyncedRepository = blockSyncedRepository;
             _indexerApi = indexerApi;
@@ -57,7 +57,7 @@ namespace Lykke.Service.EthereumCore.Services.Common
                 //only one transfer could appear in deposit transaction
                 foreach (var item in transaction.ErcTransfer)
                 {
-                    if (!await _depositContractService.ContainsAsync(item.From?.ToLower()))
+                    if (!(await _depositContractService.ContainsWithTypeAsync(item.From?.ToLower())).Item1)
                     {
                         continue;
                     }
@@ -96,7 +96,8 @@ namespace Lykke.Service.EthereumCore.Services.Common
                             foreach (var transfer in transfers)
                             {
                                 // Ignore transfers from not deposit contract addresses
-                                if (!await _depositContractService.ContainsAsync(transfer.To))
+                                var checkResult = await _depositContractService.ContainsWithTypeAsync(transfer.To);
+                                if (!checkResult.Item1)
                                 {
                                     continue;
                                 }
@@ -111,7 +112,8 @@ namespace Lykke.Service.EthereumCore.Services.Common
                                     transfer.BlockHash,
                                     (ulong)transfer.BlockNumber,
                                     SenderType.Customer,
-                                    EventType.Detected
+                                    EventType.Detected,
+                                    (Job.EthereumCore.Contracts.Enums.LykkePay.WorkflowType)checkResult.Item2
                                     ));
                             }
 

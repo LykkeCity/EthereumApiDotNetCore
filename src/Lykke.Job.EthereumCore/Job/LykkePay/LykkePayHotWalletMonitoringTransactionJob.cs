@@ -221,7 +221,8 @@ namespace Lykke.Job.EthereumCore.Job
                     transferedInfo.blockHash,
                     transferedInfo.blockNumber,
                     SenderType.EthereumCore,
-                    eventType);
+                    eventType,
+                    WorkflowType.LykkePay);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
 

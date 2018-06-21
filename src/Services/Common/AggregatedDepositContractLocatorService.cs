@@ -8,7 +8,8 @@ using Lykke.Service.EthereumCore.Core.Common;
 
 namespace Lykke.Service.EthereumCore.Services.Common
 {
-    public class AggregatedDepositContractLocatorService : IErc20DepositContractLocatorService
+    public class AggregatedDepositContractLocatorService : IErc20DepositContractLocatorService,
+        IAggregatedErc20DepositContractLocatorService
     {
         private readonly IErc20DepositContractLocatorService _lykkePayLocator;
         private readonly IErc20DepositContractLocatorService _airLinesLocator;
@@ -24,9 +25,23 @@ namespace Lykke.Service.EthereumCore.Services.Common
         public async Task<bool> ContainsAsync(string address)
         {
             var result = await _lykkePayLocator.ContainsAsync(address) ||
-                         await _lykkePayLocator.ContainsAsync(address);
+                         await _airLinesLocator.ContainsAsync(address);
 
             return result;
+        }
+
+        public  async Task<(bool, WorkflowType)> ContainsWithTypeAsync(string address)
+        {
+            if (await _lykkePayLocator.ContainsAsync(address))
+            {
+                return (true, WorkflowType.LykkePay);
+            }
+            else if (await _airLinesLocator.ContainsAsync(address))
+            {
+                return (true, WorkflowType.Airlines);
+            }
+
+            return (false, WorkflowType.None);
         }
     }
 }
