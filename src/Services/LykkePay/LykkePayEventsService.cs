@@ -35,7 +35,7 @@ namespace Lykke.Service.EthereumCore.Services.New
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            [KeyFilter(Constants.DefaultKey)] IErc20DepositContractLocatorService erc20DepositContractLocatorService) :
+            [KeyFilter(Constants.DefaultKey)] IAggregatedErc20DepositContractLocatorService erc20DepositContractLocatorService) :
             base(blockSyncedRepository,
                 indexerApi,
                 ethereumIndexerService,

@@ -84,7 +84,8 @@ namespace Lykke.Service.AirlinesJobRunner.Job
                     transaction?.BlockHash,
                     (ulong)transaction?.BlockNumber.Value,
                     SenderType.EthereumCore,
-                    EventType.Started);
+                    EventType.Started,
+                    WorkflowType.Airlines);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
             }
