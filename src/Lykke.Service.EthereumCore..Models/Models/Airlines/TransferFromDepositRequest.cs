@@ -12,18 +12,22 @@ namespace EthereumApi.Models.Models.Airlines
     public class AirlinesTransferFromDepositRequest
     {
         [DataMember(Name = "depositAddress")]
+        [Required]
         [EthereumAddress(allowsEmpty: false)]
         public string DepositContractAddress { get; set; }
 
         [DataMember(Name = "tokenAddress")]
+        [Required]
         [EthereumAddress(allowsEmpty: false)]
         public string TokenAddress { get; set; }
 
         [DataMember(Name = "destinationAddress")]
+        [Required]
         [EthereumAddress(allowsEmpty: false)]
         public string DestinationAddress { get; set; }
 
         [DataMember(Name = "tokenAmount")]
+        [Required]
         [RegularExpression(Constants.BigIntTemplate)]
         public string TokenAmount { get; set; }
     }
