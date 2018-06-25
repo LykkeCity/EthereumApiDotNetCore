@@ -17,4 +17,8 @@
     <PackageReference Include="Nethereum.Web3" Version="2.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+  </ItemGroup>
+
 </Project>
