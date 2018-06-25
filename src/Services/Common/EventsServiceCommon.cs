@@ -29,19 +29,25 @@ namespace Lykke.Service.EthereumCore.Services.Common
         private readonly IAggregatedErc20DepositContractLocatorService _depositContractService;
         private readonly IEthereumIndexerService _ethereumIndexerService;
         private readonly IRabbitQueuePublisher _rabbitQueuePublisher;
+        private readonly IHotWalletTransactionRepository _airHotWalletCashoutTransactionRepository;
+        private readonly IHotWalletTransactionRepository _lpHotWalletCashoutTransactionRepository;
 
         public EventsServiceCommon(
             IBlockSyncedByHashRepository blockSyncedRepository,
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            IAggregatedErc20DepositContractLocatorService depositContractService)
+            IAggregatedErc20DepositContractLocatorService depositContractService,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletTransactionRepository airHotWalletCashoutTransactionRepository,
+            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository lpHotWalletCashoutTransactionRepository)
         {
             _blockSyncedRepository = blockSyncedRepository;
             _indexerApi = indexerApi;
             _depositContractService = depositContractService;
             _ethereumIndexerService = ethereumIndexerService;
             _rabbitQueuePublisher = rabbitQueuePublisher;
+            _airHotWalletCashoutTransactionRepository = airHotWalletCashoutTransactionRepository;
+            _lpHotWalletCashoutTransactionRepository = lpHotWalletCashoutTransactionRepository;
         }
 
         public async Task<(BigInteger? amount, string blockHash, ulong blockNumber)> IndexCashinEventsForErc20TransactionHashAsync(string transactionHash)
@@ -102,7 +108,14 @@ namespace Lykke.Service.EthereumCore.Services.Common
                                     continue;
                                 }
 
-                                var id = $"Detected_{Guid.NewGuid()}";
+                                string trHash = transfer.TransactionHash ?? "";
+
+                                string id =
+                                    (await _airHotWalletCashoutTransactionRepository.GetByTransactionHashAsync(trHash))
+                                    ?.OperationId ??
+                                    (await _lpHotWalletCashoutTransactionRepository.GetByTransactionHashAsync(trHash))
+                                    ?.OperationId ?? null;
+                                
                                 await _rabbitQueuePublisher.PublshEvent(new TransferEvent(id,
                                     transfer.TransactionHash,
                                     transfer.TransferAmount,

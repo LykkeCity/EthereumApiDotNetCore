@@ -35,12 +35,16 @@ namespace Lykke.Service.EthereumCore.Services.New
             IEthereumSamuraiAPI indexerApi,
             IEthereumIndexerService ethereumIndexerService,
             IRabbitQueuePublisher rabbitQueuePublisher,
-            [KeyFilter(Constants.DefaultKey)] IAggregatedErc20DepositContractLocatorService erc20DepositContractLocatorService) :
+            [KeyFilter(Constants.DefaultKey)] IAggregatedErc20DepositContractLocatorService erc20DepositContractLocatorService,
+            [KeyFilter(Constants.AirLinesKey)]IHotWalletTransactionRepository airHotWalletCashoutTransactionRepository,
+            [KeyFilter(Constants.LykkePayKey)]IHotWalletTransactionRepository lpHotWalletCashoutTransactionRepository) :
             base(blockSyncedRepository,
                 indexerApi,
                 ethereumIndexerService,
                 rabbitQueuePublisher,
-                erc20DepositContractLocatorService)
+                erc20DepositContractLocatorService,
+                airHotWalletCashoutTransactionRepository,
+                lpHotWalletCashoutTransactionRepository)
         {
 
         }
