@@ -114,6 +114,28 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            public static object ApiBlockPost(this IEthereumCoreAPI operations)
+            {
+                return operations.ApiBlockPostAsync().GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiBlockPostAsync(this IEthereumCoreAPI operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiBlockPostWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='ercTransaction'>
             /// </param>
             public static object ApiErc20BalancePost(this IEthereumCoreAPI operations, GetErcBalance ercTransaction = default(GetErcBalance))
