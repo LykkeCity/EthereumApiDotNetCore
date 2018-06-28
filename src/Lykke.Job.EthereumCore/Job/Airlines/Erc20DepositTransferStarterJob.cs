@@ -85,13 +85,28 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                 var balance =
                     await _ercInterfaceService.GetPendingBalanceForExternalTokenAsync(operation.FromAddress,
                         operation.TokenAddress);
-                if (balance == 0)
+                if (balance < operation.Amount)
                 {
                     await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
                         "Execute", transaction.ToJson(),
-                        $"DepositAddress: {operation.FromAddress}, TokenAddress: {operation.TokenAddress}");
+                        $"Sendig Failed Event: DepositAddress: {operation.FromAddress}, " +
+                        $"TokenAddress: {operation.TokenAddress}, " +
+                        $"DesiredAmount: {operation.Amount} " +
+                        $"CurrentBalance {balance}");
 
-                    //TODO: Transaction Failed
+                    TransferEvent @event = new TransferEvent(transaction.OperationId,
+                        "",
+                        operation.Amount.ToString(),
+                        operation.TokenAddress,
+                        operation.FromAddress,
+                        operation.ToAddress,
+                        "",
+                        0,
+                        SenderType.EthereumCore,
+                        EventType.NotEnoughFunds,
+                        WorkflowType.Airlines);
+
+                    await _rabbitQueuePublisher.PublshEvent(@event);
 
                     return;
                 }

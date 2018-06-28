@@ -130,14 +130,6 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
                 throw new ClientSideException(ExceptionType.WrongParams, $"DepositContractAddress {depositContractAddress} does not exist");
             }
 
-            var userWallet = await TransferWalletSharedService.GetUserTransferWalletAsync(_userTransferWalletRepository,
-                depositContractAddress, erc20TokenAddress, depositContract.UserAddress);
-
-            if (userWallet != null && !string.IsNullOrEmpty(userWallet.LastBalance))
-            {
-                throw new ClientSideException(ExceptionType.TransferInProcessing, $"Transfer from {depositContractAddress} was started before wait for it to complete");
-            }
-
             var amount = System.Numerics.BigInteger.Parse(tokenAmount);
             var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(depositContractAddress, erc20TokenAddress);
             if (balance == 0 || amount > balance)
@@ -185,9 +177,6 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             });
 
             await _transferQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(message));
-
-            await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository,
-                depositContractAddress, erc20TokenAddress, depositContract.UserAddress, balance.ToString());
 
             return guidStr;
         }
