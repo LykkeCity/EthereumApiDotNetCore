@@ -182,10 +182,6 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     case HotWalletOperationType.Cashout:
                         break;
                     case HotWalletOperationType.Cashin:
-                        string userAddress = await _erc20DepositContractService.GetUserAddress(operation.FromAddress);
-                        await TransferWalletSharedService.UpdateUserTransferWalletAsync(_userTransferWalletRepository, operation.FromAddress,
-                            operation.TokenAddress, userAddress, "");
-
                         //There will be nothing to index in failed event
                         if (success)
                         {
