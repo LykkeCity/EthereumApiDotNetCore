@@ -55,9 +55,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
         }
 
 
-        public async Task<string> AssignContract(string userAddress)
+        public async Task<string> AssignContractAsync(string userAddress)
         {
-            var contractAddress = await GetContractAddress(userAddress);
+            var contractAddress = await GetContractAddressAsync(userAddress);
 
             if (string.IsNullOrEmpty(contractAddress))
             {
@@ -75,7 +75,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             return contractAddress;
         }
 
-        public async Task<string> CreateContract()
+        public async Task<string> CreateContractAsync()
         {
             try
             {
@@ -87,18 +87,18 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync(nameof(Services.Erc20DepositContractService), nameof(CreateContract), "", e, DateTime.UtcNow);
+                await _log.WriteErrorAsync(nameof(Services.Erc20DepositContractService), nameof(CreateContractAsync), "", e, DateTime.UtcNow);
 
                 return null;
             }
         }
 
-        public async Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes)
+        public async Task<IEnumerable<string>> GetContractAddressesAsync(IEnumerable<string> txHashes)
         {
             return await _contractService.GetContractsAddresses(txHashes);
         }
 
-        public async Task<string> GetContractAddress(string userAddress)
+        public async Task<string> GetContractAddressAsync(string userAddress)
         {
             var contract = await _contractRepository.Get(userAddress);
 
@@ -121,7 +121,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
         /// <param name="erc20TokenAddress"></param>
         /// <param name="destinationAddress"></param>
         /// <returns>TransactionHash</returns>
-        public async Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
+        public async Task<string> RecievePaymentFromDepositContractAsync(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress, string tokenAmount)
         {
             var depositContract = await _contractRepository.GetByContractAddress(depositContractAddress);
@@ -181,7 +181,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             return guidStr;
         }
 
-        public async Task<string> GetUserAddress(string contractAddress)
+        public async Task<string> GetUserAddressAsync(string contractAddress)
         {
             var contract = await _contractRepository.GetByContractAddress(contractAddress);
 

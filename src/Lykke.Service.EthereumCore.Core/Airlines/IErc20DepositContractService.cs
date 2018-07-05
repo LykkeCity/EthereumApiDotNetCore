@@ -9,19 +9,19 @@ namespace Lykke.Service.EthereumCore.Core.Airlines
 {
     public interface IAirlinesErc20DepositContractService : IErc20DepositContractLocatorService
     {
-        Task<string> AssignContract(string userAddress);
+        Task<string> AssignContractAsync(string userAddress);
 
-        Task<string> CreateContract();
+        Task<string> CreateContractAsync();
 
-        Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes);
+        Task<IEnumerable<string>> GetContractAddressesAsync(IEnumerable<string> txHashes);
 
-        Task<string> GetContractAddress(string userAddress);
+        Task<string> GetContractAddressAsync(string userAddress);
 
-        Task<string> GetUserAddress(string contractUser);
+        Task<string> GetUserAddressAsync(string contractUser);
 
         Task ProcessAllAsync(Func<IErc20DepositContract, Task> processAction);
 
-        Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
+        Task<string> RecievePaymentFromDepositContractAsync(string depositContractAddress,
             string erc20TokenAddress, string destinationAddress, string tokenAmount);
     }
 }
