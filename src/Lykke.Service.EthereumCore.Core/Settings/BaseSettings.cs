@@ -36,6 +36,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         EthereumContractBase TokenAdapterContract { get; set; }
         EthereumContractBase EthAdapterContract { get; set; }
         EthereumContractBase Erc20DepositContract { get; set; }
+        EthereumContractBase Erc223DepositContract { get; set; }
         string ERC20ABI { get; set; }
         string CoinAbi { get; set; }
         int MaxDequeueCount { get; set; }
@@ -59,6 +60,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public EthereumContractBase TokenAdapterContract { get; set; }
         public EthereumContractBase EthAdapterContract { get; set; }
         public EthereumContractBase Erc20DepositContract { get; set; }
+        public EthereumContractBase Erc223DepositContract { get; set; }
 
         public string EthereumMainAccount { get; set; }
         public string EthereumMainAccountPassword { get; set; }
@@ -187,6 +189,11 @@ namespace Lykke.Service.EthereumCore.Core.Settings
     public class LykkePay
     {
         public string LykkePayAddress { get; set; }
+    }
+
+    public class Airlines
+    {
+        public string AirlinesAddress { get; set; }
     }
 }
 //0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06

@@ -12,9 +12,9 @@ contract Erc20DepositContract {
         }
     }
 
-	function() public payable {
-		throw;
-	}
+    function() public payable {
+        throw;
+    }
 
     function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
         

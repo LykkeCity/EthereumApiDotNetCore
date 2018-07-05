@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core;
+using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
@@ -153,7 +154,7 @@ namespace Lykke.Service.EthereumCore.Services
         }
     }
 
-    public interface IErc20DepositContractService
+    public interface IErc20DepositContractService : IErc20DepositContractLocatorService
     {
         Task<string> AssignContract(string userAddress);
 
@@ -169,7 +170,5 @@ namespace Lykke.Service.EthereumCore.Services
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress);
-
-        Task<bool> ContainsAsync(string address);
     }
 }

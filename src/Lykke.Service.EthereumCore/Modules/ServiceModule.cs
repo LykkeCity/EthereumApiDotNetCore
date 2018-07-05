@@ -38,18 +38,19 @@ namespace Lykke.Service.EthereumCore.Modules
             }
             var nesetdBaseSettings = _settings.Nested(x => x.EthereumCore);
             var nesetdSlackSettings = _settings.Nested(x => x.SlackNotifications);
+            var nestedDBSettings = nesetdBaseSettings.Nested(x => x.Db.DataConnString);
             _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
             _services.AddSingleton(_settings.CurrentValue);
             _services.AddSingleton(_settings);
             _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
             _services.AddSingleton(_settings.CurrentValue.ApiKeys);
             builder.RegisterAzureStorages(nesetdBaseSettings, nesetdSlackSettings, _log);
-            builder.RegisterAzureQueues(nesetdBaseSettings, nesetdSlackSettings);
+            builder.RegisterAzureQueues(nestedDBSettings, nesetdSlackSettings);
             _services.RegisterServices();
             builder.RegisterServices();
 
             ServiceProvider = _services.BuildServiceProvider();
-            _services.RegisterRabbitQueue(nesetdBaseSettings, _log);
+            _services.RegisterRabbitQueue(nesetdBaseSettings.Nested(x => x.RabbitMq), nestedDBSettings, _log);
 
             #region Services
 

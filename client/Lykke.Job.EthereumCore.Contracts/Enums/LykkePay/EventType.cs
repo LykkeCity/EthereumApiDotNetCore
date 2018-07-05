@@ -11,6 +11,8 @@ namespace Lykke.Job.EthereumCore.Contracts.Enums.LykkePay
     {
         Detected = 0,
         Started = 1,
-        Completed = 2
+        Completed = 2,
+        Failed = 3,
+        NotEnoughFunds = 4,
     }
 }

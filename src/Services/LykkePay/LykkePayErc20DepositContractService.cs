@@ -157,6 +157,18 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
             {
                 throw new ClientSideException(ExceptionType.EntityAlreadyExists, "Try again later");
             }
+            var transactionSenderAddress = _appSettings.LykkePay.LykkePayAddress;
+            var estimationResult = await Erc20SharedService.EstimateDepositTransferAsync(_web3,
+                _settings.Erc20DepositContract.Abi,
+                transactionSenderAddress,
+                depositContractAddress,
+                erc20TokenAddress, 
+                destinationAddress);
+
+            if (!estimationResult)
+            {
+                throw new ClientSideException(ExceptionType.WrongDestination, $"Can't estimate transfer {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+            }
 
             await _operationsRepository.SaveAsync(new HotWalletOperation()
             {

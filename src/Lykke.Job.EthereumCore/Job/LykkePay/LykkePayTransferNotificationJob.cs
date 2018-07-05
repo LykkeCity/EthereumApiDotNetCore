@@ -93,7 +93,8 @@ namespace Lykke.Job.EthereumCore.Job
                     transaction?.BlockHash,
                     (ulong)transaction?.BlockNumber.Value,
                     SenderType.EthereumCore,
-                    EventType.Started);
+                    EventType.Started,
+                    WorkflowType.LykkePay);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
             }
