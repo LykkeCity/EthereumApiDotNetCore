@@ -33,9 +33,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
                 while (currentCount < _settings.EthereumCore.MaxContractPoolLength)
                 {
                     var tasks = Enumerable.Range(0, _settings.EthereumCore.ContractsPerRequest)
-                        .Select(x => _contractService.CreateContract());
+                        .Select(x => _contractService.CreateContractAsync());
                     var trHashes = (await Task.WhenAll(tasks)).Where(x => !string.IsNullOrEmpty(x));
-                    var contractAddresses = await _contractService.GetContractAddresses(trHashes);
+                    var contractAddresses = await _contractService.GetContractAddressesAsync(trHashes);
 
                     await Task.WhenAll(contractAddresses.Select(pool.PushContractAddress));
                     

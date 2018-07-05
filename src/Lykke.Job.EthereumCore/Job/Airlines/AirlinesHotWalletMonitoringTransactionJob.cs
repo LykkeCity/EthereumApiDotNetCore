@@ -156,7 +156,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                         OperationId = operation.OperationId
                     };
 
-                    await _transferStartQueue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(retryMessage));
+                    await _transferStartQueue.PutRawMessageAsync(retryMessage.ToJson());
                     break;
 
                 default:

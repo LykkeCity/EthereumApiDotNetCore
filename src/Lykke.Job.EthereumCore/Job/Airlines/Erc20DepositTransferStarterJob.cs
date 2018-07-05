@@ -45,7 +45,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
             )
         {
             _settings = settings;
-            _logger = logger;
+            _logger = logger.CreateComponentScope(nameof(Erc20DepositTransferStarterJob));
             _web3 = web3;
             _operationsRepository = operationsRepository;
             _transactionMonitoringQueue = queueFactory.Build(Constants.AirlinesTransactionMonitoringQueue);
@@ -131,8 +131,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                 };
 
                 //Observe transaction
-                await _transactionMonitoringQueue.PutRawMessageAsync(
-                    Newtonsoft.Json.JsonConvert.SerializeObject(message));
+                await _transactionMonitoringQueue.PutRawMessageAsync(message.ToJson());
 
                 var notificationMessage = new LykkePayErc20TransferNotificationMessage()
                 {
@@ -141,8 +140,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     Balance = operation.Amount.ToString() 
                 };
 
-                await _transactionStartedNotificationQueue.PutRawMessageAsync(
-                    Newtonsoft.Json.JsonConvert.SerializeObject(notificationMessage));
+                await _transactionStartedNotificationQueue.PutRawMessageAsync(notificationMessage.ToJson());
             }
             catch (ClientSideException ex)
             {
@@ -161,8 +159,7 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     EventType.Failed,
                     WorkflowType.Airlines);
 
-                await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob), "Execute",
-                    operation.ToJson(), ex);
+                _logger.WriteWarning("Execute", operation.ToJson(), "ClientSideException", ex);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
             }
@@ -172,16 +169,14 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     return;
 
                 if (ex.Message != transaction.LastError)
-                    await _logger.WriteWarningAsync(nameof(Erc20DepositTransferStarterJob),
-                        "Execute", transaction.ToJson(), "transaction.OperationId");
+                    _logger.WriteWarning("Execute", transaction.ToJson(), $"{transaction.OperationId}");
 
                 transaction.LastError = ex.Message;
                 transaction.DequeueCount++;
                 context.MoveMessageToEnd(transaction.ToJson());
                 context.SetCountQueueBasedDelay(_settings.EthereumCore.MaxQueueDelay, 200);
 
-                await _logger.WriteErrorAsync(nameof(Erc20DepositTransferStarterJob), "Execute",
-                    transaction.ToJson(), ex);
+                _logger.WriteError("Execute", transaction.ToJson(), ex);
             }
         }
     }

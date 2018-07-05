@@ -39,7 +39,7 @@ namespace Lykke.Service.EthereumCore.Controllers.Airlines
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            var contractAddress = await _contractService.AssignContract(userAddress);
+            var contractAddress = await _contractService.AssignContractAsync(userAddress);
 
             return Ok(new RegisterResponse
             {
@@ -59,7 +59,7 @@ namespace Lykke.Service.EthereumCore.Controllers.Airlines
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            var contractAddress = await _contractService.GetContractAddress(userAddress);
+            var contractAddress = await _contractService.GetContractAddressAsync(userAddress);
 
             return Ok(new RegisterResponse
             {
@@ -80,7 +80,7 @@ namespace Lykke.Service.EthereumCore.Controllers.Airlines
                 throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
             }
 
-            string opId = await _contractService.RecievePaymentFromDepositContract(request.DepositContractAddress?.ToLower(),
+            string opId = await _contractService.RecievePaymentFromDepositContractAsync(request.DepositContractAddress?.ToLower(),
                 request.TokenAddress?.ToLower(),
                 request.DestinationAddress?.ToLower(),
                 request.TokenAmount);
