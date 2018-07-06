@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
+using Common.Log;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Settings;
 
@@ -11,15 +12,18 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly IErc20DepositContractService _contractService;
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
         private readonly IBaseSettings _settings;
+        private readonly ILog _log;
 
         public LykkePayErc20DepositContractPoolService(
             [KeyFilter(Constants.LykkePayKey)]IErc20DepositContractService contractService,
             IErc20DepositContractQueueServiceFactory poolFactory,
-            IBaseSettings settings)
+            IBaseSettings settings,
+            ILog log)
         {
             _contractService = contractService;
             _poolFactory = poolFactory;
             _settings = settings;
+            _log = log.CreateComponentScope(nameof(LykkePayErc20DepositContractPoolService));
         }
 
         public async Task ReplenishPool()
