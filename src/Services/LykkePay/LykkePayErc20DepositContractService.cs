@@ -78,20 +78,12 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
 
         public async Task<string> CreateContract()
         {
-            try
-            {
-                var fromAddress = _appSettings.LykkePay.LykkePayAddress;
-                var abi = _settings.Erc20DepositContract.Abi;
-                var byteCode = _settings.Erc20DepositContract.ByteCode;
 
-                return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
-            }
-            catch (Exception e)
-            {
-                await _log.WriteErrorAsync(nameof(Erc20DepositContractService), nameof(CreateContract), "", e, DateTime.UtcNow);
+            var fromAddress = _appSettings.LykkePay.LykkePayAddress;
+            var abi = _settings.Erc20DepositContract.Abi;
+            var byteCode = _settings.Erc20DepositContract.ByteCode;
 
-                return null;
-            }
+            return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
         }
 
         public async Task<IEnumerable<string>> GetContractAddresses(IEnumerable<string> txHashes)

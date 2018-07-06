@@ -1,4 +1,5 @@
 ﻿using Autofac.Features.AttributeFilters;
+using Common;
 using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.EthereumCore.Core;
@@ -47,7 +48,13 @@ namespace Lykke.Job.EthereumCore.Job
             try
             {
                 await _contractPoolServiceLykkePay.ReplenishPool();
-                await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForLykkeApi), "", "Pool have been replenished", DateTime.UtcNow);
+                await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForLykkeApi), "",
+                    "Pool have been replenished", DateTime.UtcNow);
+            }
+            catch (Nethereum.JsonRpc.Client.RpcResponseException exc)
+            {
+                _logger.WriteInfo( nameof(ExecuteForLykkeApi), exc.ToJson(), $"Can't create contracts: {exc?.RpcError.Message}");
+                await Task.Delay(TimeSpan.FromMinutes(5));
             }
             catch (Exception e)
             {
