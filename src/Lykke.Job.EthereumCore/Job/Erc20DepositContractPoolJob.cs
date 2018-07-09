@@ -70,6 +70,11 @@ namespace Lykke.Job.EthereumCore.Job
                 await _contractPoolServiceAirlines.ReplenishPool();
                 await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForAirlines), "", "Pool have been replenished", DateTime.UtcNow);
             }
+            catch (Nethereum.JsonRpc.Client.RpcResponseException exc)
+            {
+                _logger.WriteInfo(nameof(ExecuteForAirlines), exc.ToJson(), $"Can't create contracts: {exc?.RpcError.Message}");
+                await Task.Delay(TimeSpan.FromMinutes(5));
+            }
             catch (Exception e)
             {
                 await _logger.WriteErrorAsync(nameof(Erc20DepositContractPoolJob), nameof(ExecuteForAirlines), "", e);

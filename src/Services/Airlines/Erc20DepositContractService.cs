@@ -77,20 +77,11 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
 
         public async Task<string> CreateContractAsync()
         {
-            try
-            {
-                var fromAddress = _appSettings.Airlines.AirlinesAddress;
-                var abi = _appSettings.EthereumCore.Erc223DepositContract.Abi;
-                var byteCode = _appSettings.EthereumCore.Erc223DepositContract.ByteCode;
+            var fromAddress = _appSettings.Airlines.AirlinesAddress;
+            var abi = _appSettings.EthereumCore.Erc223DepositContract.Abi;
+            var byteCode = _appSettings.EthereumCore.Erc223DepositContract.ByteCode;
 
-                return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
-            }
-            catch (Exception e)
-            {
-                await _log.WriteErrorAsync(nameof(Services.Erc20DepositContractService), nameof(CreateContractAsync), "", e, DateTime.UtcNow);
-
-                return null;
-            }
+            return await _contractService.CreateContractWithoutBlockchainAcceptanceFromSpecificAddress(fromAddress, abi, byteCode);
         }
 
         public async Task<IEnumerable<string>> GetContractAddressesAsync(IEnumerable<string> txHashes)
@@ -134,7 +125,7 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             var balance = await _ercInterfaceService.GetBalanceForExternalTokenAsync(depositContractAddress, erc20TokenAddress);
             if (balance == 0 || amount > balance)
             {
-                throw new ClientSideException(ExceptionType.NotEnoughFunds, 
+                throw new ClientSideException(ExceptionType.NotEnoughFunds,
                     $"Not enough tokens to proceed with withdrawal detected at deposit address {depositContractAddress}. " +
                     $"Current balance: {balance}");
             }
@@ -153,9 +144,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
             }
 
             var transactionSenderAddress = _appSettings.Airlines.AirlinesAddress;
-            var estimationResult = await Erc223SharedService.EstimateDepositTransferAsync(_web3, 
-                _appSettings.EthereumCore.Erc223DepositContract.Abi, 
-                transactionSenderAddress, 
+            var estimationResult = await Erc223SharedService.EstimateDepositTransferAsync(_web3,
+                _appSettings.EthereumCore.Erc223DepositContract.Abi,
+                transactionSenderAddress,
                 depositContractAddress,
                 erc20TokenAddress,
                 destinationAddress,
