@@ -132,7 +132,7 @@ namespace Lykke.Service.EthereumCore.Services
                     var context = new
                     {
                         obj = contractTransferTr.ToJson(),
-                        exc = clientSideExc.ToJson()
+                        exc = $"{clientSideExc.ExceptionType} {clientSideExc.Message} {clientSideExc.StackTrace}"
                     }.ToJson();
                     await _logger.WriteInfoAsync(nameof(Erc20DepositTransactionService), nameof(TransferToCoinContract),
                         $"{context}");

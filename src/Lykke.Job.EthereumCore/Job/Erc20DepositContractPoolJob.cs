@@ -6,6 +6,7 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Services;
 using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Lykke.Job.EthereumCore.Job
 {
@@ -53,7 +54,9 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (Nethereum.JsonRpc.Client.RpcResponseException exc)
             {
-                _logger.WriteInfo( nameof(ExecuteForLykkeApi), exc.ToJson(), $"Can't create contracts: {exc?.RpcError.Message}");
+                _logger.WriteInfo( nameof(ExecuteForLykkeApi),
+                    $"{exc.RpcError.Code} {exc.RpcError.Message} {exc.Message} {exc.StackTrace}",
+                    $"Can't create contracts: {exc?.RpcError.Message}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
             catch (Exception e)
@@ -72,7 +75,9 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (Nethereum.JsonRpc.Client.RpcResponseException exc)
             {
-                _logger.WriteInfo(nameof(ExecuteForAirlines), exc.ToJson(), $"Can't create contracts: {exc?.RpcError.Message}");
+                _logger.WriteInfo(nameof(ExecuteForAirlines),
+                    $"{exc.RpcError.Code} {exc.RpcError.Message} {exc.Message} {exc.StackTrace}",
+                    $"Can't create contracts: {exc?.RpcError.Message}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
             catch (Exception e)
