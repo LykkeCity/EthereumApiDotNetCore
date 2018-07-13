@@ -25,6 +25,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EthereumSamuraiApiCaller;
 using EthereumSamuraiApiCaller.Models;
+using Lykke.Service.EthereumCore.Services.HotWallet;
 
 namespace TransactionResubmit
 {
@@ -37,6 +38,16 @@ namespace TransactionResubmit
             var log = new LogToConsole();
             ContainerBuilder builder = new ContainerBuilder();
             IServiceCollection collection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+
+            var nesetdBaseSettings = settings.Nested(x => x.EthereumCore);
+            var nesetdSlackSettings = settings.Nested(x => x.SlackNotifications);
+            var nestedDBSettings = nesetdBaseSettings.Nested(x => x.Db.DataConnString);
+            collection.AddSingleton<ILog>(log);
+            collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
+            collection.AddSingleton(settings.CurrentValue);
+            collection.AddSingleton(settings);
+            collection.AddSingleton(settings.Nested(X => X.EthereumCore));
+            collection.AddSingleton(settings.CurrentValue.ApiKeys);
             collection.AddSingleton<IBaseSettings>(settings.CurrentValue.EthereumCore);
             collection.AddSingleton<ISlackNotificationSettings>(settings.CurrentValue.SlackNotifications);
             collection.RegisterServices();
@@ -73,6 +84,7 @@ namespace TransactionResubmit
             Console.WriteLine($"Type 10 to move from pending-poison to processing");
             Console.WriteLine($"Type 11 to PUT EVERYTHING IN PENDING WITH zero dequeue count");
             Console.WriteLine($"Type 20 to init starting point for lykkepay indexing");
+            Console.WriteLine($"Type 21 to init ETH transfer from one of the hotwallet addresses");
             var command = "";
 
             do
@@ -116,6 +128,9 @@ namespace TransactionResubmit
                     case "20":
                         InitIndexStartForLykkePay();
                         break;
+                    case "21":
+                        SendETH();
+                        break;
                     default:
                         break;
                 }
@@ -123,6 +138,64 @@ namespace TransactionResubmit
             while (command != "0");
 
             Console.WriteLine("Exited");
+        }
+
+        private static void SendETH()
+        {
+            try
+            {
+                Console.WriteLine("Are you sure?: Y/N");
+                var input = Console.ReadLine();
+                if (input.ToLower() != "y")
+                {
+                    Console.WriteLine("Cancel");
+                    return;
+                }
+                Console.WriteLine("Started");
+
+                var fromAddress = GetUserInputWithWalidation("Enter FROM address", "Address is not valid!",
+                    (address) =>
+                    {
+                        var isValid = ValidateAddressAsync(address).Result;
+
+                        return (isValid, isValid ? address : "Address is not a valid deposit address");
+                    });
+
+                var toAddress = GetUserInputWithWalidation("Enter TO address", "Address is not valid!",
+                    (address) =>
+                    {
+                        var isValid = ValidateAddressAsync(address).Result;
+
+                        return (isValid, isValid ? address : "Address is not a valid deposit address");
+                    });
+
+                var amount = GetUserInputWithWalidation("Enter AMOUNT in wei(example: 1000000000000000000 wei - 1 ETH)",
+                    "AMOUNT is not valid!",
+                    (amountV) =>
+                    {
+                        var isValid = BigInteger.TryParse(amountV, out var x);
+
+                        return (isValid, isValid ? amountV : "amount is not a valid value in ETH");
+                    });
+
+                var hotWalletService = ServiceProvider.Resolve<IHotWalletService>();
+
+                hotWalletService.EnqueueCashoutAsync(new HotWalletOperation()
+                {
+                    Amount = BigInteger.Parse(amount),
+                    OperationId = $"ConsoleInitiated-{Guid.NewGuid()}",
+                    TokenAddress = "", //Means transfer ETH
+                    FromAddress = fromAddress,
+                    OperationType = HotWalletOperationType.Cashout,
+                    ToAddress = toAddress
+                }).Wait();
+
+                Console.WriteLine("Operation Enqueued");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error " + e.Message + " " + e.StackTrace);
+            }
         }
 
         private static void InitIndexStartForLykkePay()
@@ -666,6 +739,35 @@ namespace TransactionResubmit
             var settings = configuration.LoadSettings<AppSettings>();
 
             return settings;
+        }
+
+        private static T GetUserInputWithWalidation<T>(string typeOfInput,
+            string messageOnWrongInput,
+            Func<string, (bool IsValid, T Result)> validFunc)
+        {
+            string input = "";
+
+            do
+            {
+                Console.Write($"{typeOfInput}: ");
+                input = Console.ReadLine();
+                var validationResult = validFunc(input);
+
+                if (validationResult.IsValid)
+                {
+                    return validationResult.Result;
+                }
+
+                Console.WriteLine($"Try Again! Error: {validationResult.Result.ToString()}");
+
+            } while (true);
+        }
+
+        public static async Task<bool> ValidateAddressAsync(string address)
+        {
+            IExchangeContractService exchangeContractService = ServiceProvider.Resolve<IExchangeContractService>();
+
+            return exchangeContractService.IsValidAddress(address);
         }
 
     }
