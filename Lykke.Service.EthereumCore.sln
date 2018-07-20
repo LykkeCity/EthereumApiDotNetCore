@@ -9,11 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{21D365DA-2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F14E63D3-95A7-41D1-AC63-50C754B05179}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD56D78E-6078-4A3E-BA8B-4D38D8F80976}"
-	ProjectSection(SolutionItems) = preProject
-		ToDo.txt = ToDo.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.Services", "src\Services\Lykke.Service.EthereumCore.Services.csproj", "{D3F96C68-C8EE-4C59-A299-DE33FEE4586C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobRunner", "src\JobRunner\JobRunner.csproj", "{292E5EBA-B062-471D-A1A4-55CF23A17BF2}"

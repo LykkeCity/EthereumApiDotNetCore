@@ -69,6 +69,7 @@ namespace Lykke.Job.EthereumCore
                 Log = CreateLogWithSlack(services, appSettings);
 
                 builder.RegisterModule(new JobModule(appSettings, Log));
+                builder.RegisterModule(new CqrsModule(appSettings, Log));
 
                 builder.Populate(services);
 
