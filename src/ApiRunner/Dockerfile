@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore:2.0
+FROM microsoft/dotnet:2.1-aspnetcore-runtime
 ENTRYPOINT ["dotnet", "ApiRunner.dll"]
 ARG source=.
 WORKDIR /app

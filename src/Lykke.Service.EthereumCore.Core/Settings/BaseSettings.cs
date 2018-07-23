@@ -116,6 +116,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public int GasPricePercentage { get; set; } = 100;
         public string EthereumSamuraiUrl { get; set; }
         public string SigningServiceApiKey { get; set; }
+        public SagasRabbitMq Cqrs { get; set; }
     }
 
     public class EthereumContractBase
@@ -196,6 +197,11 @@ namespace Lykke.Service.EthereumCore.Core.Settings
     public class Airlines
     {
         public string AirlinesAddress { get; set; }
+    }
+
+    public class SagasRabbitMq
+    {
+        public string RabbitConnectionString { get; set; }
     }
 }
 //0ffe1e21-4dc8-44d6-bcc7-7787bf5acb06
