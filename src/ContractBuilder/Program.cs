@@ -101,7 +101,6 @@ namespace ContractBuilder
             //eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce",
             //    "0x512867d36f1d6ee43f2056a7c41606133bce514fbc8e911c1834eeae80800ceb").Wait();
 
-
             #region DBE TOKEN
 
             string tokenAddress = "0xbdb5cf7527a52d4305ac00f1feec290d5b7920aa";
@@ -539,12 +538,11 @@ namespace ContractBuilder
             Console.WriteLine("Begin ethereum adapter migration process");
             try
             {
-                //Console.WriteLine("Type new main exchange address:");
-                //string newMainExchangeAddress = Console.ReadLine().Trim().ToLower();
                 var settings = GetCurrentSettings();
                 var exchangeService = ServiceProvider.Resolve<IExchangeContractService>();
                 var ethereumTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 IEnumerable<ICoin> adapters = await ServiceProvider.Resolve<ICoinRepository>().GetAll();
+
                 foreach (var adapter in adapters)
                 {
                     string transactionHash = await exchangeService.ChangeMainContractInCoin(adapter.AdapterAddress,
