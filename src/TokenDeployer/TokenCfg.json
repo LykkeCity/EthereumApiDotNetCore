@@ -3,11 +3,11 @@
   "Tokens": [
     {
       "TokenType": "Emissive",
-      "TokenName": "LKT",
+      "TokenName": "IgnatToken",
       "IssuerAddress": "0xfe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b6",
-      "divisibility": 8,
-      "TokenSymbol": "TIME",
-      "Version": "1.0.9",
+      "Divisibility": 8,
+      "TokenSymbol": "IGNAT",
+      "Version": "1.0.0",
       "InitialSupply": "1000000000000000"
     }
   ]
