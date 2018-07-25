@@ -1,0 +1,14 @@
+﻿{
+  "HotwalletAddress": "0x6Da4B01c3A88d67Fddc2Cb8B5505723409114b45",
+  "Tokens": [
+    {
+      "TokenType": "Emissive",
+      "TokenName": "LKT",
+      "IssuerAddress": "0xfe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b6",
+      "divisibility": 8,
+      "TokenSymbol": "TIME",
+      "Version": "1.0.9",
+      "InitialSupply": "1000000000000000"
+    }
+  ]
+}
