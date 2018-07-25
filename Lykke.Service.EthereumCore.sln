@@ -53,6 +53,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{60685682
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DepostContractResolver", "src\DepostContractResolver\DepostContractResolver.csproj", "{28FB41D3-4D62-4ABC-917A-6AFBA7220602}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenDeployer", "src\TokenDeployer\TokenDeployer.csproj", "{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{28FB41D3-4D62-4ABC-917A-6AFBA7220602}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FB41D3-4D62-4ABC-917A-6AFBA7220602}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FB41D3-4D62-4ABC-917A-6AFBA7220602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +167,7 @@ Global
 		{03B4361D-3B44-4E19-982E-835D56E64ED5} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{94D09F25-27DB-420E-846F-14730A1263C4} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{28FB41D3-4D62-4ABC-917A-6AFBA7220602} = {60685682-4469-431A-A949-A2703D49EC56}
+		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401} = {60685682-4469-431A-A949-A2703D49EC56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}

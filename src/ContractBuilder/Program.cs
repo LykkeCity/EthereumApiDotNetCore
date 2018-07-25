@@ -102,15 +102,15 @@ namespace ContractBuilder
             #region EmissiveErc223 TOKEN
 
             string tokenAddress = "";
-            string depositAddress = "0xafa7e8771b46ef5def063ee55123ae98e2235277";
+            string depositAddress = "";
             Contract contract;
 
-            var web3 = ServiceProvider.GetService<IWeb3>();
+            var web3 = ServiceProvider.Resolve<IWeb3>();
             {
                 var abi = GetFileContent("Erc20DepositContract.abi");
                 var bytecode = GetFileContent("Erc20DepositContract.bin");
                 depositAddress = string.IsNullOrEmpty(depositAddress) ?
-                    ServiceProvider.GetService<IContractService>()
+                    ServiceProvider.Resolve<IContractService>()
                     .CreateContract(abi,
                             bytecode,
                             4000000)
@@ -125,7 +125,7 @@ namespace ContractBuilder
                 var abi = GetFileContent("EmissiveErc223Token.abi");
                 var bytecode = GetFileContent("EmissiveErc223Token.bin");
                 tokenAddress = string.IsNullOrEmpty(tokenAddress) ?
-                    ServiceProvider.GetService<IContractService>()
+                    ServiceProvider.Resolve<IContractService>()
                     .CreateContract(abi,
                             bytecode,
                             4000000,
@@ -140,7 +140,7 @@ namespace ContractBuilder
 
             {
                 //Transfer to the deposit contract
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -154,7 +154,7 @@ namespace ContractBuilder
             {
                 //Transfer to the account managed by external private key
                 var toAddress = "0x856924997fa22efad8dc75e83acfa916490989a4";
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     toAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -165,7 +165,7 @@ namespace ContractBuilder
             {
                 //Transfer to the contract without fallback function
                 string contractWithoutFallback = "0xd6ff42fa358403e0f9462c08e78c4baea1093945";
-                var erc20Service = ServiceProvider.GetService<IErcInterfaceService>();
+                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
                 var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
                 var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
                     contractWithoutFallback, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
@@ -178,11 +178,6 @@ namespace ContractBuilder
 
             #region DBE TOKEN
 
-            string tokenAddress = "0xbdb5cf7527a52d4305ac00f1feec290d5b7920aa";
-            string depositAddress= "0xc7f038e72eb06d6d8808b2208054b2d9be0f7d6a";
-            Contract contract;
-
-            var web3 = ServiceProvider.Resolve<IWeb3>();
             {
                 //var abi = GetFileContent("Erc20DepositContract.abi");
                 //var bytecode = GetFileContent("Erc20DepositContract.bin");
