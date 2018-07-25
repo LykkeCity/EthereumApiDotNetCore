@@ -66,6 +66,7 @@ namespace TokenDeployer
             RegisterDependency.RegisterServices(collection);
             RegisterDependency.RegisterServices(containerBuilder);
             containerBuilder.Populate(collection);
+            containerBuilder.RegisterInstance<ILog>(consoleLogger);
             var resolver = containerBuilder.Build();
             resolver.ActivateRequestInterceptor();
             #endregion
@@ -87,8 +88,12 @@ namespace TokenDeployer
                 return 0;
             }
 
+            await consoleLogger.WriteInfoAsync(nameof(Main), "", $"Started Deployment");
+
             foreach (var tokenDescr in tokenCfg.Tokens)
             {
+                await consoleLogger.WriteInfoAsync(nameof(Main), "", $"Processing {tokenDescr.TokenName}");
+
                 if (!BigInteger.TryParse(tokenDescr.InitialSupply, out var initialSupply) || initialSupply == 0)
                 {
                     await consoleLogger.WriteInfoAsync(nameof(Main),
