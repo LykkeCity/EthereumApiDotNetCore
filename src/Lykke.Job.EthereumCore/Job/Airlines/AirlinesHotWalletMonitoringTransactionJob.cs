@@ -215,7 +215,8 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     transferedInfo.blockNumber,
                     SenderType.EthereumCore,
                     eventType,
-                    WorkflowType.Airlines);
+                    WorkflowType.Airlines,
+                    DateTime.UtcNow);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
 

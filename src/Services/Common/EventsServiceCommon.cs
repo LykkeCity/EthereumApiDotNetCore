@@ -126,7 +126,8 @@ namespace Lykke.Service.EthereumCore.Services.Common
                                     (ulong)transfer.BlockNumber,
                                     SenderType.Customer,
                                     EventType.Detected,
-                                    (Job.EthereumCore.Contracts.Enums.LykkePay.WorkflowType)checkResult.Item2
+                                    (Job.EthereumCore.Contracts.Enums.LykkePay.WorkflowType)checkResult.Item2,
+                                    DateTime.UtcNow
                                     ));
                             }
 

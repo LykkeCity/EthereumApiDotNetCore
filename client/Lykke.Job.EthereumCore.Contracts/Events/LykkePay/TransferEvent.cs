@@ -28,10 +28,11 @@ namespace Lykke.Job.EthereumCore.Contracts.Events.LykkePay
             ulong blockNumber,
             SenderType senderType,
             EventType eventType,
-            WorkflowType workflowType)
+            WorkflowType workflowType,
+            DateTime detectedTime)
         {
             OperationId = operationId;
-            DetectedTime = DateTime.UtcNow;
+            DetectedTime = detectedTime;
             TransactionHash = transactionHash;
             Amount = amount;
             TokenAddress = tokenAddress;
