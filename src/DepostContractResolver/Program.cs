@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using Lykke.Service.EthereumCore.AzureRepositories;
 using Lykke.Service.EthereumCore.Core.Repositories;
@@ -16,14 +17,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DepostContractResolver
+namespace DepositContractResolver
 {
     class Program
     {
         static void Main(string[] args)
         {
             Microsoft.Extensions.CommandLineUtils.CommandLineApplication application = new CommandLineApplication(true);
+            application.Name = "DepositContractResolver";
+            application.Description = ".NET Core console app to retrieve funds from deposit address and legacy coin adapter.";
 
+            application.Command("cub", lineApplication =>
+            {
+
+            }, true);
             var settingsUrlArg = application.Argument("SettingsUrl", "ethereum core SettingsUrl", false);
             var fromAddressArg = 
                 application.Argument("FromAddress", "FromAddress is an address of user old(legacy) deposit address", false);
@@ -65,7 +72,10 @@ namespace DepostContractResolver
                 consoleLogger);
             RegisterDependency.RegisterServices(collection);
             RegisterDependency.RegisterServices(containerBuilder);
+            containerBuilder.Populate(collection);
+            containerBuilder.RegisterInstance<ILog>(consoleLogger);
             var resolver = containerBuilder.Build();
+            resolver.ActivateRequestInterceptor();
 
             #endregion
 
@@ -75,20 +85,54 @@ namespace DepostContractResolver
             var contractService = resolver.Resolve<IContractService>();
             var exchangeContractService = resolver.Resolve<IExchangeContractService>();
             var oldDeposiTransferContract = await transferContractRepository.GetAsync(depositContractAddress);
+
+            if (oldDeposiTransferContract == null)
+            {
+                await consoleLogger.WriteInfoAsync(nameof(TransferFromLegacyDepositToUsersEthDepositAsync),
+                    depositContractAddress, "Deposit contract does not exist");
+
+                return 0;
+            }
+
             BigInteger balance = await transferContractService.GetBalance(depositContractAddress); //ETH Balance in wei
+
+            if (balance == 0)
+            {
+                await consoleLogger.WriteInfoAsync(nameof(TransferFromLegacyDepositToUsersEthDepositAsync),
+                    depositContractAddress, "Deposit contract balance is 0");
+
+                return 0;
+            }
 
             var transactionHash = await transferContractService.RecievePaymentFromTransferContract(
                 oldDeposiTransferContract.ContractAddress, 
                 oldDeposiTransferContract.CoinAdapterAddress);
-            await contractService.WaitForTransactionToCompleteAsync(transactionHash);
-            var guid = Guid.NewGuid();
-            await exchangeContractService.TransferWithoutSignCheck(guid,
-                oldDeposiTransferContract.CoinAdapterAddress,
-                oldDeposiTransferContract.ContractAddress,
-                toAddress, 
-                balance, 
-                "");
 
+            await consoleLogger.WriteInfoAsync(nameof(TransferFromLegacyDepositToUsersEthDepositAsync),
+                depositContractAddress, $"Transfer from deposit address to adapter is pending. {transactionHash}");
+
+            await contractService.WaitForTransactionToCompleteAsync(transactionHash);
+
+            BigInteger adapterBalance = await transferContractService.GetBalanceOnAdapter(
+                oldDeposiTransferContract.CoinAdapterAddress,
+                oldDeposiTransferContract.UserAddress,
+                checkInPendingBlock: true);
+
+            var guid = Guid.NewGuid();
+            string transactionHashFromAdapter = await exchangeContractService.CashOutWithoutSignCheck(guid,
+                oldDeposiTransferContract.CoinAdapterAddress,
+                oldDeposiTransferContract.UserAddress,
+                toAddress, 
+                balance);
+
+            await consoleLogger.WriteInfoAsync(nameof(TransferFromLegacyDepositToUsersEthDepositAsync),
+                depositContractAddress, $"Transfer from the adapter address to the destination is pending. {transactionHashFromAdapter}");
+
+            await contractService.WaitForTransactionToCompleteAsync(transactionHashFromAdapter);
+
+            await consoleLogger.WriteInfoAsync(nameof(TransferFromLegacyDepositToUsersEthDepositAsync),
+                depositContractAddress, $"Transfer to the destination address is completed. check:" +
+                                        $"https://etherscan.io/tx/{transactionHashFromAdapter}");
 
             return 0;
         }
