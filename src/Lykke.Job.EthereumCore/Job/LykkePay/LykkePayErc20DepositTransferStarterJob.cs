@@ -143,7 +143,8 @@ namespace Lykke.Job.EthereumCore.Job
                     0,
                     SenderType.EthereumCore,
                     EventType.Failed,
-                    WorkflowType.LykkePay);
+                    WorkflowType.LykkePay,
+                    DateTime.UtcNow);
 
                 await _logger.WriteWarningAsync(nameof(LykkePayErc20DepositTransferStarterJob), "Execute",
                     operation.ToJson(), ex);
