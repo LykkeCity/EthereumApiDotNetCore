@@ -53,6 +53,12 @@ namespace Lykke.Service.EthereumCore.Services.Coins
         Task<bool> CheckLastTransactionCompleted(string coinAddress, string clientAddr);
         Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign);
         Task<string> ChangeMainContractInCoin(string coinAddress, string newExchangeContractAddress, string newMainExchangeAbi);
+
+        Task<string> CashOutWithoutSignCheck(Guid id,
+            string coinAddress,
+            string clientAddr,
+            string toAddr,
+            BigInteger amount);
     }
 
     public class ExchangeContractService : IExchangeContractService
@@ -330,6 +336,28 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             return transactionHash;
         }
 
+        public async Task<string> CashOutWithoutSignCheck(Guid id, 
+            string coinAddress, 
+            string clientAddr, 
+            string toAddr, 
+            BigInteger amount)
+        {
+            await ThrowOnExistingId(id);
+            var coinAFromDb = await GetCoinWithCheck(coinAddress);
+
+            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
+            var cashout = contract.GetFunction("cashout");
+
+            var convertedId = EthUtils.GuidToBigInteger(id);
+            // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
+            var transactionHash = await cashout.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
+                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, "01".HexToByteArray(), new byte[0]);
+            await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOutWithoutSignCheck");
+
+            return transactionHash;
+        }
+
         public async Task<string> PingMainExchangeContract()
         {
             if (_settings.MainExchangeContract == null)
@@ -487,15 +515,25 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
         private async Task ThrowOnExistingId(Guid id)
         {
-            var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
-            var transactionsCheck = contract.GetFunction("transactions");
-            var bigIntRepresentation = EthUtils.GuidToBigInteger(id);
-
-            bool isInList = await transactionsCheck.CallAsync<bool>(bigIntRepresentation);
-
-            if (isInList)
+            //Check Old contract(Prevent old transactions from executing)
+            var addresses = new string[]
             {
-                throw new ClientSideException(ExceptionType.OperationWithIdAlreadyExists, $"operation with guid {id}");
+                _settings.MainExchangeContract.Address,
+                _settings.PreviousMainExchangeContractAddress 
+            };
+
+            foreach (var address in addresses)
+            {
+                var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, address);
+                var transactionsCheck = contract.GetFunction("transactions");
+                var bigIntRepresentation = EthUtils.GuidToBigInteger(id);
+
+                bool isInList = await transactionsCheck.CallAsync<bool>(bigIntRepresentation);
+
+                if (isInList)
+                {
+                    throw new ClientSideException(ExceptionType.OperationWithIdAlreadyExists, $"operation with guid {id}");
+                }
             }
         }
 

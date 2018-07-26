@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.RabbitMQ", "s
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{60685682-4469-431A-A949-A2703D49EC56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DepostContractResolver", "src\DepostContractResolver\DepostContractResolver.csproj", "{28FB41D3-4D62-4ABC-917A-6AFBA7220602}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepositContractResolver", "src\DepostContractResolver\DepositContractResolver.csproj", "{28FB41D3-4D62-4ABC-917A-6AFBA7220602}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenDeployer", "src\TokenDeployer\TokenDeployer.csproj", "{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}"
 EndProject
