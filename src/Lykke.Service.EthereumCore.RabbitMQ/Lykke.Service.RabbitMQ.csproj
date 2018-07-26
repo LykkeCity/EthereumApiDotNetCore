@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.AzureStorage" Version="3.2.0" />
-    <PackageReference Include="Lykke.RabbitMq.Azure" Version="4.0.1" />
-    <PackageReference Include="Lykke.RabbitMqBroker" Version="4.3.1" />
+    <PackageReference Include="Lykke.AzureStorage" Version="8.10.0" />
+    <PackageReference Include="Lykke.RabbitMq.Azure" Version="5.1.0" />
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="7.1.0" />
   </ItemGroup>
 
   <ItemGroup>
