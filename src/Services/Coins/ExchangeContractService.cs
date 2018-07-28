@@ -319,7 +319,7 @@ namespace Lykke.Service.EthereumCore.Services.Coins
         }
 
         //Main Exchange contract should be migrated to use the function below in an appropriate way.
-        public async Task<string> TransferWithoutSignCheck(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign)
+        public async Task<string> TransferWithoutSignCheck(Guid id, string coinAddress, string from, string to, BigInteger amount, string sign = "01")
         {
             await ThrowOnExistingId(id);
             var coinAFromDb = await GetCoinWithCheck(coinAddress);

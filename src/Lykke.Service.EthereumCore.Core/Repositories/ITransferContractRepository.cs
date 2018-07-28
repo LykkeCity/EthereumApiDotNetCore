@@ -31,5 +31,6 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
         Task<ITransferContract> GetAsync(string transferContractAddress);
         Task ProcessAllAsync(Func<ITransferContract, Task> processAction);
         Task<ITransferContract> GetAsync(string userAddress, string coinAdapterAddress);
+        Task<(IEnumerable<ITransferContract>, string)> GetByTokenAsync(int take, string continuationToken);
     }
 }

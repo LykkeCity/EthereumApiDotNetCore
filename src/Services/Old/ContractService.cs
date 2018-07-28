@@ -199,11 +199,14 @@ namespace Lykke.Service.EthereumCore.Services
             }
 
             // check if contract byte code is deployed
-            var code = await _web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
-
-            if (string.IsNullOrWhiteSpace(code) || code == "0x")
+            if (!string.IsNullOrEmpty(receipt.ContractAddress))
             {
-                throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
+                var code = await _web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
+
+                if (string.IsNullOrWhiteSpace(code) || code == "0x")
+                {
+                    throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
+                }
             }
         }
     }
