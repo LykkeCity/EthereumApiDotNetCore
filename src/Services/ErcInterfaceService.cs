@@ -34,10 +34,13 @@ namespace Lykke.Service.EthereumCore.Services
         Task<BigInteger> GetPendingBalanceForExternalTokenAsync(string address, string externalTokenAddress);
         Task<BigInteger> GetBalanceForExternalTokenAsync(string address, string externalTokenAddress);
         Task<string> Transfer(string externalTokenAddress, string fromAddress, string toAddress, BigInteger amount);
+        Task<bool> CheckTokenFallback(string toAddress);
     }
 
     public class ErcInterfaceService : IErcInterfaceService
     {
+        public const string Erc223ReceiverAbi =
+            "[{\"constant\":true,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"tokenFallback\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]";
         private readonly IBaseSettings _settings;
         private readonly IWeb3 _web3;
 
@@ -61,10 +64,10 @@ namespace Lykke.Service.EthereumCore.Services
             BigInteger result = await function.CallAsync<BigInteger>(address);
 
             return result;
-         }
+        }
 
         //It's a TRAP! (allowance)
-        public async Task<bool> TransferFrom(string externalTokenAddress, string fromAddress, 
+        public async Task<bool> TransferFrom(string externalTokenAddress, string fromAddress,
             string toAddress, BigInteger amount)
         {
             Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
@@ -85,12 +88,34 @@ namespace Lykke.Service.EthereumCore.Services
         {
             Contract contract = _web3.Eth.GetContract(_settings.ERC20ABI, externalTokenAddress);
             Function function = contract.GetFunction("transfer");
-        
+
             //bool success = await function.CallAsync<bool>(toAddress, amount);
 
             string trHash = await function.SendTransactionAsync(fromAddress, toAddress, amount);
 
             return trHash;
+        }
+
+        /*
+       "functionHashes": {
+           "tokenFallback(address,uint256,bytes)": "c0ee0b8a"
+        },
+        */
+        public async Task<bool> CheckTokenFallback(string toAddress)
+        {
+            var addressCode = await _web3.Eth.GetCode.SendRequestAsync(toAddress);
+            if (addressCode == "0x")
+            {
+                //Account controlled by external private key - passes check
+                return true;
+            }
+            else
+            {
+                var callResult =
+                    await _web3.Eth.GetContract(Erc223ReceiverAbi, toAddress).GetFunction("tokenFallback").CallAsync<string>(toAddress, 1, new byte[]{});
+            }
+
+            return false;
         }
 
         private Function GetBalanceOfFunction(string externalTokenAddress)

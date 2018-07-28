@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Contracts\EmissiveErc223Token.abi" />
+    <None Remove="Contracts\EmissiveErc223Token.bin" />
+    <None Remove="Contracts\EmissiveErc223Token.json" />
+    <None Remove="Contracts\NonEmissiveErc223Token.abi" />
+    <None Remove="Contracts\NonEmissiveErc223Token.bin" />
+    <None Remove="Contracts\NonEmissiveErc223Token.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Contracts\EmissiveErc223Token.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Contracts\EmissiveErc223Token.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Contracts\EmissiveErc223Token.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Contracts\NonEmissiveErc223Token.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Contracts\NonEmissiveErc223Token.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Contracts\NonEmissiveErc223Token.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+  </ItemGroup>
+
+</Project>

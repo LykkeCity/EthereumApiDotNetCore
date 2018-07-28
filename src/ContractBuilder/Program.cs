@@ -33,6 +33,7 @@ using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Contracts;
+using Nethereum.RPC.Eth.DTOs;
 
 namespace ContractBuilder
 {
@@ -98,100 +99,171 @@ namespace ContractBuilder
             //eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce",
             //    "0x512867d36f1d6ee43f2056a7c41606133bce514fbc8e911c1834eeae80800ceb").Wait();
 
+            //#region EmissiveErc223 TOKEN
 
-            #region DBE TOKEN
+            //string tokenAddress = "";
+            //string depositAddress = "";
+            //Contract contract;
 
-            string tokenAddress = "0xbdb5cf7527a52d4305ac00f1feec290d5b7920aa";
-            string depositAddress= "0xc7f038e72eb06d6d8808b2208054b2d9be0f7d6a";
-            Contract contract;
-
-            var web3 = ServiceProvider.Resolve<IWeb3>();
-            {
-                //var abi = GetFileContent("Erc20DepositContract.abi");
-                //var bytecode = GetFileContent("Erc20DepositContract.bin");
-                //depositAddress =
-                //    ServiceProvider.Resolve<IContractService>()
-                //    .CreateContract(abi, bytecode, 4000000)
-                //    .Result;
-            }
-            {
-
-
-                var abi = GetFileContent("debtoken.abi");
-                var bytecode = GetFileContent("debtoken.bin");
-                //tokenAddress =
-                //    ServiceProvider.Resolve<IContractService>()
-                //    .CreateContract(abi, bytecode, 4000000)
-                //    .Result;
-                contract = web3.Eth.GetContract(abi, tokenAddress);
-            }
-
-            {
-                //var unfreezeFunc = contract.GetFunction("unfreeze");
-                //var transactionHash = unfreezeFunc.SendTransactionAsync(settings.CurrentValue.EthereumCore.EthereumMainAccount,
-                //            new HexBigInteger(BigInteger.Parse("200000")), new HexBigInteger(0)).Result;
-            }
-
-            {
-                var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
-                var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
-                    depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
-            }
-
-
-            #endregion
-
-            #region StatusExamples
-            //var service = ServiceProvider.GetService<ICoinTransactionService>();
+            //var web3 = ServiceProvider.Resolve<IWeb3>();
             //{
-            //    //fail
-            //    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
-            //    {
-            //        TransactionHash = "0xf86efe1b8de285b8255519ca7d0ac76088132e6c5306f88dfc27312c6d7127ea",
-            //    }).Result;
+            //    var abi = GetFileContent("Erc20DepositContract.abi");
+            //    var bytecode = GetFileContent("Erc20DepositContract.bin");
+            //    depositAddress = string.IsNullOrEmpty(depositAddress) ?
+            //        ServiceProvider.Resolve<IContractService>()
+            //        .CreateContract(abi,
+            //                bytecode,
+            //                4000000)
+            //        .Result : depositAddress;
+            //}
+            //{
+            //    //address issuer,
+            //    //string tokenName,
+            //    //uint8 divisibility,
+            //    //string tokenSymbol,
+            //    //string version
+            //    var abi = GetFileContent("EmissiveErc223Token.abi");
+            //    var bytecode = GetFileContent("EmissiveErc223Token.bin");
+            //    tokenAddress = string.IsNullOrEmpty(tokenAddress) ?
+            //        ServiceProvider.Resolve<IContractService>()
+            //        .CreateContract(abi,
+            //                bytecode,
+            //                4000000,
+            //                settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //                "LykkeErc223Token",
+            //                18,
+            //                "LTE223",
+            //                "1.0.0")
+            //        .Result : tokenAddress;
+            //    contract = web3.Eth.GetContract(abi, tokenAddress);
             //}
 
             //{
-            //    //ok
-            //    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
-            //    {
-            //        TransactionHash = "0xa237230df97a0d6710241597a0186662928afa373c13b8d4eac86f36aa678985",
-            //    }).Result;
+            //    //Transfer to the deposit contract
+            //    var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
+            //    var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
+            //    var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+            //    WaitForTransactionCompleation(web3, transactionHash);
+            //    var balance = erc20Service.GetBalanceForExternalTokenAsync(depositAddress, tokenAddress).Result;
+            //    var isPossibleToWithdrawWithTokenFallback = erc20Service.CheckTokenFallback(depositAddress).Result;
+            //    var isPossibleToWithdrawToExternal = 
+            //        erc20Service.CheckTokenFallback("0x856924997fa22efad8dc75e83acfa916490989a4").Result;
             //}
 
             //{
-            //    //fail
-            //    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
-            //    {
-            //        TransactionHash = "0xb63ac4f94006cbbfe58a1d651e173c56dc74a45e4d1141ac57fc51a0d4202e95",
-            //    }).Result;
+            //    //Transfer to the account managed by external private key
+            //    var toAddress = "0x856924997fa22efad8dc75e83acfa916490989a4";
+            //    var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
+            //    var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
+            //    var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        toAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+            //    WaitForTransactionCompleation(web3, transactionHash);
+            //    var balance = erc20Service.GetBalanceForExternalTokenAsync(toAddress, tokenAddress).Result;
             //}
 
             //{
-            //    //fail
-            //    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
-            //    {
-            //        TransactionHash = "0x1df50ee79d0af8b433f7f0be2a84cbb5dc3e29e5822e78b9c6a7ec33d027e286",
-            //    }).Result;
+            //    //Transfer to the contract without fallback function
+            //    string contractWithoutFallback = "0xd6ff42fa358403e0f9462c08e78c4baea1093945";
+            //    var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
+            //    var balanceOld = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
+            //    var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        contractWithoutFallback, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+            //    WaitForTransactionCompleation(web3, transactionHash);
+            //    var balance = erc20Service.GetBalanceForExternalTokenAsync(contractWithoutFallback, tokenAddress).Result;
+            //    var isPossibleToWithdrawWithoutTokenFallback = erc20Service.CheckTokenFallback(contractWithoutFallback).Result;
+            //}
+
+            //#endregion
+
+            //#region DBE TOKEN
+
+            //{
+            //    //var abi = GetFileContent("Erc20DepositContract.abi");
+            //    //var bytecode = GetFileContent("Erc20DepositContract.bin");
+            //    //depositAddress =
+            //    //    ServiceProvider.Resolve<IContractService>()
+            //    //    .CreateContract(abi, bytecode, 4000000)
+            //    //    .Result;
+            //}
+            //{
+
+
+            //    var abi = GetFileContent("debtoken.abi");
+            //    var bytecode = GetFileContent("debtoken.bin");
+            //    //tokenAddress =
+            //    //    ServiceProvider.Resolve<IContractService>()
+            //    //    .CreateContract(abi, bytecode, 4000000)
+            //    //    .Result;
+            //    contract = web3.Eth.GetContract(abi, tokenAddress);
             //}
 
             //{
-            //    //fail
-            //    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
-            //    {
-            //        TransactionHash = "0xa3d4c1da523273371fe45c928b9236b353976e7b9e6d2b31e659f7a4c781a764",
-            //    }).Result;
+            //    //var unfreezeFunc = contract.GetFunction("unfreeze");
+            //    //var transactionHash = unfreezeFunc.SendTransactionAsync(settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //    //            new HexBigInteger(BigInteger.Parse("200000")), new HexBigInteger(0)).Result;
             //}
 
-            #endregion
+            //{
+            //    var erc20Service = ServiceProvider.Resolve<IErcInterfaceService>();
+            //    var transactionHash = erc20Service.Transfer(tokenAddress, settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        depositAddress, System.Numerics.BigInteger.Parse("1000000000000000000")).Result;
+            //}
+
+
+            //#endregion
+
+            //#region StatusExamples
+            ////var service = ServiceProvider.GetService<ICoinTransactionService>();
+            ////{
+            ////    //fail
+            ////    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
+            ////    {
+            ////        TransactionHash = "0xf86efe1b8de285b8255519ca7d0ac76088132e6c5306f88dfc27312c6d7127ea",
+            ////    }).Result;
+            ////}
+
+            ////{
+            ////    //ok
+            ////    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
+            ////    {
+            ////        TransactionHash = "0xa237230df97a0d6710241597a0186662928afa373c13b8d4eac86f36aa678985",
+            ////    }).Result;
+            ////}
+
+            ////{
+            ////    //fail
+            ////    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
+            ////    {
+            ////        TransactionHash = "0xb63ac4f94006cbbfe58a1d651e173c56dc74a45e4d1141ac57fc51a0d4202e95",
+            ////    }).Result;
+            ////}
+
+            ////{
+            ////    //fail
+            ////    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
+            ////    {
+            ////        TransactionHash = "0x1df50ee79d0af8b433f7f0be2a84cbb5dc3e29e5822e78b9c6a7ec33d027e286",
+            ////    }).Result;
+            ////}
+
+            ////{
+            ////    //fail
+            ////    var x = service.ProcessTransaction(new Services.Coins.Models.CoinTransactionMessage()
+            ////    {
+            ////        TransactionHash = "0xa3d4c1da523273371fe45c928b9236b353976e7b9e6d2b31e659f7a4c781a764",
+            ////    }).Result;
+            ////}
+
+            //#endregion
 
             //0xf86efe1b8de285b8255519ca7d0ac76088132e6c5306f88dfc27312c6d7127ea      0x0 
             //0xa237230df97a0d6710241597a0186662928afa373c13b8d4eac86f36aa678985      0x1
             //0xb63ac4f94006cbbfe58a1d651e173c56dc74a45e4d1141ac57fc51a0d4202e95
 
-            var service = ServiceProvider.Resolve<IErcInterfaceService>();
-            service.Transfer("0x5adbf411faf2595698d80b7f93d570dd16d7f4b2", settings.CurrentValue.EthereumCore.EthereumMainAccount,
-                "0xae4d8b0c887508750ddb6b32752a82431941e2e7", System.Numerics.BigInteger.Parse("10000000000000000000")).Wait();
+            //var service = ServiceProvider.Resolve<IErcInterfaceService>();
+            //service.Transfer("0x5adbf411faf2595698d80b7f93d570dd16d7f4b2", settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //    "0xae4d8b0c887508750ddb6b32752a82431941e2e7", System.Numerics.BigInteger.Parse("10000000000000000000")).Wait();
             //var paymentService = ServiceProvider.GetService<IPaymentService>();
             //    string result = paymentService.SendEthereum(settings.EthereumMainAccount, 
             //    "0xbb0a9c08030898cdaf1f28633f0d3c8556155482", new System.Numerics.BigInteger(5000000000000000)).Result;
@@ -515,7 +587,7 @@ namespace ContractBuilder
                 await job.ProcessOperation(new Lykke.Service.EthereumCore.Services.New.Models.OperationHashMatchMessage()
                 {
                     OperationId = operationId,
-                },null, exchangeContractService.TransferWithoutSignCheck);
+                }, null, exchangeContractService.TransferWithoutSignCheck);
 
                 Console.WriteLine("Start removing from processing queue");
                 await pendingOperationService.RemoveFromPendingOperationQueue(operationId);
@@ -536,12 +608,11 @@ namespace ContractBuilder
             Console.WriteLine("Begin ethereum adapter migration process");
             try
             {
-                //Console.WriteLine("Type new main exchange address:");
-                //string newMainExchangeAddress = Console.ReadLine().Trim().ToLower();
                 var settings = GetCurrentSettings();
                 var exchangeService = ServiceProvider.Resolve<IExchangeContractService>();
                 var ethereumTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 IEnumerable<ICoin> adapters = await ServiceProvider.Resolve<ICoinRepository>().GetAll();
+
                 foreach (var adapter in adapters)
                 {
                     string transactionHash = await exchangeService.ChangeMainContractInCoin(adapter.AdapterAddress,
@@ -709,6 +780,16 @@ namespace ContractBuilder
             foreach (var item in allEvents)
             {
                 Console.WriteLine($"{item.Event.EventNumber} {item.Event.Value}");
+            }
+        }
+
+        public static void WaitForTransactionCompleation(IWeb3 web3, string transactioHash)
+        {
+            // get contract transaction
+            TransactionReceipt receipt;
+            while ((receipt = web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactioHash).Result) == null)
+            {
+                Task.Delay(350).Wait();
             }
         }
     }

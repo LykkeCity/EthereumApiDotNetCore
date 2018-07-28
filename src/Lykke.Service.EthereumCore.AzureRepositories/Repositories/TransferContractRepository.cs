@@ -93,6 +93,13 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
             });
         }
 
+        public async Task<(IEnumerable<ITransferContract>, string)> GetByTokenAsync(int take, string continuationToken)
+        {
+            var (collection, token) = await _table.GetDataWithContinuationTokenAsync(TransferContractEntity.GenerateParitionKey(), take, continuationToken);
+
+            return (collection, token);
+        }
+
         public async Task SaveAsync(ITransferContract transferContract)
         {
             var entity = TransferContractEntity.Create(transferContract);

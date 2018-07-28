@@ -27,6 +27,7 @@ namespace Lykke.Service.EthereumCore.Services
         Task<BigInteger> GetCurrentBlock();
         Task<List<T>> GetEvents<T>(string address, string abi, string eventName, HexBigInteger filter) where T : new();
         Task<HexBigInteger> CreateFilter(string address, string abi, string eventName);
+        Task WaitForTransactionToCompleteAsync(string transactionHash);
     }
 
     public class ContractService : IContractService
@@ -189,5 +190,24 @@ namespace Lykke.Service.EthereumCore.Services
             return blockNumber.Value;
         }
 
+        public async Task WaitForTransactionToCompleteAsync(string transactionHash)
+        {
+            TransactionReceipt receipt;
+            while ((receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash)) == null)
+            {
+                await Task.Delay(100);
+            }
+
+            // check if contract byte code is deployed
+            if (!string.IsNullOrEmpty(receipt.ContractAddress))
+            {
+                var code = await _web3.Eth.GetCode.SendRequestAsync(receipt.ContractAddress);
+
+                if (string.IsNullOrWhiteSpace(code) || code == "0x")
+                {
+                    throw new Exception("Code was not deployed correctly, verify bytecode or enough gas was to deploy the contract");
+                }
+            }
+        }
     }
 }
