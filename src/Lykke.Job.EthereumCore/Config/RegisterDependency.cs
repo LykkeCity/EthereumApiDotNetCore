@@ -44,7 +44,8 @@ namespace Lykke.Job.EthereumCore.Config
             #region NewJobs
 
             builder.RegisterType<MonitoringCoinTransactionJob>().SingleInstance().WithAttributeFiltering();
-            builder.RegisterType<MonitoringTransferContracts>().SingleInstance().WithAttributeFiltering();
+            //Stop monitoring cashins
+            //builder.RegisterType<MonitoringTransferContracts>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<MonitoringTransferTransactions>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<TransferContractPoolJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<TransferContractUserAssignmentJob>().SingleInstance().WithAttributeFiltering();

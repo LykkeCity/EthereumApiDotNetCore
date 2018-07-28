@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.AzureStorage" Version="3.2.0" />
+    <PackageReference Include="Lykke.AzureStorage" Version="5.0.0" />
     <PackageReference Include="Lykke.RabbitMq.Azure" Version="4.0.1" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="4.3.1" />
   </ItemGroup>
