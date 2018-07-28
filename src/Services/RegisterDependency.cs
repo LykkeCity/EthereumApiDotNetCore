@@ -27,6 +27,7 @@ using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.Airlines;
 using Lykke.Service.EthereumCore.Services.Common;
 using Lykke.Service.EthereumCore.Services.LykkePay;
+using SigningServiceApiCaller.DelegatingHandlers;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -37,8 +38,11 @@ namespace Lykke.Service.EthereumCore.Services
             //Uses HttpClient Inside -> singleton
             Services.AddSingleton<ILykkeSigningAPI>((provider) =>
             {
+                var baseSettings = provider.GetService<IBaseSettings>();
+                var apiKey = baseSettings.SigningServiceApiKey;
+                ApiKeyHandler apiKeyHandler = new ApiKeyHandler(apiKey);
                 var lykkeSigningApi = new LykkeSigningAPI(new Uri(provider.GetService<IBaseSettings>().SignatureProviderUrl
-                    , UriKind.Absolute));
+                    , UriKind.Absolute), apiKeyHandler);
 
                 return lykkeSigningApi;
             });

@@ -46,6 +46,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         string MonitoringServiceUrl { get; set; }
         int GasPricePercentage { get; set; }
         string EthereumSamuraiUrl { get; set; }
+        string SigningServiceApiKey { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -114,7 +115,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         [Optional]
         public int GasPricePercentage { get; set; } = 100;
         public string EthereumSamuraiUrl { get; set; }
-
+        public string SigningServiceApiKey { get; set; }
         public SagasRabbitMq Cqrs { get; set; }
     }
 

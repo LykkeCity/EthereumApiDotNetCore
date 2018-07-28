@@ -91,11 +91,8 @@ namespace ContractBuilder
             containerBuilder.Populate(collection);
             ServiceProvider = containerBuilder.Build();
             ServiceProvider.ActivateRequestInterceptor();
-            //var lykkeSigningAPI = ServiceProvider.GetService<ILykkeSigningAPI>();
-            //lykkeSigningAPI.ApiEthereumAddkeyPost(new AddKeyRequest()
-            //{
-            //    Key = "",
-            //});
+            //var lykkeSigningAPI = ServiceProvider.Resolve<ILykkeSigningAPI>();
+            //var key1 = lykkeSigningAPI.ApiEthereumKeyGetAsync().Result;
 
             //var eventService = ServiceProvider.GetService<ITransactionEventsService>();
             //eventService.IndexCashinEventsForAdapter("0x1c4ca817d1c61f9c47ce2bec9d7106393ff981ce",
