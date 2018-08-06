@@ -52,4 +52,15 @@
     <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Contracts\Erc223FailRandom.abi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="Contracts\Erc223FailRandom.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

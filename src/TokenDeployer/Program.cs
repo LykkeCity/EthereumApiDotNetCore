@@ -90,6 +90,23 @@ namespace TokenDeployer
 
             await consoleLogger.WriteInfoAsync(nameof(Main), "", $"Started Deployment");
 
+            string randomAddress = null;
+
+            #region Erc223Random
+
+            {
+                var abiPath = Path.Combine("Contracts", "Erc223FailRandom.abi");
+                var byteCodePath = Path.Combine("Contracts", "Erc223FailRandom.bin");
+                var abi = File.ReadAllText(abiPath);
+                var bytecode = File.ReadAllText(byteCodePath);
+
+                randomAddress = await contractService.CreateContract(abi,
+                        bytecode,
+                        4000000);
+            }
+
+            #endregion
+
             foreach (var tokenDescr in tokenCfg.Tokens)
             {
                 await consoleLogger.WriteInfoAsync(nameof(Main), "", $"Processing {tokenDescr.TokenName}");
@@ -136,18 +153,22 @@ namespace TokenDeployer
 
                 if (tokenDescr.TokenType == TokenType.Emissive)
                 {
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
-                        $"Starting Emission to {tokenCfg.HotwalletAddress}");
-                    var transactionHash = await ercInterfaceService.Transfer(address,
-                        addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
-                        tokenCfg.HotwalletAddress,
-                        initialSupply);
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Emission txHash is {transactionHash}. " +
-                                                                                          $"Waiting for compleation");
+                    for (int i = 0; i < 21; i++)
+                    {
+                        await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(),
+                            $"Starting Emission to {tokenCfg.HotwalletAddress}");
+                        var transactionHash = await ercInterfaceService.Transfer(address,
+                            addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
+                            randomAddress/*tokenCfg.HotwalletAddress*/,
+                            initialSupply);
+                        await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(),
+                            $"Emission txHash is {transactionHash}. " +
+                            $"Waiting for compleation");
 
-                    WaitForTransactionCompleation(web3, transactionHash);
+                        WaitForTransactionCompleation(web3, transactionHash);
 
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
+                        await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
+                    }
                 }
             }
 

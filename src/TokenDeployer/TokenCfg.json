@@ -3,10 +3,10 @@
   "Tokens": [
     {
       "TokenType": "Emissive",
-      "TokenName": "IgnatToken",
+      "TokenName": "TestToken",
       "IssuerAddress": "0xfe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b6",
       "Divisibility": 8,
-      "TokenSymbol": "IGNAT",
+      "TokenSymbol": "Test_X",
       "Version": "1.0.0",
       "InitialSupply": "1000000000000000"
     }
