@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs.Commands;
+using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.EthereumCore.Core.Exceptions;
@@ -72,6 +73,8 @@ namespace Lykke.Job.EthereumCore.Workflow.Handlers
             {
                 _logger.WriteWarning(nameof(CashoutCommandHandler), nameof(Handle), $"Operation already exists, {command.Id}", ex);
             }
+
+            eventPublisher.PublishEvent(new CashoutCompletedEvent { OperationId = command.Id });
 
             return CommandHandlingResult.Ok();
         }
