@@ -8,6 +8,7 @@ using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
 using Lykke.Job.EthereumCore.Contracts.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs.Commands;
+using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Job.EthereumCore.Workflow.Handlers;
 using Lykke.Messaging;
 using Lykke.Messaging.RabbitMq;
@@ -61,6 +62,8 @@ namespace Lykke.Job.EthereumCore.Modules
                     true,
                     Register.DefaultEndpointResolver(sagasEndpointResolver),
                     Register.BoundedContext(EthereumBoundedContext.Name)
+                        .PublishingEvents(typeof(CashoutCompletedEvent), typeof(TransferCompletedEvent))
+                            .With("events")
                         .ListeningCommands(typeof(StartCashoutCommand))
                             .On(defaultRoute)
                             .WithCommandsHandler<CashoutCommandHandler>()

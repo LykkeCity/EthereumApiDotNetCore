@@ -2,6 +2,7 @@
 using Common.Log;
 using Lykke.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs.Commands;
+using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Services;
@@ -41,6 +42,8 @@ namespace Lykke.Job.EthereumCore.Workflow.Handlers
             {
                 _logger.WriteWarning(nameof(TransferCommandHandler), nameof(Handle), $"Operation already exists, {command.Id}", ex);
             }
+
+            eventPublisher.PublishEvent(new TransferCompletedEvent { OperationId = command.Id });
 
             return CommandHandlingResult.Ok();
         }
