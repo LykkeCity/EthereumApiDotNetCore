@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <AssemblyName>PassTokenAddressExporter</AssemblyName>
+        <UseNETCoreGenerator>true</UseNETCoreGenerator>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CsvHelper" Version="8.0.0-beta01" />
+        <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+        <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
+        <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+        <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
+        <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+    </ItemGroup>
+
+</Project>
