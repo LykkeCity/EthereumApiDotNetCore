@@ -59,6 +59,13 @@ namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
             return entity;
         }
 
+        public async Task<(IEnumerable<IErc20DepositContract>, string)> GetByTokenAsync(int take, string continuationToken)
+        {
+            var (collection, token) = await _table.GetDataWithContinuationTokenAsync(GetParitionKey(), take, continuationToken);
+
+            return (collection, token);
+        }
+
         public async Task<IEnumerable<IErc20DepositContract>> GetAll()
         {
             var entities = await _table.GetDataAsync(GetParitionKey());

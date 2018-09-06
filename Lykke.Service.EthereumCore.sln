@@ -57,7 +57,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenDeployer", "src\TokenD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.EthereumCore.PassTokenIntegration", "src\Lykke.Service.EthereumCore.PassTokenIntegration\Lykke.Service.EthereumCore.PassTokenIntegration.csproj", "{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PassClientTest.Console", "tests\Lykke.Service.PassClientTest.Console\Lykke.Service.PassClientTest.Console.csproj", "{9BB6D798-212E-4A5C-9E13-C29417CAD212}"
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PassClientTest.Console", "tests\Lykke.Service.PassClientTest.Console\Lykke.Service.PassClientTest.Console.csproj", "{9BB6D798-212E-4A5C-9E13-C29417CAD212}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PassTokenAddressExporter", "src\PassTokenAddressExporter\PassTokenAddressExporter.csproj", "{667614DF-8236-4A30-A51B-7D31E746A8C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +160,10 @@ Global
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212}.Release|Any CPU.Build.0 = Release|Any CPU
+		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,6 +189,7 @@ Global
 		{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401} = {60685682-4469-431A-A949-A2703D49EC56}
 		{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
+		{667614DF-8236-4A30-A51B-7D31E746A8C6} = {60685682-4469-431A-A949-A2703D49EC56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}
