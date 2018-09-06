@@ -36,5 +36,6 @@ namespace Lykke.Service.EthereumCore.Core.Repositories
 
     public interface IErc223DepositContractRepository : IErc20DepositContractRepositoryOld
     {
+        Task<(IEnumerable<IErc20DepositContract>, string)> GetByTokenAsync(int take, string continuationToken);
     }
 }
