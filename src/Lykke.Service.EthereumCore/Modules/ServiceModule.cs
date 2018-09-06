@@ -42,6 +42,8 @@ namespace Lykke.Service.EthereumCore.Modules
             _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
             _services.AddSingleton(_settings.CurrentValue);
             _services.AddSingleton(_settings);
+            _services.AddSingleton(_settings.CurrentValue.BlockPassClient);
+            _services.AddSingleton(_settings.Nested(x => x.BlockPassClient));
             _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
             _services.AddSingleton(_settings.CurrentValue.ApiKeys);
             builder.RegisterAzureStorages(nesetdBaseSettings, nesetdSlackSettings, _log);

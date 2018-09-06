@@ -71,6 +71,7 @@ namespace Lykke.Service.EthereumCore
                 mvcBuilder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(Log)); });
                 //builder.RegisterModule(new ControllerModule(Log));
                 builder.RegisterModule(new ServiceModule(appSettings, Log));
+                builder.RegisterModule(new CqrsModule(appSettings, Log));
                 builder.Populate(services);
                 builder.RegisterControllers();//RegisterType<LykkePayErc20DepositContractsController>().WithAttributeFiltering();
                 ApplicationContainer = builder.Build();
