@@ -8,7 +8,7 @@ namespace Lykke.Service.PassClientTest.Console
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             BlockPassClientFactory factory = new BlockPassClientFactory();
             var settings = new BlockPassClientSettings()
@@ -24,7 +24,7 @@ namespace Lykke.Service.PassClientTest.Console
                 AddressType = "eth"
             };
 
-            var response = await client.WhitelistAddressAsync(address);
+            var response = client.WhitelistAddressAsync(address).Result;
 
             System.Console.ReadLine();
         }
