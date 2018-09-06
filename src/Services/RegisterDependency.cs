@@ -22,11 +22,14 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.LykkePay;
+using Lykke.Service.EthereumCore.Core.PassToken;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.PassTokenIntegration;
 using Lykke.Service.EthereumCore.Services.Airlines;
 using Lykke.Service.EthereumCore.Services.Common;
 using Lykke.Service.EthereumCore.Services.LykkePay;
+using Lykke.Service.EthereumCore.Services.PassToken;
 using SigningServiceApiCaller.DelegatingHandlers;
 
 namespace Lykke.Service.EthereumCore.Services
@@ -94,6 +97,15 @@ namespace Lykke.Service.EthereumCore.Services
                 
                 return new AssetsService(new Uri(settings.Assets.ServiceUrl));
             });
+
+            Services.AddSingleton<IBlockPassClient>((provider) =>
+            {
+                var settings = provider.GetService<BlockPassClientSettings>();
+                BlockPassClientFactory factory = new BlockPassClientFactory();
+                var client = factory.CreateNew(settings, false);
+
+                return client;
+            });
         }
 
         public static void RegisterServices(this ContainerBuilder builder)
@@ -138,6 +150,7 @@ namespace Lykke.Service.EthereumCore.Services
             builder.RegisterType<TransactionRouter>().As<ITransactionRouter>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<GasPriceService>().As<IGasPriceService>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<LykkePayEventsService>().As<ILykkePayEventsService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<BlockPassService>().As<IBlockPassService>().SingleInstance().WithAttributeFiltering();
 
             builder.RegisterType<LykkePayErc20DepositContractService>()
                 .Keyed<IErc20DepositContractService>(Constants.LykkePayKey)
@@ -145,6 +158,10 @@ namespace Lykke.Service.EthereumCore.Services
 
             builder.RegisterType<Erc20DepositContractService>()
                 .Keyed<IErc20DepositContractService>(Constants.DefaultKey)
+                .SingleInstance().WithAttributeFiltering();
+
+            builder.RegisterType<Erc20ContracAssigner>()
+                .Keyed<IErc20ContracAssigner>(Constants.DefaultKey)
                 .SingleInstance().WithAttributeFiltering();
 
             builder.RegisterType<LykkePayErc20DepositContractPoolService>()
