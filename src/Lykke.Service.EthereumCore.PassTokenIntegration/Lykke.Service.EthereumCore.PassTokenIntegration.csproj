@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.2.0" />
+    <PackageReference Include="Refit" Version="4.6.30" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+  </ItemGroup>
+
+</Project>

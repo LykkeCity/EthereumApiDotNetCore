@@ -12,10 +12,13 @@ namespace Lykke.Service.EthereumCore.Controllers
     public class Erc20DepositContractsController : Controller
     {
         private readonly IErc20DepositContractService _contractService;
+        private readonly IErc20ContracAssigner _erc20ContracAssigner;
 
-        public Erc20DepositContractsController([KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService)
+        public Erc20DepositContractsController([KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService,
+            [KeyFilter(Constants.DefaultKey)]IErc20ContracAssigner erc20ContracAssigner)
         {
             _contractService = contractService;
+            _erc20ContracAssigner = erc20ContracAssigner;
         }
 
 
@@ -25,7 +28,7 @@ namespace Lykke.Service.EthereumCore.Controllers
         [ProducesResponseType(typeof(ApiException), 500)]
         public async Task<IActionResult> CreateDepositContract([FromQuery] string userAddress)
         {
-            var contractAddress = await _contractService.AssignContract(userAddress);
+            var contractAddress = await _erc20ContracAssigner.AssignContract(userAddress);
 
             return Ok(new RegisterResponse
             {

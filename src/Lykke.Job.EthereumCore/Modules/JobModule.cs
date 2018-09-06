@@ -34,7 +34,9 @@ namespace Lykke.Job.EthereumCore.Modules
             _services.AddSingleton<IBaseSettings>(_settings.CurrentValue.EthereumCore);
             _services.AddSingleton(_settings.CurrentValue);
             _services.AddSingleton(_settings);
+            _services.AddSingleton(_settings.CurrentValue.BlockPassClient);
             _services.AddSingleton(_settings.Nested(X => X.EthereumCore));
+            _services.AddSingleton(_settings.Nested(X => X.BlockPassClient));
 
             Lykke.Job.EthereumCore.Config.RegisterDependency.InitJobDependencies(_services,
                      builder,
