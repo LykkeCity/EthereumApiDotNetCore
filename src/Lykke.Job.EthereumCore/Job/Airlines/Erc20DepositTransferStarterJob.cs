@@ -104,7 +104,8 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                         0,
                         SenderType.EthereumCore,
                         EventType.NotEnoughFunds,
-                        WorkflowType.Airlines);
+                        WorkflowType.Airlines,
+                        DateTime.UtcNow);
 
                     await _rabbitQueuePublisher.PublshEvent(@event);
 
@@ -157,7 +158,8 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     0,
                     SenderType.EthereumCore,
                     EventType.Failed,
-                    WorkflowType.Airlines);
+                    WorkflowType.Airlines,
+                    DateTime.UtcNow);
 
                 _logger.WriteWarning("Execute", operation.ToJson(), "ClientSideException", ex);
 

@@ -94,7 +94,8 @@ namespace Lykke.Job.EthereumCore.Job
                     (ulong)transaction?.BlockNumber.Value,
                     SenderType.EthereumCore,
                     EventType.Started,
-                    WorkflowType.LykkePay);
+                    WorkflowType.LykkePay,
+                    DateTime.UtcNow);
 
                 await _rabbitQueuePublisher.PublshEvent(@event);
             }
