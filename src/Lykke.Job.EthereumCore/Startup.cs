@@ -33,7 +33,7 @@ namespace Lykke.Job.EthereumCore
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
-        
+
         private TriggerHost _triggerHost;
         private Task _triggerHostTask;
 
@@ -52,6 +52,7 @@ namespace Lykke.Job.EthereumCore
             try
             {
                 services.AddMvc()
+                    .AddControllersAsServices()
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ContractResolver =
@@ -93,7 +94,7 @@ namespace Lykke.Job.EthereumCore
                     app.UseDeveloperExceptionPage();
                 }
 
-                app.UseLykkeMiddleware("EthereumCore", ex => new ErrorResponse {ErrorMessage = "Technical problem"});
+                app.UseLykkeMiddleware("EthereumCore", ex => new ErrorResponse { ErrorMessage = "Technical problem" });
 
                 app.UseMvc();
                 app.UseSwagger(c =>
@@ -126,7 +127,7 @@ namespace Lykke.Job.EthereumCore
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 //Rewrite request Interceptor
-                ApplicationContainer.Resolve<ITransactionManager>(); 
+                ApplicationContainer.Resolve<ITransactionManager>();
 
                 _triggerHost = new TriggerHost(new AutofacServiceProvider(ApplicationContainer));
                 _triggerHost.ProvideAssembly(GetType().GetTypeInfo().Assembly);
@@ -150,7 +151,7 @@ namespace Lykke.Job.EthereumCore
 
                 _triggerHost?.Cancel();
 
-                if(_triggerHostTask != null)
+                if (_triggerHostTask != null)
                 {
                     await _triggerHostTask;
                 }
@@ -170,12 +171,12 @@ namespace Lykke.Job.EthereumCore
             try
             {
                 // NOTE: Job can't recieve and process IsAlive requests here, so you can destroy all resources
-                
+
                 if (Log != null)
                 {
                     await Log.WriteMonitorAsync("", "", "Terminating");
                 }
-                
+
                 ApplicationContainer.Dispose();
             }
             catch (Exception ex)
