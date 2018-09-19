@@ -8,13 +8,13 @@ contract MainExchangeNM {
     uint _lastPing;
     mapping (uint => bool) public transactions;
 
-    function MainExchangeNM() {
+    function MainExchangeNM() public {
         _owner = msg.sender;
     }
 
     modifier onlyowner { if (msg.sender == _owner || (now - _lastPing) > 30 days) _; }
 
-    function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
+    function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) public onlyowner {
         
         if (transactions[id])
             throw;
@@ -25,7 +25,7 @@ contract MainExchangeNM {
         transactions[id] = true;
     }
 
-    function transfer(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params) onlyowner {
+    function transfer(uint id, address coinAddress, address from, address to, uint amount, bytes sign, bytes params) public onlyowner {
         if (transactions[id])
             throw;
 
@@ -33,7 +33,7 @@ contract MainExchangeNM {
         transactions[id] = true; 
     }
 
-    function transferWithChange(uint id, address coinAddress, address fromAddress, address toAddress, uint amount, uint change, bytes fromSign, bytes toSign, bytes params) onlyowner {
+    function transferWithChange(uint id, address coinAddress, address fromAddress, address toAddress, uint amount, uint change, bytes fromSign, bytes toSign, bytes params) public onlyowner {
         if (transactions[id])
             throw;
         
@@ -48,7 +48,7 @@ contract MainExchangeNM {
     }
 
     // change coin exchange contract
-    function changeMainContractInCoin(address coinContract, address newMainContract) onlyowner {
+    function changeMainContractInCoin(address coinContract, address newMainContract) public onlyowner {
         var coin_contract = Coin(coinContract);
         coin_contract.changeExchangeContract(newMainContract);
     }
@@ -58,7 +58,7 @@ contract MainExchangeNM {
         coin_contract.transferMultisig(from, to, amount);
     }
 
-    function ping() onlyowner {
+    function ping() public onlyowner {
         _lastPing = now;
     }
 }

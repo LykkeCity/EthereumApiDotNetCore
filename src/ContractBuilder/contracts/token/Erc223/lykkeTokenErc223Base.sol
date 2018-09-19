@@ -1,7 +1,8 @@
-pragma solidity ^0.4.9;
-import "./erc20Token.sol";
+pragma solidity ^0.4.11;
 
-contract LykkeTokenBase is ERC20Token {
+import "./erc223Token.sol";
+
+contract LykkeTokenErc223Base is ERC223Token {
 
     address internal _issuer;
     string public standard;
@@ -9,12 +10,13 @@ contract LykkeTokenBase is ERC20Token {
     string public symbol;
     uint8 public decimals;
 
-    function LykkeTokenBase(
+    function LykkeTokenErc223Base(
         address issuer,
         string tokenName,
         uint8 divisibility,
         string tokenSymbol, 
-        string version) ERC20Token() public{
+        string version,
+        uint256 totalSupply) ERC223Token(totalSupply) public{
         symbol = tokenSymbol;
         standard = version;
         name = tokenName;

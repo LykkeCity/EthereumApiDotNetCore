@@ -14,17 +14,17 @@ contract Coin {
     modifier ownerOrTransferContract { if (msg.sender == _owner || transferContractUser[msg.sender] != address(0)) _; }
     modifier onlyFromExchangeContract { if (msg.sender == _exchangeContractAddress) _; }
 
-    function Coin(address exchangeContractAddress) {
+    function Coin(address exchangeContractAddress) public{
         _owner = msg.sender;
         _exchangeContractAddress = exchangeContractAddress;
     }   
 
-    function changeExchangeContract(address newContractAddress) onlyFromExchangeContract {
+    function changeExchangeContract(address newContractAddress) public onlyFromExchangeContract {
         _exchangeContractAddress = newContractAddress;
     }
 
     // transfer coins (called only from exchange contract)
-    function transferMultisig(address from, address to, uint amount) onlyFromExchangeContract {       
+    function transferMultisig(address from, address to, uint amount) public onlyFromExchangeContract {       
         if (coinBalanceMultisig[from] < amount) {
             throw;
         }
@@ -36,30 +36,30 @@ contract Coin {
     }
 
     // virtual method (if not implemented, then throws)
-    function cashin(address receiver, uint amount) ownerOrTransferContract payable returns(bool) { return false; }
+    function cashin(address receiver, uint amount) public ownerOrTransferContract payable returns(bool) { return false; }
 
     // virtual method (if not implemented, then throws)
-    function cashout(address from, address to, uint amount) onlyFromExchangeContract { throw; }
+    function cashout(address from, address to, uint amount) public onlyFromExchangeContract { throw; }
 
-    function balanceOf(address owner) constant returns(uint) {
-         var balance = coinBalanceMultisig[owner];
+    function balanceOf(address owner) public constant returns(uint) {
+        var balance = coinBalanceMultisig[owner];
 
-         return balance;
+        return balance;
     }
 
-    function getTransferAddressUser(address transferAddress) constant returns(address){
-         var userAddress = transferContractUser[transferAddress];
+    function getTransferAddressUser(address transferAddress) public constant returns(address){
+        var userAddress = transferContractUser[transferAddress];
 
-         return userAddress;
+        return userAddress;
     }
 
-    function setTransferAddressUser(address userAddress, address transferAddress) onlyowner{
-         var oldUserAddress = transferContractUser[transferAddress];
+    function setTransferAddressUser(address userAddress, address transferAddress) public onlyowner{
+        var oldUserAddress = transferContractUser[transferAddress];
          
-         if (oldUserAddress != address(0)) {
-             throw;
-         }
+        if (oldUserAddress != address(0)) {
+            throw;
+        }
 
-         transferContractUser[transferAddress] = userAddress;
+        transferContractUser[transferAddress] = userAddress;
     }
 }
