@@ -18,11 +18,6 @@ using Nethereum.RPC.Eth.DTOs;
 
 namespace Lykke.Service.EthereumCore.Services
 {
-    public interface IErc20ContracAssigner
-    {
-        Task<string> AssignContract(string userAddress);
-    }
-
     public class Erc20ContracAssigner : IErc20ContracAssigner
     {
         private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
@@ -221,5 +216,10 @@ namespace Lykke.Service.EthereumCore.Services
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress);
+    }
+
+    public interface IErc20ContracAssigner
+    {
+        Task<string> AssignContract(string userAddress);
     }
 }
