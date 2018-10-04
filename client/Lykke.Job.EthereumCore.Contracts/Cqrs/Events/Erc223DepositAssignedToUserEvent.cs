@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MessagePack;
 
 namespace Lykke.Job.EthereumCore.Contracts.Cqrs.Events
 {
+    [MessagePackObject(keyAsPropertyName: true)]
     public class Erc223DepositAssignedToUserEvent
     {
         public string UserAddress { get; set; }
