@@ -15,5 +15,6 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public LykkePay LykkePay { get; set; }
         public Airlines Airlines { get; set; }
         public ApiKeys ApiKeys { get; set; }
+        public BlockPassClientSettings BlockPassClient { get; set; }
     }
 }

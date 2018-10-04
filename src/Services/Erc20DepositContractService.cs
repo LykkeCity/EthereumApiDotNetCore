@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
+using Lykke.Cqrs;
+using Lykke.Job.EthereumCore.Contracts.Cqrs;
+using Lykke.Job.EthereumCore.Workflow.Commands;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.Exceptions;
@@ -15,6 +18,62 @@ using Nethereum.RPC.Eth.DTOs;
 
 namespace Lykke.Service.EthereumCore.Services
 {
+    public class Erc20ContracAssigner : IErc20ContracAssigner
+    {
+        private readonly IErc20DepositContractQueueServiceFactory _poolFactory;
+        private readonly IErc223DepositContractRepository _contractRepository;
+        private readonly ICqrsEngine _cqrsEngine;
+
+        public Erc20ContracAssigner(IErc20DepositContractQueueServiceFactory poolFactory,
+            [KeyFilter(Constants.DefaultKey)]IErc223DepositContractRepository contractRepository,
+            ICqrsEngine cqrsEngine)
+        {
+            _cqrsEngine = cqrsEngine;
+            _poolFactory = poolFactory;
+            _contractRepository = contractRepository;
+        }
+
+        public async Task<string> AssignContract(string userAddress)
+        {
+            var contractAddress = await GetContractAddress(userAddress);
+
+            if (string.IsNullOrEmpty(contractAddress))
+            {
+                var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
+
+                contractAddress = await pool.GetContractAddress();
+
+                var command = new AssignErc223DepositToUserCommand()
+                {
+                    UserAddress = userAddress,
+                    ContractAddress = contractAddress
+                };
+
+                try
+                {
+                    _cqrsEngine.SendCommand(command,
+                        "blockchain.ethereum.core.api",
+                        EthereumBoundedContext.Name);
+                }
+                catch (Exception e)
+                {
+                    await pool.PushContractAddress(contractAddress);
+
+                    throw;
+                }
+            }
+
+            return contractAddress;
+        }
+
+        public async Task<string> GetContractAddress(string userAddress)
+        {
+            var contract = await _contractRepository.Get(userAddress);
+
+            return contract?.ContractAddress;
+        }
+    }
+
     //Default Erc20 deposit contract
     public class Erc20DepositContractService : IErc20DepositContractService
     {
@@ -39,6 +98,7 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly IBaseSettings _settings;
         private readonly ILog _log;
         private readonly IWeb3 _web3;
+        private readonly ICqrsEngine _cqrsEngine;
 
         public Erc20DepositContractService(
             IErc20DepositContractRepositoryOld oldContractRepository,
@@ -61,22 +121,7 @@ namespace Lykke.Service.EthereumCore.Services
 
         public async Task<string> AssignContract(string userAddress)
         {
-            var contractAddress = await GetContractAddress(userAddress);
-
-            if (string.IsNullOrEmpty(contractAddress))
-            {
-                var pool = _poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
-
-                contractAddress = await pool.GetContractAddress();
-
-                await _contractRepository.AddOrReplace(new Erc20DepositContract
-                {
-                    ContractAddress = contractAddress,
-                    UserAddress = userAddress
-                });
-            }
-
-            return contractAddress;
+            throw new NotImplementedException();
         }
 
         public async Task<string> CreateContract()
@@ -136,7 +181,7 @@ namespace Lykke.Service.EthereumCore.Services
 
             if (!cashinWouldBeSuccesfull)
             {
-                throw new ClientSideException(ExceptionType.CantEstimateExecution ,$"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
+                throw new ClientSideException(ExceptionType.CantEstimateExecution, $"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
             }
 
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
@@ -170,5 +215,10 @@ namespace Lykke.Service.EthereumCore.Services
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress);
+    }
+
+    public interface IErc20ContracAssigner
+    {
+        Task<string> AssignContract(string userAddress);
     }
 }

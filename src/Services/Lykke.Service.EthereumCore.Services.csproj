@@ -17,15 +17,23 @@
     <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore.BusinessModels\Lykke.Service.EthereumCore.BusinessModels.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.EthereumCore.PassTokenIntegration\Lykke.Service.EthereumCore.PassTokenIntegration.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore.RabbitMQ\Lykke.Service.RabbitMQ.csproj" />
     <ProjectReference Include="..\SigningServiceApiCaller\SigningServiceApiCaller.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lykke.Cqrs" Version="4.8.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="2.1.0.120" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Lykke.Cqrs">
+      <HintPath>C:\Users\Aleks\.nuget\packages\lykke.cqrs\4.8.0\lib\netstandard2.0\Lykke.Cqrs.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
