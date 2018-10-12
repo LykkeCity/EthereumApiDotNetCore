@@ -37,6 +37,42 @@ namespace Lykke.Service.EthereumCore.Controllers
             _erc20Service = erc20Service;
         }
 
+        [HttpPost("getTransactionWithData")]
+        [ProducesResponseType(typeof(EthTransactionRaw), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> GetTransactionWithDataAsync([FromBody]PrivateWalletDataTransaction ethTransaction)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            string serialized = JsonConvert.SerializeObject(ethTransaction);
+            await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", serialized, "Get transaction for signing", DateTime.UtcNow);
+            var transaction = new DataTransaction()
+            {
+                FromAddress = ethTransaction.FromAddress,
+                GasAmount = BigInteger.Parse(ethTransaction.GasAmount),
+                GasPrice = BigInteger.Parse(ethTransaction.GasPrice),
+                ToAddress = ethTransaction.ToAddress,
+                Value = BigInteger.Parse(ethTransaction.Value),
+                Data = ethTransaction.Data
+            };
+
+            await _privateWalletService.ValidateInputAsync(transaction);
+            string transactionHex = await _privateWalletService.GetDataTransactionForSigning(transaction);
+
+            await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized} + TransactionHex:{transactionHex}",
+                "Recieved transaction for signing", DateTime.UtcNow);
+
+            return Ok(new EthTransactionRaw()
+            {
+                FromAddress = ethTransaction.FromAddress,
+                TransactionHex = transactionHex
+            });
+        }
+
         [HttpPost("getTransaction")]
         [ProducesResponseType(typeof(EthTransactionRaw), 200)]
         [ProducesResponseType(typeof(ApiException), 400)]

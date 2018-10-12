@@ -92,6 +92,13 @@ namespace ContractBuilder
             containerBuilder.Populate(collection);
             ServiceProvider = containerBuilder.Build();
             ServiceProvider.ActivateRequestInterceptor();
+            //var signApi = ServiceProvider.Resolve<ILykkeSigningAPI>();
+            //var signed = signApi.ApiEthereumSignPostWithHttpMessagesAsync(new EthereumTransactionSignRequest()
+            //{
+            //    FromProperty = "0x406561F72e25af10fD28b41200FA3D52badC5A21",
+            //    Transaction = "f86b8201618483215600830186a094db6ea754f2afb4257b9bea0828771b19504aeac380b844a9059cbb00000000000000000000000033c6b8907d65d5a53cc301c544abf99f2e783242000000000000000000000000000000000000000000000000000000000000000c808080"
+            //}).Result;
+            //var xa = 1;
             //var lykkeSigningAPI = ServiceProvider.Resolve<ILykkeSigningAPI>();
             //var key1 = lykkeSigningAPI.ApiEthereumKeyGetAsync().Result;
 
