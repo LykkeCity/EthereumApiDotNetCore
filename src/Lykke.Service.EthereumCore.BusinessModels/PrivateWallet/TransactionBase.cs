@@ -11,6 +11,6 @@ namespace Lykke.Service.EthereumCore.BusinessModels.PrivateWallet
         public string ToAddress { get; set; }
         public BigInteger GasAmount { get; set; }
         public BigInteger GasPrice { get; set; }
-        public BigInteger Value { get; set; }
+        public virtual BigInteger Value { get; set; }
     }
 }

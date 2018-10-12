@@ -26,11 +26,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
     public interface IPrivateWalletService
     {
+        Task<string> GetDataTransactionForSigning(DataTransaction ethTransaction, bool useTxPool = false);
         Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex);
         Task<string> GetTransactionForSigning(EthTransaction ethTransaction, bool useTxPool = false);
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task<bool> CheckTransactionSign(string from, string signedTrHex);
-        Task ValidateInputAsync(EthTransaction transaction);
+        Task ValidateInputAsync(TransactionBase transaction);
     }
 
     public class PrivateWalletService : IPrivateWalletService
@@ -75,6 +76,22 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);
             var hex      = tr.GetRLPEncoded().ToHex();
+
+            return hex;
+        }
+
+        public async Task<string> GetDataTransactionForSigning(DataTransaction ethTransaction, bool useTxPool = false)
+        {
+            string from = ethTransaction.FromAddress;
+
+            var gas = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasAmount);
+            var gasPrice = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasPrice);
+            var nonce = await _nonceCalculator.GetNonceAsync(from, useTxPool);
+            var to = ethTransaction.ToAddress;
+            var value = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
+            var data = ethTransaction.Data;
+            var tr = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas, data);
+            var hex = tr.GetRLPEncoded().ToHex();
 
             return hex;
         }
@@ -125,13 +142,14 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             return _addressUtil.ConvertToChecksumAddress(from) == _addressUtil.ConvertToChecksumAddress(signedBy);
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="transaction"></param>
         /// <returns></returns>
         /// <exception cref="ClientSideException">Throws client side exception</exception>
-        public async Task ValidateInputAsync(EthTransaction transaction)
+        public async Task ValidateInputAsync(TransactionBase transaction)
         {
             await _transactionValidationService.ValidateAddressBalanceAsync(transaction.FromAddress, transaction.Value, transaction.GasAmount, transaction.GasPrice);
         }
