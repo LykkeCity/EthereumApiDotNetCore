@@ -723,13 +723,12 @@ namespace ContractBuilder
         static AppSettings GetCurrentSettings()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-            var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
+            var location = Path.Combine(fi.DirectoryName);
             var builder = new ConfigurationBuilder()
                 .SetBasePath(location)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
-            var connString = configuration.GetConnectionString("ConnectionString");
             var path = GetSettingsPath();
             var settings = GeneralSettingsReader.ReadGeneralSettingsLocal<AppSettings>(path);
 
