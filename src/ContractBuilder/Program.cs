@@ -53,9 +53,16 @@ namespace ContractBuilder
 
         public static void Main(string[] args)
         {
+            if (args == null || !args.Any())
+            {
+                throw new Exception("Specify parameters! url to EtherteumCore service");
+            }
+
             var exit = false;
 
-            var settings = GetCurrentSettingsFromUrl();
+            string settingsArg = args.First();
+
+            var settings = new SettingsServiceReloadingManager<AppSettings>(settingsArg);
             SaveSettings(settings);
 
             ContainerBuilder containerBuilder = new ContainerBuilder();
@@ -715,13 +722,11 @@ namespace ContractBuilder
         static IReloadingManager<AppSettings> GetCurrentSettingsFromUrl()
         {
             FileInfo fi = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-            var location = Path.Combine(fi.DirectoryName, "..", "..", "..");
+            var location = Path.Combine(fi.DirectoryName);
             var builder = new ConfigurationBuilder()
                 .SetBasePath(location)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             var configuration = builder.Build();
-            var connString = configuration.GetConnectionString("ConnectionString");
             var settings = configuration.LoadSettings<AppSettings>();
 
             return settings;
