@@ -44,6 +44,19 @@ namespace Lykke.Service.EthereumCore.Models.Models
     }
 
     [DataContract]
+    public class PrivateWalletDataTransaction : EthTransactionBase
+    {
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntAllowZeroTemplate)]
+        public override string Value { get; set; }
+
+        //AnyData -_-
+        [DataMember]
+        public string Data { get; set; }
+    }
+
+    [DataContract]
     public class PrivateWalletErc20Transaction : EthTransactionBase
     {
         [DataMember]

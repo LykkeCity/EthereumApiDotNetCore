@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Lykke.Service.EthereumCore.BusinessModels.PrivateWallet
 {
-    public class EthTransaction : TransactionBase
+    public class DataTransaction : TransactionBase
     {
-        public override BigInteger Value { get; set; }
+        public string Data { get; set; }
     }
 }
