@@ -14,6 +14,7 @@ namespace DepositContractResolver.Commands
 {
     public class ScanDepositAndWithdrawCommand : ICommand
     {
+        private readonly BigInteger _minAmountToTransfer = BigInteger.Parse("227250000000000");
         private readonly IConfigurationHelper _helper;
         private readonly string _settingsUrl;
 
@@ -63,10 +64,18 @@ namespace DepositContractResolver.Commands
                         depositContract.UserAddress,
                         checkInPendingBlock: true);
 
-                    if (adapterBalance != 0)
+                    if (adapterBalance != 0 )
                     {
                         await consoleLogger.WriteInfoAsync(nameof(ScanDepositBalancesAndWithdrawAsync),
                             depositContract.UserAddress, $" Balance on adapter is {adapterBalance}.");
+
+                        if (adapterBalance < _minAmountToTransfer)
+                        {
+                            await consoleLogger.WriteInfoAsync(nameof(ScanDepositBalancesAndWithdrawAsync),
+                                depositContract.UserAddress, $" It is less than min so we skip it.");
+
+                            continue;
+                        }
 
                         if (depositContract.UserAddress.ToLower() == hotWalletAddress.ToLower())
                         {
