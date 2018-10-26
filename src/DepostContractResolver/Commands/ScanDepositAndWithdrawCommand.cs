@@ -14,6 +14,7 @@ namespace DepositContractResolver.Commands
 {
     public class ScanDepositAndWithdrawCommand : ICommand
     {
+        private readonly BigInteger _minAmountToTransfer = BigInteger.Parse("227250000000000");
         private readonly IConfigurationHelper _helper;
         private readonly string _settingsUrl;
 
@@ -63,10 +64,18 @@ namespace DepositContractResolver.Commands
                         depositContract.UserAddress,
                         checkInPendingBlock: true);
 
-                    if (adapterBalance != 0)
+                    if (adapterBalance != 0 )
                     {
                         await consoleLogger.WriteInfoAsync(nameof(ScanDepositBalancesAndWithdrawAsync),
                             depositContract.UserAddress, $" Balance on adapter is {adapterBalance}.");
+
+                        if (adapterBalance < _minAmountToTransfer)
+                        {
+                            await consoleLogger.WriteInfoAsync(nameof(ScanDepositBalancesAndWithdrawAsync),
+                                depositContract.UserAddress, $" It is less than min so we skip it.");
+
+                            continue;
+                        }
 
                         if (depositContract.UserAddress.ToLower() == hotWalletAddress.ToLower())
                         {
@@ -76,13 +85,18 @@ namespace DepositContractResolver.Commands
                         if (depositContract.UserAddress.ToLower() != hotWalletAddress.ToLower())
                         {
                             var guid = Guid.NewGuid();
-                            string transactionHashFromAdapter = await exchangeContractService.TransferWithoutSignCheck(guid,
-                                depositContract.CoinAdapterAddress,
-                                depositContract.UserAddress,
-                                hotWalletAddress,
-                                adapterBalance,
-                                "01");
+                            string transactionHashFromAdapter = null;
 
+                            await RetryPolicy.ExecuteUnlimitedAsync(async () =>
+                            {
+                                transactionHashFromAdapter = await exchangeContractService.TransferWithoutSignCheck(guid,
+                                    depositContract.CoinAdapterAddress,
+                                    depositContract.UserAddress,
+                                    hotWalletAddress,
+                                    adapterBalance,
+                                    "01");
+                            }, 1000, consoleLogger);
+                            
                             await consoleLogger.WriteInfoAsync(nameof(ScanDepositBalancesAndWithdrawAsync),
                                 depositContract.UserAddress, $"Transfer from the adapter address to the hotwallet(segment) is pending. {transactionHashFromAdapter}");
 
