@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Common.Log;
 
-namespace DepositContractResolver.Helpers
+namespace Lykke.Service.EthereumCore.Core.Utils
 {
     public static class RetryPolicy
     {

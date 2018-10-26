@@ -19,6 +19,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core.Shared;
+using Lykke.Service.EthereumCore.Core.Utils;
 
 namespace Lykke.Service.EthereumCore.Services.HotWallet
 {
@@ -178,7 +179,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
 
                 if (!transactionExecutionCosts.IsAllowed)
                 {
-                    throw new Exception($"Transaction will not be successfull {cashout.ToJson()}");
+                    throw new Exception($"Transaction will not be successfull {JsonSerialisersExt.ToJson(cashout)}");
                 }
 
                 transactionHash = isErc20Transfer ? await _erc20PrivateWalletService.SubmitSignedTransaction(cashout.FromAddress, signedTransaction) :
@@ -222,11 +223,14 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
                 operation.TokenAddress,
                 operation.ToAddress);
 
-            await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
+            await RetryPolicy.ExecuteUnlimitedAsync(async () =>
             {
-                OperationId = operation.OperationId,
-                TransactionHash = transactionHash
-            });
+                await _hotWalletCashoutTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
+                {
+                    OperationId = operation.OperationId,
+                    TransactionHash = transactionHash
+                });
+            }, TimeSpan.FromMinutes(1).Milliseconds, _log);
 
             CoinTransactionMessage message = new CoinTransactionMessage()
             {
