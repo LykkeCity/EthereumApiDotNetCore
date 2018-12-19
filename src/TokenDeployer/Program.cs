@@ -113,7 +113,7 @@ namespace TokenDeployer
                 }
 
                 var (abi,bytecode) = GetContractDeploymentForTokenType(tokenDescr.TokenType);
-                string address = tokenDescr.TokenType == TokenType.Emissive ? 
+                string address = tokenDescr.TokenType != TokenType.NonEmissive ? 
                     await contractService.CreateContract(abi,
                                             bytecode,
                                             4000000,
@@ -134,7 +134,7 @@ namespace TokenDeployer
 
                 await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Deployed at address {address}");
 
-                if (tokenDescr.TokenType == TokenType.Emissive)
+                if (tokenDescr.TokenType != TokenType.NonEmissive)
                 {
                     await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
                         $"Starting Emission to {tokenCfg.HotwalletAddress}");
@@ -172,12 +172,6 @@ namespace TokenDeployer
             return settings;
         }
 
-        private static volatile string EmissiveErc223TokenAbi;
-        private static volatile string EmissiveErc223TokenBin;
-        private static volatile string NonEmissiveErc223TokenAbi;
-        private static volatile string NonEmissiveErc223TokenBin;
-
-
         static (string abi, string bytecode) GetContractDeploymentForTokenType(TokenType type)
         {
             string abiPath = null;
@@ -194,6 +188,10 @@ namespace TokenDeployer
                 case TokenType.NonEmissive:
                     abiPath = "NonEmissiveErc223Token.abi";
                     byteCodePath = "NonEmissiveErc223Token.bin";
+                    break;
+                case TokenType.LuCyToken:
+                    abiPath = "LuCyToken.abi";
+                    byteCodePath = "LuCyToken.bin";
                     break;
                 default:
                     throw new NotImplementedException();

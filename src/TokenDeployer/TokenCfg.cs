@@ -28,5 +28,6 @@ namespace TokenDeployer
     {
         Emissive = 1,
         NonEmissive = 2,
+        LuCyToken = 3
     }
 }

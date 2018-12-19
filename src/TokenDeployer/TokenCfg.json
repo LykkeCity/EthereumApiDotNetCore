@@ -2,13 +2,13 @@
   "HotwalletAddress": "0x6Da4B01c3A88d67Fddc2Cb8B5505723409114b45",
   "Tokens": [
     {
-      "TokenType": "Emissive",
-      "TokenName": "IgnatToken",
-      "IssuerAddress": "0xfe2b80f7aa6c3d9b4fafeb57d0c9d98005d0e4b6",
-      "Divisibility": 8,
-      "TokenSymbol": "IGNAT",
+      "TokenType": "LuCyToken",
+      "TokenName": "LyCI_test service token",
+      "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
+      "Divisibility": 18,
+      "TokenSymbol": "LYCI_test",
       "Version": "1.0.0",
-      "InitialSupply": "1000000000000000"
+      "InitialSupply": "1000000000000000000000000"
     }
   ]
 }
