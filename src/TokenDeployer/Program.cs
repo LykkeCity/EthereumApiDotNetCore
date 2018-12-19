@@ -134,21 +134,23 @@ namespace TokenDeployer
 
                 await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Deployed at address {address}");
 
-                if (tokenDescr.TokenType != TokenType.NonEmissive)
-                {
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
-                        $"Starting Emission to {tokenCfg.HotwalletAddress}");
-                    var transactionHash = await ercInterfaceService.Transfer(address,
-                        addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
-                        tokenCfg.HotwalletAddress,
-                        initialSupply);
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Emission txHash is {transactionHash}. " +
-                                                                                          $"Waiting for compleation");
+                ////Commented code makes token emission. 
+                //
+                //if (tokenDescr.TokenType != TokenType.NonEmissive)
+                //{
+                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
+                //        $"Starting Emission to {tokenCfg.HotwalletAddress}");
+                //    var transactionHash = await ercInterfaceService.Transfer(address,
+                //        addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
+                //        tokenCfg.HotwalletAddress,
+                //        initialSupply);
+                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Emission txHash is {transactionHash}. " +
+                //                                                                          $"Waiting for compleation");
 
-                    WaitForTransactionCompleation(web3, transactionHash);
+                //    WaitForTransactionCompleation(web3, transactionHash);
 
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
-                }
+                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
+                //}
             }
 
             await consoleLogger.WriteInfoAsync(nameof(Main), "", "Completed processing all tokens.");
