@@ -1,14 +1,21 @@
 ﻿{
   "HotwalletAddress": "0x6Da4B01c3A88d67Fddc2Cb8B5505723409114b45",
   "Tokens": [
+    //{
+    //  "TokenType": "LuCyToken",
+    //  "TokenName": "LyCI_test service token",
+    //  "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
+    //  "Divisibility": 18,
+    //  "TokenSymbol": "LYCI_test",
+    //  "Version": "1.0.0",
+    //  "InitialSupply": "1000000000000000000000000"
+    //}
+  ],
+  "Transfers": [
     {
-      "TokenType": "LuCyToken",
-      "TokenName": "LyCI_test service token",
       "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
-      "Divisibility": 18,
-      "TokenSymbol": "LYCI_test",
-      "Version": "1.0.0",
-      "InitialSupply": "1000000000000000000000000"
+      "TokenAddress": "0x16e17F0e2c645b21304dCF362C58D2060d34DaD9",
+      "Amount": "100000000000000000000000"
     }
   ]
 }

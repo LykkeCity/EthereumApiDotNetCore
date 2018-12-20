@@ -133,24 +133,40 @@ namespace TokenDeployer
                         initialSupply);
 
                 await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Deployed at address {address}");
+            }
 
-                ////Commented code makes token emission. 
-                //
-                //if (tokenDescr.TokenType != TokenType.NonEmissive)
-                //{
-                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
-                //        $"Starting Emission to {tokenCfg.HotwalletAddress}");
-                //    var transactionHash = await ercInterfaceService.Transfer(address,
-                //        addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
-                //        tokenCfg.HotwalletAddress,
-                //        initialSupply);
-                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Emission txHash is {transactionHash}. " +
-                //                                                                          $"Waiting for compleation");
+            foreach (var transfer in tokenCfg.Transfers)
+            {
+                if (!BigInteger.TryParse(transfer.Amount, out var amount) || amount == 0)
+                {
+                    await consoleLogger.WriteInfoAsync(nameof(Main),
+                        transfer.ToJson(),
+                        $"Can't parse amount value. It is not a BigInt or zero");
 
-                //    WaitForTransactionCompleation(web3, transactionHash);
+                    continue;
+                }
 
-                //    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
-                //}
+                if (!exchangeContractService.IsValidAddress(transfer.IssuerAddress))
+                {
+                    await consoleLogger.WriteInfoAsync(nameof(Main),
+                        transfer.ToJson(),
+                        $"Issuer address is not a valid address.");
+
+                    continue;
+                }
+
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(),
+                    $"Starting Emission to {tokenCfg.HotwalletAddress}");
+                var transactionHash = await ercInterfaceService.Transfer(transfer.TokenAddress,
+                    addressUtil.ConvertToChecksumAddress(transfer.IssuerAddress), //Should be in SigningService
+                    tokenCfg.HotwalletAddress,
+                    amount);
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(), $"Emission txHash is {transactionHash}. " +
+                                                                                    $"Waiting for completion");
+
+                WaitForTransactionCompleation(web3, transactionHash);
+
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(), "Completed.");
             }
 
             await consoleLogger.WriteInfoAsync(nameof(Main), "", "Completed processing all tokens.");

@@ -10,6 +10,7 @@ namespace TokenDeployer
     {
         public string HotwalletAddress { get; set; }
         public IEnumerable<Token> Tokens { get; set; }
+        public IEnumerable<TokenTransfer> Transfers { get; set; }
     }
 
     public class Token
@@ -22,6 +23,13 @@ namespace TokenDeployer
         public string TokenSymbol { get; set; }
         public string Version { get; set; }
         public string InitialSupply { get; set; }
+    }
+
+    public class TokenTransfer
+    {
+        public string IssuerAddress { get; set; }
+        public string TokenAddress { get; set; }
+        public string Amount { get; set; }
     }
 
     public enum TokenType
