@@ -113,7 +113,7 @@ namespace TokenDeployer
                 }
 
                 var (abi,bytecode) = GetContractDeploymentForTokenType(tokenDescr.TokenType);
-                string address = tokenDescr.TokenType == TokenType.Emissive ? 
+                string address = tokenDescr.TokenType != TokenType.NonEmissive ? 
                     await contractService.CreateContract(abi,
                                             bytecode,
                                             4000000,
@@ -133,22 +133,40 @@ namespace TokenDeployer
                         initialSupply);
 
                 await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Deployed at address {address}");
+            }
 
-                if (tokenDescr.TokenType == TokenType.Emissive)
+            foreach (var transfer in tokenCfg.Transfers)
+            {
+                if (!BigInteger.TryParse(transfer.Amount, out var amount) || amount == 0)
                 {
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), 
-                        $"Starting Emission to {tokenCfg.HotwalletAddress}");
-                    var transactionHash = await ercInterfaceService.Transfer(address,
-                        addressUtil.ConvertToChecksumAddress(tokenDescr.IssuerAddress), //Should be in SigningService
-                        tokenCfg.HotwalletAddress,
-                        initialSupply);
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), $"Emission txHash is {transactionHash}. " +
-                                                                                          $"Waiting for compleation");
+                    await consoleLogger.WriteInfoAsync(nameof(Main),
+                        transfer.ToJson(),
+                        $"Can't parse amount value. It is not a BigInt or zero");
 
-                    WaitForTransactionCompleation(web3, transactionHash);
-
-                    await consoleLogger.WriteInfoAsync(nameof(Main), tokenDescr.ToJson(), "Completed.");
+                    continue;
                 }
+
+                if (!exchangeContractService.IsValidAddress(transfer.IssuerAddress))
+                {
+                    await consoleLogger.WriteInfoAsync(nameof(Main),
+                        transfer.ToJson(),
+                        $"Issuer address is not a valid address.");
+
+                    continue;
+                }
+
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(),
+                    $"Starting Emission to {tokenCfg.HotwalletAddress}");
+                var transactionHash = await ercInterfaceService.Transfer(transfer.TokenAddress,
+                    addressUtil.ConvertToChecksumAddress(transfer.IssuerAddress), //Should be in SigningService
+                    tokenCfg.HotwalletAddress,
+                    amount);
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(), $"Emission txHash is {transactionHash}. " +
+                                                                                    $"Waiting for completion");
+
+                WaitForTransactionCompleation(web3, transactionHash);
+
+                await consoleLogger.WriteInfoAsync(nameof(Main), transfer.ToJson(), "Completed.");
             }
 
             await consoleLogger.WriteInfoAsync(nameof(Main), "", "Completed processing all tokens.");
@@ -172,12 +190,6 @@ namespace TokenDeployer
             return settings;
         }
 
-        private static volatile string EmissiveErc223TokenAbi;
-        private static volatile string EmissiveErc223TokenBin;
-        private static volatile string NonEmissiveErc223TokenAbi;
-        private static volatile string NonEmissiveErc223TokenBin;
-
-
         static (string abi, string bytecode) GetContractDeploymentForTokenType(TokenType type)
         {
             string abiPath = null;
@@ -194,6 +206,10 @@ namespace TokenDeployer
                 case TokenType.NonEmissive:
                     abiPath = "NonEmissiveErc223Token.abi";
                     byteCodePath = "NonEmissiveErc223Token.bin";
+                    break;
+                case TokenType.LuCyToken:
+                    abiPath = "LuCyToken.abi";
+                    byteCodePath = "LuCyToken.bin";
                     break;
                 default:
                     throw new NotImplementedException();
