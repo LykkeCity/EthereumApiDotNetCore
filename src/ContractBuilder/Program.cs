@@ -99,6 +99,20 @@ namespace ContractBuilder
             containerBuilder.Populate(collection);
             ServiceProvider = containerBuilder.Build();
             ServiceProvider.ActivateRequestInterceptor();
+
+            //var web3 = ServiceProvider.Resolve<IWeb3>();
+            //var abi = GetFileContent("LuCyToken.abi");
+            //var bytecode = GetFileContent("LuCyToken.bin");
+            //var tokenAddress = "0x16e17f0e2c645b21304dcf362c58d2060d34dad9";
+            //var contract = web3.Eth.GetContract(abi, tokenAddress);
+
+            //var getTermsAndConditionsFunc = contract.GetFunction("getTermsAndConditions");
+            //var setTermsAndConditionsFunc = contract.GetFunction("setTermsAndConditions");
+            //var tC =  getTermsAndConditionsFunc.CallAsync<string>().Result;
+            //var transactionHash = setTermsAndConditionsFunc.SendTransactionAsync(settings.CurrentValue.EthereumCore.EthereumMainAccount,
+            //        new HexBigInteger(BigInteger.Parse("200000")), new HexBigInteger(0), "https://www.lykke.com/cp/terms_of_use").Result;
+
+
             //var signApi = ServiceProvider.Resolve<ILykkeSigningAPI>();
             //var signed = signApi.ApiEthereumSignPostWithHttpMessagesAsync(new EthereumTransactionSignRequest()
             //{

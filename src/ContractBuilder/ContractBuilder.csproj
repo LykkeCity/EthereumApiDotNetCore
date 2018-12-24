@@ -14,6 +14,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="contracts\bin\LuCyToken.abi" />
+    <None Remove="contracts\bin\LuCyToken.bin" />
+    <None Remove="contracts\bin\LuCyToken.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="contracts\bin\LuCyToken.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="contracts\bin\LuCyToken.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="contracts\bin\LuCyToken.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="contracts\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
