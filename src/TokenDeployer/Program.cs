@@ -208,8 +208,8 @@ namespace TokenDeployer
                     byteCodePath = "NonEmissiveErc223Token.bin";
                     break;
                 case TokenType.LuCyToken:
-                    abiPath = "LuCyToken.abi";
-                    byteCodePath = "LuCyToken.bin";
+                    abiPath = "LyCI.abi";
+                    byteCodePath = "LyCI.bin";
                     break;
                 default:
                     throw new NotImplementedException();

@@ -4,12 +4,12 @@ import "./lykkeTokenErc223Base.sol";
 import "./SafeMath.sol";
 import "./emissiveErc223Token.sol";
 
-contract LuCyToken is EmissiveErc223Token {
+contract LyCI is EmissiveErc223Token {
     using SafeMath for uint;
     string public termsAndConditionsUrl;
     address public owner;
 
-    function LuCyToken(
+    function LyCI(
         address issuer,
         string tokenName,
         uint8 divisibility,
