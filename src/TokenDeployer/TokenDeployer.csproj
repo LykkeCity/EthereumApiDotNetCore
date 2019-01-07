@@ -9,9 +9,9 @@
     <None Remove="Contracts\EmissiveErc223Token.abi" />
     <None Remove="Contracts\EmissiveErc223Token.bin" />
     <None Remove="Contracts\EmissiveErc223Token.json" />
-    <None Remove="Contracts\LuCyToken.abi" />
-    <None Remove="Contracts\LuCyToken.bin" />
-    <None Remove="Contracts\LuCyToken.json" />
+    <None Remove="Contracts\LyCI.abi" />
+    <None Remove="Contracts\LyCI.bin" />
+    <None Remove="Contracts\LyCI.json" />
     <None Remove="Contracts\NonEmissiveErc223Token.abi" />
     <None Remove="Contracts\NonEmissiveErc223Token.bin" />
     <None Remove="Contracts\NonEmissiveErc223Token.json" />
@@ -27,15 +27,15 @@
     <Content Include="Contracts\EmissiveErc223Token.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Contracts\LuCyToken.abi">
+    <Content Include="Contracts\LyCI.abi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="Contracts\LuCyToken.bin">
+    <Content Include="Contracts\LyCI.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="Contracts\LuCyToken.json">
+    <Content Include="Contracts\LyCI.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
