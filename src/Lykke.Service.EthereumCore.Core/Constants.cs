@@ -136,6 +136,7 @@ namespace Lykke.Service.EthereumCore.Core
 
         public const string OwnerTable = "Owner";
         public static BigInteger DefaultTransactionGas = 21000;
+        public static BigInteger GasForEachDataByte = 68;
         public const string Erc20TransferSignature =  "0xa9059cbb";
     }
 

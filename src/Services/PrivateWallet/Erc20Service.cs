@@ -1,23 +1,15 @@
-﻿using Lykke.Service.EthereumCore.BusinessModels;
-using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
+﻿using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
+using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
+using Lykke.Service.EthereumCore.Services.Signature;
+using Lykke.Service.EthereumCore.Services.Transactions;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
-using Nethereum.RPC.Eth.Transactions;
-using Nethereum.Util;
-using Nethereum.Web3;
-using Lykke.Service.EthereumCore.Services.Signature;
-using Lykke.Service.EthereumCore.Services.Transactions;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -40,6 +32,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         Task<string> SubmitSignedTransaction(string from, string signedTrHex);
         Task ValidateInput(Erc20Transaction transaction);
         Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction);
+        string GetTransferFunctionCallEncoded(string tokenAddress, string receiverAddress, BigInteger amount);
     }
 
     public class Erc20PrivateWalletService : IErc20PrivateWalletService
@@ -50,16 +43,13 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly ITransactionValidationService _transactionValidationService;
-        private readonly ISignatureChecker _signatureChecker;
-        private readonly AddressUtil _addressUtil;
 
         public Erc20PrivateWalletService(IWeb3 web3, 
             INonceCalculator nonceCalculator, 
             IBaseSettings settings,
             IRawTransactionSubmitter rawTransactionSubmitter,
             IErcInterfaceService ercInterfaceService,
-            ITransactionValidationService transactionValidationService,
-            ISignatureChecker signatureChecker)
+            ITransactionValidationService transactionValidationService)
         {
             _rawTransactionSubmitter      = rawTransactionSubmitter;
             _nonceCalculator              = nonceCalculator;
@@ -67,17 +57,24 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             _settings                     = settings;
             _ercInterfaceService          = ercInterfaceService;
             _transactionValidationService = transactionValidationService;
-            _signatureChecker             = signatureChecker;
-            _addressUtil                  = new AddressUtil();
         }
 
         #region transfer
 
+        public string GetTransferFunctionCallEncoded(string tokenAddress, string receiverAddress, BigInteger amount)
+        {
+            Contract contract = GetContract(tokenAddress);
+            Function transferFunction = contract.GetFunction("transfer");
+            string functionDataEncoded = transferFunction.GetData(receiverAddress, amount);
+            return functionDataEncoded;
+        }
+
         public async Task<string> GetTransferTransactionRaw(Erc20Transaction erc20Transaction, bool useTxPool = false)
         {
-            Contract contract          = GetContract(erc20Transaction.TokenAddress);
-            Function transferFunction  = contract.GetFunction("transfer");
-            string functionDataEncoded = transferFunction.GetData(erc20Transaction.ToAddress, erc20Transaction.TokenAmount);
+            var functionDataEncoded = GetTransferFunctionCallEncoded(
+                erc20Transaction.TokenAddress, 
+                erc20Transaction.ToAddress, 
+                erc20Transaction.TokenAmount);
             BigInteger nonce           =  await _nonceCalculator.GetNonceAsync(erc20Transaction.FromAddress, useTxPool);
             var transaction            = CreateTransactionInput(functionDataEncoded, erc20Transaction.TokenAddress, erc20Transaction.FromAddress,
                  erc20Transaction.GasAmount, erc20Transaction.GasPrice, nonce, 0);
@@ -143,14 +140,6 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             if (balance < tokenAmount)
             {
                 throw new ClientSideException(ExceptionType.NotEnoughFunds, "Not enough tokens");
-            }
-        }
-
-        private void ThrowOnWrongSignature(bool isSignedRight)
-        {
-            if (!isSignedRight)
-            {
-                throw new ClientSideException(ExceptionType.WrongSign, "Wrong Signature");
             }
         }
     }
