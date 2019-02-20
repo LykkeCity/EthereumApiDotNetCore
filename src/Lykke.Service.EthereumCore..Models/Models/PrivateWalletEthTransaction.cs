@@ -85,4 +85,44 @@ namespace Lykke.Service.EthereumCore.Models.Models
         [Required]
         public string SignedTransactionHex { get; set; }
     }
+
+    [DataContract]
+    public class PrivateWalletEstimateTransaction
+    {
+        [DataMember]
+        [Required]
+        public string FromAddress { get; set; }
+
+        [DataMember]
+        [Required]
+        public string ToAddress { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string EthAmount { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string GasPrice { get; set; }
+    }
+
+    [DataContract]
+    public class PrivateWalletErc20EstimateTransaction : PrivateWalletEstimateTransaction
+    {
+        [DataMember]
+        [Required]
+        public string TokenAddress { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntTemplate)]
+        public string TokenAmount { get; set; }
+
+        [DataMember]
+        [Required]
+        [RegularExpression(Constants.BigIntAllowZeroTemplate)]
+        public string EthAmount { get; set; }
+    }
 }

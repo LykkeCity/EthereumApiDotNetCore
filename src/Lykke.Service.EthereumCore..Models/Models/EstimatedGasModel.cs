@@ -15,4 +15,15 @@ namespace Lykke.Service.EthereumCore.Models
         [DataMember]
         public bool IsAllowed { get; set; }
     }
+
+    [DataContract]
+    public class EstimatedGasModelV2 : EstimatedGasModel
+    {
+        [DataMember]
+        public string EthAmount { get; set; }
+
+        [DataMember]
+        public string GasPrice { get; set; }
+
+    }
 }

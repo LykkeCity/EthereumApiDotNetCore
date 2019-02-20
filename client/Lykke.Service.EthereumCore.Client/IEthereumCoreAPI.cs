@@ -161,6 +161,26 @@ namespace Lykke.Service.EthereumCore.Client
         /// </param>
         Task<HttpOperationResponse<object>> ApiErc20WalletSubmitTransactionPostWithHttpMessagesAsync(PrivateWalletEthSignedTransaction ethTransactionSigned = default(PrivateWalletEthSignedTransaction), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='estimateTransaction'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiEstimationEstimateTransactionPostWithHttpMessagesAsync(PrivateWalletEstimateTransaction estimateTransaction = default(PrivateWalletEstimateTransaction), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='estimateTransaction'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiEstimationEstimateTransactionErc20PostWithHttpMessagesAsync(PrivateWalletErc20EstimateTransaction estimateTransaction = default(PrivateWalletErc20EstimateTransaction), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='model'>
         /// </param>
         /// <param name='customHeaders'>
@@ -395,6 +415,16 @@ namespace Lykke.Service.EthereumCore.Client
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse<object>> ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='ethTransaction'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<object>> ApiPrivateWalletGetTransactionWithDataPostWithHttpMessagesAsync(PrivateWalletDataTransaction ethTransaction = default(PrivateWalletDataTransaction), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='ethTransaction'>
         /// </param>

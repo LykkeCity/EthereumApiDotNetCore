@@ -1,36 +1,37 @@
-﻿using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
-using Lykke.Service.EthereumCore.Core.Notifiers;
-using Lykke.Service.EthereumCore.Core.Settings;
+﻿using Autofac;
+using Autofac.Features.AttributeFilters;
 using EthereumSamuraiApiCaller;
 using LkeServices.Signature;
 using Lykke.Service.Assets.Client;
-using Microsoft.Extensions.DependencyInjection;
-using Nethereum.RPC.TransactionManagers;
-using Nethereum.Web3;
-using Lykke.Service.EthereumCore.Services.Coins;
-using Lykke.Service.EthereumCore.Services.Erc20;
-using Lykke.Service.EthereumCore.Services.HotWallet;
-using Lykke.Service.EthereumCore.Services.New;
-using Lykke.Service.EthereumCore.Services.PrivateWallet;
-using Lykke.Service.EthereumCore.Services.Signature;
-using Lykke.Service.EthereumCore.Services.Transactions;
-using SigningServiceApiCaller;
-using System;
-using Autofac;
-using Autofac.Features.AttributeFilters;
+using Lykke.Service.EthereumCore.AzureRepositories.Notifiers;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Airlines;
 using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.LykkePay;
+using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.PassToken;
+using Lykke.Service.EthereumCore.Core.PrivateWallet;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.PassTokenIntegration;
 using Lykke.Service.EthereumCore.Services.Airlines;
+using Lykke.Service.EthereumCore.Services.Coins;
 using Lykke.Service.EthereumCore.Services.Common;
+using Lykke.Service.EthereumCore.Services.Erc20;
+using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.EthereumCore.Services.LykkePay;
+using Lykke.Service.EthereumCore.Services.New;
 using Lykke.Service.EthereumCore.Services.PassToken;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
+using Lykke.Service.EthereumCore.Services.Signature;
+using Lykke.Service.EthereumCore.Services.Transactions;
+using Microsoft.Extensions.DependencyInjection;
+using Nethereum.RPC.TransactionManagers;
+using Nethereum.Web3;
+using SigningServiceApiCaller;
 using SigningServiceApiCaller.DelegatingHandlers;
+using System;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -151,6 +152,7 @@ namespace Lykke.Service.EthereumCore.Services
             builder.RegisterType<GasPriceService>().As<IGasPriceService>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<LykkePayEventsService>().As<ILykkePayEventsService>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<BlockPassService>().As<IBlockPassService>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<EstimationService>().As<IEstimationService>().SingleInstance().WithAttributeFiltering();
 
             builder.RegisterType<LykkePayErc20DepositContractService>()
                 .Keyed<IErc20DepositContractService>(Constants.LykkePayKey)
