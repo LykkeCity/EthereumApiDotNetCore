@@ -21,7 +21,8 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000/api/values",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SettingsUrl": "http://settings.lykke-settings.svc.cluster.local/6dbf61f1-06bd-458e-ac20-809a2b3e1092_EthereumCore"
       }
     }
   }

@@ -344,6 +344,58 @@ namespace Lykke.Service.EthereumCore.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='estimateTransaction'>
+            /// </param>
+            public static object ApiEstimationEstimateTransactionPost(this IEthereumCoreAPI operations, PrivateWalletEstimateTransaction estimateTransaction = default(PrivateWalletEstimateTransaction))
+            {
+                return operations.ApiEstimationEstimateTransactionPostAsync(estimateTransaction).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='estimateTransaction'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiEstimationEstimateTransactionPostAsync(this IEthereumCoreAPI operations, PrivateWalletEstimateTransaction estimateTransaction = default(PrivateWalletEstimateTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiEstimationEstimateTransactionPostWithHttpMessagesAsync(estimateTransaction, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='estimateTransaction'>
+            /// </param>
+            public static object ApiEstimationEstimateTransactionErc20Post(this IEthereumCoreAPI operations, PrivateWalletErc20EstimateTransaction estimateTransaction = default(PrivateWalletErc20EstimateTransaction))
+            {
+                return operations.ApiEstimationEstimateTransactionErc20PostAsync(estimateTransaction).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='estimateTransaction'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiEstimationEstimateTransactionErc20PostAsync(this IEthereumCoreAPI operations, PrivateWalletErc20EstimateTransaction estimateTransaction = default(PrivateWalletErc20EstimateTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiEstimationEstimateTransactionErc20PostWithHttpMessagesAsync(estimateTransaction, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='model'>
             /// </param>
             public static object ApiExchangeCashoutPost(this IEthereumCoreAPI operations, CashoutModel model = default(CashoutModel))
@@ -941,6 +993,32 @@ namespace Lykke.Service.EthereumCore.Client
             public static async Task<object> ApiLykkePayErc20depositsTransferPostAsync(this IEthereumCoreAPI operations, string apiKey, TransferFromDepositRequest request = default(TransferFromDepositRequest), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ApiLykkePayErc20depositsTransferPostWithHttpMessagesAsync(apiKey, request, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='ethTransaction'>
+            /// </param>
+            public static object ApiPrivateWalletGetTransactionWithDataPost(this IEthereumCoreAPI operations, PrivateWalletDataTransaction ethTransaction = default(PrivateWalletDataTransaction))
+            {
+                return operations.ApiPrivateWalletGetTransactionWithDataPostAsync(ethTransaction).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='ethTransaction'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiPrivateWalletGetTransactionWithDataPostAsync(this IEthereumCoreAPI operations, PrivateWalletDataTransaction ethTransaction = default(PrivateWalletDataTransaction), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiPrivateWalletGetTransactionWithDataPostWithHttpMessagesAsync(ethTransaction, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

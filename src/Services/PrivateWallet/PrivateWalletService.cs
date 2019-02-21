@@ -39,28 +39,20 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private readonly IWeb3 _web3;
         private readonly INonceCalculator _nonceCalculator;
         private AddressUtil _addressUtil;
-        private readonly IEthereumTransactionService _ethereumTransactionService;
-        private readonly IPaymentService _paymentService;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
-        private readonly ISignatureChecker _signatureChecker;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IErc20PrivateWalletService _erc20Service;
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
-            IEthereumTransactionService ethereumTransactionService,
-            IPaymentService paymentService,
-            ISignatureChecker signatureChecker,
             ITransactionValidationService transactionValidationService,
             IErc20PrivateWalletService erc20Service,
-            IRawTransactionSubmitter rawTransactionSubmitter)
+            IRawTransactionSubmitter rawTransactionSubmitter,
+            IPaymentService paymentService)
         {
-            _signatureChecker             = signatureChecker;
             _rawTransactionSubmitter      = rawTransactionSubmitter;
             _nonceCalculator              = nonceCalculator;
             _web3                         = web3;
-            _ethereumTransactionService   = ethereumTransactionService;
-            _paymentService               = paymentService;
             _transactionValidationService = transactionValidationService;
             _erc20Service                 = erc20Service;
         }

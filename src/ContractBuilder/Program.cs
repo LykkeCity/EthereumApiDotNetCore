@@ -27,7 +27,9 @@ using Autofac.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
+using Lykke.Service.EthereumCore.Core.PrivateWallet;
 using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
@@ -80,7 +82,7 @@ namespace ContractBuilder
                 settings.Nested(x => x.SlackNotifications));
             RegisterReposExt.RegisterAzureStorages(containerBuilder, settings.Nested(x => x.EthereumCore),
                 settings.Nested(x => x.SlackNotifications), consoleLogger);
-            RegisterRabbitQueueEx.RegisterRabbitQueue(collection, 
+            RegisterRabbitQueueEx.RegisterRabbitQueue(collection,
                 settings.Nested(x => x.EthereumCore.RabbitMq),
                 settings.Nested(x => x.EthereumCore.Db.DataConnString),
                 consoleLogger);
@@ -99,6 +101,115 @@ namespace ContractBuilder
             containerBuilder.Populate(collection);
             ServiceProvider = containerBuilder.Build();
             ServiceProvider.ActivateRequestInterceptor();
+            var erc20PrivateWalletService = ServiceProvider.Resolve<IErc20PrivateWalletService>();
+            var estimationService = ServiceProvider.Resolve<IEstimationService>();
+
+            #region Estimation
+
+            //var estimation2 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
+
+            var estimationFullAmount1 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+                , BigInteger.Parse("8052415760625306547")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimationFullAmountContract = estimationService.EstimateTransactionExecutionCostAsync(
+                     "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                    , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
+                    , BigInteger.Parse("8052415760625306547")
+                    , BigInteger.Parse("1000000000"),
+                    null).Result;
+
+            var estimation = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimation1 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimation2 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0xe152a70E09661c248A8e4B883CF8288670785795"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimation3 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0xdBe3A455Ae330645D931817B7440b1C4f6DcF549"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimation4 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            var estimation5 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+                , "0xF9404188b2A53E6a29dA9F960eC318c452E38E3c"
+                , BigInteger.Parse("1000000000000000000")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
+            #region Erc20
+
+            var data6 = erc20PrivateWalletService.GetTransferFunctionCallEncoded(
+                "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2",
+                "0xbdfeff9a1f4a1bdf483d680046344316019c58cf",
+                BigInteger.Parse("1000000000000000000"));
+            var estimation6 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x406561f72e25af10fd28b41200fa3d52badc5a21"
+                , "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2"
+                , BigInteger.Zero
+                , BigInteger.Parse("1000000000"),
+                data6).Result;
+
+            var data7 = erc20PrivateWalletService.GetTransferFunctionCallEncoded(
+                "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2",
+                "0xbdfeff9a1f4a1bdf483d680046344316019c58cf",
+                BigInteger.Parse("997781905042671000000000000000000"));
+
+            var estimation7 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x406561f72e25af10fd28b41200fa3d52badc5a21"
+                , "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2"
+                , BigInteger.Zero
+                , BigInteger.Parse("1000000000"),
+                data7).Result;
+
+            var data8 = erc20PrivateWalletService.GetTransferFunctionCallEncoded(
+                "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2",
+                "0xbdfeff9a1f4a1bdf483d680046344316019c58cf",
+                BigInteger.Parse("9977819050426710000000000000000000"));
+
+            var estimation8 = estimationService.EstimateTransactionExecutionCostAsync(
+                "0x406561f72e25af10fd28b41200fa3d52badc5a21"
+                , "0x5adbf411faf2595698d80b7f93d570dd16d7f4b2"
+                , BigInteger.Zero
+                , BigInteger.Parse("1000000000"),
+                data8).Result;
+
+            #endregion
+
+            #endregion
+
 
             //var web3 = ServiceProvider.Resolve<IWeb3>();
             //var abi = GetFileContent("LuCyToken.abi");

@@ -53,7 +53,7 @@ namespace Service.UnitTests.PrivateWallet
             web3Mock.Setup(x => x.Eth).Returns(new EthApiContractService(_client.Object));
             #endregion
             IRawTransactionSubmitter rawTransactionSubmitter = new RawTransactionSubmitter(web3Mock.Object, _signatureChecker);
-            _erc20Service = new Erc20PrivateWalletService(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null, null);
+            _erc20Service = new Erc20PrivateWalletService(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null);
         }
 
         [TestMethod]
