@@ -113,6 +113,13 @@ namespace ContractBuilder
             //    , BigInteger.Parse("1000000000"),
             //    null).Result;
 
+            var estimationFullAmountX = estimationService.EstimateTransactionExecutionCostAsync(
+                "0xC4f72f0cc3807Bf9DdF16D400Eafc321a0C38a72"
+                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+                , BigInteger.Parse("8052415760625306547")
+                , BigInteger.Parse("1000000000"),
+                null).Result;
+
             var estimationFullAmount1 = estimationService.EstimateTransactionExecutionCostAsync(
                 "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
                 , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
