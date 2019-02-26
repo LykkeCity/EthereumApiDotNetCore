@@ -99,12 +99,9 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                         throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
                     }
                 }
-                else
+                else if (diff < 0)
                 {
-                    if (diff < 0)
-                    {
-                        isAllowed = false;
-                    }
+                    isAllowed = false;
                 }
 
                 callInput.Value = new HexBigInteger(amount);
