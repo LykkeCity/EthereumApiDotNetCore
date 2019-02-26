@@ -85,14 +85,20 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 //Recalculate transaction eth Amount
                 var diff = fromAddressBalance -
                            (amount + Lykke.Service.EthereumCore.Core.Constants.DefaultTransactionGas * gasPrice);
+
                 if (diff < 0)
                 {
                     amount += diff;
                 }
 
-                if (amount <= 0)
+
+                if (string.IsNullOrEmpty(transactionData) && amount <= 0)
                 {
                     throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
+                }
+                else if (diff < 0)
+                {
+                    isAllowed = false;
                 }
 
                 callInput.Value = new HexBigInteger(amount);
