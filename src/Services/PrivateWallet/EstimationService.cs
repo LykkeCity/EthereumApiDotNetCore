@@ -92,13 +92,14 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 }
 
 
-                if (string.IsNullOrEmpty(transactionData) && amount <= 0)
+                if (string.IsNullOrEmpty(transactionData))
                 {
-                    throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
+                    if (amount <= 0)
+                        throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
                 }
                 else if (diff < 0)
                 {
-                    isAllowed = false;
+                    throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
                 }
 
                 callInput.Value = new HexBigInteger(amount);
