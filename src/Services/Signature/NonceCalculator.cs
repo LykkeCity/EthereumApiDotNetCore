@@ -27,18 +27,12 @@ namespace Lykke.Service.EthereumCore.Services.Signature
         {
             if (checkTxPool)
             {
-                var txPool   = await _client.SendRequestAsync<JObject>(new RpcRequest($"{Guid.NewGuid()}", "txpool_inspect"));
-                var maxNonce = txPool["pending"]
-                    .Cast<JProperty>()
-                    .FirstOrDefault(x => x.Name.Equals(fromAddress, StringComparison.OrdinalIgnoreCase))?
-                    .FirstOrDefault()?
-                    .Cast<JProperty>()
-                    .Select(x => long.Parse(x.Name))
-                    .Max();
+                var txPool   = await _client.SendRequestAsync<JValue>(new RpcRequest($"{Guid.NewGuid()}", "parity_nextNonce", fromAddress));
 
-                if (maxNonce.HasValue)
+                if (txPool != null)
                 {
-                    return new HexBigInteger(new BigInteger(maxNonce.Value + 1));
+                    var bigInt = new HexBigInteger(txPool.Value.ToString());
+                    return new HexBigInteger(bigInt.Value + 1);
                 }
             }
 
