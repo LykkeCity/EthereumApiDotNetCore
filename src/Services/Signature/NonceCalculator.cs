@@ -32,7 +32,7 @@ namespace Lykke.Service.EthereumCore.Services.Signature
                 if (txPool != null)
                 {
                     var bigInt = new HexBigInteger(txPool.Value.ToString());
-                    return new HexBigInteger(bigInt.Value + 1);
+                    return bigInt;
                 }
             }
 
