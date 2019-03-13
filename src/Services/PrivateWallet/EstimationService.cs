@@ -122,6 +122,10 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                     throw new ClientSideException(ExceptionType.CantEstimateExecution, rpcException.Message);
                 }
             }
+            catch (ClientSideException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 throw new ClientSideException(ExceptionType.None, e.Message);
