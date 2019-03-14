@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
-using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
+﻿using Nethereum.Hex.HexTypes;
+using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Web3;
-using System.Threading.Tasks;
-using Nethereum.JsonRpc.Client;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services.Signature
 {
