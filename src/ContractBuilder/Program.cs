@@ -117,68 +117,68 @@ namespace ContractBuilder
             //    , BigInteger.Parse("1000000000"),
             //    null).Result;
 
-            var estimationFullAmountX = estimationService.EstimateTransactionExecutionCostAsync(
-                "0xC4f72f0cc3807Bf9DdF16D400Eafc321a0C38a72"
-                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
-                , BigInteger.Parse("8052415760625306547")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimationFullAmountX = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0xC4f72f0cc3807Bf9DdF16D400Eafc321a0C38a72"
+            //    , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+            //    , BigInteger.Parse("8052415760625306547")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimationFullAmount1 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
-                , BigInteger.Parse("8052415760625306547")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimationFullAmount1 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+            //    , BigInteger.Parse("8052415760625306547")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimationFullAmountContract = estimationService.EstimateTransactionExecutionCostAsync(
-                     "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                    , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
-                    , BigInteger.Parse("8052415760625306547")
-                    , BigInteger.Parse("1000000000"),
-                    null).Result;
+            //var estimationFullAmountContract = estimationService.EstimateTransactionExecutionCostAsync(
+            //         "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //        , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
+            //        , BigInteger.Parse("8052415760625306547")
+            //        , BigInteger.Parse("1000000000"),
+            //        null).Result;
 
-            var estimation = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0xbdfeff9a1f4a1bdf483d680046344316019c58cf"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimation1 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation1 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0x6303F9f7f1C57D0fF48fE6baD5161967f58de8fa"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimation2 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0xe152a70E09661c248A8e4B883CF8288670785795"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation2 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0xe152a70E09661c248A8e4B883CF8288670785795"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimation3 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0xdBe3A455Ae330645D931817B7440b1C4f6DcF549"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation3 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0xdBe3A455Ae330645D931817B7440b1C4f6DcF549"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimation4 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation4 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0x40c914c3A8Fc4c3ccC1d3682828928515DFa631b"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
-            var estimation5 = estimationService.EstimateTransactionExecutionCostAsync(
-                "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
-                , "0xF9404188b2A53E6a29dA9F960eC318c452E38E3c"
-                , BigInteger.Parse("1000000000000000000")
-                , BigInteger.Parse("1000000000"),
-                null).Result;
+            //var estimation5 = estimationService.EstimateTransactionExecutionCostAsync(
+            //    "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad"
+            //    , "0xF9404188b2A53E6a29dA9F960eC318c452E38E3c"
+            //    , BigInteger.Parse("1000000000000000000")
+            //    , BigInteger.Parse("1000000000"),
+            //    null).Result;
 
             #region Erc20
 
