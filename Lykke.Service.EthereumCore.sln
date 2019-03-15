@@ -57,12 +57,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenDeployer", "src\TokenD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.PassTokenIntegration", "src\Lykke.Service.EthereumCore.PassTokenIntegration\Lykke.Service.EthereumCore.PassTokenIntegration.csproj", "{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3}"
 EndProject
-
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PassClientTest.Console", "tests\Lykke.Service.PassClientTest.Console\Lykke.Service.PassClientTest.Console.csproj", "{9BB6D798-212E-4A5C-9E13-C29417CAD212}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PassTokenAddressExporter", "src\PassTokenAddressExporter\PassTokenAddressExporter.csproj", "{667614DF-8236-4A30-A51B-7D31E746A8C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.BilService.EthereumApi.ErcWithdraw", "src\Lykke.BilService.EthereumApi.ErcWithdraw\Lykke.BilService.EthereumApi.ErcWithdraw.csproj", "{ABED5BED-1034-4C76-BF41-833C34431425}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.BilService.ErcWithdraw", "src\Lykke.BilService.EthereumApi.ErcWithdraw\Lykke.BilService.ErcWithdraw.csproj", "{ABED5BED-1034-4C76-BF41-833C34431425}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

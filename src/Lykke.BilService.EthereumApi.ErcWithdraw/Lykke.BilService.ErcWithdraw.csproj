@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.Logs" Version="7.2.1" />
-    <PackageReference Include="Lykke.Quintessence.Core" Version="1.3.0-beta.1" />
+    <PackageReference Include="Lykke.Quintessence.Core" Version="1.3.0-beta.2" />
     <PackageReference Include="Lykke.Service.BlockchainApi.Client" Version="17.7.0" />
     <PackageReference Include="Lykke.Service.BlockchainSignFacade.Client" Version="1.1.3" />
     <PackageReference Include="Lykke.Service.EthereumCore.Client" Version="1.1.13" />

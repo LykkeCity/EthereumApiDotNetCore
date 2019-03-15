@@ -1,4 +1,7 @@
-﻿using Lykke.Common.Log;
+﻿using System;
+using System.Numerics;
+using System.Threading.Tasks;
+using Lykke.Common.Log;
 using Lykke.Quintessence.Core.Blockchain;
 using Lykke.Quintessence.Core.Utils;
 using Lykke.Service.BlockchainApi.Client.Models;
@@ -9,15 +12,13 @@ using Microsoft.Extensions.Logging.Console;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
+using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Numerics;
-using System.Threading.Tasks;
 using SignTransactionRequest = Lykke.Service.BlockchainSignFacade.Contract.Models.SignTransactionRequest;
 
-namespace Lykke.BilService.EthereumApi.ErcWithdraw
+namespace Lykke.BilService.ErcWithdraw
 {
     class Program
     {
@@ -63,8 +64,8 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
         {
             var web3 = new Web3(parityUrl);
             var logFactory = Lykke.Logs.LogFactory.Create();
-            var log = logFactory.CreateLog(componentName);
             logFactory.AddProvider(new ConsoleLoggerProvider((x, level) => true, true));
+            var log = logFactory.CreateLog(componentName);
             var ethCoreClient =
                 new Lykke.Service.EthereumCore.Client.EthereumCoreAPI(new Uri(ethereumCoreApi));
             var ethBilClient =
@@ -74,7 +75,8 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
                     signFacadeApiKey,
                     logFactory.CreateLog(componentName));
 
-            await ethBilClient.StartBalanceObservationAsync(fromAddress);
+            log.Info("Stopping address observation");
+            //await ethBilClient.StartBalanceObservationAsync(fromAddress);
             var isObservationStopped = await ethBilClient.StopBalanceObservationAsync(fromAddress);
 
             if (!isObservationStopped)
@@ -84,6 +86,7 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
                 return;
             }
 
+            Console.WriteLine("Getting gas price");
             var gasResponse = await ethCoreClient.ApiRpcGetNetworkGasPriceGetWithHttpMessagesAsync();
             var gasPrice = gasResponse.Body as BalanceModel;
 
@@ -98,6 +101,7 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
             BigInteger ethAmountToTransferErc20 = gasLimit * BigInteger.Parse(gasPrice.Amount);
             var res = ((decimal)ethAmountToTransferErc20 / (decimal)BigInteger.Pow(10, 18));
 
+            log.Info("Transferring ETH for erc20 transfer");
             var operationId = Guid.NewGuid();
             var blockchainAsset = new BlockchainAsset(new AssetContract()
             {
@@ -106,6 +110,8 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
                 AssetId = "ETH",
                 Name = "Ethereum"
             });
+
+            log.Info("Building");
             var result1 = await ethBilClient.BuildSingleTransactionAsync(operationId,
                 hotWalletAddress,
                 null,
@@ -114,36 +120,33 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
                 res, 
                 false);
 
+            log.Info("Signing");
             var signedTransactionFromHw = await facadeClient.SignTransactionAsync("Ethereum", new SignTransactionRequest()
             {
                 PublicAddresses = new[] { hotWalletAddress },
                 TransactionContext = result1.TransactionContext
             });
 
+            log.Info("Broadcasting");
             var brResult = await ethBilClient.BroadcastTransactionAsync(operationId, signedTransactionFromHw.SignedTransaction);
             BroadcastedSingleTransaction broadcasted;
 
+            log.Info("Waiting for tr to complete");
+
             do
             {
+                log.Info($"Waiting for {operationId} to complete");
                 broadcasted = await ethBilClient.TryGetBroadcastedSingleTransactionAsync(operationId, blockchainAsset);
-                await Task.Delay(TimeSpan.FromSeconds(7));
+                await Task.Delay(TimeSpan.FromSeconds(10));
             } while (broadcasted.State != BroadcastedTransactionState.Completed);
 
+            log.Info($"Estimate Transaction");
             var esResult = await ethCoreClient.ApiEstimationEstimateTransactionErc20PostWithHttpMessagesAsync(erc20PrivateWalletEstimation);
             var estimation = esResult.Body as EstimatedGasModelV2;
-
-            var erc20PrivateWalletTransaction = new PrivateWalletErc20Transaction(erc20ContractAddress,
-                amountToTransfer.ToString(),
-                "0",
-                fromAddress,
-                toAddress,
-                estimation.EstimatedGas,
-                estimation.GasPrice //5Gwei
-            );
             string data = GetTransferFunctionCallEncoded(web3, erc20ContractAddress, toAddress, amountToTransfer);
             AddressUtil util = new AddressUtil();
-            var result = await ethCoreClient.ApiErc20WalletGetTransactionPostWithHttpMessagesAsync(erc20PrivateWalletTransaction);
-            var trResponse = result.Body as EthTransactionRaw;
+
+            log.Info($"Getting nonce");
             var nonce = await GetNonceAsync(web3, fromAddress, true);
 
             DefaultTransactionParams @params = new DefaultTransactionParams(0, 
@@ -155,16 +158,32 @@ namespace Lykke.BilService.EthereumApi.ErcWithdraw
                 erc20ContractAddress);
             var inHexEncodingTr = Newtonsoft.Json.JsonConvert.SerializeObject(@params).ToHex();
 
+            log.Info($"Signing erc20 transfer tr");
             var signedTransaction = await facadeClient.SignTransactionAsync("Ethereum", new SignTransactionRequest()
             {
                 PublicAddresses = new[] { util.ConvertToChecksumAddress(fromAddress) },
                 TransactionContext = inHexEncodingTr
             });
 
+            var serializedObj = signedTransaction.SignedTransaction.HexToUTF8String();
+            JToken token = JObject.Parse(serializedObj);
 
-            await ethCoreClient.ApiPrivateWalletSubmitTransactionPostWithHttpMessagesAsync(
-                new PrivateWalletEthSignedTransaction(fromAddress, signedTransaction.SignedTransaction));
+            var ethSendTransaction = new EthSendRawTransaction(web3.Client);
+            string transactionHex;
 
+            log.Info($"Sending tr");
+
+            try
+            {
+                transactionHex = await ethSendTransaction.SendRequestAsync(token.SelectToken("Data").Value<string>());
+                log.Info($"Transaction has been sent {transactionHex}");
+            }
+            catch (Nethereum.JsonRpc.Client.RpcResponseException ex)
+            {
+                throw ex;
+            }
+
+            log.Info($"Start balance observation");
             await ethBilClient.StartBalanceObservationAsync(fromAddress);
         }
 

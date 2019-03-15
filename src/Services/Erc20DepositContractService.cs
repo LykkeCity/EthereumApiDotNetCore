@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Autofac.Features.AttributeFilters;
+﻿using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs;
@@ -14,7 +11,9 @@ using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services
 {
