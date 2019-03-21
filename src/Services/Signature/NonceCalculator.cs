@@ -4,7 +4,10 @@ using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Nethereum.RPC.Eth.DTOs;
+using System.Numerics;
 
 namespace Lykke.Service.EthereumCore.Services.Signature
 {
