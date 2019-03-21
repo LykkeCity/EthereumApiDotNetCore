@@ -30,7 +30,6 @@ using Lykke.Job.EthereumCore.Job;
 using Lykke.Service.EthereumCore.Core.PrivateWallet;
 using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
-using Lykke.Service.EthereumCore.Services.Signature;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
@@ -104,9 +103,6 @@ namespace ContractBuilder
             ServiceProvider.ActivateRequestInterceptor();
             var erc20PrivateWalletService = ServiceProvider.Resolve<IErc20PrivateWalletService>();
             var estimationService = ServiceProvider.Resolve<IEstimationService>();
-            var nonceCalculator = ServiceProvider.Resolve<INonceCalculator>();
-            var rx1 = nonceCalculator.GetNonceAsync("0x6Da4B01c3A88d67Fddc2Cb8B5505723409114b45", true).Result;
-
 
             #region Estimation
 
