@@ -7,15 +7,15 @@
       "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
       "Divisibility": 18,
       "TokenSymbol": "LYCI_test",
-      "Version": "1.0.0",
+      "Version": "1.1.0",
       "InitialSupply": "1000000000000000000000000"
     }
   ],
   "Transfers": [
-    {
-      "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
-      "TokenAddress": "0x16e17F0e2c645b21304dCF362C58D2060d34DaD9",
-      "Amount": "100000000000000000000000"
-    }
+    //{
+    //  "IssuerAddress": "0x1015b65d76E686a3001Fc0a42a91F058edf067Ad",
+    //  "TokenAddress": "0x16e17F0e2c645b21304dCF362C58D2060d34DaD9",
+    //  "Amount": "100000000000000000000000"
+    //}
   ]
 }
