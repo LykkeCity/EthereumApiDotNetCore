@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Service.EthereumCore.Client\Lykke.Service.EthereumCore.Client.csproj" />
+    <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore.AzureRepositories\Lykke.Service.EthereumCore.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore.Core\Lykke.Service.EthereumCore.Core.csproj" />
     <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
