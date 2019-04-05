@@ -82,11 +82,16 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
         public async Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions)
         {
-            var transactionResponseRaw = await _ethereumSamuraiApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync(
-                new GetErc20TransferHistoryRequest(addressTransactions.Address, null, new List<string>()
+            List<string> tokenQuerySearch = null;
+            if (string.IsNullOrEmpty(addressTransactions.TokenAddress))
+            {
+                tokenQuerySearch = new List<string>()
                 {
                     addressTransactions.TokenAddress
-                }),
+                };
+            }
+            var transactionResponseRaw = await _ethereumSamuraiApi.ApiErc20TransferHistoryGetErc20TransfersPostAsync(
+                new GetErc20TransferHistoryRequest(addressTransactions.Address, null, tokenQuerySearch),
                 addressTransactions.Start,
                 addressTransactions.Count);
             List<ErcAddressHistoryModel> result = MapErcHistoryFromResponse(transactionResponseRaw);

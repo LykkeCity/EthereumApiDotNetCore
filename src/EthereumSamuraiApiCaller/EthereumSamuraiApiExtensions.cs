@@ -298,6 +298,40 @@ namespace EthereumSamuraiApiCaller
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            public static object ApiErc20TransferHistoryGetErc20TransfersV2Post(this IEthereumSamuraiAPI operations, GetErc20TransferHistoryV2Request request = default(GetErc20TransferHistoryV2Request), int? start = default(int?), int? count = default(int?))
+            {
+                return operations.ApiErc20TransferHistoryGetErc20TransfersV2PostAsync(request, start, count).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='request'>
+            /// </param>
+            /// <param name='start'>
+            /// </param>
+            /// <param name='count'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<object> ApiErc20TransferHistoryGetErc20TransfersV2PostAsync(this IEthereumSamuraiAPI operations, GetErc20TransferHistoryV2Request request = default(GetErc20TransferHistoryV2Request), int? start = default(int?), int? count = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.ApiErc20TransferHistoryGetErc20TransfersV2PostWithHttpMessagesAsync(request, start, count, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='transactionHash'>
             /// </param>
             public static object ApiInternalMessagesTxHashByTransactionHashGet(this IEthereumSamuraiAPI operations, string transactionHash)
