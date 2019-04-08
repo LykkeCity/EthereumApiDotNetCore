@@ -83,7 +83,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         public async Task<IEnumerable<ErcAddressHistoryModel>> GetTokenHistory(TokenTransaction addressTransactions)
         {
             List<string> tokenQuerySearch = null;
-            if (string.IsNullOrEmpty(addressTransactions.TokenAddress))
+            if (!string.IsNullOrEmpty(addressTransactions.TokenAddress))
             {
                 tokenQuerySearch = new List<string>()
                 {
