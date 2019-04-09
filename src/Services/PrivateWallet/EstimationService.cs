@@ -84,7 +84,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
                 //Recalculate transaction eth Amount
                 var diff = fromAddressBalance -
-                           (amount + Lykke.Service.EthereumCore.Core.Constants.DefaultTransactionGas * gasPrice);
+                           (amount + estimatedGas.Value * gasPrice);
 
                 if (diff < 0)
                 {
