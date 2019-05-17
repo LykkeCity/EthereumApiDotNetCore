@@ -33,8 +33,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionResubmit", "src\TransactionResubmit\TransactionResubmit.csproj", "{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumSamuraiApiCaller", "src\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj", "{E2D9F126-4058-4177-AD63-BDF94633C7EB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumApi.Models", "src\Lykke.Service.EthereumCore..Models\EthereumApi.Models.csproj", "{393D498F-64B4-453C-BEA9-959C77501ADF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore", "src\Lykke.Service.EthereumCore\Lykke.Service.EthereumCore.csproj", "{AB37C615-A78F-4221-8A4E-3B5CE3787ABD}"
@@ -55,12 +53,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepositContractResolver", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenDeployer", "src\TokenDeployer\TokenDeployer.csproj", "{FD8A88EB-503F-48AA-9AB2-E5E2DDC64401}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.EthereumCore.PassTokenIntegration", "src\Lykke.Service.EthereumCore.PassTokenIntegration\Lykke.Service.EthereumCore.PassTokenIntegration.csproj", "{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.EthereumCore.PassTokenIntegration", "src\Lykke.Service.EthereumCore.PassTokenIntegration\Lykke.Service.EthereumCore.PassTokenIntegration.csproj", "{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3}"
 EndProject
-
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PassClientTest.Console", "tests\Lykke.Service.PassClientTest.Console\Lykke.Service.PassClientTest.Console.csproj", "{9BB6D798-212E-4A5C-9E13-C29417CAD212}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PassTokenAddressExporter", "src\PassTokenAddressExporter\PassTokenAddressExporter.csproj", "{667614DF-8236-4A30-A51B-7D31E746A8C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumSamuraiApiCaller", "src\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj", "{54A37869-E9B2-41A6-B5D8-E523EA709A04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,10 +111,6 @@ Global
 		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2D9F126-4058-4177-AD63-BDF94633C7EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{393D498F-64B4-453C-BEA9-959C77501ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{393D498F-64B4-453C-BEA9-959C77501ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{393D498F-64B4-453C-BEA9-959C77501ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -164,6 +159,10 @@ Global
 		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{667614DF-8236-4A30-A51B-7D31E746A8C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,7 +179,6 @@ Global
 		{CCC87573-1C68-457A-B105-9DBFF82C2A7B} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
 		{E7A8E6F1-EE41-4B1D-9189-55C516D8BDD4} = {7092F3CC-1E8F-4E12-8323-DEF5488CC18C}
 		{A5957DCB-F010-4A29-AAD4-1D6BE33F7294} = {60685682-4469-431A-A949-A2703D49EC56}
-		{E2D9F126-4058-4177-AD63-BDF94633C7EB} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{74311118-E71D-4CE0-AD7C-69E1B25EA695} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{A4B21B75-14E6-4FAC-85D9-EE7953D924C9} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{03B4361D-3B44-4E19-982E-835D56E64ED5} = {21D365DA-2401-4130-A7CC-19562FB73511}
@@ -190,6 +188,7 @@ Global
 		{CA7D2814-81FE-4AFB-AD04-E8EDD43CD5F3} = {21D365DA-2401-4130-A7CC-19562FB73511}
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 		{667614DF-8236-4A30-A51B-7D31E746A8C6} = {60685682-4469-431A-A949-A2703D49EC56}
+		{54A37869-E9B2-41A6-B5D8-E523EA709A04} = {21D365DA-2401-4130-A7CC-19562FB73511}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}

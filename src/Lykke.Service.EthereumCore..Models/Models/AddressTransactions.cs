@@ -24,7 +24,6 @@ namespace Lykke.Service.EthereumCore.Models.Models
     public class TokenAddressTransactions : AddressTransactions
     {
         [DataMember]
-        [Required]
         public string TokenAddress { get; set; }
     }
 }

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj" />
     <ProjectReference Include="..\Lykke.Job.EthereumCore\Lykke.Job.EthereumCore.csproj" />
     <ProjectReference Include="..\Lykke.Service.EthereumCore\Lykke.Service.EthereumCore.csproj" />
     <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
