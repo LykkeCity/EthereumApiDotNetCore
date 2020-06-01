@@ -43,6 +43,10 @@ namespace PassTokenAddressExporter.Commands
                 (IErc223DepositContractRepository)resolver.ResolveKeyed(Constants.DefaultKey, 
                     typeof(IErc223DepositContractRepository));
 
+            var oldTransferContractRepository =
+                (IErc223DepositContractRepository)resolver.ResolveKeyed(Constants.DefaultKey,
+                    typeof(IErc223DepositContractRepository));
+
             string continuationToken = null;
 
             await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
@@ -61,6 +65,22 @@ namespace PassTokenAddressExporter.Commands
                 do
                 {
                     var (collection, token) = await transferContractRepository.GetByTokenAsync(100, continuationToken);
+                    continuationToken = token;
+
+                    foreach (var depositContract in collection)
+                    {
+                        var newRecord = new DepositRecord { Address = depositContract.ContractAddress };
+                        csvWriter.WriteRecord(newRecord);
+                        csvWriter.NextRecord();
+                    }
+
+                } while (!string.IsNullOrEmpty(continuationToken));
+
+                continuationToken = null;
+
+                do
+                {
+                    var (collection, token) = await oldTransferContractRepository.GetByTokenAsync(100, continuationToken);
                     continuationToken = token;
 
                     foreach (var depositContract in collection)
