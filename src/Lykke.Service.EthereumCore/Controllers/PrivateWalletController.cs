@@ -95,8 +95,11 @@ namespace Lykke.Service.EthereumCore.Controllers
                 Value = BigInteger.Parse(ethTransaction.Value)
             };
 
-            if (!PrivateWalletService.OverrideNonceDict.TryGetValue(transaction.FromAddress, out _))
+            if (!PrivateWalletService.OverrideNonceDict.TryGetValue(transaction.FromAddress.ToLowerInvariant(), out _))
             {
+                await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized}",
+                    "Check balance", DateTime.UtcNow);
+
                 await _privateWalletService.ValidateInputAsync(transaction);
             }
 
