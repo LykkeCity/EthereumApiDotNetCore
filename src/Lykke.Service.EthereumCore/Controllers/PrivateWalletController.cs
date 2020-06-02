@@ -170,5 +170,20 @@ namespace Lykke.Service.EthereumCore.Controllers
                 IsAllowed = executionCost.IsAllowed
             });
         }
+
+        [HttpPost("overrideNonce")]
+        public async Task<IActionResult> OverrideNonce(
+            [FromQuery] string address,
+            [FromQuery] string nonce)
+        {
+            if (!BigInteger.TryParse(nonce, out var result))
+            {
+                return BadRequest(new {Error = "Nonce is not a valid number."});
+            }
+
+            PrivateWalletService.OverrideNonceDict.TryAdd(address.ToLowerInvariant(), result);
+
+            return Ok(PrivateWalletService.OverrideNonceDict);
+        }
     }
 }
