@@ -43,7 +43,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IErc20PrivateWalletService _erc20Service;
-        public static ConcurrentDictionary<string, BigInteger> OverrideNonceDict { get; set; }
+        public static ConcurrentDictionary<string, BigInteger> OverrideNonceDict = new ConcurrentDictionary<string, BigInteger>();
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
