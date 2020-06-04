@@ -21,6 +21,7 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
@@ -41,18 +42,20 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private readonly INonceCalculator _nonceCalculator;
         private AddressUtil _addressUtil;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
+        private readonly IOverrideNonceRepository _nonceRepository;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IErc20PrivateWalletService _erc20Service;
-        public static ConcurrentDictionary<string, BigInteger> OverrideNonceDict = new ConcurrentDictionary<string, BigInteger>();
 
         public PrivateWalletService(IWeb3 web3,
             INonceCalculator nonceCalculator,
             ITransactionValidationService transactionValidationService,
             IErc20PrivateWalletService erc20Service,
             IRawTransactionSubmitter rawTransactionSubmitter,
+            IOverrideNonceRepository nonceRepository,
             IPaymentService paymentService)
         {
             _rawTransactionSubmitter      = rawTransactionSubmitter;
+            _nonceRepository = nonceRepository;
             _nonceCalculator              = nonceCalculator;
             _web3                         = web3;
             _transactionValidationService = transactionValidationService;
@@ -64,10 +67,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             string from = ethTransaction.FromAddress;
             HexBigInteger nonce;
 
-            if (OverrideNonceDict.TryGetValue(from.ToLowerInvariant(), out var nonceStuck))
+            var nonceStuck = await _nonceRepository.GetNonceAsync(from);
+
+            if (!string.IsNullOrEmpty(nonceStuck) && BigInteger.TryParse(nonceStuck, out var nonceBig))
             {
-                nonce = new HexBigInteger(nonceStuck);
-                OverrideNonceDict.TryRemove(from.ToLowerInvariant(), out _);
+                nonce = new HexBigInteger(nonceBig);
+                await _nonceRepository.RemoveAsync(from);
             }
             else
             {
@@ -75,7 +80,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             }
             var gas      = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasAmount);
             var gasPrice = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.GasPrice);
-            
+
             var to       = ethTransaction.ToAddress;
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);
@@ -148,7 +153,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="transaction"></param>
         /// <returns></returns>
