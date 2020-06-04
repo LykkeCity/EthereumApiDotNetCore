@@ -71,6 +71,7 @@ namespace Lykke.Service.EthereumCore.Core
         public const string Erc20BlackListAddressTable = "BlackListAddresses";
         public const string WhiteListAddressesTable = "WhiteListAddresses";
         public const string AddressStatisticsTable = "AddressStatistics";
+        public const string OverrideNonceTable = "OverrideNonce";
 
         #region  LykkePay
 

@@ -1,5 +1,4 @@
-﻿using Lykke.Service.EthereumCore.BusinessModels;
-using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
+﻿using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Models;
@@ -10,11 +9,9 @@ using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using Lykke.Service.EthereumCore.Services.Transactions;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore;
+using Lykke.Service.EthereumCore.Core.Repositories;
 
 namespace Lykke.Service.EthereumCore.Controllers
 {
@@ -26,15 +23,19 @@ namespace Lykke.Service.EthereumCore.Controllers
         private readonly IPrivateWalletService _privateWalletService;
         private readonly ILog _log;
         private readonly IErc20PrivateWalletService _erc20Service;
+        private readonly IOverrideNonceRepository _nonceRepository;
 
-        public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log, 
+        public PrivateWalletController(IPrivateWalletService privateWalletService, ILog log,
             ITransactionValidationService transactionValidationService,
-            IErc20PrivateWalletService erc20Service)
+            IErc20PrivateWalletService erc20Service,
+            IOverrideNonceRepository nonceRepository
+            )
         {
             _transactionValidationService = transactionValidationService;
             _privateWalletService = privateWalletService;
             _log = log;
             _erc20Service = erc20Service;
+            _nonceRepository = nonceRepository;
         }
 
         [HttpPost("getTransactionWithData")]
@@ -95,7 +96,8 @@ namespace Lykke.Service.EthereumCore.Controllers
                 Value = BigInteger.Parse(ethTransaction.Value)
             };
 
-            if (!PrivateWalletService.OverrideNonceDict.TryGetValue(transaction.FromAddress.ToLowerInvariant(), out _))
+            var nonce = await _nonceRepository.GetNonceAsync(transaction.FromAddress);
+            if (string.IsNullOrEmpty(nonce))
             {
                 await _log.WriteInfoAsync("PrivateWalletController", "GetTransaction", $"{serialized}",
                     "Check balance", DateTime.UtcNow);
@@ -188,9 +190,15 @@ namespace Lykke.Service.EthereumCore.Controllers
                 return BadRequest(new {Error = "Nonce is not a valid number."});
             }
 
-            PrivateWalletService.OverrideNonceDict.TryAdd(address.ToLowerInvariant(), result);
+            await _nonceRepository.AddAsync(address, nonce);
+            return Ok();
+        }
 
-            return Ok(PrivateWalletService.OverrideNonceDict);
+        [HttpGet("overrideNonce")]
+        public async Task<IActionResult> GetAllNonceOverrides()
+        {
+            var entities = await _nonceRepository.GetAllAsync();
+            return Ok(entities);
         }
     }
 }

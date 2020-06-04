@@ -181,7 +181,7 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
 
             #endregion
 
-            #region AirLines 
+            #region AirLines
 
             builder.RegisterInstance<IErc223DepositContractRepository>(new Erc20DepositContractRepository(
                 AzureTableStorage<Erc20DepositContractEntity>.Create(dataReloadingManager,
@@ -225,6 +225,10 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             builder.RegisterInstance<IErc20BlackListAddressesRepository>(new Erc20BlackListAddressesRepository(
                 AzureTableStorage<Erc20BlackListAddressesEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.Erc20BlackListAddressTable,
                     log)));
+
+            builder.RegisterInstance<IOverrideNonceRepository>(new OverrideNonceRepository(
+                AzureTableStorage<NonceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OverrideNonceTable, log)
+            ));
         }
 
         public static void RegisterAzureQueues(this ContainerBuilder builder,
