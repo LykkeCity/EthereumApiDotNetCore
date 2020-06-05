@@ -72,7 +72,6 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             if (!string.IsNullOrEmpty(nonceStuck) && BigInteger.TryParse(nonceStuck, out var nonceBig))
             {
                 nonce = new HexBigInteger(nonceBig);
-                await _nonceRepository.RemoveAsync(from);
             }
             else
             {
@@ -137,8 +136,16 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
         public async Task<string> SubmitSignedTransaction(string from, string signedTrHex)
         {
-            await _transactionValidationService.ValidateInputForSignedAsync(from, signedTrHex);
+            var nonce = await _nonceRepository.GetNonceAsync(from);
+
+            if (string.IsNullOrEmpty(nonce))
+            {
+                await _transactionValidationService.ValidateInputForSignedAsync(from, signedTrHex);
+            }
+
             string transactionHex = await _rawTransactionSubmitter.SubmitSignedTransaction(from, signedTrHex);
+
+            await _nonceRepository.RemoveAsync(from);
 
             return transactionHex;
         }

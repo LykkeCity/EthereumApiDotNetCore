@@ -200,5 +200,12 @@ namespace Lykke.Service.EthereumCore.Controllers
             var entities = await _nonceRepository.GetAllAsync();
             return Ok(entities);
         }
+
+        [HttpDelete("overrideNonce")]
+        public async Task<IActionResult> DeleteOverrideNonce([FromQuery] string address)
+        {
+            await _nonceRepository.RemoveAsync(address);
+            return Ok();
+        }
     }
 }
