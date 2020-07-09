@@ -191,7 +191,7 @@ namespace Lykke.Job.EthereumCore.Job
                 catch (Exception e)
                 {
                     await _logger.WriteErrorAsync(nameof(Erc20DepositMonitoringContracts),
-                                        nameof(Execute), "", e, DateTime.UtcNow);
+                                        nameof(Execute), item.ToJson(), e, DateTime.UtcNow);
                 }
             });
         }
