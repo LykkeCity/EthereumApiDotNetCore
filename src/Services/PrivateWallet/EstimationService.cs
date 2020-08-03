@@ -6,6 +6,7 @@ using Nethereum.RPC.Eth.DTOs;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Common;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -21,7 +22,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         Expected {false, 432 123, The transaction spends too much gas, please set up the parameters manually}
 
         4 The user wants to withdraw eth amount = available
-        Logic 
+        Logic
         1step try transaction with amount 1*10^accuracy to calculate amount for gas
         2step Then retry transaction witn amount = (amount - gas*gasPrice)
         Expected {true, 32 123, null}
@@ -99,6 +100,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 }
                 else if (diff < 0)
                 {
+                    Console.WriteLine($"Not enough funds! - fromAddress: {fromAddress}, diff: {diff}, amount: {amount}, fromAddressBalance: {fromAddressBalance}");
                     throw new ClientSideException(ExceptionType.NotEnoughFunds, $"Not enough Ethereum on {fromAddress}");
                 }
 
@@ -110,6 +112,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             }
             catch (Nethereum.JsonRpc.Client.RpcResponseException rpcException)
             {
+                Console.WriteLine($"Exception: {rpcException.Message}, {rpcException.RpcError.ToJson()}");
                 var rpcError = rpcException?.RpcError;
                 if (rpcError != null &&
                     rpcError.Code == -32000)
@@ -124,10 +127,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             }
             catch (ClientSideException e)
             {
+                Console.WriteLine($"Exception: {e.Message}");
                 throw;
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Exception: {e.Message}");
                 throw new ClientSideException(ExceptionType.None, e.Message);
             }
 
