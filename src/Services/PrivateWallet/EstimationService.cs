@@ -7,6 +7,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Common;
+using Lykke.Service.EthereumCore.Core.Repositories;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -46,10 +47,14 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
     public class EstimationService : IEstimationService
     {
+        private readonly IOverrideNonceRepository _nonceRepository;
         private readonly IWeb3 _web3;
 
-        public EstimationService(IWeb3 web3)
+        public EstimationService(
+            IOverrideNonceRepository nonceRepository,
+            IWeb3 web3)
         {
+            _nonceRepository = nonceRepository;
             _web3 = web3;
         }
 
@@ -60,7 +65,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             BigInteger gasPrice,
             string transactionData)
         {
-            var fromAddressBalance = await _web3.Eth.GetBalance.SendRequestAsync(fromAddress, BlockParameter.CreatePending());
+            var nonce = await _nonceRepository.GetNonceAsync(fromAddress);
+
+            var fromAddressBalance = nonce == null
+                ? await _web3.Eth.GetBalance.SendRequestAsync(fromAddress, BlockParameter.CreatePending())
+                : await _web3.Eth.GetBalance.SendRequestAsync(fromAddress);
+
             //var currentGasPrice = await _web3.Eth.GasPrice.SendRequestAsync();
             var value = new HexBigInteger(amount);
             CallInput callInput;
