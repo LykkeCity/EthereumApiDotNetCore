@@ -148,6 +148,7 @@ namespace Lykke.Job.EthereumCore.Job
                                 _userTransferWalletRepository.FormatAddressForErc20(item.ContractAddress, tokenAddress);
                                 IUserTransferWallet wallet =
                                 await _userTransferWalletRepository.GetUserContractAsync(item.UserAddress, formattedAddress);
+
                                 if (wallet == null ||
                                     string.IsNullOrEmpty(wallet.LastBalance) ||
                                     wallet.LastBalance == "0")

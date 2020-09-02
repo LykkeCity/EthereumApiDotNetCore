@@ -50,7 +50,7 @@ namespace Lykke.Job.EthereumCore.Config
             builder.RegisterType<TransferContractPoolJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<TransferContractUserAssignmentJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<PoolRenewJob>().SingleInstance().WithAttributeFiltering();
-            builder.RegisterType<PingContractsJob>().SingleInstance().WithAttributeFiltering();
+            //builder.RegisterType<PingContractsJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<TransferTransactionQueueJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<MonitoringOperationJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<CashinIndexingJob>().SingleInstance().WithAttributeFiltering();
