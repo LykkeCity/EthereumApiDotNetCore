@@ -44,5 +44,10 @@ namespace Lykke.Service.EthereumCore.Services.Signature
 
             return await _getTransactionCount.SendRequestAsync(fromAddress, BlockParameter.CreatePending());
         }
+
+        public async Task<HexBigInteger> GetNonceLatestAsync(string fromAddress)
+        {
+            return await _getTransactionCount.SendRequestAsync(fromAddress, BlockParameter.CreateLatest());
+        }
     }
 }

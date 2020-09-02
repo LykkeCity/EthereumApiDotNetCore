@@ -29,5 +29,10 @@ namespace Service.UnitTests.Mocks
 
             return Task.FromResult(currentNonce);
         }
+
+        public Task<HexBigInteger> GetNonceLatestAsync(string fromAddress)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -33,6 +33,7 @@ namespace Lykke.Service.EthereumCore.Services.Signature
         private readonly ITransactionRouter _transactionRouter;
         private readonly Web3 _web3;
         private readonly IGasPriceRepository _gasPriceRepository;
+        private readonly IOverrideNonceRepository _overrideNonceRepository;
 
 
         public LykkeSignedTransactionManager(
@@ -41,7 +42,8 @@ namespace Lykke.Service.EthereumCore.Services.Signature
             ILykkeSigningAPI signingApi,
             ITransactionRouter transactionRouter,
             Web3 web3,
-            IGasPriceRepository gasPriceRepository)
+            IGasPriceRepository gasPriceRepository,
+            IOverrideNonceRepository overrideNonceRepository)
         {
             _baseSettings = baseSettings;
             _estimateGas = new EthEstimateGas(web3.Client);
@@ -52,6 +54,7 @@ namespace Lykke.Service.EthereumCore.Services.Signature
             _transactionRouter = transactionRouter;
             _web3 = web3;
             _gasPriceRepository = gasPriceRepository;
+            _overrideNonceRepository = overrideNonceRepository;
 
             Client = web3.Client;
         }
@@ -70,7 +73,8 @@ namespace Lykke.Service.EthereumCore.Services.Signature
         {
             get
             {
-                if (_transactionReceiptService == null) return TransactionReceiptServiceFactory.GetDefaultransactionReceiptService(this);
+                if (_transactionReceiptService == null)
+                    return TransactionReceiptServiceFactory.GetDefaultransactionReceiptService(this);
                 return _transactionReceiptService;
             }
             set
@@ -134,7 +138,8 @@ namespace Lykke.Service.EthereumCore.Services.Signature
             );
         }
 
-        private async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger value, BigInteger? gasPrice, BigInteger? gasValue)
+        private async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger value,
+            BigInteger? gasPrice, BigInteger? gasValue)
         {
             from = from == Constants.AddressForRoundRobinTransactionSending
                  ? await _transactionRouter.GetNextSenderAddressAsync()
@@ -148,7 +153,18 @@ namespace Lykke.Service.EthereumCore.Services.Signature
 
                 (gasPrice, gasValue) = await GetGasPriceAndValueAsync(gasPrice, gasValue);
 
-                var nonce = await _nonceCalculator.GetNonceAsync(from, true);
+                var nonceStuck = await _overrideNonceRepository.GetNonceAsync(from);
+                HexBigInteger nonce;
+
+                if (!string.IsNullOrEmpty(nonceStuck) && BigInteger.TryParse(nonceStuck, out var nonceBig))
+                {
+                    nonce = await _nonceCalculator.GetNonceLatestAsync(from);
+                }
+                else
+                {
+                    nonce = await _nonceCalculator.GetNonceAsync(from, true);
+                }
+
                 var transaction = new Nethereum.Signer.Transaction(to, value, nonce.Value, gasPrice.Value, gasValue.Value, data);
                 var signRequest = new EthereumTransactionSignRequest
                 {

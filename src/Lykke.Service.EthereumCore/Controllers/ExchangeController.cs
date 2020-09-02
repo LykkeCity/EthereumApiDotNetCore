@@ -39,6 +39,27 @@ namespace Lykke.Service.EthereumCore.Controllers
             _pendingOperationService = pendingOperationService;
         }
 
+        [Route("ping-smart-contract")]
+        [HttpPost]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> Ping()
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ClientSideException(ExceptionType.WrongParams, JsonConvert.SerializeObject(ModelState.Errors()));
+            }
+
+            await Log("Ping", $"Begin Process {this.GetIp()}", new { });
+
+            var hash = await _exchangeContractService.PingMainExchangeContract();
+
+            await Log("Ping", "End Process", new {});
+
+            return Ok(hash);
+        }
+
         [Route("cashout")]
         [HttpPost]
         [ProducesResponseType(typeof(OperationIdResponse), 200)]

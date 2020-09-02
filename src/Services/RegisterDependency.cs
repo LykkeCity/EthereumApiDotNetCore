@@ -83,8 +83,16 @@ namespace Lykke.Service.EthereumCore.Services
                 var nonceCalculator = provider.GetService<INonceCalculator>();
                 var transactionRouter = provider.GetService<ITransactionRouter>();
                 var gasPriceRepository = provider.GetService<IGasPriceRepository>();
+                var overrideNonceRepository = provider.GetService<IOverrideNonceRepository>();
 
-                var transactionManager = new LykkeSignedTransactionManager(baseSettings, nonceCalculator, signatureApi, transactionRouter, web3, gasPriceRepository);
+                var transactionManager = new LykkeSignedTransactionManager(
+                baseSettings, 
+                nonceCalculator, 
+                signatureApi, 
+                transactionRouter, 
+                web3, 
+                gasPriceRepository,
+                overrideNonceRepository);
 
                 web3.TransactionManager = transactionManager;
                 web3.Client.OverridingRequestInterceptor = new SignatureInterceptor(transactionManager);
