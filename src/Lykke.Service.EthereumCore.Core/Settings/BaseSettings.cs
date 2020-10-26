@@ -119,6 +119,8 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public string SigningServiceApiKey { get; set; }
         public SagasRabbitMq Cqrs { get; set; }
         public string PreviousMainExchangeContractAddress { get; set; }
+        [Optional]
+        public string BlockPassTokenAddress { get; set; }
     }
 
     public class EthereumContractBase

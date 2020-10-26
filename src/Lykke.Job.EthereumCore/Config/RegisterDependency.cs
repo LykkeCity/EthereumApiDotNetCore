@@ -19,9 +19,9 @@ namespace Lykke.Job.EthereumCore.Config
 {
     public static class RegisterDependency
     {
-        public static void InitJobDependencies(this IServiceCollection collection, 
+        public static void InitJobDependencies(this IServiceCollection collection,
             ContainerBuilder builder,
-            IReloadingManager<BaseSettings> settings, 
+            IReloadingManager<BaseSettings> settings,
             IReloadingManager<SlackNotificationSettings> slackNotificationSettings,
             ILog log)
         {
@@ -31,15 +31,15 @@ namespace Lykke.Job.EthereumCore.Config
             builder.RegisterAzureQueues(settings.Nested(x => x.Db.DataConnString), slackNotificationSettings);
             collection.RegisterServices();
             builder.RegisterServices();
-            collection.RegisterRabbitQueue(settings.Nested(x => x.RabbitMq), 
-                settings.Nested(x => x.Db.DataConnString), 
+            collection.RegisterRabbitQueue(settings.Nested(x => x.RabbitMq),
+                settings.Nested(x => x.Db.DataConnString),
                 log);
             collection.AddTransient<IPoisionQueueNotifier, SlackNotifier>();
             collection.AddSingleton(new Lykke.MonitoringServiceApiCaller.MonitoringServiceFacade(settings.CurrentValue.MonitoringServiceUrl));
-            RegisterJobs(builder);
+            RegisterJobs(builder, settings);
         }
 
-        public static void RegisterJobs(ContainerBuilder builder)
+        public static void RegisterJobs(ContainerBuilder builder, IReloadingManager<BaseSettings> settings)
         {
             #region NewJobs
 
@@ -60,7 +60,10 @@ namespace Lykke.Job.EthereumCore.Config
             builder.RegisterType<Erc20DepositContractPoolJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<Erc20DepositContractPoolRenewJob>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<Erc20DepositMonitoringCashinTransactions>().SingleInstance().WithAttributeFiltering();
-            builder.RegisterType<Erc20DepositMonitoringContracts>().SingleInstance().WithAttributeFiltering();
+            builder.RegisterType<Erc20DepositMonitoringContracts>()
+                .SingleInstance()
+                .WithAttributeFiltering()
+                .WithParameter(TypedParameter.From(settings.CurrentValue.BlockPassTokenAddress));
 
             #region LykkePay
 
