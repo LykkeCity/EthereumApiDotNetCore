@@ -20,6 +20,9 @@ using Lykke.Service.Assets.Client.Models;
 using System.Collections.Generic;
 using Autofac.Features.AttributeFilters;
 using EthereumSamuraiApiCaller;
+using Lykke.Cqrs;
+using Lykke.Job.EthereumCore.Contracts.Cqrs;
+using Lykke.Job.EthereumCore.Workflow.Commands;
 using Lykke.Service.EthereumCore.Services.Erc20;
 
 namespace Lykke.Job.EthereumCore.Job
@@ -46,6 +49,8 @@ namespace Lykke.Job.EthereumCore.Job
         private readonly IAssetsService _assetsService;
         private readonly IErc20BalanceService _erc20BalanceService;
         private readonly IErc20DepositTransactionService _erc20DepositTransactionService;
+        private readonly ICqrsEngine _cqrsEngine;
+        private readonly string _blockPassTokenAddress;
 
         public Erc20DepositMonitoringContracts(IBaseSettings settings,
             IErcInterfaceService ercInterfaceService,
@@ -64,7 +69,9 @@ namespace Lykke.Job.EthereumCore.Job
             [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService erc20DepositContractService,
             IAssetsService assetsService,
             IErc20BalanceService erc20BalanceService,
-            IErc20DepositTransactionService erc20DepositTransactionService
+            IErc20DepositTransactionService erc20DepositTransactionService,
+            ICqrsEngine cqrsEngine,
+            string blockPassTokenAddress
             )
         {
             _util = new AddressUtil();
@@ -86,6 +93,8 @@ namespace Lykke.Job.EthereumCore.Job
             _assetsService = assetsService;
             _erc20BalanceService = erc20BalanceService;
             _erc20DepositTransactionService = erc20DepositTransactionService;
+            _cqrsEngine = cqrsEngine;
+            _blockPassTokenAddress = blockPassTokenAddress;
         }
 
         [TimerTrigger("0.00:04:00")]
@@ -158,6 +167,16 @@ namespace Lykke.Job.EthereumCore.Job
 
                                     if (balance > 0)
                                     {
+                                        if (string.Equals(tokenAddress, _blockPassTokenAddress, StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            var command = new AddToPassWhiteListCommand
+                                            {
+                                                Address = item.UserAddress
+                                            };
+
+                                            _cqrsEngine.SendCommand(command, EthereumBoundedContext.Name, EthereumBoundedContext.Name);
+                                        }
+
                                         await _userTransferWalletRepository.ReplaceAsync(new UserTransferWallet()
                                         {
                                             LastBalance = balance.ToString(),

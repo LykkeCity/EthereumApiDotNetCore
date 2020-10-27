@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Autofac;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
@@ -12,7 +11,6 @@ using Lykke.Job.EthereumCore.Contracts.Cqrs.Commands;
 using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Job.EthereumCore.Workflow.Commands;
 using Lykke.Job.EthereumCore.Workflow.Handlers;
-using Lykke.Job.EthereumCore.Workflow.Sagas;
 using Lykke.Messaging;
 using Lykke.Messaging.RabbitMq;
 using Lykke.Service.EthereumCore.Core.Settings;
@@ -51,8 +49,6 @@ namespace Lykke.Job.EthereumCore.Modules
                 environment: "lykke",
                 exclusiveQueuePostfix: "k8s");
 
-            builder.RegisterType<Erc223DepositSagas>().SingleInstance().WithAttributeFiltering();
-
             builder.RegisterType<BlockPassCommandHandler>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<CashoutCommandHandler>().SingleInstance().WithAttributeFiltering();
             builder.RegisterType<TransferCommandHandler>().SingleInstance().WithAttributeFiltering();
@@ -90,16 +86,8 @@ namespace Lykke.Job.EthereumCore.Modules
                             //.WithLoopback()
                             .WithCommandsHandler<BlockPassCommandHandler>()
                         .ProcessingOptions(defaultRoute).MultiThreaded(8).QueueCapacity(1024)
-                        .ProcessingOptions(eventsRoute).MultiThreaded(8).QueueCapacity(1024),
-
-                    Register.Saga<Erc223DepositSagas>($"{EthereumBoundedContext.Name}.saga")
-                        .ListeningEvents(typeof(Erc223DepositAssignedToUserEvent))
-                        .From(EthereumBoundedContext.Name)
-                        .On(defaultRoute)
-                        .PublishingCommands(typeof(AddToPassWhiteListCommand))
-                        .To(EthereumBoundedContext.Name)
-                        .With(defaultPipeline)
-                    );
+                        .ProcessingOptions(eventsRoute).MultiThreaded(8).QueueCapacity(1024)
+                );
 
             })
             .As<ICqrsEngine>()
