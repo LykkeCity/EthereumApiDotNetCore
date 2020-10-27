@@ -167,7 +167,7 @@ namespace Lykke.Job.EthereumCore.Job
 
                                     if (balance > 0)
                                     {
-                                        if (tokenAddress == _blockPassTokenAddress)
+                                        if (string.Equals(tokenAddress, _blockPassTokenAddress, StringComparison.InvariantCultureIgnoreCase))
                                         {
                                             var command = new AddToPassWhiteListCommand
                                             {
