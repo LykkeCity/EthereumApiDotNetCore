@@ -128,7 +128,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                     rpcError.Code == -32000)
                 {
                     estimatedGas = new HexBigInteger(0);
-                    isAllowed = false;
+                    isAllowed = !string.IsNullOrEmpty(nonce);
                 }
                 else
                 {
