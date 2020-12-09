@@ -127,8 +127,9 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
                 if (rpcError != null &&
                     rpcError.Code == -32000)
                 {
-                    estimatedGas = new HexBigInteger(0);
-                    isAllowed = false;
+                    //if we have nonce override we need to allow user to pass further
+                    estimatedGas = new HexBigInteger(string.IsNullOrEmpty(nonce) ? 0 : Core.Constants.DefaultTransactionGas);
+                    isAllowed = !string.IsNullOrEmpty(nonce);
                 }
                 else
                 {
