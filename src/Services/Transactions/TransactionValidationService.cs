@@ -36,7 +36,7 @@ namespace Lykke.Service.EthereumCore.Services.Transactions
 
         public async Task<bool> IsTransactionErc20Transfer(string transactionHex)
         {
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(transactionHex.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(transactionHex.HexToByteArray());
             string erc20InvocationData = transaction.Data?.ToHexCompact().EnsureHexPrefix();
             
             return erc20InvocationData?.IndexOf(Constants.Erc20TransferSignature, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -44,7 +44,7 @@ namespace Lykke.Service.EthereumCore.Services.Transactions
 
         public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
         {
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(signedTransaction.HexToByteArray());
             bool isSignedRight = await _signatureChecker.CheckTransactionSign(fromAddress, signedTransaction);
             string valueHex = transaction.Value.ToHex();
             string gasLimit = transaction.GasLimit.ToHex();

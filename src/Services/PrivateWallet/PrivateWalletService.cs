@@ -107,7 +107,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
         public async Task<OperationEstimationResult> EstimateTransactionExecutionCost(string from, string signedTrHex)
         {
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(signedTrHex.HexToByteArray());
             var increasedGas                         = new HexBigInteger(transaction.GasLimit.ToHexCompact()).Value + 1;
             var gasLimit                             = new HexBigInteger(increasedGas);
             var gasPrice                             = new HexBigInteger(transaction.GasPrice.ToHexCompact());
