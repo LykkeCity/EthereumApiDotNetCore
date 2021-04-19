@@ -1,10 +1,8 @@
 ﻿using Common;
 using Lykke.Job.EthereumCore.Contracts.Events;
-using Lykke.RabbitMqBroker.Publisher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Job.EthereumCore.Contracts.Events.LykkePay;
 

@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Common.Log;
-using Lykke.Job.EthereumCore.Config;
 using Lykke.Service.EthereumCore.Services;
 
 // ReSharper disable once CheckNamespace

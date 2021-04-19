@@ -3,16 +3,13 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Job.EthereumCore.Job;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Lykke.Service.EthereumCore.Services.New.Models;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Service.UnitTests.Jobs

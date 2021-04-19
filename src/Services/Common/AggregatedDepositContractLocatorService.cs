@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Common;

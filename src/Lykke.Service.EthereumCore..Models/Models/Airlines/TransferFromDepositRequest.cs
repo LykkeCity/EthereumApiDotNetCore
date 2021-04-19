@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Text;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Models.Attributes;
 

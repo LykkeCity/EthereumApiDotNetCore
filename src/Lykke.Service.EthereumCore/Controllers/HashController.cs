@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,6 @@ using Lykke.Service.EthereumCore.Services;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Lykke.Service.EthereumCore.Utils;
 using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Core.Common;
 using Nethereum.Util;
 
 namespace Lykke.Service.EthereumCore.Controllers

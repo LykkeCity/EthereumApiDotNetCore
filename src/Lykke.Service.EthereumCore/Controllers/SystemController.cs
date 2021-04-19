@@ -1,14 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.EthereumCore.Services;
-using Nethereum.Web3;
-using System.Threading;
-using System.Text;
 using System;
 using Lykke.Service.EthereumCore.Core.Services;
-using System.Dynamic;
-using System.Collections.Generic;
-using Common;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Lykke.Common.Api.Contract.Responses;
 using System.Net;

@@ -2,9 +2,7 @@
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace Lykke.Service.EthereumCore.Services
 {

@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Repositories;
+﻿using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
-using AzureStorage;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories.Repositories
 {

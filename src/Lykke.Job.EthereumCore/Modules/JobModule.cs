@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using Lykke.SettingsReader;
 using Lykke.JobTriggers.Extenstions;
-using AzureStorage.Blob;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services;

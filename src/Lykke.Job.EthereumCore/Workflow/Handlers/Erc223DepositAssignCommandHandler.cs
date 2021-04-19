@@ -2,8 +2,6 @@
 using Lykke.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Job.EthereumCore.Workflow.Commands;
-using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.PassToken;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core;

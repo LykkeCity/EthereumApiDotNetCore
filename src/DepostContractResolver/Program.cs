@@ -1,14 +1,7 @@
-﻿using Autofac;
-using Common;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.EthereumCore.Services.Coins;
-using Microsoft.Extensions.CommandLineUtils;
+﻿using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
-using System.Threading.Tasks;
 using DepositContractResolver.Commands;
 using DepositContractResolver.CommandsRegistration;
 using DepositContractResolver.Helpers;

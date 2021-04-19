@@ -1,9 +1,7 @@
 ﻿using EthereumSamuraiApiCaller;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.BusinessModels;

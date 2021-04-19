@@ -1,15 +1,10 @@
 ﻿using Lykke.Service.EthereumCore.Core.Settings;
-using Nethereum.ABI;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Services;
 
 namespace Lykke.Service.EthereumCore.Services
 {

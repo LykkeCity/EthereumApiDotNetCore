@@ -2,11 +2,6 @@
 using System.Threading.Tasks;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth.DTOs;
-using Nethereum.RPC.Eth.Transactions;
-using Nethereum.Web3;
-using Newtonsoft.Json.Linq;
-using SigningServiceApiCaller;
-using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.RPC.TransactionManagers;
 
 namespace LkeServices.Signature

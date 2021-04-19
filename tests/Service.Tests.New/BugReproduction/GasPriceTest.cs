@@ -1,23 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Tests;
-using Microsoft.Extensions.DependencyInjection;
-using SigningServiceApiCaller;
-using Lykke.Service.EthereumCore.Services;
-using System.Numerics;
-using Nethereum.Hex.HexConvertors.Extensions;
-using System.Diagnostics;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using LkeServices.Signature;
-using Nethereum.Web3;
-using Nethereum.RPC.Eth.DTOs;
-using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Services.Signature;
-
-namespace Service.Tests.BugReproduction
+﻿namespace Service.Tests.BugReproduction
 {
     //[TestClass]
     //public class GasPriceTest : BaseTest

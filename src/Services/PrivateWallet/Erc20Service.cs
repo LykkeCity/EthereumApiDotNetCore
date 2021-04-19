@@ -1,7 +1,6 @@
 ﻿using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services.Signature;
 using Lykke.Service.EthereumCore.Services.Transactions;
@@ -10,6 +9,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using System.Numerics;
 using System.Threading.Tasks;
+using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {

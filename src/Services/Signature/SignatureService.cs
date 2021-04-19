@@ -2,9 +2,6 @@
 using Nethereum.Util;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services.Signature

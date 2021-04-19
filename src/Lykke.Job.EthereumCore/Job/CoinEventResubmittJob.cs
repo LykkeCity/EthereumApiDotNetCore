@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
@@ -11,7 +10,6 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Lykke.Service.EthereumCore.Services.New.Models;
-using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
 using AzureStorage.Queue;
 using System.Linq;

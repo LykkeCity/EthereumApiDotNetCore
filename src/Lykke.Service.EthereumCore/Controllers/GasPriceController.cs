@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Models.Models;

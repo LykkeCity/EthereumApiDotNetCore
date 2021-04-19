@@ -1,7 +1,5 @@
 ﻿using Lykke.Service.EthereumCore.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
 using Lykke.Service.EthereumCore.Core.Settings;

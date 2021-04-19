@@ -12,7 +12,6 @@ using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.PassToken;
 using Lykke.Service.EthereumCore.Core.PrivateWallet;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.PassTokenIntegration;
 using Lykke.Service.EthereumCore.Services.Airlines;
@@ -71,7 +70,7 @@ namespace Lykke.Service.EthereumCore.Services
             {
                 var web3 = provider.GetService<Web3>();
 
-                return new Web3Decorator(web3);
+                return web3;
             });
 
 

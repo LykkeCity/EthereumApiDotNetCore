@@ -1,11 +1,8 @@
 ﻿using Lykke.Service.EthereumCore.Core.Exceptions;
 using Nethereum.RPC.Eth.Transactions;
 using Lykke.Service.EthereumCore.Services.Signature;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Services;
+using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Services.Transactions
 {

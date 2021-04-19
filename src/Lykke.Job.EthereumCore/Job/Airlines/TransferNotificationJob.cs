@@ -8,13 +8,12 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using Lykke.Service.RabbitMQ;
 using Nethereum.RPC.Eth.DTOs;
 using System;
 using System.Threading.Tasks;
+using Nethereum.Web3;
 
 namespace Lykke.Service.AirlinesJobRunner.Job
 {

@@ -1,14 +1,10 @@
 ﻿using System;
-using Lykke.Service.EthereumCore.AzureRepositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Lykke.Service.EthereumCore.Services;
 using Common.Log;
-using Lykke.Service.RabbitMQ;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.SettingsReader;
 using Lykke.Service.EthereumCore.Modules;
@@ -17,13 +13,8 @@ using AzureStorage.Tables;
 using Lykke.SlackNotification.AzureQueue;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Services;
-using Lykke.Common.ApiLibrary.Middleware;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using Autofac.Features.AttributeFilters;
-using Lykke.Service.EthereumCore;
-using Lykke.Service.EthereumCore.Controllers.LykkePay;
-using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Filters.Swagger;
 using Nethereum.RPC.TransactionManagers;
 

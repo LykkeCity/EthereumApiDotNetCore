@@ -12,7 +12,6 @@ using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.HotWallet;
-using RabbitMQ;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.Service.RabbitMQ;
 using Lykke.Service.EthereumCore.Services.New;

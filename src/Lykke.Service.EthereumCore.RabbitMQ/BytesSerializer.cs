@@ -1,7 +1,5 @@
 ﻿using Lykke.RabbitMqBroker.Publisher;
 using Lykke.RabbitMqBroker.Subscriber;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Lykke.Service.RabbitMQ

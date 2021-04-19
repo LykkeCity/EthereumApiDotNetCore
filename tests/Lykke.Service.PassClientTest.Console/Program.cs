@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core;
+﻿using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.PassTokenIntegration;
 using Lykke.Service.EthereumCore.PassTokenIntegration.Models.Requests;
 

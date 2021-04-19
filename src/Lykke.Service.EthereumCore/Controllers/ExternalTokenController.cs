@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.EthereumCore.Services.Coins;
 using Common.Log;
 using Lykke.Service.EthereumCoreSelfHosted.Models;
 using Lykke.Service.EthereumCore.Core.Repositories;

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Utils;
-using Nethereum.ABI.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using Nethereum.Signer;
-using Org.BouncyCastle.Math;
 
 namespace Tests
 {
@@ -58,7 +53,7 @@ namespace Tests
             //ToByteArrayUnsigned
             var r = signature.R.ToHex();
             var s = signature.S.ToHex();
-            var v = new[] { signature.V }.ToHex();
+            var v = signature.V.ToHex();
 
             var arr = (r + s + v).HexToByteArray();
             return arr;

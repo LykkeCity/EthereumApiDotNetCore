@@ -1,7 +1,5 @@
 ﻿using Lykke.Job.EthereumCore.Contracts.Enums;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lykke.Job.EthereumCore.Contracts.Events
 {

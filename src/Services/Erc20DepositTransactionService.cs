@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Services.Coins;
 using AzureStorage.Queue;
 using Common.Log;
-using System.Numerics;
-using Autofac.Features.AttributeFilters;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Utils;

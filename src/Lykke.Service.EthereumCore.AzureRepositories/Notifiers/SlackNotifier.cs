@@ -4,8 +4,6 @@ using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.JobTriggers.Abstractions;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories.Notifiers
