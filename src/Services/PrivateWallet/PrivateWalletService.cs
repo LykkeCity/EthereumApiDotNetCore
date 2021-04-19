@@ -13,6 +13,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Repositories;
+using Lykke.Service.EthereumCore.Core.Settings;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -33,6 +34,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private AddressUtil _addressUtil;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly IOverrideNonceRepository _nonceRepository;
+        private readonly IBaseSettings _baseSettings;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IErc20PrivateWalletService _erc20Service;
 
@@ -42,10 +44,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             IErc20PrivateWalletService erc20Service,
             IRawTransactionSubmitter rawTransactionSubmitter,
             IOverrideNonceRepository nonceRepository,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IBaseSettings baseSettings)
         {
             _rawTransactionSubmitter      = rawTransactionSubmitter;
             _nonceRepository = nonceRepository;
+            _baseSettings = baseSettings;
             _nonceCalculator              = nonceCalculator;
             _web3                         = web3;
             _transactionValidationService = transactionValidationService;
@@ -72,7 +76,8 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
             var to       = ethTransaction.ToAddress;
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
-            var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);
+            var tr       = new Nethereum.Signer.TransactionChainId(to, value, nonce, gasPrice, gas, 
+                _baseSettings.ChainId);
             var hex      = tr.GetRLPEncoded().ToHex();
 
             return hex;
@@ -88,7 +93,13 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             var to = ethTransaction.ToAddress;
             var value = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var data = ethTransaction.Data;
-            var tr = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas, data);
+            var tr = new Nethereum.Signer.TransactionChainId(to, 
+                value, 
+                nonce, 
+                gasPrice, 
+                gas, 
+                data,
+                _baseSettings.ChainId);
             var hex = tr.GetRLPEncoded().ToHex();
 
             return hex;

@@ -141,9 +141,23 @@ namespace Lykke.Service.EthereumCore.Services.Signature
             );
         }
 
-        public Task<string> SignTransactionAsync(TransactionInput transaction)
+        public async Task<string> SignTransactionAsync(TransactionInput transactionInput)
         {
-            throw new NotImplementedException();
+            var transaction = new Nethereum.Signer.TransactionChainId(transactionInput.To,
+                transactionInput.Value, 
+                transactionInput.Nonce, 
+                transactionInput.GasPrice, 
+                transactionInput.Gas,
+                transactionInput.Data, 
+                _baseSettings.ChainId);
+            var signRequest = new EthereumTransactionSignRequest
+            {
+                FromProperty = new AddressUtil().ConvertToChecksumAddress(transactionInput.From),
+                Transaction = transaction.GetRLPEncoded().ToHex()
+            };
+
+            var signResponse = await _signingApi.ApiEthereumSignPostAsync(signRequest);
+            return signResponse.SignedTransaction;
         }
 
         private async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger value,
