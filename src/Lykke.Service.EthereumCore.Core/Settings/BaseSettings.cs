@@ -6,7 +6,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public interface IBaseSettings
     {
-        BigInteger ChainId { get; set; }
+        long ChainId { get; set; }
         string EthereumMainAccount { get; set; }
         string EthereumMainAccountPassword { get; set; }
 
@@ -63,7 +63,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public EthereumContractBase Erc20DepositContract { get; set; }
         public EthereumContractBase Erc223DepositContract { get; set; }
 
-        public BigInteger ChainId { get; set; }
+        public long ChainId { get; set; }
         public string EthereumMainAccount { get; set; }
         public string EthereumMainAccountPassword { get; set; }
 
