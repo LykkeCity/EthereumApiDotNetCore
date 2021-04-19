@@ -12,12 +12,12 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.Service.RabbitMQ;
+using Nethereum.Web3;
 
 namespace Lykke.Job.EthereumCore.Job.Airlines
 {

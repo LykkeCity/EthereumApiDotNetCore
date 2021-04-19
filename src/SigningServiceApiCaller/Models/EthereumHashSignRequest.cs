@@ -5,7 +5,6 @@
 namespace SigningServiceApiCaller.Models
 {
     using Newtonsoft.Json;
-    using System.Linq;
 
     public partial class EthereumHashSignRequest
     {

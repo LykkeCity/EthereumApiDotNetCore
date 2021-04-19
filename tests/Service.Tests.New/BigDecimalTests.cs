@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 using Common;
-using Lykke.Service.EthereumCore.Core.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

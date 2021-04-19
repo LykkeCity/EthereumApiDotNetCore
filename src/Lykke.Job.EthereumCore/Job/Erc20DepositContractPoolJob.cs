@@ -1,12 +1,10 @@
 ﻿using Autofac.Features.AttributeFilters;
-using Common;
 using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Services;
 using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Lykke.Job.EthereumCore.Job
 {

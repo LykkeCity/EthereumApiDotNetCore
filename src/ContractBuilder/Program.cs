@@ -8,14 +8,10 @@ using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services;
 using Nethereum.Web3;
 using Nethereum.ABI.FunctionEncoding.Attributes;
-using System.Text;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.AzureRepositories;
-using SigningServiceApiCaller;
-using SigningServiceApiCaller.Models;
 using Lykke.Service.EthereumCore.Services.Coins;
-using RabbitMQ;
 using Common.Log;
 using Lykke.Service.EthereumCore.Services.New;
 //using Lykke.Service.EthereumCore.Core.Repositories;
@@ -28,13 +24,10 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using Nethereum.Util;
 using Lykke.Job.EthereumCore.Job;
 using Lykke.Service.EthereumCore.Core.PrivateWallet;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using EthereumContract = Lykke.Service.EthereumCore.Core.Settings.EthereumContract;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
-using Nethereum.Hex.HexTypes;
-using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
 
 namespace ContractBuilder

@@ -15,10 +15,10 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Common;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Util;
+using Nethereum.Web3;
 
 namespace TokenDeployer
 {

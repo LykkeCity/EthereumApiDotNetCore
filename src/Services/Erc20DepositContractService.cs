@@ -10,11 +10,10 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Services
 {

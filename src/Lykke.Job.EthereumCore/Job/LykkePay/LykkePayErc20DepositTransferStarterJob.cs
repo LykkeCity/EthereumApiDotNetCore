@@ -4,7 +4,6 @@ using Nethereum.Web3;
 using Lykke.Service.EthereumCore.Services;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core.Settings;
-using System.Numerics;
 using System;
 using Autofac.Features.AttributeFilters;
 using AzureStorage.Queue;
@@ -16,10 +15,8 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Messages.LykkePay;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.RabbitMQ;
 
 namespace Lykke.Job.EthereumCore.Job

@@ -1,12 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Nethereum.Web3;
 using Lykke.Service.EthereumCore.Services;
 using Common.Log;
 using Lykke.Service.EthereumCore.Core.Settings;
-using System.Numerics;
 using System;
-using Common;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core;

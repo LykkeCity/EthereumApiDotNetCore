@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.Core;
+﻿using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
 using AzureStorage;

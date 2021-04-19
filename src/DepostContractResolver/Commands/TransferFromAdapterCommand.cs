@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using DepositContractResolver.Helpers;
-using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins;
 

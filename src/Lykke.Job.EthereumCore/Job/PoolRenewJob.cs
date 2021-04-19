@@ -5,8 +5,6 @@ using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.EthereumCore.Services;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Job.EthereumCore.Job

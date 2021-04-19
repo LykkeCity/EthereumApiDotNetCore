@@ -1,16 +1,8 @@
-﻿using Lykke.Service.EthereumCore.BusinessModels;
-using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Models;
+﻿using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Models.Models;
 using Lykke.Service.EthereumCore.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.EthereumCore.Services.PrivateWallet;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Models.Attributes;

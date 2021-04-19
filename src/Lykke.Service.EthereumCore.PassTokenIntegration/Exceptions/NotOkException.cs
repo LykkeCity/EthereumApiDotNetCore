@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.Service.EthereumCore.PassTokenIntegration.Exceptions
+﻿namespace Lykke.Service.EthereumCore.PassTokenIntegration.Exceptions
 {
     public class NotOkException : System.Exception
     {

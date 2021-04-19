@@ -1,7 +1,6 @@
 ﻿using Lykke.Service.EthereumCore.Services.Signature;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using System.Threading.Tasks;

@@ -1,28 +1,19 @@
-﻿using Lykke.Service.EthereumCore.BusinessModels;
-using Lykke.Service.EthereumCore.Core;
+﻿using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
-using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Lykke.Service.EthereumCore.Services.Model;
 using Lykke.Service.EthereumCore.Services.Signature;
 using Lykke.Service.EthereumCore.Services.Transactions;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
 using System.Numerics;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
+using Lykke.Service.EthereumCore.Core.Settings;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -43,6 +34,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private AddressUtil _addressUtil;
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly IOverrideNonceRepository _nonceRepository;
+        private readonly IBaseSettings _baseSettings;
         private readonly ITransactionValidationService _transactionValidationService;
         private readonly IErc20PrivateWalletService _erc20Service;
 
@@ -52,10 +44,12 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             IErc20PrivateWalletService erc20Service,
             IRawTransactionSubmitter rawTransactionSubmitter,
             IOverrideNonceRepository nonceRepository,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IBaseSettings baseSettings)
         {
             _rawTransactionSubmitter      = rawTransactionSubmitter;
             _nonceRepository = nonceRepository;
+            _baseSettings = baseSettings;
             _nonceCalculator              = nonceCalculator;
             _web3                         = web3;
             _transactionValidationService = transactionValidationService;
@@ -82,7 +76,8 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 
             var to       = ethTransaction.ToAddress;
             var value    = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
-            var tr       = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas);
+            var tr       = new Nethereum.Signer.TransactionChainId(to, value, nonce, gasPrice, gas, 
+                _baseSettings.ChainId);
             var hex      = tr.GetRLPEncoded().ToHex();
 
             return hex;
@@ -98,7 +93,13 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             var to = ethTransaction.ToAddress;
             var value = new Nethereum.Hex.HexTypes.HexBigInteger(ethTransaction.Value);
             var data = ethTransaction.Data;
-            var tr = new Nethereum.Signer.Transaction(to, value, nonce, gasPrice, gas, data);
+            var tr = new Nethereum.Signer.TransactionChainId(to, 
+                value, 
+                nonce, 
+                gasPrice, 
+                gas, 
+                data,
+                _baseSettings.ChainId);
             var hex = tr.GetRLPEncoded().ToHex();
 
             return hex;

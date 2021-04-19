@@ -5,10 +5,9 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Lykke.Service.EthereumCore.Services.Signature;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
+using Common;
 
 namespace Lykke.Service.EthereumCore.Services.Transactions
 {
@@ -51,7 +50,7 @@ namespace Lykke.Service.EthereumCore.Services.Transactions
             string gasLimit = transaction.GasLimit.ToHex();
             string gasPrice = transaction.GasPrice.ToHex();
 
-            await this.ThrowOnExistingHashAsync(transaction.Hash.ToHex());
+            await this.ThrowOnExistingHashAsync(transaction.RawHash.ToHex());
             ThrowOnWrongSignature(isSignedRight);
             await ValidateAddressBalanceAsync(fromAddress,
                 new HexBigInteger(transaction.Value.ToHex()),

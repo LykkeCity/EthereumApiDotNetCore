@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core;
@@ -8,18 +7,10 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
-using Nethereum.ABI.Encoders;
-using Nethereum.ABI.Util;
 using Lykke.Service.EthereumCore.Services;
 using Lykke.Service.EthereumCore.Services.Coins;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Web3;
 using Lykke.Service.EthereumCore.Core.Utils;
-using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
-using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Services.Coins.Models;
-using AzureStorage.Queue;
 using Nethereum.Util;
 using Nethereum.Signer;
 using System.Diagnostics;
@@ -258,7 +249,7 @@ namespace Tests
             var signature = secret.SignAndCalculateV(hash);
             string r = signature.R.Length == 32 ? signature.R.ToHex() : "00" + signature.R.ToHex();
             string s = signature.S.Length == 32 ? signature.S.ToHex() : "00" + signature.S.ToHex();
-            string v = new[] { signature.V }.ToHex();
+            string v = signature.V.ToHex();
 
             var arrHex = (r + s + v);
 
@@ -344,7 +335,7 @@ namespace Tests
             //ToByteArrayUnsigned
             var r = signature.R.ToHex();
             var s = signature.S.ToHex();
-            var v = new[] { signature.V }.ToHex();
+            var v = signature.V.ToHex();
 
             var arr = (r + s + v).HexToByteArray();
             return arr;

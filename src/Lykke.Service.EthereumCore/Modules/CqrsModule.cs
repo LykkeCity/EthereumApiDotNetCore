@@ -6,8 +6,6 @@ using JetBrains.Annotations;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
 using Lykke.Job.EthereumCore.Contracts.Cqrs;
-using Lykke.Job.EthereumCore.Contracts.Cqrs.Commands;
-using Lykke.Job.EthereumCore.Contracts.Cqrs.Events;
 using Lykke.Job.EthereumCore.Workflow.Commands;
 using Lykke.Messaging;
 using Lykke.Messaging.RabbitMq;

@@ -1,5 +1,4 @@
-﻿using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
-using Common.Log;
+﻿using Common.Log;
 using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
@@ -11,8 +10,6 @@ using Lykke.Service.EthereumCore.Services.Coins;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
 using Lykke.Service.EthereumCore.Services.New;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Job.EthereumCore.Job;
 

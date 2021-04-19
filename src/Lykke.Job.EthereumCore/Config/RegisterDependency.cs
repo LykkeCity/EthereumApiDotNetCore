@@ -11,7 +11,6 @@ using Common.Log;
 using Lykke.Job.EthereumCore.Job.Airlines;
 using Lykke.Job.EthereumCore.Job.LykkePay;
 using Lykke.Service.AirlinesJobRunner.Job;
-using RabbitMQ;
 using Lykke.Service.RabbitMQ;
 using Lykke.SettingsReader;
 

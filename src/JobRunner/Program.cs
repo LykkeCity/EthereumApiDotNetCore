@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Job.EthereumCore;
-using Microsoft.Extensions.DependencyInjection;
-using Lykke.Job.EthereumCore.Config;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.AspNetCore.Hosting;
 

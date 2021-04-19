@@ -1,18 +1,8 @@
 ﻿using System.Linq;
-using System.Reflection;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
-using Lykke.Service.EthereumCore.AzureRepositories;
-using Lykke.Service.EthereumCore.Core.Services;
-using Lykke.Service.EthereumCore.Core.Settings;
-using Lykke.Service.EthereumCore.Core.Utils;
-using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.RabbitMQ;
-using Lykke.SettingsReader;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using MoreLinq;
 using Module = Autofac.Module;
 
