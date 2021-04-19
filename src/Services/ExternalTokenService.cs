@@ -1,10 +1,7 @@
 ﻿using Common.Log;
-using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Nethereum.Hex.HexTypes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

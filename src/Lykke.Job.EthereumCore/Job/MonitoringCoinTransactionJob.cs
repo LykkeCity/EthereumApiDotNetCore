@@ -11,9 +11,7 @@ using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Services;
-using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.New;
-using System.Linq;
 
 namespace Lykke.Job.EthereumCore.Job
 {

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 using Lykke.Service.EthereumCore.Core;
 
 namespace Lykke.Service.EthereumCore.Models.Models

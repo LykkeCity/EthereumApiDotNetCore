@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using Lykke.Service.EthereumCoreSelfHosted.Models;
-using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.EthereumCore.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.EthereumCore.Controllers
 {

@@ -26,7 +26,7 @@
     <PackageReference Include="Lykke.Cqrs" Version="4.8.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="2.1.0.120" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.2" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 

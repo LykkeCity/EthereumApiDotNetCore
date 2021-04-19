@@ -1,7 +1,5 @@
 ﻿using Common.Log;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Lykke.Service.EthereumCore.Utils

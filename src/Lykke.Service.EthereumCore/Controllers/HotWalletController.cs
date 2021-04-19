@@ -4,10 +4,7 @@ using Lykke.Service.EthereumCore.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Services.HotWallet;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Controllers

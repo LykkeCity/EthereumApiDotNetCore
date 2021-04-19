@@ -1,8 +1,6 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Core.ContractEvents;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;

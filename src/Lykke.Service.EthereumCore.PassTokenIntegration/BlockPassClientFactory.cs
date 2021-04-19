@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Lykke.HttpClientGenerator;
 using Lykke.HttpClientGenerator.Caching;
 using Lykke.Service.EthereumCore.Core;

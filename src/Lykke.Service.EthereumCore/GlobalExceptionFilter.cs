@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

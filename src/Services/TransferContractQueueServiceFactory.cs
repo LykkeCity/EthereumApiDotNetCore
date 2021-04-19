@@ -1,12 +1,7 @@
 ﻿using AzureStorage.Queue;
 using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services
 {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Lykke.Service.EthereumCore.Core;
@@ -10,9 +8,6 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Lykke.Service.EthereumCore.Core.Utils;
-using Newtonsoft.Json;
-using Lykke.Service.EthereumCore.Services.Coins.Models;
-using Lykke.Service.EthereumCore.Services.Coins.Models.Events;
 using AzureStorage.Queue;
 using Nethereum.Contracts;
 using Nethereum.Util;

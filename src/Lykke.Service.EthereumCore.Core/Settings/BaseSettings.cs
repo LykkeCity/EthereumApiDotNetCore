@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
-using Common;
 using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Service.EthereumCore.Core.Settings
 {
     public interface IBaseSettings
     {
+        long ChainId { get; set; }
         string EthereumMainAccount { get; set; }
         string EthereumMainAccountPassword { get; set; }
 
@@ -64,6 +63,7 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public EthereumContractBase Erc20DepositContract { get; set; }
         public EthereumContractBase Erc223DepositContract { get; set; }
 
+        public long ChainId { get; set; }
         public string EthereumMainAccount { get; set; }
         public string EthereumMainAccountPassword { get; set; }
 

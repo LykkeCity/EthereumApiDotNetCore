@@ -4,12 +4,10 @@ using Lykke.Service.EthereumCore.AzureRepositories.Repositories;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
 using Lykke.Service.EthereumCore.Core.Settings;
-using Microsoft.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using AzureStorage.Queue;
 using Common.Log;
 using AzureStorage.Tables.Templates.Index;
-using AzureStorage.Blob;
 using Lykke.SettingsReader;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories

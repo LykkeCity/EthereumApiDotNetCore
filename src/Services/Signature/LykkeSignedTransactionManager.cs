@@ -16,7 +16,6 @@ using Nethereum.RPC.TransactionManagers;
 using Nethereum.RPC.TransactionReceipts;
 using Nethereum.Util;
 using Nethereum.Web3;
-using Nethereum.Web3.Accounts;
 using SigningServiceApiCaller;
 using SigningServiceApiCaller.Models;
 
@@ -60,6 +59,11 @@ namespace Lykke.Service.EthereumCore.Services.Signature
         }
 
 
+        public Task<TransactionReceipt> SendTransactionAndWaitForReceiptAsync(TransactionInput transactionInput, CancellationTokenSource tokenSource)
+        {
+            throw new NotImplementedException();
+        }
+
         public IClient Client { get; set; }
 
         public BigInteger DefaultGasPrice { get; set; }
@@ -86,7 +90,25 @@ namespace Lykke.Service.EthereumCore.Services.Signature
         IAccount ITransactionManager.Account => throw new NotImplementedException();
 
 
-        public async Task<HexBigInteger> EstimateGasAsync<T>(T callInput) where T : CallInput
+        public async Task<string> SendTransactionAsync(TransactionInput transactionInput)
+        {
+            if (transactionInput == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return await SendTransactionAsync
+            (
+                transactionInput.From,
+                transactionInput.To,
+                transactionInput.Data,
+                transactionInput.Value ?? new BigInteger(0),
+                transactionInput.GasPrice ?? new BigInteger(0),
+                transactionInput.Gas ?? new BigInteger(0)
+            );
+        }
+
+        public async Task<HexBigInteger> EstimateGasAsync(CallInput callInput)
         {
             if (Client == null)
             {
@@ -106,25 +128,6 @@ namespace Lykke.Service.EthereumCore.Services.Signature
             return await _estimateGas.SendRequestAsync(callInput);
         }
 
-        public async Task<string> SendTransactionAsync<T>(T transaction)
-            where T : TransactionInput
-        {
-            if (transaction == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            return await SendTransactionAsync
-            (
-                transaction.From,
-                transaction.To,
-                transaction.Data,
-                transaction.Value ?? new BigInteger(0),
-                transaction.GasPrice ?? new BigInteger(0),
-                transaction.Gas ?? new BigInteger(0)
-            );
-        }
-
         public async Task<string> SendTransactionAsync(string from, string to, HexBigInteger amount)
         {
             return await SendTransactionAsync
@@ -136,6 +139,25 @@ namespace Lykke.Service.EthereumCore.Services.Signature
                 null,
                 null
             );
+        }
+
+        public async Task<string> SignTransactionAsync(TransactionInput transactionInput)
+        {
+            var transaction = new Nethereum.Signer.TransactionChainId(transactionInput.To,
+                transactionInput.Value, 
+                transactionInput.Nonce, 
+                transactionInput.GasPrice, 
+                transactionInput.Gas,
+                transactionInput.Data, 
+                _baseSettings.ChainId);
+            var signRequest = new EthereumTransactionSignRequest
+            {
+                FromProperty = new AddressUtil().ConvertToChecksumAddress(transactionInput.From),
+                Transaction = transaction.GetRLPEncoded().ToHex()
+            };
+
+            var signResponse = await _signingApi.ApiEthereumSignPostAsync(signRequest);
+            return signResponse.SignedTransaction;
         }
 
         private async Task<string> SendTransactionAsync(string from, string to, string data, BigInteger value,
@@ -165,7 +187,8 @@ namespace Lykke.Service.EthereumCore.Services.Signature
                     nonce = await _nonceCalculator.GetNonceAsync(from, true);
                 }
 
-                var transaction = new Nethereum.Signer.Transaction(to, value, nonce.Value, gasPrice.Value, gasValue.Value, data);
+                var transaction = new Nethereum.Signer.TransactionChainId(to, value, nonce.Value, gasPrice.Value, gasValue.Value, data,
+                    _baseSettings.ChainId);
                 var signRequest = new EthereumTransactionSignRequest
                 {
                     FromProperty = new AddressUtil().ConvertToChecksumAddress(from),

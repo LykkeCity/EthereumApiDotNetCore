@@ -1,8 +1,5 @@
 ﻿using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.Services.Signature
@@ -23,7 +20,7 @@ namespace Lykke.Service.EthereumCore.Services.Signature
 
         public async Task<bool> CheckTransactionSign(string from, string signedTrHex)
         {
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTrHex.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(signedTrHex.HexToByteArray());
             string signedBy = transaction.Key.GetPublicAddress();
 
             return _addressUtil.ConvertToChecksumAddress(from) == _addressUtil.ConvertToChecksumAddress(signedBy);

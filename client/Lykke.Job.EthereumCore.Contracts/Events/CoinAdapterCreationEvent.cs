@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.Job.EthereumCore.Contracts.Events
+﻿namespace Lykke.Job.EthereumCore.Contracts.Events
 {
     public class CoinAdapterCreationEvent
     {

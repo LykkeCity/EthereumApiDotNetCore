@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.EthereumCore.Services;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Tests;
 using Lykke.Service.EthereumCore.Core.Utils;
 using Nethereum.Hex.HexConvertors.Extensions;

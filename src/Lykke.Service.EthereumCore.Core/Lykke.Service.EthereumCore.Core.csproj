@@ -19,11 +19,11 @@
     <PackageReference Include="Lykke.Logs" Version="5.1.1" />
     <PackageReference Include="Lykke.SettingsReader" Version="2.4.1" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.1.0" />
-    <PackageReference Include="Nethereum.Geth" Version="2.2.3" />
-    <PackageReference Include="Nethereum.RPC" Version="2.2.3" />
-    <PackageReference Include="Nethereum.Signer" Version="2.2.3" />
-    <PackageReference Include="Nethereum.Web3" Version="2.2.3" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.1" />
+    <PackageReference Include="Nethereum.Geth" Version="3.8.0" />
+    <PackageReference Include="Nethereum.RPC" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Signer" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.2" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />

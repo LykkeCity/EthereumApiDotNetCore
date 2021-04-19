@@ -20,10 +20,6 @@ using Lykke.SlackNotification.AzureQueue;
 using System.Reflection;
 using Nethereum.RPC.TransactionManagers;
 using Lykke.Common.Api.Contract.Responses;
-using Lykke.Job.EthereumCore.Job;
-using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Services;
 
 namespace Lykke.Job.EthereumCore
 {

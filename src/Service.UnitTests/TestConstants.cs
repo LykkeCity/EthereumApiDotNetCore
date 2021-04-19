@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Service.UnitTests
+﻿namespace Service.UnitTests
 {
     public static class TestConstants
     {

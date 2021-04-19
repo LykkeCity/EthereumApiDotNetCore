@@ -5,20 +5,14 @@
     <AssemblyName>TestRunner</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>TestRunner</PackageId>
-    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nethereum.Signer" Version="2.2.3" />
-    <PackageReference Include="Nethereum.Web3" Version="2.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Services\Lykke.Service.EthereumCore.Services.csproj" />
+    <PackageReference Include="Nethereum.Signer" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
   </ItemGroup>
 
 </Project>

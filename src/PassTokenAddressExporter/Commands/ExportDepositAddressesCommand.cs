@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Autofac;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Services;
-using Lykke.Service.EthereumCore.Services.Coins;
 using PassTokenAddressExporter.Helpers;
 
 namespace PassTokenAddressExporter.Commands

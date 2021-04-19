@@ -1,8 +1,6 @@
 ﻿using Lykke.Service.EthereumCore.Services.Coins;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Lykke.Service.EthereumCore.Models.Attributes
 {

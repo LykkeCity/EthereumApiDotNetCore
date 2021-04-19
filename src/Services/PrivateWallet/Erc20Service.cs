@@ -1,7 +1,6 @@
 ﻿using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.Services;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services.Signature;
 using Lykke.Service.EthereumCore.Services.Transactions;
@@ -10,6 +9,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using System.Numerics;
 using System.Threading.Tasks;
+using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Services.PrivateWallet
 {
@@ -43,13 +43,15 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         private readonly IRawTransactionSubmitter _rawTransactionSubmitter;
         private readonly IErcInterfaceService _ercInterfaceService;
         private readonly ITransactionValidationService _transactionValidationService;
+        private readonly IBaseSettings _baseSettings;
 
         public Erc20PrivateWalletService(IWeb3 web3, 
             INonceCalculator nonceCalculator, 
             IBaseSettings settings,
             IRawTransactionSubmitter rawTransactionSubmitter,
             IErcInterfaceService ercInterfaceService,
-            ITransactionValidationService transactionValidationService)
+            ITransactionValidationService transactionValidationService,
+            IBaseSettings baseSettings)
         {
             _rawTransactionSubmitter      = rawTransactionSubmitter;
             _nonceCalculator              = nonceCalculator;
@@ -57,6 +59,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             _settings                     = settings;
             _ercInterfaceService          = ercInterfaceService;
             _transactionValidationService = transactionValidationService;
+            _baseSettings = baseSettings;
         }
 
         #region transfer
@@ -101,10 +104,11 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
             return contract;
         }
 
-        protected Nethereum.Signer.Transaction CreateTransactionInput(string encodedFunctionCall, string erc20ContractAddress,
+        protected Nethereum.Signer.TransactionChainId CreateTransactionInput(string encodedFunctionCall, string erc20ContractAddress,
             string from, BigInteger gas, BigInteger gasPrice, BigInteger nonce, BigInteger value)
         {
-            return new Nethereum.Signer.Transaction(erc20ContractAddress, value, nonce, gasPrice, gas, encodedFunctionCall);
+            return new Nethereum.Signer.TransactionChainId(erc20ContractAddress, value, nonce, gasPrice, gas, encodedFunctionCall,
+                _baseSettings.ChainId);
         }
 
         public async Task ValidateInput(Erc20Transaction transaction)
@@ -117,7 +121,7 @@ namespace Lykke.Service.EthereumCore.Services.PrivateWallet
         public async Task ValidateInputForSignedAsync(string fromAddress, string signedTransaction)
         {
             await _transactionValidationService.ValidateInputForSignedAsync(fromAddress, signedTransaction);
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(signedTransaction.HexToByteArray());
             string erc20Address                      = transaction.ReceiveAddress.ToHex().EnsureHexPrefix();
             string erc20InvocationData               = transaction.Data.ToHex().EnsureHexPrefix();
             

@@ -1,7 +1,5 @@
 ﻿using Lykke.Service.EthereumCore.Client.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TransactionResubmit
 {

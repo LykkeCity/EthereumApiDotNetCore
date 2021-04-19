@@ -1,10 +1,9 @@
 ﻿using Lykke.Service.EthereumCore.Core.Exceptions;
-using Lykke.Service.EthereumCore.Core.Services;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Core.Shared
 {

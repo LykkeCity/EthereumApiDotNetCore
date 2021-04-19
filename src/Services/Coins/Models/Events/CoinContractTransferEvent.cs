@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 
 namespace Lykke.Service.EthereumCore.Services.Coins.Models.Events

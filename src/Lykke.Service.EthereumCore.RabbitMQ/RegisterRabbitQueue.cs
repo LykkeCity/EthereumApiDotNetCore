@@ -1,12 +1,10 @@
 ﻿using Common;
 using Common.Log;
-using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Job.EthereumCore.Contracts.Events;
 using Lykke.RabbitMqBroker.Publisher;
 using Lykke.RabbitMqBroker.Subscriber;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
-using System;
 using Lykke.SettingsReader;
 using Lykke.RabbitMq.Azure;
 using AzureStorage.Blob;

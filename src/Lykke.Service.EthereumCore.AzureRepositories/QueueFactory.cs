@@ -2,10 +2,6 @@
 using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.SettingsReader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lykke.Service.EthereumCore.AzureRepositories
 {

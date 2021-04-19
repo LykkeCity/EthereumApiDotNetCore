@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using EthereumSamuraiApiCaller;
@@ -12,8 +11,6 @@ using Lykke.Service.EthereumCore.Core;
 using Lykke.Service.EthereumCore.Core.Common;
 using Lykke.Service.EthereumCore.Core.LykkePay;
 using Lykke.Service.EthereumCore.Core.Repositories;
-using Lykke.Service.EthereumCore.Core.Services;
-using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using Lykke.Service.RabbitMQ;
 using Newtonsoft.Json.Linq;

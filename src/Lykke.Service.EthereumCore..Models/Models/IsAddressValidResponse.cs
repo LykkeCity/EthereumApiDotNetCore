@@ -1,10 +1,4 @@
-﻿using Lykke.Service.EthereumCore.Core;
-using Lykke.Service.EthereumCore.Models.Attributes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Runtime.Serialization;
 
 namespace Lykke.Service.EthereumCore.Models.Models
 {

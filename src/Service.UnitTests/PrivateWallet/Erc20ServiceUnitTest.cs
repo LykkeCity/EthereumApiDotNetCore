@@ -1,16 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Lykke.Service.EthereumCore.Services.PrivateWallet;
 using Lykke.Service.EthereumCore.Services.Signature;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Lykke.Service.EthereumCore.Services;
 using Moq;
 using Nethereum.JsonRpc.Client;
-using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using Lykke.Service.EthereumCore.BusinessModels;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Service.UnitTests.Mocks;
 using Nethereum.Hex.HexTypes;
@@ -18,9 +12,9 @@ using Nethereum.Signer;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.BusinessModels.PrivateWallet;
-using Lykke.Service.EthereumCore.Core.Services;
-using Nethereum.Contracts;
 using Lykke.Service.EthereumCore.Services.Transactions;
+using Nethereum.Contracts.Services;
+using Nethereum.Web3;
 
 namespace Service.UnitTests.PrivateWallet
 {
@@ -53,7 +47,8 @@ namespace Service.UnitTests.PrivateWallet
             web3Mock.Setup(x => x.Eth).Returns(new EthApiContractService(_client.Object));
             #endregion
             IRawTransactionSubmitter rawTransactionSubmitter = new RawTransactionSubmitter(web3Mock.Object, _signatureChecker);
-            _erc20Service = new Erc20PrivateWalletService(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null);
+            _erc20Service = new Erc20PrivateWalletService(web3Mock.Object, _nonceCalc, baseSettings.Object, rawTransactionSubmitter, null, null, new BaseSettings()
+                {ChainId = 3});
         }
 
         [TestMethod]
@@ -71,7 +66,7 @@ namespace Service.UnitTests.PrivateWallet
             };
 
             string transactionHex = await _erc20Service.GetTransferTransactionRaw(ethTransaction);
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(transactionHex.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(transactionHex.HexToByteArray());
 
             Assert.AreEqual(_nonceCalc._nonceStorage[from].Value, new HexBigInteger(transaction.Nonce.ToHex()));
             Assert.AreEqual(ethTransaction.GasAmount, new HexBigInteger(transaction.GasLimit.ToHex()));
@@ -98,7 +93,7 @@ namespace Service.UnitTests.PrivateWallet
             string transactionHex = await _erc20Service.GetTransferTransactionRaw(ethTransaction);
             string signedTransaction = SignRawTransaction(transactionHex, _privateKey);
             string transactionHash = await _erc20Service.SubmitSignedTransaction(from, signedTransaction);
-            Nethereum.Signer.Transaction transaction = new Nethereum.Signer.Transaction(signedTransaction.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(signedTransaction.HexToByteArray());
 
             _client.Verify(x => x.SendRequestAsync<string>(It.IsAny<Nethereum.JsonRpc.Client.RpcRequest>(), null), Times.Once);
             Assert.AreEqual(from, transaction.Key.GetPublicAddress());
@@ -141,7 +136,7 @@ namespace Service.UnitTests.PrivateWallet
 
         private string SignRawTransaction(string trHex, string privateKey)
         {
-            var transaction = new Nethereum.Signer.Transaction(trHex.HexToByteArray());
+            var transaction = new Nethereum.Signer.TransactionChainId(trHex.HexToByteArray());
             var secret = new EthECKey(privateKey);
             transaction.Sign(secret);
 

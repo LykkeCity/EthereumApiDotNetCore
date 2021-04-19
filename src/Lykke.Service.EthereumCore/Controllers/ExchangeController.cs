@@ -18,7 +18,6 @@ using Lykke.Service.EthereumCore.Services.Model;
 using Common;
 using Newtonsoft.Json;
 using Lykke.Service.EthereumCore.Utils;
-using Lykke.Service.EthereumCore;
 
 namespace Lykke.Service.EthereumCore.Controllers
 {
