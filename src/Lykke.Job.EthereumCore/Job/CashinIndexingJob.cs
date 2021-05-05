@@ -38,29 +38,6 @@ namespace Lykke.Job.EthereumCore.Job
         }
 
         [TimerTrigger("0.00:00:30")]
-        public async Task ExecuteForAdapters()
-        {
-            try
-            {
-                await _coinRepository.ProcessAllAsync(async (adapters) =>
-                {
-                    foreach (var adapter in adapters)
-                    {
-                        await _log.WriteInfoAsync("CashinIndexingJob", "Execute",
-                            $"Coin adapter address{adapter.AdapterAddress}",
-                            "Cashin Indexing has been started", DateTime.UtcNow);
-
-                        await _transactionEventsService.IndexCashinEventsForAdapter(adapter.AdapterAddress, adapter.DeployedTransactionHash);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                await _log.WriteErrorAsync(nameof(CashinIndexingJob), nameof(ExecuteForAdapters), "", ex);
-            }
-        }
-
-        [TimerTrigger("0.00:00:30")]
         public async Task ExecuteForErc20Deposits()
         {
             try
@@ -69,7 +46,7 @@ namespace Lykke.Job.EthereumCore.Job
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(CashinIndexingJob), nameof(ExecuteForAdapters), "", ex);
+                await _log.WriteErrorAsync(nameof(CashinIndexingJob), nameof(ExecuteForErc20Deposits), "", ex);
             }
         }
 
