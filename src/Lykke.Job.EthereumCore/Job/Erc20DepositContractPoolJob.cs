@@ -27,7 +27,7 @@ namespace Lykke.Job.EthereumCore.Job
             _logger = logger;
         }
 
-        [TimerTrigger("0.00:01:00")]
+        [TimerTrigger("0.01:00:00")]
         public async Task Execute()
         {
             try
