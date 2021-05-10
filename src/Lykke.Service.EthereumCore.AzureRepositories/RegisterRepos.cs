@@ -227,6 +227,11 @@ namespace Lykke.Service.EthereumCore.AzureRepositories
             builder.RegisterInstance<IOverrideNonceRepository>(new OverrideNonceRepository(
                 AzureTableStorage<NonceEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.OverrideNonceTable, log)
             ));
+
+            builder.RegisterInstance<IEthereumContractPoolRepository>(new EthereumContractPoolRepository(
+                AzureTableStorage<EthereumContractPoolEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.EthereumContractPoolTable, log),
+                AzureTableStorage<EthereumCreatedContractEntity>.Create(dataReloadingManager, Constants.StoragePrefix + Constants.EthereumCreatedContractTable, log)
+            ));
         }
 
         public static void RegisterAzureQueues(this ContainerBuilder builder,

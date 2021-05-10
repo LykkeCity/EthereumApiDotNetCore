@@ -72,6 +72,9 @@ namespace Lykke.Service.EthereumCore.Core
         public const string WhiteListAddressesTable = "WhiteListAddresses";
         public const string AddressStatisticsTable = "AddressStatistics";
         public const string OverrideNonceTable = "OverrideNonce";
+        public const string EthereumContractPoolTable = "EthereumContractPool";
+        public const string EthereumCreatedContractTable = "EthereumCreatedContract";
+
 
         #region  LykkePay
 
