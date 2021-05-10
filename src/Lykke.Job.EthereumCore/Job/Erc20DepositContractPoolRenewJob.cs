@@ -42,7 +42,8 @@ namespace Lykke.Job.EthereumCore.Job
             }
         }
 
-        [TimerTrigger("1.00:00:00")]
+        //NOT USED ANYMORE
+        //[TimerTrigger("1.00:00:00")]
         public async Task ExecuteForLykkePay()
         {
             await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolRenewJob), nameof(ExecuteForLykkePay), "", "Job has been started ", DateTime.UtcNow);
@@ -63,7 +64,8 @@ namespace Lykke.Job.EthereumCore.Job
             }
         }
 
-        [TimerTrigger("1.00:00:00")]
+        //NOT USED ANYMORE
+        //[TimerTrigger("1.00:00:00")]
         public async Task ExecuteForAirlines()
         {
             await _logger.WriteInfoAsync(nameof(Erc20DepositContractPoolRenewJob), nameof(ExecuteForLykkePay), "", "Job has been started ", DateTime.UtcNow);

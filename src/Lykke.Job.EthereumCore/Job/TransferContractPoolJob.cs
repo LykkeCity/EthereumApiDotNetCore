@@ -25,7 +25,8 @@ namespace Lykke.Job.EthereumCore.Job
             _transferContractPoolService = transferContractPoolService;
         }
 
-        [TimerTrigger("0.00:01:00")]
+        //NOT NEEDED
+        //[TimerTrigger("0.00:01:00")]
         public async Task Execute()
         {
             await _coinRepository.ProcessAllAsync(async (items) =>
