@@ -41,7 +41,8 @@ namespace Lykke.Job.EthereumCore.Job
             }
         }
 
-        [TimerTrigger("0.00:01:00")]
+        //NOT USED ANYMORE
+        //[TimerTrigger("0.00:01:00")]
         public async Task ExecuteForLykkeApi()
         {
             try
@@ -63,7 +64,8 @@ namespace Lykke.Job.EthereumCore.Job
             }
         }
 
-        [TimerTrigger("0.00:01:00")]
+        //NOT USED ANYMORE
+        //[TimerTrigger("0.00:01:00")]
         public async Task ExecuteForAirlines()
         {
             try

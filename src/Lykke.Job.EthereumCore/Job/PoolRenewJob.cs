@@ -25,7 +25,8 @@ namespace Lykke.Job.EthereumCore.Job
             _transferContractQueueServiceFactory = transferContractQueueServiceFactory;
         }
 
-        [TimerTrigger("1.00:00:00")]
+        //NOT NEEDED
+        //[TimerTrigger("1.00:00:00")]
         public async Task Execute()
         {
             await _logger.WriteInfoAsync("PoolRenewJob", "Execute", "", "PoolRenewJob has been started ", DateTime.UtcNow);
