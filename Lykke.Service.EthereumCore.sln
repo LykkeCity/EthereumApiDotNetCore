@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runners", "Runners", "{45765D82-186C-4CA6-A7B0-8B60052EFFCF}"
 EndProject
@@ -60,6 +60,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PassTokenAddressExporter", "src\PassTokenAddressExporter\PassTokenAddressExporter.csproj", "{667614DF-8236-4A30-A51B-7D31E746A8C6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EthereumSamuraiApiCaller", "src\EthereumSamuraiApiCaller\EthereumSamuraiApiCaller.csproj", "{54A37869-E9B2-41A6-B5D8-E523EA709A04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErcDepositFix", "src\ErcDepositFix\ErcDepositFix.csproj", "{7947FB9E-F63C-4B99-AD53-3AD658E29966}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -163,6 +165,10 @@ Global
 		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54A37869-E9B2-41A6-B5D8-E523EA709A04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7947FB9E-F63C-4B99-AD53-3AD658E29966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7947FB9E-F63C-4B99-AD53-3AD658E29966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7947FB9E-F63C-4B99-AD53-3AD658E29966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7947FB9E-F63C-4B99-AD53-3AD658E29966}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -189,6 +195,7 @@ Global
 		{9BB6D798-212E-4A5C-9E13-C29417CAD212} = {F14E63D3-95A7-41D1-AC63-50C754B05179}
 		{667614DF-8236-4A30-A51B-7D31E746A8C6} = {60685682-4469-431A-A949-A2703D49EC56}
 		{54A37869-E9B2-41A6-B5D8-E523EA709A04} = {21D365DA-2401-4130-A7CC-19562FB73511}
+		{7947FB9E-F63C-4B99-AD53-3AD658E29966} = {60685682-4469-431A-A949-A2703D49EC56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3178D1EC-E539-45E4-BECA-0DB6AFC159A9}
