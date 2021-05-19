@@ -45,13 +45,13 @@ namespace ErcDepositFix.Commands
                     typeof(IErc223DepositContractRepository));
 
             var oldTransferContractRepository =
-                (IErc223DepositContractRepository)resolver.ResolveKeyed(Constants.DefaultKey,
-                    typeof(IErc223DepositContractRepository));
+                (IErc20DepositContractRepositoryOld)resolver.Resolve(typeof(IErc20DepositContractRepositoryOld));
 
             var poolFactory = resolver.Resolve< IErc20DepositContractQueueServiceFactory> ();
             var pool = poolFactory.Get(Constants.Erc20DepositContractPoolQueue);
             var ethereumContractPoolRepository = resolver.Resolve<IEthereumContractPoolRepository>();
             
+            // approx 11_000 entities on prod
             var existingContracts = new HashSet<string>();
 
 
@@ -68,21 +68,16 @@ namespace ErcDepositFix.Commands
                 }
 
             } while (!string.IsNullOrEmpty(continuationToken));
-
-            continuationToken = null;
-
-            do
+            
             {
-                var (collection, token) = await oldTransferContractRepository.GetByTokenAsync(100, continuationToken);
-                continuationToken = token;
+                // approx 4000 entities on prod!
+                var oldContracts = await oldTransferContractRepository.GetAll();
 
-                foreach (var depositContract in collection)
+                foreach (var depositContract in oldContracts)
                 {
                     existingContracts.Add(depositContract.ContractAddress.ToLowerInvariant());
                 }
-
-            } while (!string.IsNullOrEmpty(continuationToken));
-
+            }
 
             await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
                 "", $"Begin fix");
@@ -94,22 +89,42 @@ namespace ErcDepositFix.Commands
 
                 foreach (var transaction in transactions)
                 {
+                    var context = Newtonsoft.Json.JsonConvert.SerializeObject(transaction);
+                    await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
+                        context, $"Start processing the transaction");
+
                     if (!string.IsNullOrEmpty(transaction.To) ||
                         string.IsNullOrEmpty(transaction.ContractAddress))
+                    {
+                        await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
+                            context, $"Skipping");
                         continue;
+                    }
 
                     var contractAddress = transaction.ContractAddress.ToLowerInvariant();
 
                     if (existingContracts.Contains(contractAddress))
+                    {
+                        await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
+                            context, $"Skipping");
                         continue;
+                    }
 
+                    existingContracts.Add(contractAddress);
                     var isCreated = await ethereumContractPoolRepository.GetOrDefaultAsync(contractAddress);
 
-                    if (!isCreated)
+                    if (isCreated)
                     {
-                        await ethereumContractPoolRepository.InsertOrReplaceAsync(contractAddress);
-                        await pool.PushContractAddress(contractAddress);
+                        await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
+                            context, $"Skipping");
+                        continue;
                     }
+
+                    await ethereumContractPoolRepository.InsertOrReplaceAsync(contractAddress);
+                    await pool.PushContractAddress(contractAddress);
+
+                    await consoleLogger.WriteInfoAsync(nameof(ExportDepositAddressesAsync),
+                        context, $"Complete processing the transaction");
                 }
             }
 
