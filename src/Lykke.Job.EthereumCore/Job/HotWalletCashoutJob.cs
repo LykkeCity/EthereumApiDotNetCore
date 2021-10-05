@@ -8,6 +8,7 @@ using Lykke.JobTriggers.Triggers.Bindings;
 using Lykke.Service.EthereumCore.Core.Settings;
 using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.EthereumCore.Core.Messages.HotWallet;
+using Lykke.Service.EthereumCore.Services;
 
 namespace Lykke.Job.EthereumCore.Job
 {
@@ -15,16 +16,19 @@ namespace Lykke.Job.EthereumCore.Job
     {
         private readonly ILog _log;
         private readonly IBaseSettings _settings;
+        private readonly IOperationsService _operationsService;
         private readonly IHotWalletService _hotWalletService;
 
         public HotWalletCashoutJob(
             ILog log,
             IBaseSettings settings,
+            IOperationsService operationsService,
             IHotWalletService hotWalletService
             )
         {
             _log = log;
             _settings = settings;
+            _operationsService = operationsService;
             _hotWalletService = hotWalletService;
         }
 
@@ -40,6 +44,12 @@ namespace Lykke.Job.EthereumCore.Job
 
             try
             {
+                if (_operationsService.IsOperationAborted(cashoutMessage.OperationId))
+                {
+                    await _log.WriteWarningAsync(nameof(HotWalletCashoutJob), "Execute", $"{cashoutMessage.OperationId}", "Operation aborted");
+                    return;
+                }
+
                 await _hotWalletService.StartCashoutAsync(cashoutMessage.OperationId);
             }
             catch (Exception exc)
