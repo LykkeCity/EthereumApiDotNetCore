@@ -24,6 +24,7 @@ namespace Lykke.Job.EthereumCore.Workflow.Handlers
         {
             try
             {
+                _logger.WriteInfo(nameof(BlockPassCommandHandler), command, "Adding address to whitelist");
                 string ticketId = await _blockPassService.AddToWhiteListAsync(command.Address);
             }
             catch (ClientSideException ex)

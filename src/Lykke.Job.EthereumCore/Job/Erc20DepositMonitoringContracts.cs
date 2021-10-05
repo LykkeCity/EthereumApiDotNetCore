@@ -170,6 +170,8 @@ namespace Lykke.Job.EthereumCore.Job
                                                 Address = item.UserAddress
                                             };
 
+                                            _logger.WriteInfo(nameof(Erc20DepositMonitoringContracts), command, "Sending command to whitelist address");
+
                                             _cqrsEngine.SendCommand(command, EthereumBoundedContext.Name, EthereumBoundedContext.Name);
                                         }
 

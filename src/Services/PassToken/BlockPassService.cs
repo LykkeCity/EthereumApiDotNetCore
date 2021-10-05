@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Common;
+using Common.Log;
 using Lykke.Service.EthereumCore.Core.Exceptions;
 using Lykke.Service.EthereumCore.Core.PassToken;
 using Lykke.Service.EthereumCore.PassTokenIntegration;
@@ -13,15 +15,20 @@ namespace Lykke.Service.EthereumCore.Services.PassToken
     {
         private const string _addressType = "eth";
         private readonly IBlockPassClient _blockPassClient;
+        private readonly ILog _logger;
 
-        public BlockPassService(IBlockPassClient blockPassClient)
+        public BlockPassService(
+            IBlockPassClient blockPassClient,
+            ILog logger
+            )
         {
             _blockPassClient = blockPassClient;
+            _logger = logger;
         }
 
         public async Task<string> AddToWhiteListAsync(string address)
         {
-            var addressRequest = new EthAddressRequest()
+            var addressRequest = new EthAddressRequest
             {
                 AddressType = _addressType,
                 Address = address
@@ -32,6 +39,8 @@ namespace Lykke.Service.EthereumCore.Services.PassToken
             try
             {
                 response = await _blockPassClient.WhitelistAddressAsync(addressRequest);
+
+                _logger.WriteInfo(nameof(BlockPassService), new { address, response = response.ToJson()}, "Whitelist response from blockpass.");
             }
             catch (NotOkException e)
             {
@@ -40,11 +49,11 @@ namespace Lykke.Service.EthereumCore.Services.PassToken
                         "Address was passed to BlockPass already.");
 
                 if (e.HttpCode == (int)HttpStatusCode.Forbidden)
-                    throw new ClientSideException(ExceptionType.MissingRequiredParams, 
+                    throw new ClientSideException(ExceptionType.MissingRequiredParams,
                         "Api key in settings is wrong: " + e.Message);
 
                 if (e.HttpCode == (int) HttpStatusCode.InternalServerError)
-                    throw new ClientSideException(ExceptionType.None, 
+                    throw new ClientSideException(ExceptionType.None,
                         "Unknown BlockPass error: " +e.Message);
 
                 throw new ClientSideException(ExceptionType.None, "Unknown exception: " + e.Message);

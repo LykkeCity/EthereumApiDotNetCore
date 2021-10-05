@@ -43,7 +43,7 @@ namespace Lykke.Job.EthereumCore.Modules
                     _settings.Nested(x => x.SlackNotifications),
                     _log);
             _services.AddSingleton(_settings.CurrentValue);
-           
+
             Console.WriteLine($"----------- Job is running now {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}-----------");
 
             builder.RegisterInstance(_log)
@@ -62,7 +62,9 @@ namespace Lykke.Job.EthereumCore.Modules
 
             RegisterAzureQueueHandlers(builder);
 
-            // TODO: Add your dependencies here
+            builder.RegisterType<OperationsService>()
+                .As<IOperationsService>()
+                .SingleInstance();
 
             builder.Populate(_services);
         }
