@@ -3,6 +3,7 @@ using Lykke.Service.EthereumCore.Core.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Service.EthereumCore.Core.Settings;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
@@ -18,14 +19,17 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly IOwnerRepository _ownerRepository;
         private readonly IOwnerBlockchainService _ownerBlockchainService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
+        private readonly BaseSettings _settings;
 
         public OwnerService(IOwnerRepository ownerRepository,
             IOwnerBlockchainService ownerBlockchainService,
-            IEthereumTransactionService ethereumTransactionService)
+            IEthereumTransactionService ethereumTransactionService,
+            BaseSettings settings)
         {
             _ownerRepository = ownerRepository;
             _ownerBlockchainService = ownerBlockchainService;
             _ethereumTransactionService = ethereumTransactionService;
+            _settings = settings;
         }
 
         public async Task<IEnumerable<IOwner>> GetAll()
@@ -38,7 +42,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         public async Task AddOwners(IEnumerable<IOwner> owners)
         {
             string transactionHash = await _ownerBlockchainService.AddOwnersToMainExchangeAsync(owners);
-            while (!await _ethereumTransactionService.IsTransactionExecuted(transactionHash, Constants.GasForCoinTransaction))
+            while (!await _ethereumTransactionService.IsTransactionExecuted(transactionHash, _settings.GasForCoinTransaction))
             {
                 await Task.Delay(300);
             }
@@ -56,7 +60,7 @@ namespace Lykke.Service.EthereumCore.Services.New
         public async Task RemoveOwners(IEnumerable<IOwner> owners)
         {
             string transactionHash = await _ownerBlockchainService.RemoveOwnersFromMainExchangeAsync(owners);
-            while (!await _ethereumTransactionService.IsTransactionExecuted(transactionHash, Constants.GasForCoinTransaction))
+            while (!await _ethereumTransactionService.IsTransactionExecuted(transactionHash, _settings.GasForCoinTransaction))
             {
                 await Task.Delay(300);
             }

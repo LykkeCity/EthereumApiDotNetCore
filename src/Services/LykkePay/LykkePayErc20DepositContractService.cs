@@ -153,7 +153,9 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
                 transactionSenderAddress,
                 depositContractAddress,
                 erc20TokenAddress, 
-                destinationAddress);
+                destinationAddress,
+                _settings,
+                _log);
 
             if (!estimationResult)
             {

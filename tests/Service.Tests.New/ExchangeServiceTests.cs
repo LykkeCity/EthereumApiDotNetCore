@@ -88,7 +88,7 @@ namespace Tests
             var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
             var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
 
-            Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
+            Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, _settings.GasForCoinTransaction));
             Assert.IsTrue(currentBalanceOnAdapter == 0);
             Assert.IsTrue(currentBalance <= newBalance);
         }
@@ -117,7 +117,7 @@ namespace Tests
             var currentBalanceOnAdapter = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
             var newBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, toAddress);
 
-            Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, Constants.GasForCoinTransaction));
+            Assert.IsTrue(await _transactionService.IsTransactionExecuted(transferHash, _settings.GasForCoinTransaction));
             Assert.IsTrue(currentBalanceOnAdapter == change);
             Assert.IsTrue(currentBalanceOnAdapter <= newBalance);
         }
@@ -149,7 +149,7 @@ namespace Tests
             while (await _transactionService.GetTransactionReceipt(cashout) == null)
                 await Task.Delay(100);
 
-            Assert.IsTrue(await _transactionService.IsTransactionExecuted(cashout, Constants.GasForCoinTransaction));
+            Assert.IsTrue(await _transactionService.IsTransactionExecuted(cashout, _settings.GasForCoinTransaction));
             var currentBalance = await _transferContractService.GetBalanceOnAdapter(colorCoin.AdapterAddress, _clientA);
             var newBalance = await _ercService.GetBalanceForExternalTokenAsync(_clientA, _externalTokenAddress);
 

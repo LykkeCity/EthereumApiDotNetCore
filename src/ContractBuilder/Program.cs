@@ -758,7 +758,7 @@ namespace ContractBuilder
                         mainExchangeAddress, mainExchangeAbi);
                     Console.WriteLine($"Coin adapter: {adapter.AdapterAddress} - reassign main exchange {transactionHash}");
 
-                    while (!await ethereumTransactionService.IsTransactionExecuted(transactionHash, Constants.GasForCoinTransaction))
+                    while (!await ethereumTransactionService.IsTransactionExecuted(transactionHash, settings.EthereumCore.GasForCoinTransaction))
                     {
                         await Task.Delay(400);
                     }

@@ -86,7 +86,7 @@ namespace Lykke.Job.EthereumCore.Job
                     //Process cashin operations
                     var coinEvent = await _coinEventService.GetCoinEventById(opMessage.OperationId);
                     if (coinEvent != null &&
-                        await _ethereumTransactionService.IsTransactionExecuted(coinEvent.TransactionHash, Constants.GasForCoinTransaction))
+                        await _ethereumTransactionService.IsTransactionExecuted(coinEvent.TransactionHash, _settings.GasForCoinTransaction))
                     {
                         await ResubmittTransactionAsync(coinEvent.TransactionHash, operatioId, opResubmitCounter);
 
@@ -104,7 +104,7 @@ namespace Lykke.Job.EthereumCore.Job
                     foreach (var match in historicalMessages)
                     {
                         if (!string.IsNullOrEmpty(match.TransactionHash) &&
-                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction))
+                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, _settings.GasForCoinTransaction))
                         {
                             var coinEvent = await _coinEventService.GetCoinEventById(match.OperationId);
                             if (coinEvent != null && coinEvent.TransactionHash.ToLower() == match.TransactionHash.ToLower())

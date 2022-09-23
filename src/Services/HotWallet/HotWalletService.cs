@@ -16,6 +16,7 @@ using Common;
 using System.Threading;
 using System.Collections.Concurrent;
 using Autofac.Features.AttributeFilters;
+using Lykke.Common.Log;
 using Lykke.Service.EthereumCore.Core.Shared;
 using Lykke.Service.EthereumCore.Core.Utils;
 
@@ -134,6 +135,16 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
             string transactionHash = null;
             bool isErc20Transfer = !string.IsNullOrEmpty(cashout.TokenAddress);
             SemaphoreSlim semaphore = _semaphores.GetOrAdd(cashout.FromAddress, f => new SemaphoreSlim(1, 1));
+            
+            _log.Info("Obtaining transaction for signing", new
+            {
+                FromAddress = cashout.FromAddress,
+                GasAmount = _baseSettings.GasForHotWalletTransaction,
+                GasPrice = selectedGasPrice,
+                ToAddress = cashout.ToAddress,
+                TokenAddress = cashout.TokenAddress,
+                TokenAmount = cashout.Amount
+            });
 
             try
             {
@@ -144,7 +155,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
                     transactionForSigning = await _erc20PrivateWalletService.GetTransferTransactionRaw(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.Erc20Transaction()
                     {
                         FromAddress = cashout.FromAddress,
-                        GasAmount = Constants.GasForHotWalletTransaction,
+                        GasAmount = _baseSettings.GasForHotWalletTransaction,
                         GasPrice = selectedGasPrice,
                         ToAddress = cashout.ToAddress,
                         TokenAddress = cashout.TokenAddress,
@@ -158,7 +169,7 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
                     transactionForSigning = await _privateWalletService.GetTransactionForSigning(new Lykke.Service.EthereumCore.BusinessModels.PrivateWallet.EthTransaction()
                     {
                         FromAddress = cashout.FromAddress,
-                        GasAmount = Constants.GasForHotWalletTransaction,
+                        GasAmount = _baseSettings.GasForHotWalletTransaction,
                         GasPrice = selectedGasPrice,
                         ToAddress = cashout.ToAddress,
                         Value = cashout.Amount

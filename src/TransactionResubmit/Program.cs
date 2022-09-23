@@ -317,12 +317,13 @@ namespace TransactionResubmit
                 var queue = queueFactory.Build(Constants.TransactionMonitoringQueue);
                 var coinEventRepo = ServiceProvider.Resolve<ICoinEventRepository>();
                 var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
+                var settings = ServiceProvider.Resolve<IBaseSettings>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId) && x.CoinEventType == CoinEventType.CashinStarted).ToList();
                 if (events != null)
                 {
                     foreach (var @event in events)
                     {
-                        if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, settings.GasForCoinTransaction).Result)
                         {
                             Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
                             queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new CoinTransactionMessage()
@@ -363,18 +364,19 @@ namespace TransactionResubmit
                 var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
                 var allCoinEvents = events.ToLookup(x => x.OperationId);
+                var settings = ServiceProvider.Resolve<IBaseSettings>();
                 opRepo.ProcessAllAsync((matches) =>
                 {
                     foreach (var match in matches)
                     {
-                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, settings.GasForCoinTransaction).Result)
                         {
                             var coinEvents = allCoinEvents[match.OperationId]?.OrderByDescending(x => x.EventTime);
                             if (coinEvents != null)
                             {
                                 foreach (var @event in coinEvents)
                                 {
-                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, settings.GasForCoinTransaction).Result)
                                     {
                                         Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
                                         queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new CoinTransactionMessage() { TransactionHash = @event.TransactionHash, OperationId = match.OperationId, LastError = "FROM_CONSOLE", PutDateTime = DateTime.UtcNow })).Wait();
@@ -406,18 +408,19 @@ namespace TransactionResubmit
                 var trService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var events = coinEventRepo.GetAll().Result.Where(x => !string.IsNullOrEmpty(x.OperationId));
                 var allCoinEvents = events.ToLookup(x => x.OperationId);
+                var settings = ServiceProvider.Resolve<IBaseSettings>();
                 opRepo.ProcessAllAsync((matches) =>
                 {
                     foreach (var match in matches)
                     {
-                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (string.IsNullOrEmpty(match.TransactionHash) || !trService.IsTransactionExecuted(match.TransactionHash, settings.GasForCoinTransaction).Result)
                         {
                             var coinEvents = allCoinEvents[match.OperationId]?.OrderByDescending(x => x.EventTime);
                             if (coinEvents != null)
                             {
                                 foreach (var @event in coinEvents)
                                 {
-                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, Constants.GasForCoinTransaction).Result)
+                                    if (@event != null && trService.IsTransactionExecuted(@event.TransactionHash, settings.GasForCoinTransaction).Result)
                                     {
                                         Console.WriteLine($"Unpublished transaction {@event.TransactionHash}");
                                         allUnpublishedEvents.Add(@event.TransactionHash);
@@ -591,11 +594,12 @@ namespace TransactionResubmit
                 Console.WriteLine("CheckingOperation");
                 IEthereumTransactionService coinTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var operationToHashMatchRepository = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
+                var settings = ServiceProvider.Resolve<IBaseSettings>();
                 operationToHashMatchRepository.ProcessAllAsync((items) =>
                 {
                     foreach (var item in items)
                     {
-                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, settings.GasForCoinTransaction).Result)
                         {
                             Console.WriteLine($"Operation is dead {item.OperationId}");
                             list.Add(item.OperationId);
@@ -630,11 +634,12 @@ namespace TransactionResubmit
                 IEthereumTransactionService coinTransactionService = ServiceProvider.Resolve<IEthereumTransactionService>();
                 var queue = queueFactory.Build(Constants.PendingOperationsQueue);
                 var operationToHashMatchRepository = ServiceProvider.Resolve<IOperationToHashMatchRepository>();
+                var settings = ServiceProvider.Resolve<IBaseSettings>();
                 operationToHashMatchRepository.ProcessAllAsync((items) =>
                 {
                     foreach (var item in items)
                     {
-                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, Constants.GasForCoinTransaction).Result)
+                        if (string.IsNullOrEmpty(item.TransactionHash) || !coinTransactionService.IsTransactionExecuted(item.TransactionHash, settings.GasForCoinTransaction).Result)
                         {
                             Console.WriteLine($"Resubmitting {item.OperationId}");
                             queue.PutRawMessageAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new OperationHashMatchMessage() { OperationId = item.OperationId })).Wait();

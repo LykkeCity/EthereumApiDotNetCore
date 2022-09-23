@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Job.EthereumCore.Contracts.Cqrs;
 using Lykke.Job.EthereumCore.Workflow.Commands;
@@ -77,7 +78,7 @@ namespace Lykke.Service.EthereumCore.Services
     public class Erc20DepositContractService : IErc20DepositContractService
     {
         /*
-         function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
+        function transferAllTokens(address _tokenAddress, address _to) onlyOwner public returns (bool success) {
         
         ERC20Interface erc20Contract = ERC20Interface(_tokenAddress);
         uint balance = erc20Contract.balanceOf(this); 
@@ -175,16 +176,31 @@ namespace Lykke.Service.EthereumCore.Services
         {
             Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction("transferAllTokens");
+            
+            _log.Info("Receiving payment from deposit contract (estimation)", new
+            {
+                _settings.GasForHotWalletTransaction,
+                TokenAddress = erc20TokenAddress,
+                DestinationAddress = destinationAddress
+            });
+            
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             if (!cashinWouldBeSuccesfull)
             {
                 throw new ClientSideException(ExceptionType.CantEstimateExecution, $"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
             }
 
+            _log.Info("Receiving payment from deposit contract (sending transaction)", new
+            {
+                _settings.GasForHotWalletTransaction,
+                TokenAddress = erc20TokenAddress,
+                DestinationAddress = destinationAddress
+            });
+            
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
         }

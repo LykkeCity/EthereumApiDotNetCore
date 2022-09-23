@@ -148,7 +148,9 @@ namespace Lykke.Service.EthereumCore.Services.Airlines
                 depositContractAddress,
                 erc20TokenAddress,
                 destinationAddress,
-                amount);
+                amount,
+                _appSettings.EthereumCore,
+                _log);
 
             if (!estimationResult)
             {
