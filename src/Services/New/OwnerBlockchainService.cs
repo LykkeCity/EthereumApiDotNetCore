@@ -5,6 +5,8 @@ using Nethereum.Hex.HexTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Log;
+using Lykke.Common.Log;
 using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Services.New
@@ -24,10 +26,12 @@ namespace Lykke.Service.EthereumCore.Services.New
     {
         private readonly IWeb3 _web3;
         private IBaseSettings _baseSettings;
+        private readonly ILog _log;
 
-        public OwnerBlockchainService(IWeb3 web3, IBaseSettings baseSettings)
+        public OwnerBlockchainService(IWeb3 web3, IBaseSettings baseSettings, ILog log)
         {
             _baseSettings = baseSettings;
+            _log = log;
             _web3 = web3;
         }
 
@@ -36,8 +40,17 @@ namespace Lykke.Service.EthereumCore.Services.New
             var contract = _web3.Eth.GetContract(_baseSettings.MainExchangeContract.Abi, _baseSettings.MainExchangeContract.Address);
             var addOwners = contract.GetFunction("addOwners");
             var ownerAddresses = owners.Select(x => x.Address).ToArray();
-            var transactionHash = await addOwners.SendTransactionAsync(_baseSettings.EthereumMainAccount,
-                        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), new object[] { ownerAddresses });
+            
+            _log.Info("Adding Owners to main exchange ", new
+            {
+                _baseSettings.GasForCoinTransaction,
+                OwnerAddress = ownerAddresses
+            });
+            
+            var transactionHash = await addOwners.SendTransactionAsync(
+                _baseSettings.EthereumMainAccount, 
+                new HexBigInteger(_baseSettings.GasForCoinTransaction),
+                new HexBigInteger(0), new object[] { ownerAddresses });
 
             return transactionHash;
         }
@@ -47,8 +60,15 @@ namespace Lykke.Service.EthereumCore.Services.New
             var contract = _web3.Eth.GetContract(_baseSettings.MainExchangeContract.Abi, _baseSettings.MainExchangeContract.Address);
             var removeOwners = contract.GetFunction("removeOwners");
             var ownerAddresses = owners.Select(x => x.Address).ToArray();
+            
+            _log.Info("Removing owners from Main Exchange", new
+            {
+                _baseSettings.GasForCoinTransaction,
+                OwnerAddresses = ownerAddresses
+            });
+            
             var transactionHash = await removeOwners.SendTransactionAsync(_baseSettings.EthereumMainAccount,
-                        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), ownerAddresses);
+                        new HexBigInteger(_baseSettings.GasForCoinTransaction), new HexBigInteger(0), ownerAddresses);
 
             return transactionHash;
         }

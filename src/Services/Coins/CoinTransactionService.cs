@@ -44,12 +44,13 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             if (receipt == null)
                 return null;
 
-            ICoinTransaction coinDbTransaction = new CoinTransaction()
+            ICoinTransaction coinDbTransaction = new CoinTransaction
             {
                 ConfirmationLevel = 0,
                 TransactionHash = transaction.TransactionHash
             };
-            bool error = !await _transactionService.IsTransactionExecuted(transaction.TransactionHash);
+            bool error = !await _transactionService.IsTransactionExecuted(transaction.TransactionHash,
+                _baseSettings.GasForCoinTransaction);
 
             var confimations = await _contractService.GetCurrentBlock() - receipt.BlockNumber;
             var coinTransaction = new CoinTransaction

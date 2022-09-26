@@ -9,6 +9,8 @@ using Nethereum.Web3;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Common.Log;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -38,6 +40,7 @@ namespace Lykke.Service.EthereumCore.Services
         private readonly Web3 _web3;
         private readonly IPaymentService _paymentService;
         private readonly IErcInterfaceService _ercInterfaceService;
+        private readonly ILog _log;
 
         public TransferContractService(IContractService contractService,
             ITransferContractRepository transferContractRepository,
@@ -47,8 +50,7 @@ namespace Lykke.Service.EthereumCore.Services
             ITransferContractUserAssignmentQueueService transferContractUserAssignmentQueueService,
             IPaymentService paymentService,
             Web3 web3,
-            IErcInterfaceService ercInterfaceService
-            )
+            IErcInterfaceService ercInterfaceService, ILog log)
         {
             _paymentService = paymentService;
             _web3 = web3;
@@ -59,6 +61,7 @@ namespace Lykke.Service.EthereumCore.Services
             _transferContractQueueServiceFactory = transferContractQueueServiceFactory;
             _transferContractUserAssignmentQueueService = transferContractUserAssignmentQueueService;
             _ercInterfaceService = ercInterfaceService;
+            _log = log;
         }
 
         public async Task<string> CreateTransferContractTrHashWithoutUser(string coinAdapterAddress)
@@ -191,10 +194,15 @@ namespace Lykke.Service.EthereumCore.Services
 
             var cashin = contract.GetFunction("cashin");
             string tr;
+            
+            _log.Info("Receiving payment from transfer contract (cashin)", new
+            {
+                _settings.GasForCoinTransaction
+            });
 
             //function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params)
             tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-            new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0));
+            new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0));
 
             return tr;
         }

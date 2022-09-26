@@ -3,6 +3,9 @@ using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using System.Numerics;
 using System.Threading.Tasks;
+using Common.Log;
+using Lykke.Common.Log;
+using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Web3;
 
 namespace Lykke.Service.EthereumCore.Core.Shared
@@ -16,14 +19,23 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             string fromAddress, 
             string depositContractAddress, 
             string erc20TokenAddress, 
-            string destinationAddress, 
-            BigInteger tokenAmount)
+            string destinationAddress,
+            BigInteger tokenAmount,
+            BaseSettings settings,
+            ILog logger)
         {
             Contract contract = web3.Eth.GetContract(settingsErc20DepositContractAbi, depositContractAddress);
             var cashin = contract.GetFunction(TransferTokensFuncName);
 
+            logger.Info("Starting deposit transfer of ERC223 tokens", new
+            {
+                settings.GasForHotWalletTransaction,
+                TokenAddress = erc20TokenAddress,
+                DestinationAddress = destinationAddress
+            });
+            
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
-                new HexBigInteger(Constants.GasForHotWalletTransaction), 
+                new HexBigInteger(settings.GasForHotWalletTransaction), 
                 new HexBigInteger(0),
                 erc20TokenAddress,
                 destinationAddress,
@@ -36,7 +48,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             }
 
             string trHash = await cashin.SendTransactionAsync(fromAddress,
-                new HexBigInteger(Constants.GasForHotWalletTransaction), 
+                new HexBigInteger(settings.GasForHotWalletTransaction), 
                 new HexBigInteger(0),
                 erc20TokenAddress,
                 destinationAddress,
@@ -51,13 +63,22 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             string depositContractAddress, 
             string erc20TokenAddress, 
             string destinationAddress,
-            BigInteger tokenAmount)
+            BigInteger tokenAmount,
+            BaseSettings settings,
+            ILog logger)
         {
+            logger.Info("Estimation of deposit transfer of ERC223 tokens", new
+            {
+                settings.GasForHotWalletTransaction,
+                TokenAddress = erc20TokenAddress,
+                DestinationAddress = destinationAddress
+            });
+            
             Contract contract = web3.Eth.GetContract(settingsErc20DepositContractAbi, depositContractAddress);
             var cashin = contract.GetFunction(TransferTokensFuncName);
 
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
-                new HexBigInteger(Constants.GasForHotWalletTransaction),
+                new HexBigInteger(settings.GasForHotWalletTransaction),
                 new HexBigInteger(0),
                 erc20TokenAddress,
                 destinationAddress,

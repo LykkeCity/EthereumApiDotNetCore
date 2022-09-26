@@ -224,7 +224,7 @@ namespace Lykke.Service.EthereumCore.Services.Signature
 
 
             gasPrice = selectedGasPrice;
-            gasValue = gasValue == null || gasValue.Value == 0 || gasValue.Value == 21000 ? Constants.GasForCoinTransaction : gasValue;
+            gasValue = gasValue == null || gasValue.Value == 0 || gasValue.Value == 21000 ? _baseSettings.GasForCoinTransaction : gasValue;
 
             return (gasPrice, gasValue);
         }

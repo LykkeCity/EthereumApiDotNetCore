@@ -47,6 +47,11 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         string EthereumSamuraiUrl { get; set; }
         string SigningServiceApiKey { get; set; }
         string PreviousMainExchangeContractAddress { get; set; }
+        int GasForUserContractTransafer { get; set; }
+        int GasForCoinTransaction { get; set; }
+        int GasForHotWalletTransaction { get; set; }
+        int GasForEthCashin { get; set; }
+        int HalfGasLimit { get; set; }
     }
 
     public class BaseSettings : IBaseSettings
@@ -121,6 +126,21 @@ namespace Lykke.Service.EthereumCore.Core.Settings
         public string PreviousMainExchangeContractAddress { get; set; }
         [Optional]
         public string BlockPassTokenAddress { get; set; }
+
+        [Optional]
+        public int GasForUserContractTransafer { get; set; } = 50000;
+
+        [Optional]
+        public int GasForCoinTransaction { get; set; } = 200000;
+
+        [Optional]
+        public int GasForHotWalletTransaction { get; set; } = 400000;
+
+        [Optional]
+        public int GasForEthCashin { get; set; } = 800000;
+
+        [Optional]
+        public int HalfGasLimit { get; set; } = 100000;
     }
 
     public class EthereumContractBase

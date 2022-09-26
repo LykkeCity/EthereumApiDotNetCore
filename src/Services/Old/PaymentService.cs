@@ -5,6 +5,7 @@ using Lykke.Service.EthereumCore.Core.Settings;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Common.Log;
+using Lykke.Common.Log;
 using Nethereum.Util;
 using Nethereum.RPC.Eth.DTOs;
 
@@ -66,8 +67,20 @@ namespace Lykke.Service.EthereumCore.Services
 
         public async Task<string> SendEthereum(string fromAddress, string toAddress, BigInteger amount)
         {
+            _logger.Info("Sending ethereum", new
+            {
+                GasAmount = _settings.GasForEthCashin,
+                ToAddress = toAddress,
+                FromAddress = fromAddress,
+                Amount = amount
+            });
+            
             string transactionHash = await _web3.Eth.Transactions.SendTransaction.SendRequestAsync(
-                new Nethereum.RPC.Eth.DTOs.TransactionInput("", toAddress, fromAddress, new HexBigInteger(Constants.GasForEthCashin), new HexBigInteger(amount)));
+                new TransactionInput("",
+                    toAddress,
+                    fromAddress,
+                 new HexBigInteger(_settings.GasForEthCashin),
+                new HexBigInteger(amount)));
 
             return transactionHash;
         }

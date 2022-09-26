@@ -18,6 +18,8 @@ using Lykke.Service.EthereumCore.Core.Exceptions;
 using Nethereum.Signer;
 using Lykke.Service.EthereumCore.Services.Model;
 using System.Text.RegularExpressions;
+using Common.Log;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.EthereumCore.Services.Coins
 {
@@ -73,11 +75,13 @@ namespace Lykke.Service.EthereumCore.Services.Coins
         private readonly AddressUtil _addressUtil;
         private readonly IBlackListAddressesRepository _blackListAddressesRepository;
         private readonly IWhiteListAddressesRepository _whiteListAddressesRepository;
+        private readonly ILog _log;
 
         public ExchangeContractService(IBaseSettings settings,
             ICoinTransactionService cointTransactionService, IContractService contractService,
             ICoinContractFilterRepository coinContractFilterRepository, Func<string, IQueueExt> queueFactory,
-            ICoinRepository coinRepository, Web3 web3,
+            ICoinRepository coinRepository,
+            Web3 web3,
             ILykkeSigningAPI lykkeSigningAPI,
             IUserPaymentHistoryRepository userPaymentHistory,
             ICoinEventService coinEventService,
@@ -85,7 +89,8 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             IPendingTransactionsRepository pendingTransactionsRepository,
             ITransferContractService transferContractService,
             IBlackListAddressesRepository blackListAddressesRepository,
-            IWhiteListAddressesRepository whiteListAddressesRepository)
+            IWhiteListAddressesRepository whiteListAddressesRepository,
+            ILog log)
         {
             _lykkeSigningAPI = lykkeSigningAPI;
             _web3 = web3;
@@ -102,6 +107,7 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             _addressUtil = new AddressUtil();
             _blackListAddressesRepository = blackListAddressesRepository;
             _whiteListAddressesRepository = whiteListAddressesRepository;
+            _log = log;
         }
 
         public bool IsValidAddress(string address)
@@ -124,16 +130,26 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             };
         }
 
-        public async Task<OperationEstimationResult> EstimateCashoutGas(Guid id, string coinAdapterAddress, string fromAddress, string toAddress, BigInteger amount, string sign)
+        public async Task<OperationEstimationResult> EstimateCashoutGas(Guid id,
+            string coinAdapterAddress,
+            string fromAddress,
+            string toAddress,
+            BigInteger amount,
+            string sign)
         {
             var blackListedAddress = await _blackListAddressesRepository.GetAsync(toAddress);
             var whiteListedAddress = await _whiteListAddressesRepository.GetAsync(toAddress);
-
+            
             if (blackListedAddress != null && whiteListedAddress == null)
             {
-                return new OperationEstimationResult()
+                _log.Info("Estimating cashout gas", new
                 {
-                    GasAmount = Constants.GasForCoinTransaction,
+                    _settings.GasForCoinTransaction
+                });
+                
+                return new OperationEstimationResult
+                {
+                    GasAmount = _settings.GasForCoinTransaction,
                     IsAllowed = false
                 };
             }
@@ -160,11 +176,23 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("cashout");
             var convertedId = EthUtils.GuidToBigInteger(id);
+            
             //ACTION
+            var checksumAddress = _addressUtil.ConvertToChecksumAddress(coinAFromDb.AdapterAddress);
+            _log.Info("Estimating cashout gas", new
+            {
+                _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                FromAddress = fromAddress,
+                ToAddress = toAddress,
+                Amount = amount,
+                Sign = sign
+            });
+
             var estimatedGasForOperation = await cashout.EstimateGasAsync(_settings.EthereumMainAccount,
-                        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), 
+                        new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0), 
                         convertedId,
-                        _addressUtil.ConvertToChecksumAddress(coinAFromDb.AdapterAddress), 
+                        checksumAddress, 
                         fromAddress, 
                         toAddress,
                         amount, 
@@ -174,7 +202,7 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             return new OperationEstimationResult()
             {
                 GasAmount = estimatedGasForOperation.Value,
-                IsAllowed = estimatedGasForOperation.Value < Constants.GasForCoinTransaction
+                IsAllowed = estimatedGasForOperation.Value < _settings.GasForCoinTransaction
             };
         }
 
@@ -205,18 +233,26 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
             var convertedId = EthUtils.GuidToBigInteger(id);
 
+            _log.Info("Executing cashin", new
+            {
+                _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                Receiver = receiver,
+                Amount = amount
+            });
+            
             var cashin = contract.GetFunction("cashin");
-            var res = await cashin.CallAsync<bool>(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
+            var res = await cashin.CallAsync<bool>(_settings.EthereumMainAccount, new HexBigInteger(_settings.GasForCoinTransaction),
                             new HexBigInteger(0), receiver, convertedAmountA);
             string tr;
             if (coinAFromDb.ContainsEth)
             {
-                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
+                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(_settings.GasForCoinTransaction),
                             new HexBigInteger(convertedAmountA), receiver, convertedAmountA);
             }
             else
             {
-                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(Constants.GasForCoinTransaction),
+                tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount, new HexBigInteger(_settings.GasForCoinTransaction),
                             new HexBigInteger(0), receiver, convertedAmountA);
             }
 
@@ -239,9 +275,21 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             var cashout = contract.GetFunction("cashout");
 
             var convertedId = EthUtils.GuidToBigInteger(id);
+            
+            _log.Info("Executing CashOut", new
+            {
+                _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                coinAFromDb.AdapterAddress,
+                ClientAddress = clientAddr,
+                ToAddress = toAddr,
+                Amount = amount,
+                Sign = sign
+            });
+            
             // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
             var transactionHash = await cashout.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                        new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                        new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0),
                         convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, sign.HexToByteArray(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOut");
             await CreatePendingTransaction(coinAddress, clientAddr, transactionHash);
@@ -264,9 +312,22 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transfer");
 
+                        
             var convertedId = EthUtils.GuidToBigInteger(id);
+            
+            _log.Info("Executing Transfer", new
+            {
+                _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                coinAFromDb.AdapterAddress,
+                From = from,
+                To = to,
+                Amount = amount,
+                Sign = sign
+            });
+            
             var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                    new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "Transfer");
             await CreatePendingTransaction(coinAddress, from, transactionHash);
@@ -301,8 +362,20 @@ namespace Lykke.Service.EthereumCore.Services.Coins
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transferWithChange");
             var convertedId = EthUtils.GuidToBigInteger(id);
+            
+            _log.Info("Transferring with change", new
+            {
+                _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                AdapterAddress = coinAFromDb.AdapterAddress,
+                From = from,
+                To = to,
+                Amount = amount,
+                Change = change,
+            });
+            
             var transactionHash = await transferFunction.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                    new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, change,
                     signFrom.HexToByteArray(), signTo.HexToByteArray(), new byte[0]);
             var difference = (amount - change);
@@ -321,10 +394,20 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("transfer");
-
             var convertedId = EthUtils.GuidToBigInteger(id);
+
+            _log.Info("Transferring without sign check", new
+            {
+                GasAmount = _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                From = from,
+                To = to,
+                Sign = sign,
+                Amount = amount
+            });
+            
             var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
-                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                    new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0),
                     convertedId, coinAFromDb.AdapterAddress, from, to, amount, sign.HexToByteArray(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), from, to, transactionHash, "TransferWithoutSignCheck");
 
@@ -342,11 +425,22 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var cashout = contract.GetFunction("cashout");
-
             var convertedId = EthUtils.GuidToBigInteger(id);
+
+            
+            _log.Info("Cashing out without sign check", new
+            {
+                GasAmount = _settings.GasForCoinTransaction,
+                ConvertedId = convertedId,
+                ClientAddr = clientAddr,
+                ToAddr = toAddr,
+                coinAFromDb.AdapterAddress,
+                Amount = amount
+            });
+            
             // function cashout(uint id, address coinAddress, address client, address to, uint amount, bytes client_sign, bytes params) onlyowner {
             var transactionHash = await cashout.SendTransactionAsync(Constants.AddressForRoundRobinTransactionSending,
-                new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0),
+                new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0),
                 convertedId, coinAFromDb.AdapterAddress, clientAddr, toAddr, amount, "01".HexToByteArray(), new byte[0]);
             await SaveUserHistory(coinAddress, amount.ToString(), clientAddr, toAddr, transactionHash, "CashOutWithoutSignCheck");
 
@@ -441,11 +535,18 @@ namespace Lykke.Service.EthereumCore.Services.Coins
 
         public async Task<string> ChangeMainContractInCoin(string coinAddress, string newExchangeContractAddress, string newMainExchangeAbi)
         {
+            _log.Info("Changing main contract coin", new
+            {
+                _settings.GasForCoinTransaction,
+                CoinAddress = coinAddress,
+                NewExchangeContractAddress = newExchangeContractAddress,
+            });
+            
             var coinAFromDb = await GetCoinWithCheck(coinAddress);
             var contract = _web3.Eth.GetContract(_settings.MainExchangeContract.Abi, _settings.MainExchangeContract.Address);
             var transferFunction = contract.GetFunction("changeMainContractInCoin");
             var transactionHash = await transferFunction.SendTransactionAsync(_settings.EthereumMainAccount,
-                    new HexBigInteger(Constants.GasForCoinTransaction), new HexBigInteger(0), coinAddress, newExchangeContractAddress);
+                    new HexBigInteger(_settings.GasForCoinTransaction), new HexBigInteger(0), coinAddress, newExchangeContractAddress);
 
             return transactionHash;
         }

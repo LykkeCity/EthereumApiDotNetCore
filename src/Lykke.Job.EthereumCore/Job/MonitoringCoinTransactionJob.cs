@@ -243,7 +243,7 @@ namespace Lykke.Job.EthereumCore.Job
                         foreach (var match in historycal)
                         {
                             if (!string.IsNullOrEmpty(match.TransactionHash) &&
-                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, Constants.GasForCoinTransaction))
+                            await _ethereumTransactionService.IsTransactionExecuted(match.TransactionHash, _settings.GasForCoinTransaction))
                             {
                                 var @event = await _coinEventService.GetCoinEvent(match.TransactionHash);
                                 if (@event != null && @event.TransactionHash.ToLower() == match.TransactionHash.ToLower())

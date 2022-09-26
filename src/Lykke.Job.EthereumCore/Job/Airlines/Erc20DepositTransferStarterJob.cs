@@ -118,7 +118,9 @@ namespace Lykke.Job.EthereumCore.Job.Airlines
                     operation.FromAddress, 
                     operation.TokenAddress, 
                     operation.ToAddress,
-                    operation.Amount);
+                    operation.Amount,
+                    _settings.EthereumCore,
+                    _logger);
                 await _hotWalletTransactionRepository.SaveAsync(new HotWalletCashoutTransaction()
                 {
                     OperationId = transaction.OperationId,
