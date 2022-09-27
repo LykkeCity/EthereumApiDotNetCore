@@ -19,12 +19,12 @@ namespace Lykke.Service.EthereumCore.Services.New
         private readonly IOwnerRepository _ownerRepository;
         private readonly IOwnerBlockchainService _ownerBlockchainService;
         private readonly IEthereumTransactionService _ethereumTransactionService;
-        private readonly BaseSettings _settings;
+        private readonly IBaseSettings _settings;
 
         public OwnerService(IOwnerRepository ownerRepository,
             IOwnerBlockchainService ownerBlockchainService,
             IEthereumTransactionService ethereumTransactionService,
-            BaseSettings settings)
+            IBaseSettings settings)
         {
             _ownerRepository = ownerRepository;
             _ownerBlockchainService = ownerBlockchainService;
