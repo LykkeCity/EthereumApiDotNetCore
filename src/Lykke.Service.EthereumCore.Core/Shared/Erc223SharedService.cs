@@ -21,7 +21,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             string erc20TokenAddress, 
             string destinationAddress,
             BigInteger tokenAmount,
-            BaseSettings settings,
+            IBaseSettings settings,
             ILog logger)
         {
             Contract contract = web3.Eth.GetContract(settingsErc20DepositContractAbi, depositContractAddress);
@@ -64,7 +64,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             string erc20TokenAddress, 
             string destinationAddress,
             BigInteger tokenAmount,
-            BaseSettings settings,
+            IBaseSettings settings,
             ILog logger)
         {
             logger.Info("Estimation of deposit transfer of ERC223 tokens", new

@@ -14,7 +14,7 @@ namespace Lykke.Service.EthereumCore.Core.Shared
         public const string TransferAllTokensFuncName = "transferAllTokens";
 
         public static async Task<string> StartDepositTransferAsync(IWeb3 web3, 
-            BaseSettings settings,
+            IBaseSettings settings,
             string fromAddress, 
             string depositContractAddress, 
             string erc20TokenAddress, 
