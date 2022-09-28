@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Common.Log;
 using Nethereum.Web3;
+using Common;
 
 namespace Lykke.Service.EthereumCore.Services.New
 {
@@ -40,12 +41,14 @@ namespace Lykke.Service.EthereumCore.Services.New
             var contract = _web3.Eth.GetContract(_baseSettings.MainExchangeContract.Abi, _baseSettings.MainExchangeContract.Address);
             var addOwners = contract.GetFunction("addOwners");
             var ownerAddresses = owners.Select(x => x.Address).ToArray();
-            
-            _log.Info("Adding Owners to main exchange ", new
-            {
-                _baseSettings.GasForCoinTransaction,
-                OwnerAddress = ownerAddresses
-            });
+
+            _log.WriteInfoAsync(nameof(OwnerBlockchainService), nameof(AddOwnersToMainExchangeAsync),
+                new
+                {
+                    _baseSettings.GasForCoinTransaction,
+                    OwnerAddress = ownerAddresses
+                }.ToJson(),
+                "Adding Owners to main exchange ");
             
             var transactionHash = await addOwners.SendTransactionAsync(
                 _baseSettings.EthereumMainAccount, 
@@ -61,11 +64,13 @@ namespace Lykke.Service.EthereumCore.Services.New
             var removeOwners = contract.GetFunction("removeOwners");
             var ownerAddresses = owners.Select(x => x.Address).ToArray();
             
-            _log.Info("Removing owners from Main Exchange", new
-            {
-                _baseSettings.GasForCoinTransaction,
-                OwnerAddresses = ownerAddresses
-            });
+            _log.WriteInfoAsync(nameof(OwnerBlockchainService), nameof(RemoveOwnersFromMainExchangeAsync),
+                new
+                {
+                    _baseSettings.GasForCoinTransaction,
+                    OwnerAddresses = ownerAddresses
+                }.ToJson(),
+                "Removing owners from Main Exchange");
             
             var transactionHash = await removeOwners.SendTransactionAsync(_baseSettings.EthereumMainAccount,
                         new HexBigInteger(_baseSettings.GasForCoinTransaction), new HexBigInteger(0), ownerAddresses);

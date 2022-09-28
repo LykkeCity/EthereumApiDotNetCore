@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Common.Log;
+using Common;
 
 namespace Lykke.Service.EthereumCore.Services
 {
@@ -194,11 +195,13 @@ namespace Lykke.Service.EthereumCore.Services
 
             var cashin = contract.GetFunction("cashin");
             string tr;
-            
-            _log.Info("Receiving payment from transfer contract (cashin)", new
-            {
-                _settings.GasForCoinTransaction
-            });
+
+            _log.WriteInfoAsync(nameof(TransferContractService), nameof(RecievePaymentFromTransferContract),
+                new
+                {
+                    _settings.GasForCoinTransaction
+                }.ToJson(),
+                "Receiving payment from transfer contract (cashin)");
 
             //function cashin(uint id, address coin, address receiver, uint amount, uint gas, bytes params)
             tr = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
