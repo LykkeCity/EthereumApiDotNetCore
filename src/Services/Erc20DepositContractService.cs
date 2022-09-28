@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
+using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Cqrs;
@@ -176,13 +177,15 @@ namespace Lykke.Service.EthereumCore.Services
         {
             Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction("transferAllTokens");
-            
-            _log.Info("Receiving payment from deposit contract (estimation)", new
-            {
-                _settings.GasForHotWalletTransaction,
-                TokenAddress = erc20TokenAddress,
-                DestinationAddress = destinationAddress
-            });
+
+            _log.WriteInfoAsync(nameof(Erc20DepositContractService), nameof(RecievePaymentFromDepositContract),
+                new
+                {
+                    _settings.GasForHotWalletTransaction,
+                    TokenAddress = erc20TokenAddress,
+                    DestinationAddress = destinationAddress
+                }.ToJson(),
+                "Receiving payment from deposit contract (estimation)");
             
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
             new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
@@ -192,12 +195,14 @@ namespace Lykke.Service.EthereumCore.Services
                 throw new ClientSideException(ExceptionType.CantEstimateExecution, $"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
             }
 
-            _log.Info("Receiving payment from deposit contract (sending transaction)", new
-            {
-                _settings.GasForHotWalletTransaction,
-                TokenAddress = erc20TokenAddress,
-                DestinationAddress = destinationAddress
-            });
+            _log.WriteInfoAsync(nameof(Erc20DepositContractService), nameof(RecievePaymentFromDepositContract),
+                new
+                {
+                    _settings.GasForHotWalletTransaction,
+                    TokenAddress = erc20TokenAddress,
+                    DestinationAddress = destinationAddress
+                }.ToJson(),
+                "Receiving payment from deposit contract (sending transaction)");
             
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
             new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);

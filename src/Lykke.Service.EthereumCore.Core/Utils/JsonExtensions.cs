@@ -21,11 +21,5 @@ namespace Lykke.Service.EthereumCore.Core.Utils
 		{
 			return JsonConvert.DeserializeObject<T>(json);
 		}
-
-		public static string ToJson(this object src, bool ignoreNulls = false)
-		{
-			return JsonConvert.SerializeObject(src,
-				new JsonSerializerSettings { NullValueHandling = ignoreNulls ? NullValueHandling.Ignore : NullValueHandling.Include });
-		}
 	}
 }

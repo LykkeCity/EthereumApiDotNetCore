@@ -135,16 +135,18 @@ namespace Lykke.Service.EthereumCore.Services.HotWallet
             string transactionHash = null;
             bool isErc20Transfer = !string.IsNullOrEmpty(cashout.TokenAddress);
             SemaphoreSlim semaphore = _semaphores.GetOrAdd(cashout.FromAddress, f => new SemaphoreSlim(1, 1));
-            
-            _log.Info("Obtaining transaction for signing", new
-            {
-                FromAddress = cashout.FromAddress,
-                GasAmount = _baseSettings.GasForHotWalletTransaction,
-                GasPrice = selectedGasPrice,
-                ToAddress = cashout.ToAddress,
-                TokenAddress = cashout.TokenAddress,
-                TokenAmount = cashout.Amount
-            });
+
+            _log.WriteInfoAsync(nameof(HotWalletService), nameof(StartCashoutAsync),
+                new
+                {
+                    FromAddress = cashout.FromAddress,
+                    GasAmount = _baseSettings.GasForHotWalletTransaction,
+                    GasPrice = selectedGasPrice,
+                    ToAddress = cashout.ToAddress,
+                    TokenAddress = cashout.TokenAddress,
+                    TokenAmount = cashout.Amount
+                }.ToJson(),
+                "Obtaining transaction for signing");
 
             try
             {

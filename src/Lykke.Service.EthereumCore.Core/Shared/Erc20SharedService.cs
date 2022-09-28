@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.EthereumCore.Core.Exceptions;
@@ -23,13 +24,15 @@ namespace Lykke.Service.EthereumCore.Core.Shared
         {
             Contract contract = web3.Eth.GetContract(settings.Erc20DepositContract.Abi, depositContractAddress);
             var cashin = contract.GetFunction(TransferAllTokensFuncName);
-            
-            logger.Info("Starting deposit transfer of ERC20 tokens ", new
-            {
-                settings.GasForHotWalletTransaction,
-                TokenAddress = erc20TokenAddress,
-                DestinationAddress = destinationAddress
-            });
+
+            logger.WriteInfoAsync(nameof(Erc20SharedService), nameof(StartDepositTransferAsync),
+                new
+                {
+                    settings.GasForHotWalletTransaction,
+                    TokenAddress = erc20TokenAddress,
+                    DestinationAddress = destinationAddress
+                }.ToJson(),
+                "Starting deposit transfer of ERC20 tokens ");
             
             var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(fromAddress,
                 new HexBigInteger(settings.GasForHotWalletTransaction), 
@@ -61,12 +64,14 @@ namespace Lykke.Service.EthereumCore.Core.Shared
             IBaseSettings settings,
             ILog logger)
         {
-            logger.Info("Estimation of deposit transfer of ERC20 tokens", new
-            {
-                settings.GasForHotWalletTransaction,
-                TokenAddress = erc20TokenAddress,
-                DestinationAddress = destinationAddress
-            });
+            logger.WriteInfoAsync(nameof(Erc20SharedService), nameof(EstimateDepositTransferAsync),
+                new
+                {
+                    settings.GasForHotWalletTransaction,
+                    TokenAddress = erc20TokenAddress,
+                    DestinationAddress = destinationAddress
+                }.ToJson(),
+                "Estimation of deposit transfer of ERC20 tokens");
             
             Contract contract = web3.Eth.GetContract(settingsErc20DepositContractAbi, depositContractAddress);
             var cashin = contract.GetFunction(TransferAllTokensFuncName);

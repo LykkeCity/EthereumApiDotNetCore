@@ -11,6 +11,7 @@ using Lykke.Service.EthereumCore.Core.Notifiers;
 using Lykke.Service.EthereumCore.Core.Utils;
 using Lykke.Service.EthereumCore.Services.HotWallet;
 using Lykke.Service.EthereumCore.Services.Coins.Models;
+using Common;
 
 namespace Lykke.Service.EthereumCore.Services
 {
