@@ -187,25 +187,21 @@ namespace Lykke.Service.EthereumCore.Services
                 }.ToJson(),
                 "Receiving payment from deposit contract (estimation)");
             
-            var cashinWouldBeSuccesfull = await cashin.CallAsync<bool>(_settings.EthereumMainAccount,
+            var estimatedGas = await cashin.EstimateGasAsync(_settings.EthereumMainAccount,
             new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
-
-            if (!cashinWouldBeSuccesfull)
-            {
-                throw new ClientSideException(ExceptionType.CantEstimateExecution, $"CAN'T Estimate Cashin {depositContractAddress}, {erc20TokenAddress}, {destinationAddress}");
-            }
 
             _log.WriteInfoAsync(nameof(Erc20DepositContractService), nameof(RecievePaymentFromDepositContract),
                 new
                 {
                     _settings.GasForHotWalletTransaction,
                     TokenAddress = erc20TokenAddress,
-                    DestinationAddress = destinationAddress
+                    DestinationAddress = destinationAddress,
+                    EstimatedGas = estimatedGas
                 }.ToJson(),
                 "Receiving payment from deposit contract (sending transaction)");
             
             string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
-            new HexBigInteger(_settings.GasForHotWalletTransaction), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+            estimatedGas, new HexBigInteger(0), erc20TokenAddress, destinationAddress);
 
             return trHash;
         }
