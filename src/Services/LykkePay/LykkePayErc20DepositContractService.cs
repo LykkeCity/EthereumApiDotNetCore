@@ -186,5 +186,10 @@ namespace Lykke.Service.EthereumCore.Services.LykkePay
 
             return contract?.UserAddress;
         }
+
+        public Task<string> RecievePaymentFromDepositContractWithoutEstimation(string depositContractAddress, string erc20TokenAddress, string destinationAddress, int? gasOverride)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
