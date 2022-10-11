@@ -206,6 +206,30 @@ namespace Lykke.Service.EthereumCore.Services
             return trHash;
         }
 
+        public async Task<string> RecievePaymentFromDepositContractWithoutEstimation(string depositContractAddress,
+           string erc20TokenAddress, string destinationAddress, int? gasOverride)
+        {
+            Contract contract = _web3.Eth.GetContract(_settings.Erc20DepositContract.Abi, depositContractAddress);
+            var cashin = contract.GetFunction("transferAllTokens");
+
+            var gas = gasOverride ?? _settings.GasForHotWalletTransaction;
+
+            _log.WriteInfoAsync(nameof(Erc20DepositContractService), nameof(RecievePaymentFromDepositContractWithoutEstimation),
+                new
+                {
+                    _settings.GasForHotWalletTransaction,
+                    TokenAddress = erc20TokenAddress,
+                    DestinationAddress = destinationAddress,
+                    Gas = gas
+                }.ToJson(),
+                "Receiving payment from deposit contract without estimation (sending transaction)");
+
+            string trHash = await cashin.SendTransactionAsync(_settings.EthereumMainAccount,
+            new HexBigInteger(gas), new HexBigInteger(0), erc20TokenAddress, destinationAddress);
+
+            return trHash;
+        }
+
         public async Task<string> GetUserAddress(string contractAddress)
         {
             var contract = (await _contractRepository.GetByContractAddress(contractAddress)) ??
@@ -231,6 +255,9 @@ namespace Lykke.Service.EthereumCore.Services
 
         Task<string> RecievePaymentFromDepositContract(string depositContractAddress,
            string erc20TokenAddress, string destinationAddress);
+
+        Task<string> RecievePaymentFromDepositContractWithoutEstimation(string depositContractAddress,
+           string erc20TokenAddress, string destinationAddress, int? gasOverride);
     }
 
     public interface IErc20ContracAssigner

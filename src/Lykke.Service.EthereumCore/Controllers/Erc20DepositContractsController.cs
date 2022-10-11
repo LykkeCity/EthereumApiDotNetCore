@@ -14,7 +14,8 @@ namespace Lykke.Service.EthereumCore.Controllers
         private readonly IErc20DepositContractService _contractService;
         private readonly IErc20ContracAssigner _erc20ContracAssigner;
 
-        public Erc20DepositContractsController([KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService,
+        public Erc20DepositContractsController(
+            [KeyFilter(Constants.DefaultKey)]IErc20DepositContractService contractService,
             [KeyFilter(Constants.DefaultKey)]IErc20ContracAssigner erc20ContracAssigner)
         {
             _contractService = contractService;
@@ -47,6 +48,24 @@ namespace Lykke.Service.EthereumCore.Controllers
             return Ok(new RegisterResponse
             {
                 Contract = contractAddress
+            });
+        }
+
+        [HttpPost("recieve-payment-without-estimation")]
+        [ProducesResponseType(typeof(ReceivePaymentWithoutEstimationResponse), 200)]
+        [ProducesResponseType(typeof(ApiException), 400)]
+        [ProducesResponseType(typeof(ApiException), 500)]
+        public async Task<IActionResult> RecievePaymentFromDepositContractWithoutEstimation([FromBody] ReceivePaymentWithoutEstimationRequest request)
+        {
+            var transactionHash = await _contractService.RecievePaymentFromDepositContractWithoutEstimation(
+                request.DepositContractAddress,
+                request.Erc20TokenContractAddress,
+                request.ToAddress,
+                request.Gas);
+
+            return Ok(new ReceivePaymentWithoutEstimationResponse
+            {
+                TransactionHash = transactionHash
             });
         }
     }
