@@ -9,6 +9,7 @@ using Lykke.Service.EthereumCore.Models.Attributes;
 
 namespace Lykke.Service.EthereumCore.Controllers
 {
+
     [Route("api/whiteList")]
     [Produces("application/json")]
     public class WhiteListController : Controller
