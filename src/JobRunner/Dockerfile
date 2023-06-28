@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime
+FROM swisschains/dotnet:2.2-aspnetcore-runtime
 ENTRYPOINT ["dotnet", "JobRunner.dll"]
 ARG source=.
 WORKDIR /app
